@@ -97,3 +97,72 @@ Following you'll find the list of migrated functions from the WebAPI.
 | Get the Current API Key             | ✅   | ✅      |
 | Generate a New API Key              | ✅   | ✅      |
 
+## Database APIs
+Implementation not planned at the moment.
+
+## Job Queue APIs
+
+| Function                            | Added?| Tested? |
+| ----------------------------------- |:-----:| -------:|
+| Retrieve the job queue status       | No    | No      |
+| Enqueue a job                       | No    | No      |
+| Remove a Job                        | No    | No      |
+| Pause the job queue                 | No    | No      |
+| Start the job queue                 | No    | No      |
+
+## Update Manager APIs
+
+| Function                            | Added?| Tested? |
+| ----------------------------------- |:-----:| -------:|
+| Get update status                   | No    | No      |
+| Perform a full update               | No    | No      |
+| Update Moonraker                    | No    | No      |
+| Update Klipper                      | No    | No      |
+| Update Client                       | No    | No      |
+| Update System Packages              | No    | No      |
+| Recover a corrupt repo              | No    | No      |
+
+## Power APIs
+
+| Function                            | Added?| Tested? |
+| ----------------------------------- |:-----:| -------:|
+| Get Device List                     | No    | No      |
+| Get Device Status                   | No    | No      |
+| Set Device State                    | No    | No      |
+| Get Batch Device Status             | No    | No      |
+| Batch Power On Devices              | No    | No      |
+| Batch Power Off Devices             | No    | No      |
+
+## Octoprint API emulation
+
+| Function                               | Added?| Tested? |
+| ---------------------------------------|:-----:| -------:|
+| Version information                    | No    | No      |
+| Server status                          | No    | No      |
+| Login verification & User information  | No    | No      |
+| Get settings                           | No    | No      |
+| Octoprint File Upload                  | No    | No      |
+| Get Job status                         | No    | No      |
+| Get Printer status                     | No    | No      |
+| Send GCode command                     | No    | No      |
+| List Printer profiles                  | No    | No      |
+
+## History APIs
+
+| Function                               | Added?| Tested? |
+| ---------------------------------------|:-----:| -------:|
+| Get job list                           | No    | No      |
+| Get job totals                         | No    | No      |
+| Reset totals                           | No    | No      |
+| Get a single job                       | No    | No      |
+| Delete job                             | No    | No      |
+
+## MQTT APIs
+
+| Function                               | Added?| Tested? |
+| ---------------------------------------|:-----:| -------:|
+| Publish a topic                        | No    | No      |
+| Subscribe to a topic                   | No    | No      |
+
+## Websocket notifications
+Not implemented yet.
