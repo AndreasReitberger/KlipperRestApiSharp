@@ -9,9 +9,9 @@ Following you'll find the list of migrated functions from the WebAPI.
 
 | Function                            | Added?| Tested? |
 | ----------------------------------- |:-----:| -------:|
-| Get Klippy host information         | Yes   | Yes     |
-| Emergency Stop                      | Yes   | No      |
-| Host Restart                        | Yes   | Yes     |
+| Get Klippy host information         | ✅    | Yes     |
+| Emergency Stop                      | ✅    | No      |
+| Host Restart                        | ✅    | Yes     |
 | Firmware Restart                    | Yes   | Yes     |
 | List available printer objects      | Yes   | Yes     |
 | Query printer object status         | Yes   | Yes     |
