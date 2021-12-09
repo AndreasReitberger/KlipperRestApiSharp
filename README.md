@@ -68,31 +68,31 @@ Following you'll find the list of migrated functions from the WebAPI.
 | Function                            | Added?| Tested? |
 | ----------------------------------- |:-----:| -------:|
 | List available files                | ✅   | No      |
-| Get gcode metadata                  | No   | No      |
-| Get directory information           | No   | No      |
-| Create directory                    | No   | No      |
-| Delete directory                    | No   | No      |
-| Move a file or directory            | No   | No      |
-| Copy a file or directory            | No   | No      |
-| File download                       | No   | No      |
-| File upload                         | No   | No      |
-| File delete                         | No   | No      |
-| Download klippy.log                 | No   | No      |
-| Download moonraker.log              | No   | No      |
+| Get gcode metadata                  | No   | No       |
+| Get directory information           | No   | No       |
+| Create directory                    | No   | No       |
+| Delete directory                    | No   | No       |
+| Move a file or directory            | No   | No       |
+| Copy a file or directory            | No   | No       |
+| File download                       | No   | No       |
+| File upload                         | No   | No       |
+| File delete                         | No   | No       |
+| Download klippy.log                 | No   | No       |
+| Download moonraker.log              | No   | No       |
 
 
 ## Authorization
 
 | Function                            | Added?| Tested? |
 | ----------------------------------- |:-----:| -------:|
-| Login User                          | No   | No      |
-| Logout Current User                 | No   | No      |
-| Get Current User                    | No   | No      |
-| Create User                         | No   | No      |
-| Delete User                         | No   | No      |
-| List Available Users                | No   | No      |
-| Reset User Password                 | No   | No      |
-| Refresh JSON Web Token              | No   | No      |
+| Login User                          | ✅   | ✅      |
+| Logout Current User                 | ✅   | ✅      |
+| Get Current User                    | ✅   | ✅      |
+| Create User                         | ✅   | ✅      |
+| Delete User                         | ✅   | ✅      |
+| List Available Users                | ✅   | ✅      |
+| Reset User Password                 | ✅   | ✅      |
+| Refresh JSON Web Token              | ✅   | ✅      |
 | Generate a Oneshot Token            | ✅   | ✅      |
 | Get the Current API Key             | ✅   | ✅      |
 | Generate a New API Key              | ✅   | ✅      |
