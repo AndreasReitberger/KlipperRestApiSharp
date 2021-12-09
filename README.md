@@ -114,13 +114,13 @@ Implementation not planned at the moment.
 
 | Function                            | Added?| Tested? |
 | ----------------------------------- |:-----:| -------:|
-| Get update status                   | No    | No      |
-| Perform a full update               | No    | No      |
-| Update Moonraker                    | No    | No      |
-| Update Klipper                      | No    | No      |
-| Update Client                       | No    | No      |
-| Update System Packages              | No    | No      |
-| Recover a corrupt repo              | No    | No      |
+| Get update status                   | ✅    | No      |
+| Perform a full update               | ✅    | No      |
+| Update Moonraker                    | ✅    | No      |
+| Update Klipper                      | ✅    | No      |
+| Update Client                       | ✅    | No      |
+| Update System Packages              | ✅    | No      |
+| Recover a corrupt repo              | ✅    | No      |
 
 ## Power APIs
 
