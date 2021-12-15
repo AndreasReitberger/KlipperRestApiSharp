@@ -67,18 +67,18 @@ Following you'll find the list of migrated functions from the WebAPI.
 
 | Function                            | Added?| Tested? |
 | ----------------------------------- |:-----:| -------:|
-| List available files                | ✅   | No      |
-| Get gcode metadata                  | ✅   | No      |
-| Get directory information           | ✅   | No      |
-| Create directory                    | ✅   | No      |
-| Delete directory                    | ✅   | No      |
-| Move a file or directory            | ✅   | No      |
-| Copy a file or directory            | ✅   | No      |
+| List available files                | ✅   | ✅      |
+| Get gcode metadata                  | ✅   | ✅      |
+| Get directory information           | ✅   | ✅      |
+| Create directory                    | ✅   | ✅      |
+| Delete directory                    | ✅   | ✅      |
+| Move a file or directory            | ✅   | ✅      |
+| Copy a file or directory            | ✅   | ✅      |
 | File download                       | ✅   | No      |
 | File upload                         | ✅   | No      |
-| File delete                         | ✅   | No      |
-| Download klippy.log                 | ✅   | No      |
-| Download moonraker.log              | ✅   | No      |
+| File delete                         | ✅   | ✅      |
+| Download klippy.log                 | ✅   | ✅      |
+| Download moonraker.log              | ✅   | ✅      |
 
 
 ## Authorization
