@@ -16,7 +16,7 @@ Following you'll find the list of migrated functions from the WebAPI.
 | Function                            | Added?| Tested? |
 | ----------------------------------- |:-----:| -------:|
 | Get Klippy host information         | ✅   | ✅      |
-| Emergency Stop                      | ✅   | No      |
+| Emergency Stop                      | ✅   | ✅      |
 | Host Restart                        | ✅   | ✅      |
 | Firmware Restart                    | ✅   | ✅      |
 
@@ -26,8 +26,8 @@ Following you'll find the list of migrated functions from the WebAPI.
 | ----------------------------------- |:-----:| -------:|
 | List available printer objects      | ✅   | ✅      |
 | Query printer object status         | ✅   | ✅      |
-| Subscribe to printer object status  | No    | No      |
-| Query Endstops                      | No    | No      |
+| Subscribe to printer object status  | ✅   | No      |
+| Query Endstops                      | ✅   | ✅      |
 | Query Server Info                   | ✅   | ✅      |
 | Get Server Configuration            | ✅   | ✅      |
 | Request Cached Temperature Data     | ✅   | ✅      |
