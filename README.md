@@ -39,15 +39,15 @@ Following you'll find the list of migrated functions from the WebAPI.
 
 | Function                            | Added?| Tested? |
 | ----------------------------------- |:-----:| -------:|
-| Run a gcode                         | ✅   | No      |
+| Run a gcode                         | ✅   | ✅      |
 | Get GCode Help                      | ✅   | ✅      |
 
 ## Print Management
 
 | Function                            | Added?| Tested? |
 | ----------------------------------- |:-----:| -------:|
-| Print a file                        | ✅   | No      |
-| Pause a print                       | ✅   | No      |
+| Print a file                        | ✅   | ✅      |
+| Pause a print                       | ✅   | ✅      |
 | Resume a print                      | ✅   | No      |
 | Cancel a print                      | ✅   | No      |
 
@@ -104,11 +104,11 @@ Implementation not planned at the moment.
 
 | Function                            | Added?| Tested? |
 | ----------------------------------- |:-----:| -------:|
-| Retrieve the job queue status       | No    | No      |
-| Enqueue a job                       | No    | No      |
-| Remove a Job                        | No    | No      |
-| Pause the job queue                 | No    | No      |
-| Start the job queue                 | No    | No      |
+| Retrieve the job queue status       | ✅   | ✅      |
+| Enqueue a job                       | ✅   | ✅      |
+| Remove a Job                        | ✅   | ✅      |
+| Pause the job queue                 | ✅   | ✅      |
+| Start the job queue                 | ✅   | ✅      |
 
 ## Update Manager APIs
 
@@ -126,36 +126,36 @@ Implementation not planned at the moment.
 
 | Function                            | Added?| Tested? |
 | ----------------------------------- |:-----:| -------:|
-| Get Device List                     | No    | No      |
-| Get Device Status                   | No    | No      |
-| Set Device State                    | No    | No      |
-| Get Batch Device Status             | No    | No      |
-| Batch Power On Devices              | No    | No      |
-| Batch Power Off Devices             | No    | No      |
+| Get Device List                     | ✅    | ✅     |
+| Get Device Status                   | ✅    | ✅     |
+| Set Device State                    | ✅    | ✅     |
+| Get Batch Device Status             | ✅    | ✅     |
+| Batch Power On Devices              | ✅    | ✅     |
+| Batch Power Off Devices             | ✅    | ✅     |
 
 ## Octoprint API emulation
 
 | Function                               | Added?| Tested? |
 | ---------------------------------------|:-----:| -------:|
-| Version information                    | No    | No      |
-| Server status                          | No    | No      |
-| Login verification & User information  | No    | No      |
-| Get settings                           | No    | No      |
-| Octoprint File Upload                  | No    | No      |
-| Get Job status                         | No    | No      |
-| Get Printer status                     | No    | No      |
-| Send GCode command                     | No    | No      |
-| List Printer profiles                  | No    | No      |
+| Version information                    | ✅    | ✅     |
+| Server status                          | ✅    | ✅     |
+| Login verification & User information  | ✅    | No     |
+| Get settings                           | ✅    | ✅     |
+| Octoprint File Upload                  | ✅    | ✅     |
+| Get Job status                         | ✅    | ✅     |
+| Get Printer status                     | ✅    | ✅     |
+| Send GCode command                     | ✅    | ✅     |
+| List Printer profiles                  | ✅    | ✅     |
 
 ## History APIs
 
 | Function                               | Added?| Tested? |
 | ---------------------------------------|:-----:| -------:|
-| Get job list                           | No    | No      |
-| Get job totals                         | No    | No      |
-| Reset totals                           | No    | No      |
-| Get a single job                       | No    | No      |
-| Delete job                             | No    | No      |
+| Get job list                           | ✅    | ✅     |
+| Get job totals                         | ✅    | ✅     |
+| Reset totals                           | ✅    | ✅     |
+| Get a single job                       | ✅    | ✅     |
+| Delete job                             | ✅    | ✅     |
 
 ## MQTT APIs
 
