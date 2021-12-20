@@ -1,0 +1,26 @@
+﻿using Newtonsoft.Json;
+using System.Collections.Generic;
+
+namespace AndreasReitberger.Models
+{
+    public partial class OctoprintApiSettingsResult
+    {
+        #region Properties
+        [JsonProperty("plugins")]
+        public Dictionary<string, OctoprintApiPlugin> Plugins { get; set; }
+
+        [JsonProperty("feature")]
+        public OctoprintApiFeature Feature { get; set; }
+
+        [JsonProperty("webcam")]
+        public OctoprintApiWebcam Webcam { get; set; }
+        #endregion
+
+        #region Overrides
+        public override string ToString()
+        {
+            return JsonConvert.SerializeObject(this);
+        }
+        #endregion
+    }
+}
