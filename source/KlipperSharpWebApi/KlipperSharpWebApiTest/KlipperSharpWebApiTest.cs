@@ -87,7 +87,7 @@ namespace RepetierServerSharpApiTest
                     KlipperClient instance = (KlipperClient)xmlSerializer.Deserialize(fileStream);
                 }
             }
-            catch (Exception exc) 
+            catch (Exception exc)
             {
                 Assert.Fail(exc.Message);
             }
@@ -277,7 +277,7 @@ namespace RepetierServerSharpApiTest
             }
         }
         #endregion
-        
+
 
         #region Print Management Tests
         [TestMethod]
@@ -310,8 +310,8 @@ namespace RepetierServerSharpApiTest
                     string fileName = "test.gcode";
                     bool printStarted = await _server.PrintFileAsync(fileName);
                     Assert.IsTrue(printStarted);
-                    
-                    if(printStarted)
+
+                    if (printStarted)
                     {
                         // Wait a minute
                         await Task.Delay(60 * 1000);
@@ -319,13 +319,13 @@ namespace RepetierServerSharpApiTest
                         await Task.Delay(5000);
                         Assert.IsTrue(paused);
 
-                        if(paused)
+                        if (paused)
                         {
                             bool resumed = await _server.ResumePrintAsync();
                             await Task.Delay(5000);
                             Assert.IsTrue(resumed);
 
-                            if(resumed)
+                            if (resumed)
                             {
                                 bool cancelled = await _server.CancelPrintAsync();
                                 await Task.Delay(5000);
@@ -663,7 +663,7 @@ namespace RepetierServerSharpApiTest
 
                     KlipperUser currentUser = await _server.GetCurrentUserAsync();
                     Assert.IsNotNull(currentUser);
-                    
+
                     KlipperUserActionResult newTokenResult = await _server.RefreshJSONWebTokenAsync();
                     Assert.IsNotNull(newTokenResult);
                     Assert.IsTrue(_server.UserToken == newTokenResult.Token);
@@ -694,11 +694,11 @@ namespace RepetierServerSharpApiTest
             }
             finally
             {
-                
+
             }
         }
         #endregion
-        
+
         #region Database APIs
         [TestMethod]
         public async Task DatabaseTest()
@@ -723,7 +723,7 @@ namespace RepetierServerSharpApiTest
 
                     KlipperDatabaseMainsailValueWebcam webcamConfig = JsonConvert.DeserializeObject<KlipperDatabaseMainsailValueWebcam>(webcams.FirstOrDefault().Value.ToString());
                     Assert.IsNotNull(webcamConfig);
-                    
+
                     webcamConfig = await _server.GetWebCamSettingsAsync();
                     Assert.IsNotNull(webcamConfig);
 
@@ -748,7 +748,7 @@ namespace RepetierServerSharpApiTest
             }
             finally
             {
-                
+
             }
         }
         #endregion
@@ -801,7 +801,7 @@ namespace RepetierServerSharpApiTest
             }
             finally
             {
-                
+
             }
         }
         #endregion
@@ -844,7 +844,7 @@ namespace RepetierServerSharpApiTest
             }
             finally
             {
-                
+
             }
         }
         #endregion
@@ -874,7 +874,7 @@ namespace RepetierServerSharpApiTest
             }
             finally
             {
-                
+
             }
         }
         #endregion
@@ -1019,7 +1019,7 @@ namespace RepetierServerSharpApiTest
                     await Task.Delay(10000);
                     await _server.CheckOnlineAsync();
                     await _server.RefreshAllAsync();
-                } while (_server.IsOnline && !cts.IsCancellationRequested);                
+                } while (_server.IsOnline && !cts.IsCancellationRequested);
                 Assert.IsTrue(cts.IsCancellationRequested);
             }
             catch (Exception exc)
@@ -1027,7 +1027,7 @@ namespace RepetierServerSharpApiTest
                 Assert.Fail(exc.Message);
             }
         }
-        
+
         [TestMethod]
         public async Task WebsocketTest()
         {
@@ -1063,11 +1063,11 @@ namespace RepetierServerSharpApiTest
                 // Subscirbe to state changes
                 _server.KlipperExtruderStatesChanged += (o, args) =>
                 {
-                    foreach(var pair in args.ExtruderStates)
+                    foreach (var pair in args.ExtruderStates)
                     {
                         Debug.WriteLine($"Extruder{pair.Key}: {pair.Value?.Temperature} °C (Target: {pair.Value?.Target} °C)");
                     }
-                };               
+                };
                 _server.KlipperHeaterBedStateChanged += (o, args) =>
                 {
                     Debug.WriteLine($"HeatedBed: {args.HeaterBedState.Temperature} °C (Target: {args.HeaterBedState.Target} °C)");
@@ -1109,6 +1109,6 @@ namespace RepetierServerSharpApiTest
             {
                 Assert.Fail(exc.Message);
             }
-        }    
+        }
     }
 }

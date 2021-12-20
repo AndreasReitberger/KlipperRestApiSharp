@@ -736,7 +736,7 @@ namespace AndreasReitberger
             get => _klipperState;
             set
             {
-                if (_klipperState == value) return;            
+                if (_klipperState == value) return;
                 OnKlipperStateChanged(new KlipperStateChangedEventArgs()
                 {
                     NewState = value,
@@ -834,8 +834,8 @@ namespace AndreasReitberger
                 OnPropertyChanged();
             }
         }
-        
-        
+
+
         #endregion
 
         #region ReadOnly
@@ -1410,7 +1410,7 @@ namespace AndreasReitberger
                             "moonraker_stats"
                         };
                         KlipperWebSocketMessage method = JsonConvert.DeserializeObject<KlipperWebSocketMessage>(e.Message);
-                        for(int i = 0; i < method?.Params?.Count; i++)
+                        for (int i = 0; i < method?.Params?.Count; i++)
                         {
                             string current = method.Params[i]?.ToString();
                             if (!allowedTags.Any(current.Contains))
@@ -1463,7 +1463,7 @@ namespace AndreasReitberger
                                     {
                                         stats.Add(3, toolheadState.Extruder3);
                                     }
-                                    if(stats.Count > 0)
+                                    if (stats.Count > 0)
                                     {
                                         Extruders = stats;
                                     }
@@ -1637,7 +1637,7 @@ namespace AndreasReitberger
                     RequestFormat = DataFormat.Json,
                     Method = method
                 };
-                if(!string.IsNullOrEmpty(UserToken))
+                if (!string.IsNullOrEmpty(UserToken))
                 {
                     request.AddHeader("Authorization", $"Bearer {UserToken}");
                 }
@@ -1722,7 +1722,7 @@ namespace AndreasReitberger
             }
             return apiRsponeResult;
         }
-        
+
         async Task<KlipperApiRequestRespone> SendRestApiRequestAsync(
             MoonRakerCommandBase commandBase, Method method, string command, string jsonDataString = "", int timeout = 10000, Dictionary<string, string> urlSegments = null, string requestTargetUri = "")
         {
@@ -1973,7 +1973,7 @@ namespace AndreasReitberger
         }
         #endregion
 
-#region Proxy
+        #region Proxy
         Uri GetProxyUri()
         {
             return ProxyAddress.StartsWith("http://") || ProxyAddress.StartsWith("https://") ? new Uri($"{ProxyAddress}:{ProxyPort}") : new Uri($"{(SecureProxyConnection ? "https" : "http")}://{ProxyAddress}:{ProxyPort}");
@@ -2015,9 +2015,9 @@ namespace AndreasReitberger
                     client = new HttpClient(handler: HttpHandler, disposeHandler: true);
             }
         }
-#endregion
+        #endregion
 
-#region Timers
+        #region Timers
         void StopPingTimer()
         {
             if (PingTimer != null)
@@ -2050,9 +2050,9 @@ namespace AndreasReitberger
                 }
             }
         }
-#endregion
+        #endregion
 
-#region State & Config
+        #region State & Config
         void UpdateServerConfig(KlipperServerConfig newConfig)
         {
             try
@@ -2077,13 +2077,13 @@ namespace AndreasReitberger
                 OnError(new UnhandledExceptionEventArgs(exc, false));
             }
         }
-#endregion
+        #endregion
 
-#endregion
+        #endregion
 
-#region Public
+        #region Public
 
-#region Proxy
+        #region Proxy
         public void SetProxy(bool Secure, string Address, int Port, bool Enable = true)
         {
             EnableProxy = Enable;
@@ -2106,9 +2106,9 @@ namespace AndreasReitberger
             SecureProxyConnection = Secure;
             UpdateWebClientInstance();
         }
-#endregion
+        #endregion
 
-#region Refresh
+        #region Refresh
         public void StartListening(bool StopActiveListening = false)
         {
             if (IsListening)// avoid multiple sessions
@@ -2188,9 +2188,9 @@ namespace AndreasReitberger
             }
             IsRefreshing = false;
         }
-#endregion
+        #endregion
 
-#region Login
+        #region Login
 
         /*
         public void Login(string UserName, SecureString Password, string SessionId, bool remember = true)
@@ -2259,9 +2259,9 @@ namespace AndreasReitberger
             }
             return strBuilder.ToString();
         }
-#endregion
+        #endregion
 
-#region Cancel
+        #region Cancel
         public void CancelCurrentRequests()
         {
             try
@@ -2277,9 +2277,9 @@ namespace AndreasReitberger
                 OnError(new UnhandledExceptionEventArgs(exc, false));
             }
         }
-#endregion
+        #endregion
 
-#region CheckOnline
+        #region CheckOnline
 
         public async Task<bool> CheckOnlineWithApiCallAsync(int Timeout = 10000)
         {
@@ -2398,7 +2398,7 @@ namespace AndreasReitberger
         {
             await CheckIfApiIsValidAsync(Timeout).ConfigureAwait(false);
         }
-#endregion
+        #endregion
 
         #region WebCam
         public string GetWebCamUri(int index = 0)
@@ -2416,7 +2416,7 @@ namespace AndreasReitberger
         #endregion
 
         #region Updates
-        
+
         #endregion
 
         #region DetectChanges
@@ -2553,7 +2553,7 @@ namespace AndreasReitberger
             try
             {
                 //object cmd = new { name = ScriptName };
-                KlipperApiRequestRespone result = 
+                KlipperApiRequestRespone result =
                     await SendRestApiRequestAsync(MoonRakerCommandBase.printer, Method.POST, "emergency_stop")
                     .ConfigureAwait(false);
                 return GetQueryResult(result.Result);
@@ -2570,7 +2570,7 @@ namespace AndreasReitberger
             try
             {
                 //object cmd = new { name = ScriptName };
-                KlipperApiRequestRespone result = 
+                KlipperApiRequestRespone result =
                     await SendRestApiRequestAsync(MoonRakerCommandBase.printer, Method.POST, "restart")
                     .ConfigureAwait(false);
                 return GetQueryResult(result.Result);
@@ -2587,7 +2587,7 @@ namespace AndreasReitberger
             try
             {
                 //object cmd = new { name = ScriptName };
-                KlipperApiRequestRespone result = 
+                KlipperApiRequestRespone result =
                     await SendRestApiRequestAsync(MoonRakerCommandBase.printer, Method.POST, "firmware_restart")
                     .ConfigureAwait(false);
                 return GetQueryResult(result.Result);
@@ -2716,7 +2716,7 @@ namespace AndreasReitberger
             try
             {
                 Dictionary<string, string> urlSegments = new();
-                foreach(KeyValuePair<string, string> obj in objects)
+                foreach (KeyValuePair<string, string> obj in objects)
                 {
                     // Do not query macros here, there is an extra method for this.
                     if (obj.Key.StartsWith("gcode_macro")) continue;
@@ -2858,7 +2858,7 @@ namespace AndreasReitberger
                 Dictionary<string, string> urlSegments = new();
                 urlSegments.Add("connection_id", $"{connectionId}");
                 //urlSegments.Add("objects", string.Join("&", objects));
-                for(int i = 0; i < objects.Count; i++)
+                for (int i = 0; i < objects.Count; i++)
                 {
                     urlSegments.Add(objects[i], string.Empty);
                 }
@@ -2919,7 +2919,7 @@ namespace AndreasReitberger
                 return resultObject;
             }
         }
-#endregion
+        #endregion
 
         #region ServerConfig
         public async Task RefreshServerConfigAsync()
@@ -2935,7 +2935,7 @@ namespace AndreasReitberger
                 Config = null;
             }
         }
-        
+
         public async Task<KlipperServerConfig> GetServerConfigAsync()
         {
             KlipperApiRequestRespone result = new();
@@ -3044,7 +3044,7 @@ namespace AndreasReitberger
             try
             {
                 //string infoCommand = $"{{\"jsonrpc\":\"2.0\",\"method\":\"server.info\",\"params\":{{}},\"id\":1}}";
-                if(WebSocket?.State == WebSocketState.Open)
+                if (WebSocket?.State == WebSocketState.Open)
                 {
                     WebSocket.Send(command);
                 }
@@ -3094,7 +3094,7 @@ namespace AndreasReitberger
             {
                 Dictionary<string, string> urlSegements = new();
                 urlSegements.Add("script", script);
-                
+
                 KlipperApiRequestRespone result =
                     await SendRestApiRequestAsync(MoonRakerCommandBase.printer, Method.POST, "gcode/script", "", 10000, urlSegements)
                     .ConfigureAwait(false);
@@ -3133,9 +3133,9 @@ namespace AndreasReitberger
                 return resultObject;
             }
         }
-#endregion
+        #endregion
 
-#region Print Management
+        #region Print Management
         public async Task<bool> PrintFileAsync(string fileName)
         {
             try
@@ -3200,9 +3200,9 @@ namespace AndreasReitberger
             }
         }
 
-#endregion
+        #endregion
 
-#region Movement
+        #region Movement
         public async Task<bool> HomeAxesAsync(bool X, bool Y, bool Z)
         {
             try
@@ -3253,9 +3253,9 @@ namespace AndreasReitberger
             return false;
         }
 
-#endregion
+        #endregion
 
-#region Machine Commands
+        #region Machine Commands
         public async Task<KlipperMachineInfo> GetMachineSystemInfoAsync()
         {
             KlipperApiRequestRespone result = new();
@@ -3410,9 +3410,9 @@ namespace AndreasReitberger
                 return resultObject;
             }
         }
-#endregion
+        #endregion
 
-#region File Operations
+        #region File Operations
         // Doc: https://github.com/Arksine/moonraker/blob/master/docs/web_api.md#list-available-files
 
         public async Task RefreshAvailableFilesAsync(string rootPath = "", bool includeGcodeMeta = true)
@@ -3436,20 +3436,20 @@ namespace AndreasReitberger
             try
             {
                 Dictionary<string, string> urlSegements = new();
-                if(!string.IsNullOrEmpty(rootPath))
+                if (!string.IsNullOrEmpty(rootPath))
                 {
                     urlSegements.Add("root", rootPath);
                 }
 
                 result = await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.GET, "files/list", "", 10000, urlSegements).ConfigureAwait(false);
                 KlipperFileListRespone files = JsonConvert.DeserializeObject<KlipperFileListRespone>(result.Result);
-                if(includeGcodeMeta)
+                if (includeGcodeMeta)
                 {
-                    for(int i = 0; i < files?.Result?.Count; i++)
+                    for (int i = 0; i < files?.Result?.Count; i++)
                     {
                         KlipperFile current = files?.Result[i];
                         current.GcodeMeta = await GetGcodeMetadataAsync(current.Path).ConfigureAwait(false);
-                        if(current.GcodeMeta.Thumbnails?.Count > 0)
+                        if (current.GcodeMeta.Thumbnails?.Count > 0)
                         {
                             current.Image = GetGcodeThumbnailImage(current.GcodeMeta, 1);
                         }
@@ -3866,7 +3866,7 @@ namespace AndreasReitberger
                 return null;
             }
         }
-#endregion
+        #endregion
 
         #region Authorization
 
@@ -3886,7 +3886,7 @@ namespace AndreasReitberger
                 UserToken = queryResult?.Result?.Token;
                 RefreshToken = queryResult?.Result?.RefreshToken;
 
-                return queryResult?.Result;               
+                return queryResult?.Result;
             }
             catch (JsonException jecx)
             {
@@ -3918,11 +3918,11 @@ namespace AndreasReitberger
                 };
                 result = await SendRestApiRequestAsync(MoonRakerCommandBase.access, Method.POST, "refresh_jwt", cmd).ConfigureAwait(false);
                 KlipperUserActionRespone queryResult = JsonConvert.DeserializeObject<KlipperUserActionRespone>(result.Result);
-                
+
                 UserToken = queryResult?.Result?.Token;
                 queryResult.Result.RefreshToken = token;
 
-                return queryResult?.Result;               
+                return queryResult?.Result;
             }
             catch (JsonException jecx)
             {
@@ -3955,7 +3955,7 @@ namespace AndreasReitberger
                 result = await SendRestApiRequestAsync(MoonRakerCommandBase.access, Method.POST, "user/password", cmd).ConfigureAwait(false);
                 KlipperUserActionRespone queryResult = JsonConvert.DeserializeObject<KlipperUserActionRespone>(result.Result);
 
-                return queryResult?.Result;               
+                return queryResult?.Result;
             }
             catch (JsonException jecx)
             {
@@ -3984,7 +3984,7 @@ namespace AndreasReitberger
                 UserToken = string.Empty;
 
                 KlipperUserActionRespone queryResult = JsonConvert.DeserializeObject<KlipperUserActionRespone>(result.Result);
-                return queryResult?.Result;                
+                return queryResult?.Result;
             }
             catch (JsonException jecx)
             {
@@ -4040,10 +4040,10 @@ namespace AndreasReitberger
                 urlSegements.Add("username", username);
                 urlSegements.Add("password", password);
 
-                object cmd = new 
-                { 
-                    username = username, 
-                    password = password 
+                object cmd = new
+                {
+                    username = username,
+                    password = password
                 };
 
                 result = await SendRestApiRequestAsync(MoonRakerCommandBase.access, Method.POST, "user", cmd).ConfigureAwait(false);
@@ -4113,7 +4113,7 @@ namespace AndreasReitberger
                 result = await SendRestApiRequestAsync(MoonRakerCommandBase.access, Method.GET, "users/list").ConfigureAwait(false);
                 KlipperUserListRespone queryResult = JsonConvert.DeserializeObject<KlipperUserListRespone>(result.Result);
                 return queryResult?.Result?.Users;
-                
+
             }
             catch (JsonException jecx)
             {
@@ -4170,13 +4170,13 @@ namespace AndreasReitberger
             {
                 Dictionary<string, string> urlSegements = new();
                 urlSegements.Add("namespace", namespaceName);
-                if(!string.IsNullOrEmpty(key)) urlSegements.Add("key", key);
+                if (!string.IsNullOrEmpty(key)) urlSegements.Add("key", key);
 
                 result =
                     await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.GET, $"database/item", "", 10000, urlSegements)
                     .ConfigureAwait(false);
                 KlipperDatabaseItemRespone queryResult = JsonConvert.DeserializeObject<KlipperDatabaseItemRespone>(result.Result);
-                if(queryResult != null)
+                if (queryResult != null)
                 {
                     resultObject = new();
                     resultObject.Add($"{namespaceName}{(!string.IsNullOrEmpty(key) ? $"|{key}" : "")}", queryResult?.Result?.Value);
@@ -4205,7 +4205,7 @@ namespace AndreasReitberger
             KlipperDatabaseMainsailValueWebcam resultObject = null;
             try
             {
-                Dictionary<string, object>  result = await GetDatabaseItemAsync("mainsail", "webcam").ConfigureAwait(false);
+                Dictionary<string, object> result = await GetDatabaseItemAsync("mainsail", "webcam").ConfigureAwait(false);
                 resultObject = JsonConvert.DeserializeObject<KlipperDatabaseMainsailValueWebcam>(result.FirstOrDefault().Value.ToString());
                 return resultObject;
             }
@@ -4221,7 +4221,7 @@ namespace AndreasReitberger
             List<KlipperDatabaseMainsailValuePreset> resultObject = null;
             try
             {
-                Dictionary<string, object>  result = await GetDatabaseItemAsync("mainsail", "presets").ConfigureAwait(false);
+                Dictionary<string, object> result = await GetDatabaseItemAsync("mainsail", "presets").ConfigureAwait(false);
                 resultObject = JsonConvert.DeserializeObject<List<KlipperDatabaseMainsailValuePreset>>(result.FirstOrDefault().Value.ToString());
                 return resultObject;
             }
@@ -4237,7 +4237,7 @@ namespace AndreasReitberger
             List<KlipperDatabaseMainsailValuePreset> resultObject = null;
             try
             {
-                Dictionary<string, object>  result = await GetDatabaseItemAsync("mainsail", "heightmap").ConfigureAwait(false);
+                Dictionary<string, object> result = await GetDatabaseItemAsync("mainsail", "heightmap").ConfigureAwait(false);
                 resultObject = JsonConvert.DeserializeObject<List<KlipperDatabaseMainsailValuePreset>>(result.FirstOrDefault().Value.ToString());
                 return resultObject;
             }
@@ -4384,7 +4384,7 @@ namespace AndreasReitberger
                 };
                 result = await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.POST, "job_queue/job", cmd).ConfigureAwait(false);
                 KlipperJobQueueRespone queryResult = JsonConvert.DeserializeObject<KlipperJobQueueRespone>(result.Result);
-                
+
                 return queryResult?.Result;
             }
             catch (JsonException jecx)
@@ -4531,9 +4531,9 @@ namespace AndreasReitberger
                 return resultObject;
             }
         }
-#endregion
+        #endregion
 
-#region Update Manager API
+        #region Update Manager API
         public async Task<KlipperUpdateStatusResult> GetUpdateStatusAsync(bool refresh = false)
         {
             KlipperApiRequestRespone result = new();
@@ -4656,7 +4656,7 @@ namespace AndreasReitberger
             {
                 Dictionary<string, string> urlSegments = new();
                 urlSegments.Add("name", repoName);
-                urlSegments.Add("hard", hard? "true" : "false");
+                urlSegments.Add("hard", hard ? "true" : "false");
 
                 KlipperApiRequestRespone result =
                     await SendRestApiRequestAsync(MoonRakerCommandBase.machine, Method.POST, $"update/recover", "", 10000, urlSegments)
@@ -4669,9 +4669,9 @@ namespace AndreasReitberger
                 return false;
             }
         }
-#endregion
+        #endregion
 
-#region Power APIs
+        #region Power APIs
         public async Task<List<KlipperDevice>> GetDeviceListAsync()
         {
             KlipperApiRequestRespone result = new();
@@ -4776,7 +4776,7 @@ namespace AndreasReitberger
             try
             {
                 StringBuilder deviceList = new();
-                for(int i = 0; i < devices.Length; i++)
+                for (int i = 0; i < devices.Length; i++)
                 {
                     deviceList.Append(devices[i]);
                     if (i < devices.Length - 1)
@@ -4814,7 +4814,7 @@ namespace AndreasReitberger
             try
             {
                 StringBuilder deviceList = new();
-                for(int i = 0; i < devices.Length; i++)
+                for (int i = 0; i < devices.Length; i++)
                 {
                     deviceList.Append(devices[i]);
                     if (i < devices.Length - 1)
@@ -4852,7 +4852,7 @@ namespace AndreasReitberger
             try
             {
                 StringBuilder deviceList = new();
-                for(int i = 0; i < devices.Length; i++)
+                for (int i = 0; i < devices.Length; i++)
                 {
                     deviceList.Append(devices[i]);
                     if (i < devices.Length - 1)
@@ -4882,9 +4882,9 @@ namespace AndreasReitberger
                 return resultObject;
             }
         }
-#endregion
+        #endregion
 
-#region Octoprint API emulation
+        #region Octoprint API emulation
         public async Task<OctoprintApiVersionResult> GetVersionInfoAsync()
         {
             KlipperApiRequestRespone result = new();
@@ -5073,7 +5073,7 @@ namespace AndreasReitberger
                 {
                     commands = commands
                 };
-                KlipperApiRequestRespone result = 
+                KlipperApiRequestRespone result =
                     await SendRestApiRequestAsync(MoonRakerCommandBase.api, Method.POST, "printer/command", cmd)
                     .ConfigureAwait(false);
                 return GetQueryResult(result.Result, true);
@@ -5119,9 +5119,9 @@ namespace AndreasReitberger
                 return resultObject;
             }
         }
-#endregion
+        #endregion
 
-#region History APIs
+        #region History APIs
         public async Task<KlipperHistoryResult> GetHistoryJobListAsync(int limit = 100, int start = 0, double since = -1, double before = -1, string order = "asc")
         {
             KlipperApiRequestRespone result = new();
@@ -5285,13 +5285,13 @@ namespace AndreasReitberger
                 return resultObject;
             }
         }
-#endregion
+        #endregion
 
-#endregion
+        #endregion
 
-#endregion
+        #endregion
 
-#region Overrides
+        #region Overrides
         public override string ToString()
         {
             try
@@ -5314,9 +5314,9 @@ namespace AndreasReitberger
         {
             return Id.GetHashCode();
         }
-#endregion
+        #endregion
 
-#region Dispose
+        #region Dispose
         public void Dispose()
         {
             Dispose(true);
@@ -5334,6 +5334,6 @@ namespace AndreasReitberger
                 DisconnectWebSocket();
             }
         }
-#endregion
+        #endregion
     }
 }
