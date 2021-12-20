@@ -98,7 +98,13 @@ Following you'll find the list of migrated functions from the WebAPI.
 | Generate a New API Key              | ✅   | ✅      |
 
 ## Database APIs
-Implementation not planned at the moment.
+
+| Function                            | Added?| Tested? |
+| ----------------------------------- |:-----:| -------:|
+| List namespaces                     | ✅   | ✅      |
+| Get Database Item                   | ✅   | ✅      |
+| Add Database Item                   | ✅   | ✅      |
+| Delete Database Item                | ✅   | ✅      |
 
 ## Job Queue APIs
 
