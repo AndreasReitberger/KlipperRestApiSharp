@@ -7,7 +7,7 @@ namespace AndreasReitberger.Models
         #region Properties
         [JsonProperty("filename")]
         public string FileName { get; set; }
-        
+
         [JsonProperty("path")]
         public string Path { get; set; }
 
