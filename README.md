@@ -26,14 +26,14 @@ Following you'll find the list of migrated functions from the WebAPI.
 | ----------------------------------- |:-----:| -------:|
 | List available printer objects      | ✅   | ✅      |
 | Query printer object status         | ✅   | ✅      |
-| Subscribe to printer object status  | ✅   | No      |
+| Subscribe to printer object status  | ✅   | ✅      |
 | Query Endstops                      | ✅   | ✅      |
 | Query Server Info                   | ✅   | ✅      |
 | Get Server Configuration            | ✅   | ✅      |
 | Request Cached Temperature Data     | ✅   | ✅      |
 | Request Cached GCode Responses      | ✅   | ✅      |
 | Restart Server                      | ✅   | ✅      |
-| Get Websocket ID                    | n.a.  | n.a.    |
+| Get Websocket ID                    | ✅   | ✅      |
 
 ## GCode APIs
 
@@ -75,7 +75,7 @@ Following you'll find the list of migrated functions from the WebAPI.
 | Move a file or directory            | ✅   | ✅      |
 | Copy a file or directory            | ✅   | ✅      |
 | File download                       | ✅   | No      |
-| File upload                         | ✅   | No      |
+| File upload                         | ✅   | ✅      |
 | File delete                         | ✅   | ✅      |
 | Download klippy.log                 | ✅   | ✅      |
 | Download moonraker.log              | ✅   | ✅      |
@@ -166,3 +166,139 @@ Implementation not planned at the moment.
 
 ## Websocket notifications
 Not implemented yet.
+
+# Usage
+You can check the Test project for more code examples.
+
+## Initialize the client
+This initialize a new `KlipperClient` object. Always check if the
+client is reachable before using it.
+
+```csharp
+private readonly string _host = "192.168.10.113";
+private readonly int _port = 80;
+private readonly string _api = "";
+private readonly bool _ssl = false;
+
+// Note, the api key is not mandatory
+KlipperClient _server = new(_host, _port, _ssl);
+await _server.CheckOnlineAsync();
+if (_server.IsOnline)
+{
+    await _server.RefreshAllAsync();
+    Assert.IsTrue(_server.InitialDataFetched);
+
+    //var token = await _server.GetOneshotTokenAsync();
+    KlipperAccessTokenResult token2 = await _server.GetApiKeyAsync();
+    Assert.IsTrue(!string.IsNullOrEmpty(token2.Result));
+}
+```
+
+## WebSocket
+It's recommended to `StartListening()` to the WebSocket of your Klipper server. 
+An example is shown below.
+
+```csharp
+Dictionary<DateTime, string> websocketMessages = new();
+KlipperClient _server = new(_host, _api, _port, _ssl);
+
+await _server.CheckOnlineAsync();
+Assert.IsTrue(_server.IsOnline);
+
+_server.StartListening();
+
+// Once the Id has been received, subscribe to the printer status objects
+_server.WebSocketConnectionIdChanged += (o, args) =>
+{
+    Assert.IsNotNull(args.ConnectionId);
+    Assert.IsTrue(args.ConnectionId > 0);
+    Task.Run(async () =>
+    {
+        string subResult = await _server.SubscribeAllPrinterObjectStatusAsync(args.ConnectionId);
+    });
+};
+
+_server.Error += (o, args) =>
+{
+    Assert.Fail(args.ToString());
+};
+_server.ServerWentOffline += (o, args) =>
+{
+    Assert.Fail(args.ToString());
+};
+
+_server.WebSocketDataReceived += (o, args) =>
+{
+    if (!string.IsNullOrEmpty(args.Message))
+    {
+        websocketMessages.Add(DateTime.Now, args.Message);
+        Debug.WriteLine($"WebSocket Data: {args.Message} (Total: {websocketMessages.Count})");
+    }
+};
+
+_server.WebSocketError += (o, args) =>
+{
+    Assert.Fail($"Websocket closed due to an error: {args}");
+};
+
+// Wait 10 minutes
+CancellationTokenSource cts = new(new TimeSpan(0, 10, 0));
+_server.WebSocketDisconnected += (o, args) =>
+{
+    if (!cts.IsCancellationRequested)
+        Assert.Fail($"Websocket unexpectly closed: {args}");
+};
+
+do
+{
+    await Task.Delay(10000);
+    await _server.CheckOnlineAsync();
+} while (_server.IsOnline && !cts.IsCancellationRequested);
+_server.StopListening();
+
+
+Assert.IsTrue(cts.IsCancellationRequested);
+```
+
+## User auth
+If your Klipper server is protected with a login, please call the `LoginUserAsync` method first.
+Alternatively you can provide the API key instead.
+
+```csharp
+string username = "TestUser";
+string password = "TestPassword";
+
+KlipperUserActionResult userCreated = await _server.CreateUserAsync(username, password);
+Assert.IsNotNull(userCreated);
+
+List<KlipperUser> users = await _server.ListAvailableUsersAsync();
+Assert.IsTrue(users?.Count > 0);
+
+KlipperUserActionResult login = await _server.LoginUserAsync(username, password);
+Assert.IsNotNull(login);
+Assert.IsTrue(login.Username == username);
+
+KlipperUser currentUser = await _server.GetCurrentUserAsync();
+Assert.IsNotNull(currentUser);
+
+KlipperUserActionResult newTokenResult = await _server.RefreshJSONWebTokenAsync();
+Assert.IsNotNull(newTokenResult);
+Assert.IsTrue(_server.UserToken == newTokenResult.Token);
+
+string newPassword = "TestPasswordChanged";
+KlipperUserActionResult refreshPassword = await _server.ResetUserPasswordAsync(password, newPassword);
+Assert.IsNotNull(refreshPassword);
+
+KlipperUserActionResult logout = await _server.LogoutCurrentUserAsync();
+Assert.IsNotNull(logout);
+
+login = await _server.LoginUserAsync(username, newPassword);
+Assert.IsNotNull(login);
+Assert.IsTrue(login.Username == username);
+
+logout = await _server.LogoutCurrentUserAsync();
+Assert.IsNotNull(logout);
+
+KlipperUserActionResult userDeleted = await _server.DeleteUserAsync(username);
+Assert.IsNotNull(userDeleted);
+```
