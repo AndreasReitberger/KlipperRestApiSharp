@@ -2,14 +2,11 @@
 
 namespace AndreasReitberger.Models
 {
-    public partial class KlipperStatusDisplay
+    public class KlipperFSensorStateChangedEventArgs : KlipperEventArgs
     {
         #region Properties
-        [JsonProperty("progress")]
-        public double Progress { get; set; }
-
-        [JsonProperty("message")]
-        public string Message { get; set; }
+        public KlipperStatusFilamentSensor NewFSensorState { get; set; }
+        public KlipperStatusFilamentSensor PreviousFSensorState { get; set; }
         #endregion
 
         #region Overrides

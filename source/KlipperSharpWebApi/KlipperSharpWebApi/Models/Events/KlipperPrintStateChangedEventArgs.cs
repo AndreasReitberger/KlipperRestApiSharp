@@ -2,14 +2,11 @@
 
 namespace AndreasReitberger.Models
 {
-    public partial class KlipperStatusDisplay
+    public class KlipperPrintStateChangedEventArgs : KlipperEventArgs
     {
         #region Properties
-        [JsonProperty("progress")]
-        public double Progress { get; set; }
-
-        [JsonProperty("message")]
-        public string Message { get; set; }
+        public KlipperStatusPrintStats NewPrintState { get; set; }
+        public KlipperStatusPrintStats PreviousPrintState { get; set; }
         #endregion
 
         #region Overrides

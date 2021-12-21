@@ -2,14 +2,11 @@
 
 namespace AndreasReitberger.Models
 {
-    public partial class KlipperStatusDisplay
+    public partial class KlipperStatusFilamentSensor
     {
         #region Properties
-        [JsonProperty("progress")]
-        public double Progress { get; set; }
-
-        [JsonProperty("message")]
-        public string Message { get; set; }
+        [JsonProperty("filament_detected")]
+        public bool FilamentDetected { get; set; }
         #endregion
 
         #region Overrides

@@ -7,16 +7,16 @@ namespace AndreasReitberger.Models
     {
         #region Properties
         [JsonProperty("live_position")]
-        public List<long> LivePosition { get; set; } = new();
+        public List<double> LivePosition { get; set; } = new();
 
         [JsonProperty("steppers")]
         public List<string> Steppers { get; set; } = new();
 
         [JsonProperty("live_velocity")]
-        public long LiveVelocity { get; set; }
+        public double LiveVelocity { get; set; }
 
         [JsonProperty("live_extruder_velocity")]
-        public long LiveExtruderVelocity { get; set; }
+        public double LiveExtruderVelocity { get; set; }
 
         [JsonProperty("trapq")]
         public List<string> Trapq { get; set; } = new();

@@ -2,6 +2,7 @@
 
 namespace AndreasReitberger.Models
 {
+    // Maybe delete later?
     public partial class KlipperPrinterStatusQueryRespone
     {
         #region Properties

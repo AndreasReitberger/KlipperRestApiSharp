@@ -2,14 +2,14 @@
 
 namespace AndreasReitberger.Models
 {
-    public partial class KlipperStatusDisplay
+    public partial class KlipperStatusProbe
     {
         #region Properties
-        [JsonProperty("progress")]
-        public double Progress { get; set; }
+        [JsonProperty("last_z_result")]
+        public double LastZResult { get; set; }
 
-        [JsonProperty("message")]
-        public string Message { get; set; }
+        [JsonProperty("last_query")]
+        public bool LastQuery { get; set; }
         #endregion
 
         #region Overrides

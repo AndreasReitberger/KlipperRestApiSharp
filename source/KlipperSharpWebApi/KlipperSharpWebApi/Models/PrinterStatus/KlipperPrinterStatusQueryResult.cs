@@ -4,6 +4,7 @@ namespace AndreasReitberger.Models
 {
     public partial class KlipperPrinterStatusQueryResult
     {
+        // Maybe delete later?
         #region Properties
         [JsonProperty("status")]
         public KlipperPrinterStatus Status { get; set; }

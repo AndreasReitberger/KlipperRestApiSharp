@@ -6,7 +6,7 @@ namespace AndreasReitberger.Models
     {
         #region Properties
         [JsonProperty("progress")]
-        public long Progress { get; set; }
+        public double Progress { get; set; }
 
         [JsonProperty("file_position")]
         public long FilePosition { get; set; }

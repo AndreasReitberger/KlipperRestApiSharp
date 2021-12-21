@@ -6,10 +6,10 @@ namespace AndreasReitberger.Models
     {
         #region Properties
         [JsonProperty("speed")]
-        public long? Speed { get; set; }
+        public double? Speed { get; set; }
 
         [JsonProperty("rpm")]
-        public long? Rpm { get; set; }
+        public double? Rpm { get; set; }
         #endregion
 
         #region Overrides

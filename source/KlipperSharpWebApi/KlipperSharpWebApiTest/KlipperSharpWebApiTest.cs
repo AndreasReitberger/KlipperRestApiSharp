@@ -13,6 +13,7 @@ using System.Collections.ObjectModel;
 using AndreasReitberger.Enum;
 using System.Linq;
 using Newtonsoft.Json;
+using System.Text;
 
 namespace RepetierServerSharpApiTest
 {
@@ -128,7 +129,7 @@ namespace RepetierServerSharpApiTest
 
                     //var emergencyStop = await _server.EmergencyStopPrinterAsync();
                     //var objectList = await _server.GetPrinterObjectListAsync();
-                    KlipperPrinterStatus objectList = await _server.QueryPrinterObjectStatusAsync(new() { { "gcode_move", "" } });
+                    Dictionary<string, object> objectList = await _server.QueryPrinterObjectStatusAsync(new() { { "gcode_move", "" } });
                     objectList = await _server.QueryPrinterObjectStatusAsync(new() { { "toolhead", "position,status" } });
                     //objectList = await _server.QueryPrinterObjectStatusAsync("toolhead", new string[] { "position", "status" });
                     //RepetierGcodeScript result = await _server.GetPrinterInfoAsync();
@@ -178,7 +179,7 @@ namespace RepetierServerSharpApiTest
                     Dictionary<string, KlipperGcodeMacro> availableMarcros = await _server.GetGcodeMacrosAsync(macros);
                     Assert.IsNotNull(availableMarcros);
 
-                    var objectStates = await _server.QueryPrinterObjectStatusAsync(targets);
+                    Dictionary<string, object> objectStates = await _server.QueryPrinterObjectStatusAsync(targets);
                     Assert.IsNotNull(objectStates);
 
                     long? connectionId = _server.WebSocketConnectionId; // ""; // Get from WebSocket?
@@ -207,8 +208,8 @@ namespace RepetierServerSharpApiTest
                     KlipperPrinterStateMessageResult info = await _server.GetPrinterInfoAsync();
                     Assert.IsNotNull(info);
 
-                    bool eStop = await _server.EmergencyStopPrinterAsync();
-                    Assert.IsTrue(eStop);
+                    //bool eStop = await _server.EmergencyStopPrinterAsync();
+                    //Assert.IsTrue(eStop);
                 }
                 else
                     Assert.Fail($"Server {_server.FullWebAddress} is offline.");
@@ -1039,6 +1040,8 @@ namespace RepetierServerSharpApiTest
                 await _server.CheckOnlineAsync();
                 Assert.IsTrue(_server.IsOnline);
 
+                var test = await _server.GetActiveJobStatusAsync();
+
                 _server.StartListening();
 
                 _server.WebSocketConnectionIdChanged += (o, args) =>
@@ -1072,6 +1075,20 @@ namespace RepetierServerSharpApiTest
                 {
                     Debug.WriteLine($"HeatedBed: {args.HeaterBedState.Temperature} °C (Target: {args.HeaterBedState.Target} °C)");
                 };
+                _server.KlipperDisplayStatusChanged += (o, args) =>
+                {
+                    if(args.NewDisplayStatus != null)
+                        Debug.WriteLine($"Progress: {args.NewDisplayStatus.Progress * 100} % (Msg: {args.NewDisplayStatus.Message})");
+                };
+                
+                _server.KlipperToolHeadStateChanged += (o, args) =>
+                {
+                    //Debug.WriteLine($"Toolhead: {args.ToolheadStates.EstimatedPrintTime}");
+                };
+                _server.KlipperPrintStateChanged += (o, args) =>
+                {
+                    //Debug.WriteLine($"PrintState: New => {args.NewPrintState.State}; Previous => {args.PreviousPrintState?.State}");
+                };
 
                 _server.WebSocketDataReceived += (o, args) =>
                 {
@@ -1087,8 +1104,8 @@ namespace RepetierServerSharpApiTest
                     Assert.Fail($"Websocket closed due to an error: {args}");
                 };
 
-                // Wait 10 minutes
-                CancellationTokenSource cts = new(new TimeSpan(0, 10, 0));
+                // Wait a few minutes
+                CancellationTokenSource cts = new(new TimeSpan(0, 15, 0));
                 _server.WebSocketDisconnected += (o, args) =>
                 {
                     if (!cts.IsCancellationRequested)
@@ -1102,6 +1119,12 @@ namespace RepetierServerSharpApiTest
                 } while (_server.IsOnline && !cts.IsCancellationRequested);
                 _server.StopListening();
 
+                StringBuilder sb = new();
+                foreach(var pair in websocketMessages)
+                {
+                    sb.AppendLine($"{pair.Key}: {pair.Value}");
+                }
+                await File.WriteAllTextAsync("ws_messages.txt", sb.ToString());
 
                 Assert.IsTrue(cts.IsCancellationRequested);
             }

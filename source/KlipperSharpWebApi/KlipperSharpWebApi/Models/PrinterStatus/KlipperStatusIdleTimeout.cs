@@ -9,7 +9,7 @@ namespace AndreasReitberger.Models
         public string State { get; set; }
 
         [JsonProperty("printing_time")]
-        public long PrintingTime { get; set; }
+        public double PrintingTime { get; set; }
         #endregion
 
         #region Overrides

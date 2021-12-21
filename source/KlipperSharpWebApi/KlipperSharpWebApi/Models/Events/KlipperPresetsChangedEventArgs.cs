@@ -1,15 +1,12 @@
 ﻿using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace AndreasReitberger.Models
 {
-    public partial class KlipperStatusDisplay
+    public class KlipperPresetsChangedEventArgs : KlipperEventArgs
     {
         #region Properties
-        [JsonProperty("progress")]
-        public double Progress { get; set; }
-
-        [JsonProperty("message")]
-        public string Message { get; set; }
+        public List<KlipperDatabaseMainsailValuePreset> NewPresets { get; set; }
         #endregion
 
         #region Overrides
