@@ -2,13 +2,11 @@
 
 namespace AndreasReitberger.Models
 {
-    public partial class KlipperStatusFilamentSensor
+    public partial class KlipperFilamentSensorsRespone
     {
         #region Properties
-        [JsonProperty("filament_detected")]
-        public bool FilamentDetected { get; set; }
-        [JsonProperty("enabled")]
-        public bool Enabled { get; set; }
+        [JsonProperty("result")]
+        public KlipperFilamentSensorsResult Result { get; set; }
         #endregion
 
         #region Overrides

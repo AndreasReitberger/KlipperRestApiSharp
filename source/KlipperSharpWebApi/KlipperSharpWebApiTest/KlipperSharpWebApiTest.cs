@@ -143,6 +143,39 @@ namespace RepetierServerSharpApiTest
             }
         }
 
+        [TestMethod]
+        public async Task RefreshTest()
+        {
+            try
+            {
+                KlipperClient _server = new(_host, _port, _ssl);
+                await _server.CheckOnlineAsync();
+                if (_server.IsOnline)
+                {
+                    _server.RestJsonConvertError += (o, args) =>
+                    {
+                        Assert.Fail(args.Message);
+                    };
+
+                    await _server.RefreshAllAsync();
+                    Assert.IsTrue(_server.InitialDataFetched);
+
+                    await _server.RefreshAvailableFilesAsync();
+                    Assert.IsNotNull(_server.Files);
+                    Assert.IsTrue(_server.Files?.Count > 0);
+
+                    //bool eStop = await _server.EmergencyStopPrinterAsync();
+                    //Assert.IsTrue(eStop);
+                }
+                else
+                    Assert.Fail($"Server {_server.FullWebAddress} is offline.");
+            }
+            catch (Exception exc)
+            {
+                Assert.Fail(exc.Message);
+            }
+        }
+
         #region Printer Tests
         [TestMethod]
         public async Task PrinterStatusTest()
@@ -156,7 +189,24 @@ namespace RepetierServerSharpApiTest
                     await _server.RefreshAllAsync();
                     Assert.IsTrue(_server.InitialDataFetched);
 
+                    _server.RestJsonConvertError += (o, args) =>
+                    {
+                        Assert.Fail(args.Message);
+                    };
                     _server.StartListening();
+
+                    var fSensors = await _server.GetFilamentSensorsAsync();
+                    Assert.IsNotNull(fSensors);
+
+                    Dictionary<string, string> macros = new();
+                    var availableMacros = await _server.GetPrinterObjectListAsync("gcode_macro");
+                    for (int i = 0; i < availableMacros.Count; i++)
+                    {
+                        macros.Add(availableMacros[i], string.Empty);
+                    }
+
+                    var gcMacros = await _server.GetGcodeMacrosAsync();
+                    Assert.IsNotNull(gcMacros);
 
                     List<string> objects = await _server.GetPrinterObjectListAsync();
                     Assert.IsNotNull(objects);
@@ -164,7 +214,7 @@ namespace RepetierServerSharpApiTest
                     KlipperEndstopQueryResult endstops = await _server.QueryEndstopsAsync();
                     Assert.IsNotNull(endstops);
 
-                    Dictionary<string, string> macros = new();
+                    macros.Clear();
                     Dictionary<string, string> targets = new();
                     for (int i = 0; i < objects.Count; i++)
                     {
@@ -176,7 +226,7 @@ namespace RepetierServerSharpApiTest
                     //targets.Add("toolhead", "");
                     //targets.Add("extruder", "target,temperature");
 
-                    Dictionary<string, KlipperGcodeMacro> availableMarcros = await _server.GetGcodeMacrosAsync(macros);
+                    Dictionary<string, KlipperGcodeMacro> availableMarcros = await _server.GetGcodeMacrosAsync();
                     Assert.IsNotNull(availableMarcros);
 
                     Dictionary<string, object> objectStates = await _server.QueryPrinterObjectStatusAsync(targets);
@@ -193,6 +243,50 @@ namespace RepetierServerSharpApiTest
                 Assert.Fail(exc.Message);
             }
         }
+
+        [TestMethod]
+        public async Task GcodeMacroTest()
+        {
+            try
+            {
+                KlipperClient _server = new(_host, _port, _ssl);
+                await _server.CheckOnlineAsync();
+                if (_server.IsOnline)
+                {
+                    await _server.RefreshAllAsync();
+                    Assert.IsTrue(_server.InitialDataFetched);
+
+                    _server.RestJsonConvertError += (o, args) =>
+                    {
+                        Assert.Fail(args.Message);
+                    };
+
+                    Dictionary<string, string> macros = new();
+                    List<string> availableMacros = await _server.GetPrinterObjectListAsync("gcode_macro", true);
+                    for (int i = 0; i < availableMacros.Count; i++)
+                    {
+                        macros.Add(availableMacros[i], string.Empty);
+                    }
+
+                    macros.Clear();
+                    List<string> objects = await _server.GetPrinterObjectListAsync("gcode_macro");
+                    for (int i = 0; i < objects.Count; i++)
+                    {
+                        macros.Add(objects[i], string.Empty);
+                    }
+
+                    Dictionary<string, KlipperGcodeMacro> gcMacros = await _server.GetGcodeMacrosAsync();
+                    Assert.IsNotNull(gcMacros);
+                }
+                else
+                    Assert.Fail($"Server {_server.FullWebAddress} is offline.");
+            }
+            catch (Exception exc)
+            {
+                Assert.Fail(exc.Message);
+            }
+        }
+        
         [TestMethod]
         public async Task PrinterInfoTest()
         {

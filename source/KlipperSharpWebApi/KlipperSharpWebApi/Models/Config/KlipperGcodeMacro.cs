@@ -5,6 +5,9 @@ namespace AndreasReitberger.Models
     public partial class KlipperGcodeMacro
     {
         #region Properties
+        [JsonIgnore]
+        public string Name { get; set; }
+
         [JsonProperty("rename_existing")]
         public string RenameExisting { get; set; }
 

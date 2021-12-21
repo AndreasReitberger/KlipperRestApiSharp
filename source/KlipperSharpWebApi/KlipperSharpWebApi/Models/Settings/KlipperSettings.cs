@@ -29,6 +29,7 @@ namespace AndreasReitberger.Models
         [JsonProperty("stepper_x")]
         public KlipperConfigStepper StepperX { get; set; }
 
+        /*
         [JsonProperty("gcode_macro resume")]
         public KlipperGcodeMacro GcodeMacroResume { get; set; }
 
@@ -37,6 +38,7 @@ namespace AndreasReitberger.Models
 
         [JsonProperty("gcode_macro cancel_print")]
         public KlipperGcodeMacro GcodeMacroCancelPrint { get; set; }
+        */
 
         [JsonProperty("idle_timeout")]
         public KlipperSettingIdleTimeout IdleTimeout { get; set; }
@@ -52,6 +54,9 @@ namespace AndreasReitberger.Models
 
         [JsonProperty("extruder")]
         public KlipperConfigExtruder Extruder { get; set; }
+
+        [JsonProperty("heater_bed")]
+        public KlipperConfigHeaterBed HeaterBed { get; set; }
         #endregion
 
         #region Overrides
