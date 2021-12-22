@@ -2,10 +2,10 @@
 
 namespace AndreasReitberger.Models
 {
-    public class KlipperHeaterBedStateChangedEventArgs : KlipperEventArgs
+    public class KlipperVirtualSdCardStateChangedEventArgs : KlipperEventArgs
     {
         #region Properties
-        public KlipperStatusHeaterBed NewHeaterBedState { get; set; } = new();
+        public KlipperStatusVirtualSdcard NewState { get; set; }
         #endregion
 
         #region Overrides

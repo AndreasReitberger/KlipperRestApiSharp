@@ -1,15 +1,35 @@
 ﻿using Newtonsoft.Json;
+using System;
 
 namespace AndreasReitberger.Models
 {
     public partial class KlipperStatusFan
     {
         #region Properties
+        [JsonIgnore]
+        public int Percent => GetPercentageSpeed();
+
         [JsonProperty("speed")]
         public double? Speed { get; set; }
 
         [JsonProperty("rpm")]
-        public double? Rpm { get; set; }
+        public long? Rpm { get; set; }
+        #endregion
+
+        #region MyRegion
+        int GetPercentageSpeed()
+        {
+            try
+            {
+                if (Speed == null) return 0;
+                int calc = Convert.ToInt32(Speed * 100);
+                return calc;
+            }
+            catch (Exception)
+            {
+                return 0;
+            }
+        }
         #endregion
 
         #region Overrides

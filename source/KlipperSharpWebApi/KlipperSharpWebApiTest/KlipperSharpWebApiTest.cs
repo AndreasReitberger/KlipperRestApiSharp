@@ -160,7 +160,31 @@ namespace RepetierServerSharpApiTest
                     await _server.RefreshAllAsync();
                     Assert.IsTrue(_server.InitialDataFetched);
 
-                    await _server.RefreshAvailableFilesAsync();
+                    //await _server.RefreshIdleStatusAsync();
+                    Assert.IsNotNull(_server.IdleState);
+
+                    //await _server.RefreshDisplayStatusAsync();
+                    Assert.IsNotNull(_server.DisplayStatus);
+
+                    //await _server.RefreshToolHeadStatusAsync();
+                    Assert.IsNotNull(_server.ToolHead);
+
+                    //await _server.RefreshGcodeMoveStatusAsync();
+                    Assert.IsNotNull(_server.GcodeMove);
+
+                    //await _server.RefreshVirtualSdCardStatusAsync();
+                    Assert.IsNotNull(_server.VirtualSdCard);
+
+                    //await _server.RefreshHeaterBedStatusAsync();
+                    Assert.IsNotNull(_server.HeaterBed);
+
+                    //await _server.RefreshExtruderStatusAsync();
+                    Assert.IsNotNull(_server.Extruders);
+
+                    //await _server.RefreshPrintStatusAsync();
+                    Assert.IsNotNull(_server.PrintStats);
+
+                    //await _server.RefreshAvailableFilesAsync();
                     Assert.IsNotNull(_server.Files);
                     Assert.IsTrue(_server.Files?.Count > 0);
 
@@ -175,6 +199,42 @@ namespace RepetierServerSharpApiTest
                 Assert.Fail(exc.Message);
             }
         }
+
+        #region WebCam
+        [TestMethod]
+        public async Task WebCamTest()
+        {
+            try
+            {
+                KlipperClient _server = new(_host, _port, _ssl);
+                await _server.CheckOnlineAsync();
+                if (_server.IsOnline)
+                {
+                    _server.RestJsonConvertError += (o, args) =>
+                    {
+                        Assert.Fail(args.Message);
+                    };
+
+                    await _server.RefreshAllAsync();
+                    Assert.IsTrue(_server.InitialDataFetched);
+
+                    string webcamUri = await _server.GetWebCamUriAsync(0, false);
+                    Assert.IsNotNull(_server.WebCamConfigs);
+                    Assert.IsTrue(_server.WebCamConfigs?.Count > 0);
+                    Assert.IsTrue(!string.IsNullOrEmpty(webcamUri));
+
+                    //bool eStop = await _server.EmergencyStopPrinterAsync();
+                    //Assert.IsTrue(eStop);
+                }
+                else
+                    Assert.Fail($"Server {_server.FullWebAddress} is offline.");
+            }
+            catch (Exception exc)
+            {
+                Assert.Fail(exc.Message);
+            }
+        }
+        #endregion
 
         #region Printer Tests
         [TestMethod]
@@ -1134,7 +1194,9 @@ namespace RepetierServerSharpApiTest
                 await _server.CheckOnlineAsync();
                 Assert.IsTrue(_server.IsOnline);
 
-                var test = await _server.GetActiveJobStatusAsync();
+                await _server.RefreshAllAsync();
+
+                //var test = await _server.GetActiveJobStatusAsync();
 
                 _server.StartListening();
 
@@ -1167,7 +1229,7 @@ namespace RepetierServerSharpApiTest
                 };
                 _server.KlipperHeaterBedStateChanged += (o, args) =>
                 {
-                    Debug.WriteLine($"HeatedBed: {args.HeaterBedState.Temperature} °C (Target: {args.HeaterBedState.Target} °C)");
+                    Debug.WriteLine($"HeatedBed: {args.NewHeaterBedState.Temperature} °C (Target: {args.NewHeaterBedState.Target} °C)");
                 };
                 _server.KlipperDisplayStatusChanged += (o, args) =>
                 {

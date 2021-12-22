@@ -2,10 +2,11 @@
 
 namespace AndreasReitberger.Models
 {
-    public class KlipperHeaterBedStateChangedEventArgs : KlipperEventArgs
+    public class KlipperIdleStateChangedEventArgs : KlipperEventArgs
     {
         #region Properties
-        public KlipperStatusHeaterBed NewHeaterBedState { get; set; } = new();
+        public KlipperStatusIdleTimeout NewState { get; set; }
+        public KlipperStatusIdleTimeout PreviousState { get; set; }
         #endregion
 
         #region Overrides

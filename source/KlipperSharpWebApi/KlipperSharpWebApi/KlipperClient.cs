@@ -2,7 +2,6 @@
 using AndreasReitberger.Enum;
 using AndreasReitberger.Interfaces;
 using AndreasReitberger.Models;
-using AndreasReitberger.Models.WebSocket;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RestSharp;
@@ -13,7 +12,6 @@ using System.ComponentModel;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Security;
 using System.Security.Authentication;
@@ -45,6 +43,13 @@ namespace AndreasReitberger
         #region Variables
         static HttpClient client = new();
         int _retries = 0;
+
+        readonly bool _enableCooldown = true;
+        readonly int _cooldownFallback = 4;
+
+        int _cooldownExtruder = 4;
+        int _cooldownHeaterBed = 4;
+
         #endregion
 
         #region Id
@@ -794,6 +799,50 @@ namespace AndreasReitberger
             }
         }
 
+        [JsonIgnore]
+        [XmlIgnore]
+        KlipperStatusGcodeMove _gcodeMove;
+        [JsonIgnore]
+        [XmlIgnore]
+        public KlipperStatusGcodeMove GcodeMove
+        {
+            get => _gcodeMove;
+            set
+            {
+                if (_gcodeMove == value) return;
+                _gcodeMove = value;
+                OnKlipperGcodeMoveStateChanged(new KlipperGcodeMoveStateChangedEventArgs()
+                {
+                    NewState = value,
+                    SessonId = SessionId,
+                    CallbackId = -1,
+                });
+                OnPropertyChanged();
+            }
+        }
+
+        [JsonIgnore]
+        [XmlIgnore]
+        KlipperStatusVirtualSdcard _virtualSdCard;
+        [JsonIgnore]
+        [XmlIgnore]
+        public KlipperStatusVirtualSdcard VirtualSdCard
+        {
+            get => _virtualSdCard;
+            set
+            {
+                if (_virtualSdCard == value) return;
+                _virtualSdCard = value;
+                OnKlipperVirtualSdCardStateChanged(new KlipperVirtualSdCardStateChangedEventArgs()
+                {
+                    NewState = value,
+                    SessonId = SessionId,
+                    CallbackId = -1,
+                });
+                OnPropertyChanged();
+            }
+        }
+
         [XmlIgnore, JsonIgnore]
         Dictionary<int, KlipperStatusExtruder> _extruders = new();
         [XmlIgnore, JsonIgnore]
@@ -804,12 +853,31 @@ namespace AndreasReitberger
             {
                 if (_extruders == value) return;
                 _extruders = value;
-                OnKlipperExtruderStatesChanged(new KlipperExtruderStatesChangedEventArgs()
+                // WebSocket is updating this property in a high frequency, so a cooldown can be enabled
+                if (_enableCooldown)
                 {
-                    ExtruderStates = value,
-                    SessonId = SessionId,
-                    CallbackId = -1,
-                });
+                    if (_cooldownExtruder > 0)
+                        _cooldownExtruder--;
+                    else
+                    {
+                        _cooldownExtruder = _cooldownFallback;
+                        OnKlipperExtruderStatesChanged(new KlipperExtruderStatesChangedEventArgs()
+                        {
+                            ExtruderStates = value,
+                            SessonId = SessionId,
+                            CallbackId = -1,
+                        });
+                    }
+                }
+                else
+                {
+                    OnKlipperExtruderStatesChanged(new KlipperExtruderStatesChangedEventArgs()
+                    {
+                        ExtruderStates = value,
+                        SessonId = SessionId,
+                        CallbackId = -1,
+                    });
+                }
                 OnPropertyChanged();
             }
         }
@@ -826,12 +894,31 @@ namespace AndreasReitberger
             {
                 if (_heaterBed == value) return;
                 _heaterBed = value;
-                OnKlipperHeaterBedStateChanged(new KlipperHeaterBedStateChangedEventArgs()
+                // WebSocket is updating this property in a high frequency, so a cooldown can be enabled
+                if (_enableCooldown)
                 {
-                    HeaterBedState = value,
-                    SessonId = SessionId,
-                    CallbackId = -1,
-                });
+                    if (_cooldownHeaterBed > 0)
+                        _cooldownHeaterBed--;
+                    else
+                    {
+                        _cooldownHeaterBed = _cooldownFallback;
+                        OnKlipperHeaterBedStateChanged(new KlipperHeaterBedStateChangedEventArgs()
+                        {
+                            NewHeaterBedState = value,
+                            SessonId = SessionId,
+                            CallbackId = -1,
+                        });
+                    }
+                }
+                else
+                {
+                    OnKlipperHeaterBedStateChanged(new KlipperHeaterBedStateChangedEventArgs()
+                    {
+                        NewHeaterBedState = value,
+                        SessonId = SessionId,
+                        CallbackId = -1,
+                    });
+                }
                 OnPropertyChanged();
             }
         }
@@ -861,6 +948,51 @@ namespace AndreasReitberger
 
         [JsonIgnore]
         [XmlIgnore]
+        KlipperStatusFan _fan;
+        [JsonIgnore]
+        [XmlIgnore]
+        public KlipperStatusFan Fan
+        {
+            get => _fan;
+            set
+            {
+                if (_fan == value) return;
+                _fan = value;
+                OnKlipperFanStateChanged(new KlipperFanStateChangedEventArgs()
+                {
+                    NewFanState = value,
+                    SessonId = SessionId,
+                    CallbackId = -1,
+                });
+                OnPropertyChanged();
+            }
+        }
+
+        [JsonIgnore]
+        [XmlIgnore]
+        KlipperStatusIdleTimeout _idleState;
+        [JsonIgnore]
+        [XmlIgnore]
+        public KlipperStatusIdleTimeout IdleState
+        {
+            get => _idleState;
+            set
+            {
+                if (_idleState == value) return;
+                OnKlipperIdleStateChanged(new KlipperIdleStateChangedEventArgs()
+                {
+                    NewState = value,
+                    PreviousState = _idleState,
+                    SessonId = SessionId,
+                    CallbackId = -1,
+                });
+                _idleState = value;
+                OnPropertyChanged();
+            }
+        }
+
+        [JsonIgnore]
+        [XmlIgnore]
         KlipperStatusToolhead _toolHead;
         [JsonIgnore]
         [XmlIgnore]
@@ -873,7 +1005,7 @@ namespace AndreasReitberger
                 _toolHead = value;
                 OnKlipperToolHeadStateChanged(new KlipperToolHeadStateChangedEventArgs()
                 {
-                    ToolheadStates = value,
+                    NewToolheadState = value,
                     SessonId = SessionId,
                     CallbackId = -1,
                 });
@@ -906,23 +1038,23 @@ namespace AndreasReitberger
 
         [JsonIgnore]
         [XmlIgnore]
-        KlipperStatusDisplay _currentStatus;
+        KlipperStatusDisplay _displayStatus;
         [JsonIgnore]
         [XmlIgnore]
-        public KlipperStatusDisplay CurrentStatus
+        public KlipperStatusDisplay DisplayStatus
         {
-            get => _currentStatus;
+            get => _displayStatus;
             set
             {
-                if (_currentStatus == value) return;
+                if (_displayStatus == value) return;
                 OnKlipperDisplayStatusChanged(new KlipperDisplayStatusChangedEventArgs()
                 {
                     NewDisplayStatus = value,
-                    PreviousDisplayStatus = _currentStatus,
+                    PreviousDisplayStatus = _displayStatus,
                     SessonId = SessionId,
                     CallbackId = -1,
                 });
-                _currentStatus = value;
+                _displayStatus = value;
                 OnPropertyChanged();
             }
         }
@@ -1303,6 +1435,18 @@ namespace AndreasReitberger
             KlipperPrinterInfoChanged?.Invoke(this, e);
         }
 
+        public event EventHandler<KlipperGcodeMoveStateChangedEventArgs> KlipperGcodeMoveStateChanged;
+        protected virtual void OnKlipperGcodeMoveStateChanged(KlipperGcodeMoveStateChangedEventArgs e)
+        {
+            KlipperGcodeMoveStateChanged?.Invoke(this, e);
+        }
+
+        public event EventHandler<KlipperVirtualSdCardStateChangedEventArgs> KlipperVirtualSdCardStateChanged;
+        protected virtual void OnKlipperVirtualSdCardStateChanged(KlipperVirtualSdCardStateChangedEventArgs e)
+        {
+            KlipperVirtualSdCardStateChanged?.Invoke(this, e);
+        }
+
         public event EventHandler<KlipperExtruderStatesChangedEventArgs> KlipperExtruderStatesChanged;
         protected virtual void OnKlipperExtruderStatesChanged(KlipperExtruderStatesChangedEventArgs e)
         {
@@ -1319,6 +1463,18 @@ namespace AndreasReitberger
         protected virtual void OnKlipperPrintStateChanged(KlipperPrintStateChangedEventArgs e)
         {
             KlipperPrintStateChanged?.Invoke(this, e);
+        }
+
+        public event EventHandler<KlipperFanStateChangedEventArgs> KlipperFanStateChanged;
+        protected virtual void OnKlipperFanStateChanged(KlipperFanStateChangedEventArgs e)
+        {
+            KlipperFanStateChanged?.Invoke(this, e);
+        }
+
+        public event EventHandler<KlipperIdleStateChangedEventArgs> KlipperIdleStateChanged;
+        protected virtual void OnKlipperIdleStateChanged(KlipperIdleStateChangedEventArgs e)
+        {
+            KlipperIdleStateChanged?.Invoke(this, e);
         }
 
         public event EventHandler<KlipperToolHeadStateChangedEventArgs> KlipperToolHeadStateChanged;
@@ -1442,6 +1598,7 @@ namespace AndreasReitberger
         #endregion
 
         #region WebSocket
+        /*
         void PingServer()
         {
             try
@@ -1460,6 +1617,7 @@ namespace AndreasReitberger
             }
 
         }
+        */
 
         public void ConnectWebSocket()
         {
@@ -1547,6 +1705,7 @@ namespace AndreasReitberger
         private void WebSocket_Error(object sender, ErrorEventArgs e)
         {
             IsListeningToWebsocket = false;
+            WebSocketConnectionId = -1;
             OnWebSocketError(e);
             OnError(e);
         }
@@ -1554,6 +1713,7 @@ namespace AndreasReitberger
         private void WebSocket_Closed(object sender, EventArgs e)
         {
             IsListeningToWebsocket = false;
+            WebSocketConnectionId = -1;
             StopPingTimer();
             OnWebSocketDisconnected(new KlipperEventArgs()
             {
@@ -1619,11 +1779,12 @@ namespace AndreasReitberger
                                     case "virtual_sdcard":
                                         KlipperStatusVirtualSdcard virtualSdcardState =
                                             JsonConvert.DeserializeObject<KlipperStatusVirtualSdcard>(jsonBody);
+                                        VirtualSdCard = virtualSdcardState;
                                         break;
                                     case "display_status":
                                         KlipperStatusDisplay displayState =
                                             JsonConvert.DeserializeObject<KlipperStatusDisplay>(jsonBody);
-                                        CurrentStatus = displayState;
+                                        DisplayStatus = displayState;
                                         break;
                                     case "moonraker_stats":
                                         MoonrakerStatInfo notifyProcState =
@@ -1652,6 +1813,7 @@ namespace AndreasReitberger
                                     case "gcode_move":
                                         KlipperStatusGcodeMove gcodeMoveState =
                                             JsonConvert.DeserializeObject<KlipperStatusGcodeMove>(jsonBody);
+                                        GcodeMove = gcodeMoveState;
                                         break;
                                     case "print_stats":
                                         KlipperStatusPrintStats printStats =
@@ -1661,6 +1823,7 @@ namespace AndreasReitberger
                                     case "fan":
                                         KlipperStatusFan fanState =
                                             JsonConvert.DeserializeObject<KlipperStatusFan>(jsonBody);
+                                        Fan = fanState;
                                         break;
                                     case "toolhead":
                                         KlipperStatusToolhead toolhead =
@@ -1672,6 +1835,17 @@ namespace AndreasReitberger
                                         if (!jsonBody.Contains("temperature")) break;
                                         KlipperStatusHeaterBed heaterBed =
                                             JsonConvert.DeserializeObject<KlipperStatusHeaterBed>(jsonBody);
+                                        if (HeaterBed != null)
+                                        {
+                                            if (!jsonBody.Contains("target"))
+                                            {
+                                                heaterBed.Target = HeaterBed.Target;
+                                            }
+                                            else
+                                            {
+
+                                            }
+                                        }
                                         HeaterBed = heaterBed;
                                         break;
                                     case "extruder":
@@ -1688,7 +1862,16 @@ namespace AndreasReitberger
                                         }
                                         KlipperStatusExtruder extruder =
                                             JsonConvert.DeserializeObject<KlipperStatusExtruder>(jsonBody);
+                                        if (Extruders.ContainsKey(index))
+                                        {
+                                            KlipperStatusExtruder previousExtruderState = Extruders[index];
+                                            if (!jsonBody.Contains("target"))
+                                            {
+                                                extruder.Target = previousExtruderState.Target;
+                                            }
+                                        }
                                         extruderStats.Add(index, extruder);
+                                        //OnPropertyChanged(nameof(Extruders));
                                         break;
                                     case "motion_report":
                                         KlipperStatusMotionReport motionReport =
@@ -1697,6 +1880,7 @@ namespace AndreasReitberger
                                     case "idle_timeout":
                                         KlipperStatusIdleTimeout idleTimeout =
                                             JsonConvert.DeserializeObject<KlipperStatusIdleTimeout>(jsonBody);
+                                        IdleState = idleTimeout;
                                         break;
                                     case "filament_switch_sensor fsensor":
                                         KlipperStatusFilamentSensor fSensor =
@@ -1726,8 +1910,9 @@ namespace AndreasReitberger
                                     case "tmc2130 stepper_y":
                                     case "tmc2130 stepper_z":
                                     case "tmc2130 extruder":
+                                    case "heater_fan nozzle_cooling_fan":
 #if DEBUG
-                                        Console.WriteLine($"Ignored Json object: '{name}' => '{jsonBody}");
+                                        //Console.WriteLine($"Ignored Json object: '{name}' => '{jsonBody}");
 #endif
                                         break;
                                     default:
@@ -1737,7 +1922,7 @@ namespace AndreasReitberger
                                         OnError(new KlipprtJsonConvertEventArgs()
                                         {
                                             Exception = null,
-                                            OriginalString = current,
+                                            OriginalString = jsonBody,
                                             Message = "No Json object found for this string",
                                         });
 #endif
@@ -1812,7 +1997,7 @@ namespace AndreasReitberger
                                         OnError(new KlipprtJsonConvertEventArgs()
                                         {
                                             Exception = null,
-                                            OriginalString = current,
+                                            OriginalString = jsonBody,
                                             Message = "No Json object found for this string",
                                         });
 #endif
@@ -1820,22 +2005,6 @@ namespace AndreasReitberger
                                 }
                             }
                         }
-                        /*
-                        string jsonObject = result?.Result?.ToString();
-                        // Try to get the result
-                        try
-                        {
-                            KlipperWebSocketIdRespone wsId = JsonConvert.DeserializeObject<KlipperWebSocketIdRespone>(jsonObject);
-                            WebSocketConnectionId = wsId?.WebsocketId;
-                        }
-                        catch (Exception) { }
-                        try
-                        {
-                            KlipperWebSocketStateRespone state = JsonConvert.DeserializeObject<KlipperWebSocketStateRespone>(jsonObject);
-                            KlipperState = state?.KlippyState;
-                        }
-                        catch (Exception) { }
-                        */
                     }
                     catch (JsonException jecx)
                     {
@@ -2370,7 +2539,7 @@ namespace AndreasReitberger
             try
             {
                 if (newPrinterInfo == null) return;
-
+                KlipperState = newPrinterInfo.State;
             }
             catch (Exception exc)
             {
@@ -2476,8 +2645,17 @@ namespace AndreasReitberger
                     RefreshDashboardPresetsAsync(),
                     RefreshAvailableFilesAsync(),
                     RefreshJobQueueStatusAsync(),
-                    RefreshAvailableFilesAsync(),
                     RefreshDirectoryInformationAsync(),
+
+                    RefreshToolHeadStatusAsync(),
+                    RefreshVirtualSdCardStatusAsync(),
+                    RefreshPrintStatusAsync(),
+                    RefreshGcodeMoveStatusAsync(),
+                    RefreshExtruderStatusAsync(),
+                    RefreshHeaterBedStatusAsync(),
+                    RefreshIdleStatusAsync(),
+                    RefreshFanStatusAsync(),
+                    RefreshDisplayStatusAsync(),
                     //CheckForServerUpdateAsync(),
                 };
                 await Task.WhenAll(task).ConfigureAwait(false);
@@ -2705,11 +2883,39 @@ namespace AndreasReitberger
         #endregion
 
         #region WebCam
-        public string GetDefaultWebCamUri(int index = 0)
+        public string GetDefaultWebCamUri()
         {
             try
             {
-                return $"{FullWebAddress}/webcam/?action=stream?t={(!string.IsNullOrEmpty(API) ? API : SessionId)}";
+                string token = !string.IsNullOrEmpty(API) ? API : UserToken;
+                return $"{FullWebAddress}/webcam/?action=stream{(!string.IsNullOrEmpty(token) ? $"?t={token}" : "")}";
+            }
+            catch (Exception exc)
+            {
+                OnError(new UnhandledExceptionEventArgs(exc, false));
+                return "";
+            }
+        }
+        public async Task<string> GetWebCamUriAsync(int index = 0, bool refreshWebCamConfig = false)
+        {
+            try
+            {
+                if (WebCamConfigs?.Count <= 0)
+                {
+                    await RefreshWebCamConfigAsync().ConfigureAwait(false);
+                }
+                KlipperDatabaseMainsailValueWebcamConfig config = null;
+                if (WebCamConfigs?.Count > index)
+                {
+                    config = WebCamConfigs[index];
+                }
+                else if (WebCamConfigs.Count > 0)
+                {
+                    config = WebCamConfigs.FirstOrDefault();
+                }
+
+                string token = !string.IsNullOrEmpty(API) ? API : UserToken;
+                return config == null ? GetDefaultWebCamUri() : $"{FullWebAddress}{config.Url}{(!string.IsNullOrEmpty(token) ? $"?t={token}" : "")}";
             }
             catch (Exception exc)
             {
@@ -2908,7 +3114,7 @@ namespace AndreasReitberger
             try
             {
                 string cmd = $"SET_HEATER_TEMPERATURE HEATER=heater_bed TARGET={target}";
-                bool result = await SendGcodeCommandAsync(cmd).ConfigureAwait(false);
+                bool result = await RunGcodeScriptAsync(cmd).ConfigureAwait(false);
                 return result;
             }
             catch (Exception exc)
@@ -2923,7 +3129,7 @@ namespace AndreasReitberger
             try
             {
                 string cmd = $"SET_HEATER_TEMPERATURE HEATER=extruder{(extruder <= 0 ? "" : $"{extruder}")} TARGET={target}";
-                bool result = await SendGcodeCommandAsync(cmd).ConfigureAwait(false);
+                bool result = await RunGcodeScriptAsync(cmd).ConfigureAwait(false);
                 return result;
             }
             catch (Exception exc)
@@ -2938,7 +3144,7 @@ namespace AndreasReitberger
             try
             {
                 string cmd = $"M220 S{target}";
-                bool result = await SendGcodeCommandAsync(cmd).ConfigureAwait(false);
+                bool result = await RunGcodeScriptAsync(cmd).ConfigureAwait(false);
                 return result;
             }
             catch (Exception exc)
@@ -2953,7 +3159,7 @@ namespace AndreasReitberger
             try
             {
                 string cmd = $"M221 S{target}";
-                bool result = await SendGcodeCommandAsync(cmd).ConfigureAwait(false);
+                bool result = await RunGcodeScriptAsync(cmd).ConfigureAwait(false);
                 return result;
             }
             catch (Exception exc)
@@ -2971,15 +3177,25 @@ namespace AndreasReitberger
                 if (!isPercentage)
                 {
                     // Avoid invalid ranges
-                    if (target > 255)
-                        setSpeed = 255;
-                    else if (target < 0)
-                        setSpeed = 0;
+                    switch (target)
+                    {
+                        case > 255:
+                            setSpeed = 255;
+                            break;
+                        case < 0:
+                            setSpeed = 0;
+                            break;
+                        default:
+                            break;
+                    }
                 }
                 else
-                    setSpeed = Convert.ToInt32((target) * 255f / 100f);
+                {
+                    setSpeed = Convert.ToInt32(target * 255f / 100f);
+                }
+
                 string cmd = $"M106 S{setSpeed}";
-                bool result = await SendGcodeCommandAsync(cmd).ConfigureAwait(false);
+                bool result = await RunGcodeScriptAsync(cmd).ConfigureAwait(false);
                 return result;
             }
             catch (Exception exc)
@@ -3458,45 +3674,6 @@ namespace AndreasReitberger
             }
         }
 
-        /*
-        [Obsolete]
-        public async Task<Dictionary<string, KlipperGcodeMacro>> GetGcodeMacrosAsync(Dictionary<string, string> macros)
-        {
-            KlipperApiRequestRespone result = new();
-            Dictionary<string, KlipperGcodeMacro> resultObject = null;
-            try
-            {
-                Dictionary<string, string> urlSegments = new();
-                foreach (KeyValuePair<string, string> obj in macros)
-                {
-                    urlSegments.Add(obj.Key, obj.Value);
-                }
-                
-                result = await SendRestApiRequestAsync(MoonRakerCommandBase.printer, Method.GET, "objects/query", "", 10000, urlSegments)
-                    .ConfigureAwait(false);
-
-                KlipperGcodeMacroRespone queryResult = JsonConvert.DeserializeObject<KlipperGcodeMacroRespone>(result.Result);
-                return queryResult?.Result?.Status;
-
-            }
-            catch (JsonException jecx)
-            {
-                OnError(new KlipprtJsonConvertEventArgs()
-                {
-                    Exception = jecx,
-                    OriginalString = result.Result,
-                    Message = jecx.Message,
-                });
-                return resultObject;
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-                return resultObject;
-            }
-        }
-        */
-
         public async Task<Dictionary<string, KlipperGcodeMacro>> GetGcodeMacrosAsync()
         {
             KlipperApiRequestRespone result = new();
@@ -3606,6 +3783,19 @@ namespace AndreasReitberger
                 return resultObject;
             }
         }
+        public async Task RefreshPrintStatusAsync()
+        {
+            try
+            {
+                KlipperStatusPrintStats result = await GetPrintStatusAsync().ConfigureAwait(false);
+                PrintStats = result;
+            }
+            catch (Exception exc)
+            {
+                OnError(new UnhandledExceptionEventArgs(exc, false));
+                PrintStats = null;
+            }
+        }
 
         public async Task<KlipperStatusExtruder> GetExtruderStatusAsync(int index = 0)
         {
@@ -3615,6 +3805,7 @@ namespace AndreasReitberger
                 string key = $"extruder{(index > 0 ? index : "")}";
                 Dictionary<string, string> queryObjects = new();
                 queryObjects.Add(key, "");
+                //queryObjects.Add(key, "temperature,target,power,pressure_advance,smooth_time");
 
                 Dictionary<string, object> result = await QueryPrinterObjectStatusAsync(queryObjects)
                     .ConfigureAwait(false);
@@ -3626,6 +3817,24 @@ namespace AndreasReitberger
             {
                 OnError(new UnhandledExceptionEventArgs(exc, false));
                 return resultObject;
+            }
+        }
+        public async Task RefreshExtruderStatusAsync(int index = 0)
+        {
+            try
+            {
+                KlipperStatusExtruder result = await GetExtruderStatusAsync(index).ConfigureAwait(false);
+                if(result != null)
+                {
+                    Dictionary<int, KlipperStatusExtruder> states = new();
+                    states.Add(index, result);
+                    Extruders = states;
+                }
+            }
+            catch (Exception exc)
+            {
+                OnError(new UnhandledExceptionEventArgs(exc, false));
+                Extruders = null;
             }
         }
 
@@ -3648,6 +3857,19 @@ namespace AndreasReitberger
             {
                 OnError(new UnhandledExceptionEventArgs(exc, false));
                 return resultObject;
+            }
+        }
+        public async Task RefreshFanStatusAsync()
+        {
+            try
+            {
+                KlipperStatusFan result = await GetFanStatusAsync().ConfigureAwait(false);
+                Fan = result;
+            }
+            catch (Exception exc)
+            {
+                OnError(new UnhandledExceptionEventArgs(exc, false));
+                ActiveJob = null;
             }
         }
 
@@ -3684,7 +3906,6 @@ namespace AndreasReitberger
                 return resultObject;
             }
         }
-
         public async Task RefreshActiveJobStatusAsync()
         {
             try
@@ -3696,6 +3917,228 @@ namespace AndreasReitberger
             {
                 OnError(new UnhandledExceptionEventArgs(exc, false));
                 ActiveJob = null;
+            }
+        }
+
+        public async Task<KlipperStatusIdleTimeout> GetIdleStatusAsync()
+        {
+            KlipperStatusIdleTimeout resultObject = null;
+            try
+            {
+                string key = "idle_timeout";
+                Dictionary<string, string> queryObjects = new();
+                queryObjects.Add(key, string.Empty);
+
+                Dictionary<string, object> result = await QueryPrinterObjectStatusAsync(queryObjects)
+                    .ConfigureAwait(false);
+
+                if (result?[key] is KlipperStatusIdleTimeout stateObj)
+                    resultObject = stateObj;
+                return resultObject;
+
+            }
+            catch (Exception exc)
+            {
+                OnError(new UnhandledExceptionEventArgs(exc, false));
+                return resultObject;
+            }
+        }
+        public async Task RefreshIdleStatusAsync()
+        {
+            try
+            {
+                KlipperStatusIdleTimeout result = await GetIdleStatusAsync().ConfigureAwait(false);
+                IdleState = result;
+            }
+            catch (Exception exc)
+            {
+                OnError(new UnhandledExceptionEventArgs(exc, false));
+                IdleState = null;
+            }
+        }
+
+        public async Task<KlipperStatusDisplay> GetDisplayStatusAsync()
+        {
+            KlipperStatusDisplay resultObject = null;
+            try
+            {
+                string key = "display_status";
+                Dictionary<string, string> queryObjects = new();
+                queryObjects.Add(key, string.Empty);
+
+                Dictionary<string, object> result = await QueryPrinterObjectStatusAsync(queryObjects)
+                    .ConfigureAwait(false);
+
+                if (result?[key] is KlipperStatusDisplay stateObj)
+                    resultObject = stateObj;
+                return resultObject;
+
+            }
+            catch (Exception exc)
+            {
+                OnError(new UnhandledExceptionEventArgs(exc, false));
+                return resultObject;
+            }
+        }
+        public async Task RefreshDisplayStatusAsync()
+        {
+            try
+            {
+                KlipperStatusDisplay result = await GetDisplayStatusAsync().ConfigureAwait(false);
+                DisplayStatus = result;
+            }
+            catch (Exception exc)
+            {
+                OnError(new UnhandledExceptionEventArgs(exc, false));
+                DisplayStatus = null;
+            }
+        }
+
+        public async Task<KlipperStatusToolhead> GetToolHeadStatusAsync()
+        {
+            KlipperStatusToolhead resultObject = null;
+            try
+            {
+                string key = "toolhead";
+                Dictionary<string, string> queryObjects = new();
+                queryObjects.Add(key, string.Empty);
+
+                Dictionary<string, object> result = await QueryPrinterObjectStatusAsync(queryObjects)
+                    .ConfigureAwait(false);
+
+                if (result?[key] is KlipperStatusToolhead stateObj)
+                    resultObject = stateObj;
+                return resultObject;
+
+            }
+            catch (Exception exc)
+            {
+                OnError(new UnhandledExceptionEventArgs(exc, false));
+                return resultObject;
+            }
+        }
+        public async Task RefreshToolHeadStatusAsync()
+        {
+            try
+            {
+                KlipperStatusToolhead result = await GetToolHeadStatusAsync().ConfigureAwait(false);
+                ToolHead = result;
+            }
+            catch (Exception exc)
+            {
+                OnError(new UnhandledExceptionEventArgs(exc, false));
+                ToolHead = null;
+            }
+        }
+
+        public async Task<KlipperStatusGcodeMove> GetGcodeMoveStatusAsync()
+        {
+            KlipperStatusGcodeMove resultObject = null;
+            try
+            {
+                string key = "gcode_move";
+                Dictionary<string, string> queryObjects = new();
+                queryObjects.Add(key, string.Empty);
+
+                Dictionary<string, object> result = await QueryPrinterObjectStatusAsync(queryObjects)
+                    .ConfigureAwait(false);
+
+                if (result?[key] is KlipperStatusGcodeMove stateObj)
+                    resultObject = stateObj;
+                return resultObject;
+
+            }
+            catch (Exception exc)
+            {
+                OnError(new UnhandledExceptionEventArgs(exc, false));
+                return resultObject;
+            }
+        }
+        public async Task RefreshGcodeMoveStatusAsync()
+        {
+            try
+            {
+                KlipperStatusGcodeMove result = await GetGcodeMoveStatusAsync().ConfigureAwait(false);
+                GcodeMove = result;
+            }
+            catch (Exception exc)
+            {
+                OnError(new UnhandledExceptionEventArgs(exc, false));
+                GcodeMove = null;
+            }
+        }
+
+        public async Task<KlipperStatusVirtualSdcard> GetVirtualSdCardStatusAsync()
+        {
+            KlipperStatusVirtualSdcard resultObject = null;
+            try
+            {
+                string key = "virtual_sdcard";
+                Dictionary<string, string> queryObjects = new();
+                queryObjects.Add(key, string.Empty);
+
+                Dictionary<string, object> result = await QueryPrinterObjectStatusAsync(queryObjects)
+                    .ConfigureAwait(false);
+
+                if (result?[key] is KlipperStatusVirtualSdcard stateObj)
+                    resultObject = stateObj;
+                return resultObject;
+
+            }
+            catch (Exception exc)
+            {
+                OnError(new UnhandledExceptionEventArgs(exc, false));
+                return resultObject;
+            }
+        }
+        public async Task RefreshVirtualSdCardStatusAsync()
+        {
+            try
+            {
+                KlipperStatusVirtualSdcard result = await GetVirtualSdCardStatusAsync().ConfigureAwait(false);
+                VirtualSdCard = result;
+            }
+            catch (Exception exc)
+            {
+                OnError(new UnhandledExceptionEventArgs(exc, false));
+                VirtualSdCard = null;
+            }
+        }
+
+        public async Task<KlipperStatusHeaterBed> GetHeaterBedStatusAsync()
+        {
+            KlipperStatusHeaterBed resultObject = null;
+            try
+            {
+                string key = "heater_bed";
+                Dictionary<string, string> queryObjects = new();
+                queryObjects.Add(key, string.Empty);
+
+                Dictionary<string, object> result = await QueryPrinterObjectStatusAsync(queryObjects)
+                    .ConfigureAwait(false);
+
+                if (result?[key] is KlipperStatusHeaterBed stateObj)
+                    resultObject = stateObj;
+                return resultObject;
+
+            }
+            catch (Exception exc)
+            {
+                OnError(new UnhandledExceptionEventArgs(exc, false));
+                return resultObject;
+            }
+        }
+        public async Task RefreshHeaterBedStatusAsync()
+        {
+            try
+            {
+                KlipperStatusHeaterBed result = await GetHeaterBedStatusAsync().ConfigureAwait(false);
+                HeaterBed = result;
+            }
+            catch (Exception exc)
+            {
+                OnError(new UnhandledExceptionEventArgs(exc, false));
+                HeaterBed = null;
             }
         }
 
@@ -3715,7 +4158,14 @@ namespace AndreasReitberger
                 //urlSegments.Add("objects", string.Join("&", objects));
                 for (int i = 0; i < objects.Count; i++)
                 {
-                    urlSegments.Add(objects[i], string.Empty);
+                    string key = objects[i];
+                    string value = string.Empty;
+                    /*
+                    if(key.StartsWith("extruder") || key.StartsWith("heater_bed"))
+                    {
+                        value = "temperature,target,power";
+                    }*/
+                    urlSegments.Add(key, value);
                 }
 
                 // POST /printer/objects/subscribe?connection_id=123456789&gcode_move&extruder`
@@ -3776,7 +4226,7 @@ namespace AndreasReitberger
         }
 #endregion
 
-#region ServerConfig
+        #region ServerConfig
         public async Task RefreshServerConfigAsync()
         {
             try
@@ -3892,7 +4342,7 @@ namespace AndreasReitberger
         }
 #endregion
 
-#region WebSocket
+        #region WebSocket
 
         public void SendWebSocketCommand(string command)
         {
@@ -3940,9 +4390,9 @@ namespace AndreasReitberger
             }
         }
         */
-#endregion
+        #endregion
 
-#region Gcode API
+        #region Gcode API
         public async Task<bool> RunGcodeScriptAsync(string script)
         {
             try
@@ -3968,6 +4418,49 @@ namespace AndreasReitberger
                 string cmd = $"{marco.Description}";
                 bool result = await SendGcodeCommandAsync(cmd).ConfigureAwait(false);
                 return result;
+            }
+            catch (Exception exc)
+            {
+                OnError(new UnhandledExceptionEventArgs(exc, false));
+                return false;
+            }
+        }
+        public async Task<bool> RunPresetAsync(KlipperDatabaseMainsailValuePreset presetProfile)
+        {
+            try
+            {
+                if (presetProfile == null)
+                {
+                    return false;
+                }
+
+                List<string> cmds = new();
+                if (!string.IsNullOrEmpty(presetProfile?.Gcode))
+                {
+                    cmds.Add(presetProfile.Gcode);
+                }
+                if (presetProfile?.Values?.Extruder != null && presetProfile?.Values?.Extruder?.Bool == true)
+                {
+                    cmds.Add($"SET_HEATER_TEMPERATURE HEATER=extruder TARGET={presetProfile.Values.Extruder.Value}");
+                }
+                if (presetProfile?.Values?.Extruder1 != null && presetProfile?.Values?.Extruder1?.Bool == true)
+                {
+                    cmds.Add($"SET_HEATER_TEMPERATURE HEATER=extruder1 TARGET={presetProfile.Values.Extruder1.Value}");
+                }
+                if (presetProfile?.Values?.HeaterBed != null && presetProfile?.Values?.HeaterBed?.Bool == true)
+                {
+                    cmds.Add($"SET_HEATER_TEMPERATURE HEATER=heater_bed TARGET={presetProfile.Values.HeaterBed.Value}");
+                }
+                //bool result = await SendGcodeCommandAsync(cmds.ToArray()).ConfigureAwait(false);
+                //return result;
+                List<bool> results = new();
+                for (int i = 0; i < cmds.Count; i++)
+                {
+                    string cmd = cmds[i];
+                    bool result = await RunGcodeScriptAsync(cmd).ConfigureAwait(false);
+                    results.Add(result);
+                }
+                return results.All(res => res);
             }
             catch (Exception exc)
             {
@@ -6193,9 +6686,9 @@ namespace AndreasReitberger
 
 #endregion
 
-#endregion
+        #endregion
 
-#region Overrides
+        #region Overrides
         public override string ToString()
         {
             try
@@ -6218,9 +6711,9 @@ namespace AndreasReitberger
         {
             return Id.GetHashCode();
         }
-#endregion
+        #endregion
 
-#region Dispose
+        #region Dispose
         public void Dispose()
         {
             Dispose(true);
@@ -6238,6 +6731,6 @@ namespace AndreasReitberger
                 DisconnectWebSocket();
             }
         }
-#endregion
+        #endregion
     }
 }

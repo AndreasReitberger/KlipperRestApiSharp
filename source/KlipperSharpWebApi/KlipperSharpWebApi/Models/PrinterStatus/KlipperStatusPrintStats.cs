@@ -6,13 +6,13 @@ namespace AndreasReitberger.Models
     {
         #region Properties
         [JsonProperty("print_duration")]
-        public long PrintDuration { get; set; }
+        public double PrintDuration { get; set; }
 
         [JsonProperty("total_duration")]
-        public long TotalDuration { get; set; }
+        public double TotalDuration { get; set; }
 
         [JsonProperty("filament_used")]
-        public long FilamentUsed { get; set; }
+        public double FilamentUsed { get; set; }
 
         [JsonProperty("filename")]
         public string Filename { get; set; }
