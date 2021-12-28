@@ -2,10 +2,11 @@
 
 namespace AndreasReitberger.Models
 {
-    public class KlipperJobFinishedEventArgs : KlipperEventArgs
+    public class KlipperJobListStateChangedEventArgs : KlipperEventArgs
     {
         #region Properties
-        public KlipperStatusJob Job { get; set; } = new();
+        public string NewJobListStatus { get; set; } = string.Empty;
+        public string PreviousJobListStatus { get; set; } = string.Empty;
         #endregion
 
         #region Overrides

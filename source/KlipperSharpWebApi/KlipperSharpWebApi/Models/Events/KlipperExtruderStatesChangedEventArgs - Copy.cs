@@ -1,11 +1,12 @@
 ﻿using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace AndreasReitberger.Models
 {
-    public class KlipperJobFinishedEventArgs : KlipperEventArgs
+    public class KlipperIgnoredJsonResultsChangedEventArgs : KlipperEventArgs
     {
         #region Properties
-        public KlipperStatusJob Job { get; set; } = new();
+        public Dictionary<string, string> NewIgnoredJsonResults { get; set; } = new();
         #endregion
 
         #region Overrides

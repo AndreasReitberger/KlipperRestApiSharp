@@ -2,10 +2,10 @@
 
 namespace AndreasReitberger.Models
 {
-    public class KlipperJobFinishedEventArgs : KlipperEventArgs
+    public class KlipperCpuTemperatureChangedEventArgs : KlipperEventArgs
     {
         #region Properties
-        public KlipperStatusJob Job { get; set; } = new();
+        public double NewTemperature { get; set; }
         #endregion
 
         #region Overrides

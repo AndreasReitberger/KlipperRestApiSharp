@@ -2,14 +2,11 @@
 
 namespace AndreasReitberger.Models
 {
-    public partial class KlipperDirectoryItem
+    public class KlipperMotionReportChangedEventArgs : KlipperEventArgs
     {
         #region Properties
-        [JsonProperty("path")]
-        public string Path { get; set; }
-
-        [JsonProperty("root")]
-        public string Root { get; set; }
+        public KlipperStatusMotionReport NewState { get; set; }
+        public KlipperStatusMotionReport PreviousState { get; set; }
         #endregion
 
         #region Overrides

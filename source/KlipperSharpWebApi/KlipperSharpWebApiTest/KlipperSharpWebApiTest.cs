@@ -876,6 +876,12 @@ namespace RepetierServerSharpApiTest
                     Dictionary<string, object> webcams = await _server.GetDatabaseItemAsync("mainsail", "webcam");
                     Assert.IsNotNull(webcams);
 
+                    Dictionary<string, object> remotePrinters = await _server.GetDatabaseItemAsync("mainsail", "remote_printers");
+                    Assert.IsNotNull(remotePrinters);
+
+                    List<KlipperDatabaseMainsailValueRemotePrinter> remotePrinters2 = await _server.GetRemotePrintersAsync();
+                    Assert.IsNotNull(remotePrinters2);
+
                     KlipperDatabaseMainsailValueWebcam webcamConfig = JsonConvert.DeserializeObject<KlipperDatabaseMainsailValueWebcam>(webcams.FirstOrDefault().Value.ToString());
                     Assert.IsNotNull(webcamConfig);
 
@@ -885,7 +891,7 @@ namespace RepetierServerSharpApiTest
                     List<KlipperDatabaseMainsailValuePreset> presets = await _server.GetDashboardPresetsAsync();
                     Assert.IsNotNull(presets);
 
-                    var heightmap = await _server.GetMeshHeightMapAsync();
+                    KlipperDatabaseMainsailValueHeightmap heightmap = await _server.GetMeshHeightMapAsync();
                     Assert.IsNotNull(heightmap);
 
                     Dictionary<string, object> add = await _server.AddDatabaseItemAsync("mainsail", "testkey", 56);
@@ -909,6 +915,33 @@ namespace RepetierServerSharpApiTest
         #endregion
 
         #region Job Queue
+        [TestMethod]
+        public async Task ActiveJobTest()
+        {
+            try
+            {
+                KlipperClient _server = new(_host, _port, _ssl);
+                await _server.CheckOnlineAsync();
+                if (_server.IsOnline)
+                {
+                    await _server.RefreshAllAsync();
+                    Assert.IsTrue(_server.InitialDataFetched);
+
+                    KlipperJobQueueResult jobstatus = await _server.GetJobQueueStatusAsync();
+                    Assert.IsNotNull(jobstatus);
+                }
+                else
+                    Assert.Fail($"Server {_server.FullWebAddress} is offline.");
+            }
+            catch (Exception exc)
+            {
+                Assert.Fail(exc.Message);
+            }
+            finally
+            {
+
+            }
+        }
         [TestMethod]
         public async Task JobQueueTest()
         {
@@ -1047,28 +1080,28 @@ namespace RepetierServerSharpApiTest
                     await _server.RefreshAllAsync();
                     Assert.IsTrue(_server.InitialDataFetched);
 
-                    OctoprintApiVersionResult version = await _server.GetVersionInfoAsync();
+                    OctoprintApiVersionResult version = await _server.GetOctoPrintApiVersionInfoAsync();
                     Assert.IsNotNull(version);
 
-                    OctoprintApiServerStatusResult server = await _server.GetServerStatusAsync();
+                    OctoprintApiServerStatusResult server = await _server.GetOctoPrintApiServerStatusAsync();
                     Assert.IsNotNull(server);
 
                     //var userInfo = await _server.GetUserInformationAsync();
                     //Assert.IsNotNull(userInfo);
 
-                    OctoprintApiSettingsResult settings = await _server.GetSettingsAsync();
+                    OctoprintApiSettingsResult settings = await _server.GetOctoPrintApiSettingsAsync();
                     Assert.IsNotNull(settings);
 
-                    OctoprintApiJobResult jobStatus = await _server.GetJobStatusAsync();
+                    OctoprintApiJobResult jobStatus = await _server.GetOctoPrintApiJobStatusAsync();
                     Assert.IsNotNull(jobStatus);
 
-                    OctoprintApiPrinterStatusResult printerStatus = await _server.GetPrinterStatusAsync();
+                    OctoprintApiPrinterStatusResult printerStatus = await _server.GetOctoPrintApiPrinterStatusAsync();
                     Assert.IsNotNull(printerStatus);
 
-                    Dictionary<string, OctoprintApiPrinter> printerProfiles = await _server.GetPrinterProfilesAsync();
+                    Dictionary<string, OctoprintApiPrinter> printerProfiles = await _server.GetOctoPrintApiPrinterProfilesAsync();
                     Assert.IsNotNull(printerProfiles);
 
-                    bool gcodeCommand = await _server.SendGcodeCommandAsync("G28");
+                    bool gcodeCommand = await _server.SendOctoPrintApiGcodeCommandAsync("G28");
                     Assert.IsTrue(gcodeCommand);
                 }
                 else
@@ -1098,13 +1131,13 @@ namespace RepetierServerSharpApiTest
                     await _server.RefreshAllAsync();
                     Assert.IsTrue(_server.InitialDataFetched);
 
-                    KlipperHistoryResult history = await _server.GetHistoryJobListAsync();
+                    List<KlipperJobItem> history = await _server.GetHistoryJobListAsync();
                     Assert.IsNotNull(history);
 
                     KlipperHistoryJobTotalsResult total = await _server.GetHistoryTotalJobsAsync();
                     Assert.IsNotNull(total);
 
-                    string uid = history.Jobs[0].JobId;
+                    string uid = history[0].JobId;
                     KlipperJobItem job = await _server.GetHistoryJobAsync(uid);
                     Assert.IsNotNull(job);
 

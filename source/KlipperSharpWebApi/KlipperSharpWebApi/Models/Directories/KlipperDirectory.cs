@@ -11,6 +11,9 @@ namespace AndreasReitberger.Models
         [JsonProperty("path")]
         public string Path { get; set; }
 
+        [JsonProperty("root")]
+        public string Root { get; set; }
+
         [JsonProperty("modified")]
         public double Modified { get; set; }
 

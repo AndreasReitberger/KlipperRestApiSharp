@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using AndreasReitberger.Enum;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace AndreasReitberger.Models
 {
@@ -9,7 +11,7 @@ namespace AndreasReitberger.Models
         public double EndTime { get; set; }
 
         [JsonProperty("filament_used")]
-        public long FilamentUsed { get; set; }
+        public double FilamentUsed { get; set; }
 
         [JsonProperty("filename")]
         public string Filename { get; set; }
@@ -18,10 +20,12 @@ namespace AndreasReitberger.Models
         public KlipperGcodeMetaResult Metadata { get; set; }
 
         [JsonProperty("print_duration")]
-        public long PrintDuration { get; set; }
+        public double PrintDuration { get; set; }
 
         [JsonProperty("status")]
-        public string Status { get; set; }
+        [JsonConverter(typeof(StringEnumConverter), true)]
+        public KlipperJobStates Status { get; set; }
+        //public string Status { get; set; }
 
         [JsonProperty("start_time")]
         public double StartTime { get; set; }

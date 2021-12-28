@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using AndreasReitberger.Enum;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace AndreasReitberger.Models
 {
@@ -18,10 +20,14 @@ namespace AndreasReitberger.Models
         public string Filename { get; set; }
 
         [JsonProperty("state")]
-        public string State { get; set; }
+        [JsonConverter(typeof(StringEnumConverter), true)]
+        public KlipperPrintStates State { get; set; }
 
         [JsonProperty("message")]
         public string Message { get; set; }
+
+        [JsonIgnore]
+        public bool ValidPrintState { get; set; } = false;
         #endregion
 
         #region Overrides

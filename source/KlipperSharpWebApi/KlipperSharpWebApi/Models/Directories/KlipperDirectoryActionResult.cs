@@ -6,10 +6,10 @@ namespace AndreasReitberger.Models
     {
         #region Properties
         [JsonProperty("item")]
-        public KlipperDirectoryItem Item { get; set; }
+        public KlipperDirectory Item { get; set; }
 
         [JsonProperty("source_item")]
-        public KlipperDirectoryItem SourceItem { get; set; }
+        public KlipperDirectory SourceItem { get; set; }
 
         [JsonProperty("action")]
         public string Action { get; set; }

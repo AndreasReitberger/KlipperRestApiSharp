@@ -1,10 +1,14 @@
 ﻿using Newtonsoft.Json;
+using System;
 
 namespace AndreasReitberger.Models
 {
     public partial class KlipperStatusVirtualSdcard
     {
         #region Properties
+        [JsonIgnore]
+        public int PercentageProgress => GetPercentageProgress();
+
         [JsonProperty("progress")]
         public double Progress { get; set; }
 
@@ -19,6 +23,22 @@ namespace AndreasReitberger.Models
 
         [JsonProperty("file_size")]
         public long FileSize { get; set; }
+        #endregion
+
+        #region Methods
+        int GetPercentageProgress()
+        {
+            try
+            {
+                if (Progress <= 0) return 0;
+                int calc = Convert.ToInt32(Progress * 100);
+                return calc;
+            }
+            catch (Exception)
+            {
+                return 0;
+            }
+        }
         #endregion
 
         #region Overrides

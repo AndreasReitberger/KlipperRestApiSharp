@@ -41,7 +41,35 @@ namespace AndreasReitberger.Models
 
         [JsonProperty("extruder")]
         public string Extruder { get; set; }
-        #endregion 
+        #endregion
+
+        #region Methods
+        public Dictionary<string, bool> GetHomedAxisStates()
+        {
+            Dictionary<string, bool> state = new()
+            {
+                { "x", false },
+                { "y", false },
+                { "z", false },
+            };
+            if (!string.IsNullOrEmpty(HomedAxes))
+            {
+                for(int i = 0; i < HomedAxes.Length; i++)
+                {
+                    string current = HomedAxes[i].ToString();
+                    if (state.ContainsKey(current))
+                    {
+                        state[current] = true;
+                    }
+                    else
+                    {
+                        state.Add(current, true);
+                    }
+                }
+            }
+            return state;
+        }
+        #endregion
 
         #region Overrides
         public override string ToString()

@@ -7,7 +7,7 @@ namespace AndreasReitberger.Models
     {
         #region Properties
         [JsonProperty("dirs")]
-        public List<KlipperDirectoryItem> Dirs { get; set; }
+        public List<KlipperDirectory> Dirs { get; set; }
 
         [JsonProperty("files")]
         public List<KlipperFile> Files { get; set; }

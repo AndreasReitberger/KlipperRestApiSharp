@@ -2,10 +2,11 @@
 
 namespace AndreasReitberger.Models
 {
-    public class KlipperJobFinishedEventArgs : KlipperEventArgs
+    public class KlipperIsPrintingStateChangedEventArgs : KlipperEventArgs
     {
         #region Properties
-        public KlipperStatusJob Job { get; set; } = new();
+        public bool NewPrintState { get; set; }
+        public bool PreviousPrintState { get; set; }
         #endregion
 
         #region Overrides

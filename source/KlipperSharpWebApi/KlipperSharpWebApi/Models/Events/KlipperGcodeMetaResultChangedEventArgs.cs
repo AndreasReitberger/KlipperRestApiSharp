@@ -2,10 +2,10 @@
 
 namespace AndreasReitberger.Models
 {
-    public class KlipperJobFinishedEventArgs : KlipperEventArgs
+    public class KlipperGcodeMetaResultChangedEventArgs : KlipperEventArgs
     {
         #region Properties
-        public KlipperStatusJob Job { get; set; } = new();
+        public KlipperGcodeMetaResult NewResult { get; set; }
         #endregion
 
         #region Overrides

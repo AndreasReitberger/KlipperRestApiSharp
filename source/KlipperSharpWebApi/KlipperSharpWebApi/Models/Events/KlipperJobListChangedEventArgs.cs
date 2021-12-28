@@ -7,7 +7,7 @@ namespace AndreasReitberger.Models
     {
         #region Properties
         public ObservableCollection<KlipperJobQueueItem> NewJobList { get; set; } = new();
-        public string NewJobListStatus { get; set; } = string.Empty;
+        //public string NewJobListStatus { get; set; } = string.Empty;
         #endregion
 
         #region Overrides

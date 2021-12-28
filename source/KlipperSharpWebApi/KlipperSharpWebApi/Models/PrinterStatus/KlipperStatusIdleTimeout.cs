@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using AndreasReitberger.Enum;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace AndreasReitberger.Models
 {
@@ -6,10 +8,15 @@ namespace AndreasReitberger.Models
     {
         #region Properties
         [JsonProperty("state")]
-        public string State { get; set; }
+        [JsonConverter(typeof(StringEnumConverter), true)]
+        //public string State { get; set; }
+        public KlipperIdletates State { get; set; }
 
         [JsonProperty("printing_time")]
         public double PrintingTime { get; set; }
+
+        [JsonIgnore]
+        public bool ValidState { get; set; } = false;
         #endregion
 
         #region Overrides

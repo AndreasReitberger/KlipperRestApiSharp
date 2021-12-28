@@ -12,16 +12,16 @@ namespace AndreasReitberger.Models
         public double TotalTime { get; set; }
 
         [JsonProperty("total_print_time")]
-        public long TotalPrintTime { get; set; }
+        public double TotalPrintTime { get; set; }
 
         [JsonProperty("total_filament_used")]
-        public long TotalFilamentUsed { get; set; }
+        public double TotalFilamentUsed { get; set; }
 
         [JsonProperty("longest_job")]
         public double LongestJob { get; set; }
 
         [JsonProperty("longest_print")]
-        public long LongestPrint { get; set; }
+        public double LongestPrint { get; set; }
         #endregion
 
         #region Overrides
