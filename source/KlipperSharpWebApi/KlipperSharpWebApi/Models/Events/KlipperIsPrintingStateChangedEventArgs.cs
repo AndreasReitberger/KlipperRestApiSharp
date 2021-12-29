@@ -5,8 +5,8 @@ namespace AndreasReitberger.Models
     public class KlipperIsPrintingStateChangedEventArgs : KlipperEventArgs
     {
         #region Properties
-        public bool NewPrintState { get; set; }
-        public bool PreviousPrintState { get; set; }
+        public bool IsPrinting { get; set; }
+        public bool IsPaused { get; set; }
         #endregion
 
         #region Overrides

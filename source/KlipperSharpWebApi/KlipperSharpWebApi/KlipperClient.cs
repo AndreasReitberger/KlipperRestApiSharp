@@ -1172,15 +1172,38 @@ namespace AndreasReitberger
             set
             {
                 if (_isPrinting == value) return;
+                _isPrinting = value;
                 UpdateCurrentPrintDependencies(value);
                 OnKlipperIsPrintingStateChanged(new KlipperIsPrintingStateChangedEventArgs()
                 {
-                    NewPrintState = value,
-                    PreviousPrintState = _isPrinting,
+                    IsPrinting = value,
+                    IsPaused = IsPaused,
                     SessonId = SessionId,
                     CallbackId = -1,
                 });
-                _isPrinting = value;
+                OnPropertyChanged();
+            }
+        }
+
+        [JsonIgnore]
+        [XmlIgnore]
+        bool _isPaused = false;
+        [JsonIgnore]
+        [XmlIgnore]
+        public bool IsPaused
+        {
+            get => _isPaused;
+            set
+            {
+                if (_isPaused == value) return;
+                _isPaused = value;
+                OnKlipperIsPrintingStateChanged(new KlipperIsPrintingStateChangedEventArgs()
+                {
+                    IsPrinting = IsPrinting,
+                    IsPaused = value,
+                    SessonId = SessionId,
+                    CallbackId = -1,
+                });
                 OnPropertyChanged();
             }
         }
@@ -2260,6 +2283,7 @@ namespace AndreasReitberger
                                     case "pause_resume":
                                         KlipperStatusPauseResume pauseResume =
                                             JsonConvert.DeserializeObject<KlipperStatusPauseResume>(jsonBody);
+                                        IsPaused = pauseResume.IsPaused;
                                         break;
                                     case "action":
                                         string action = jsonBody;
@@ -2477,12 +2501,11 @@ namespace AndreasReitberger
             try
             {
                 if ((string.IsNullOrEmpty(result) || result == "{}") && EmptyResultIsValid)
+                {
                     return true;
+                }
                 KlipperActionResult actionResult = JsonConvert.DeserializeObject<KlipperActionResult>(result);
-                if (actionResult != null)
-                    return actionResult.Result.ToLower() == "ok";
-                else
-                    return false;
+                return actionResult != null ? actionResult.Result.ToLower() == "ok" : false;
             }
             catch (JsonException jecx)
             {
@@ -2490,6 +2513,7 @@ namespace AndreasReitberger
                 {
                     Exception = jecx,
                     OriginalString = result,
+                    TargetType = nameof(KlipperActionResult),
                     Message = jecx.Message,
                 });
                 return false;
@@ -3444,6 +3468,7 @@ namespace AndreasReitberger
                 {
                     Exception = jecx,
                     OriginalString = result.Result,
+                    TargetType = nameof(KlipperAccessTokenResult),
                     Message = jecx.Message,
                 });
                 return resultObject;
@@ -3473,6 +3498,7 @@ namespace AndreasReitberger
                 {
                     Exception = jecx,
                     OriginalString = result.Result,
+                    TargetType = nameof(KlipperAccessTokenResult),
                     Message = jecx.Message,
                 });
                 return resultObject;
@@ -3521,6 +3547,7 @@ namespace AndreasReitberger
                 {
                     Exception = jecx,
                     OriginalString = result.Result,
+                    TargetType = nameof(KlipperPrinterStateMessageRespone),
                     Message = jecx.Message,
                 });
                 return resultObject;
@@ -3710,6 +3737,7 @@ namespace AndreasReitberger
                 {
                     Exception = jecx,
                     OriginalString = result.Result,
+                    TargetType = nameof(KlipperActionListRespone),
                     Message = jecx.Message,
                 });
                 return resultObject;
@@ -4094,6 +4122,7 @@ namespace AndreasReitberger
                 {
                     Exception = jecx,
                     OriginalString = result.Result,
+                    TargetType = nameof(KlipperFilamentSensorsRespone),
                     Message = jecx.Message,
                 });
                 return resultObject;
@@ -4497,39 +4526,18 @@ namespace AndreasReitberger
             string resultObject = null;
             try
             {
-
                 Dictionary<string, string> urlSegments = new();
                 urlSegments.Add("connection_id", $"{connectionId}");
-                //urlSegments.Add("objects", string.Join("&", objects));
+
                 for (int i = 0; i < objects.Count; i++)
                 {
                     string key = objects[i];
                     string value = string.Empty;
-                    /*
-                    if(key.StartsWith("extruder") || key.StartsWith("heater_bed"))
-                    {
-                        value = "temperature,target,power";
-                    }*/
                     urlSegments.Add(key, value);
                 }
 
-                // POST /printer/objects/subscribe?connection_id=123456789&gcode_move&extruder`
                 result = await SendRestApiRequestAsync(MoonRakerCommandBase.printer, Method.POST, "objects/subscribe", "", 10000, urlSegments).ConfigureAwait(false);
                 return result?.Result;
-                /*
-                KlipperPrinterStatusSubscriptionRespone queryResult = JsonConvert.DeserializeObject<KlipperPrinterStatusSubscriptionRespone>(result.Result);
-                return queryResult?.Result?.Status?.Objects;
-                */
-            }
-            catch (JsonException jecx)
-            {
-                OnError(new KlipprtJsonConvertEventArgs()
-                {
-                    Exception = jecx,
-                    OriginalString = result.Result,
-                    Message = jecx.Message,
-                });
-                return resultObject;
             }
             catch (Exception exc)
             {
@@ -4559,6 +4567,7 @@ namespace AndreasReitberger
                 {
                     Exception = jecx,
                     OriginalString = result.Result,
+                    TargetType = nameof(KlipperEndstopQueryRespone),
                     Message = jecx.Message,
                 });
                 return resultObject;
@@ -4602,6 +4611,7 @@ namespace AndreasReitberger
                 {
                     Exception = jecx,
                     OriginalString = result.Result,
+                    TargetType = nameof(KlipperServerConfigRespone),
                     Message = jecx.Message,
                 });
                 return resultObject;
@@ -4630,6 +4640,7 @@ namespace AndreasReitberger
                 {
                     Exception = jecx,
                     OriginalString = result.Result,
+                    TargetType = nameof(KlipperServerTempDataRespone),
                     Message = jecx.Message,
                 });
                 return resultObject;
@@ -4658,6 +4669,7 @@ namespace AndreasReitberger
                 {
                     Exception = jecx,
                     OriginalString = result.Result,
+                    TargetType = nameof(KlipperGcodesRespone),
                     Message = jecx.Message,
                 });
                 return resultObject;
@@ -4835,6 +4847,7 @@ namespace AndreasReitberger
                 {
                     Exception = jecx,
                     OriginalString = result.Result,
+                    TargetType = nameof(KlipperGcodeHelpRespone),
                     Message = jecx.Message,
                 });
                 return resultObject;
@@ -4953,7 +4966,7 @@ namespace AndreasReitberger
                 if (x != double.PositiveInfinity) gcodeCommand.Append($"G1 X{(relative ? "" : "+")}{x} F{speed};");
                 if (y != double.PositiveInfinity) gcodeCommand.Append($"G1 Y{(relative ? "" : "+")}{y} F{speed};");
                 if (z != double.PositiveInfinity) gcodeCommand.Append($"G1 Y{(relative ? "" : "+")}{z} F{speed};");
-                if (e != double.PositiveInfinity) gcodeCommand.Append($"M83 G1 E{e} F{speed};");
+                if (e != double.PositiveInfinity) gcodeCommand.Append($"M83\nG1 E{e} F{speed};");
 
                 bool result = await RunGcodeScriptAsync(gcodeCommand.ToString()).ConfigureAwait(false);
                 return result;
@@ -4984,6 +4997,7 @@ namespace AndreasReitberger
                 {
                     Exception = jecx,
                     OriginalString = result.Result,
+                    TargetType = nameof(KlipperMachineInfoRespone),
                     Message = jecx.Message,
                 });
                 return resultObject;
@@ -5112,6 +5126,7 @@ namespace AndreasReitberger
                 {
                     Exception = jecx,
                     OriginalString = result.Result,
+                    TargetType = nameof(KlipperMoonrakerProcessStatsRespone),
                     Message = jecx.Message,
                 });
                 return resultObject;
@@ -5175,6 +5190,7 @@ namespace AndreasReitberger
                 {
                     Exception = jecx,
                     OriginalString = result.Result,
+                    TargetType = nameof(KlipperFileListRespone),
                     Message = jecx.Message,
                 });
                 return resultObject;
@@ -5221,6 +5237,7 @@ namespace AndreasReitberger
                 {
                     Exception = jecx,
                     OriginalString = result.Result,
+                    TargetType = nameof(KlipperGcodeMetaRespone),
                     Message = jecx.Message,
                 });
                 return resultObject;
@@ -5308,6 +5325,7 @@ namespace AndreasReitberger
                 {
                     Exception = jecx,
                     OriginalString = result.Result,
+                    TargetType = nameof(KlipperDirectoryInfoRespone),
                     Message = jecx.Message,
                 });
                 return resultObject;
@@ -5378,6 +5396,7 @@ namespace AndreasReitberger
                 {
                     Exception = jecx,
                     OriginalString = result.Result,
+                    TargetType = nameof(KlipperDirectoryActionRespone),
                     Message = jecx.Message,
                 });
                 return resultObject;
@@ -5411,6 +5430,7 @@ namespace AndreasReitberger
                 {
                     Exception = jecx,
                     OriginalString = result.Result,
+                    TargetType = nameof(KlipperDirectoryActionRespone),
                     Message = jecx.Message,
                 });
                 return resultObject;
@@ -5444,6 +5464,7 @@ namespace AndreasReitberger
                 {
                     Exception = jecx,
                     OriginalString = result.Result,
+                    TargetType = nameof(KlipperDirectoryActionRespone),
                     Message = jecx.Message,
                 });
                 return resultObject;
@@ -5477,6 +5498,7 @@ namespace AndreasReitberger
                 {
                     Exception = jecx,
                     OriginalString = result.Result,
+                    TargetType = nameof(KlipperDirectoryActionRespone),
                     Message = jecx.Message,
                 });
                 return resultObject;
@@ -5520,6 +5542,7 @@ namespace AndreasReitberger
                 {
                     Exception = jecx,
                     OriginalString = result.Result,
+                    TargetType = nameof(KlipperFileActionResult),
                     Message = jecx.Message,
                 });
                 return resultObject;
@@ -5548,6 +5571,7 @@ namespace AndreasReitberger
                 {
                     Exception = jecx,
                     OriginalString = result.Result,
+                    TargetType = nameof(KlipperFileActionResult),
                     Message = jecx.Message,
                 });
                 return resultObject;
@@ -5577,6 +5601,7 @@ namespace AndreasReitberger
                 {
                     Exception = jecx,
                     OriginalString = result.Result,
+                    TargetType = nameof(KlipperDirectoryActionResult),
                     Message = jecx.Message,
                 });
                 return resultObject;
@@ -5609,6 +5634,7 @@ namespace AndreasReitberger
                 {
                     Exception = jecx,
                     OriginalString = result.Result,
+                    TargetType = nameof(KlipperDirectoryActionRespone),
                     Message = jecx.Message,
                 });
                 return resultObject;
@@ -5662,6 +5688,7 @@ namespace AndreasReitberger
                 {
                     Exception = jecx,
                     OriginalString = result.Result,
+                    TargetType = nameof(KlipperUserActionRespone),
                     Message = jecx.Message,
                 });
                 return resultObject;
@@ -5698,6 +5725,7 @@ namespace AndreasReitberger
                 {
                     Exception = jecx,
                     OriginalString = result.Result,
+                    TargetType = nameof(KlipperUserActionRespone),
                     Message = jecx.Message,
                 });
                 return resultObject;
@@ -5731,6 +5759,7 @@ namespace AndreasReitberger
                 {
                     Exception = jecx,
                     OriginalString = result.Result,
+                    TargetType = nameof(KlipperUserActionRespone),
                     Message = jecx.Message,
                 });
                 return resultObject;
@@ -5760,6 +5789,7 @@ namespace AndreasReitberger
                 {
                     Exception = jecx,
                     OriginalString = result.Result,
+                    TargetType = nameof(KlipperUserActionRespone),
                     Message = jecx.Message,
                 });
                 return resultObject;
@@ -5787,6 +5817,7 @@ namespace AndreasReitberger
                 {
                     Exception = jecx,
                     OriginalString = result.Result,
+                    TargetType = nameof(KlipperUserRespone),
                     Message = jecx.Message,
                 });
                 return resultObject;
@@ -5826,6 +5857,7 @@ namespace AndreasReitberger
                 {
                     Exception = jecx,
                     OriginalString = result.Result,
+                    TargetType = nameof(KlipperUserActionRespone),
                     Message = jecx.Message,
                 });
                 return resultObject;
@@ -5861,6 +5893,7 @@ namespace AndreasReitberger
                 {
                     Exception = jecx,
                     OriginalString = result.Result,
+                    TargetType = nameof(KlipperUserActionRespone),
                     Message = jecx.Message,
                 });
                 return resultObject;
@@ -5889,6 +5922,7 @@ namespace AndreasReitberger
                 {
                     Exception = jecx,
                     OriginalString = result.Result,
+                    TargetType = nameof(KlipperUserListRespone),
                     Message = jecx.Message,
                 });
                 return resultObject;
@@ -5920,6 +5954,7 @@ namespace AndreasReitberger
                 {
                     Exception = jecx,
                     OriginalString = result.Result,
+                    TargetType = nameof(KlipperDatabaseNamespaceListRespone),
                     Message = jecx.Message,
                 });
                 return resultObject;
@@ -5957,6 +5992,7 @@ namespace AndreasReitberger
                 {
                     Exception = jecx,
                     OriginalString = result.Result,
+                    TargetType = nameof(KlipperDatabaseItemRespone),
                     Message = jecx.Message,
                 });
                 return resultObject;
@@ -5985,6 +6021,7 @@ namespace AndreasReitberger
                 {
                     Exception = jecx,
                     OriginalString = resultString,
+                    TargetType = nameof(KlipperDatabaseMainsailValueWebcam),
                     Message = jecx.Message,
                 });
                 return resultObject;
@@ -6027,6 +6064,7 @@ namespace AndreasReitberger
                 {
                     Exception = jecx,
                     OriginalString = resultString,
+                    TargetType = nameof(KlipperDatabaseMainsailValueGeneral),
                     Message = jecx.Message,
                 });
                 return resultObject;
@@ -6070,6 +6108,7 @@ namespace AndreasReitberger
                 {
                     Exception = jecx,
                     OriginalString = resultString,
+                    TargetType = nameof(KlipperDatabaseMainsailValueRemotePrinter),
                     Message = jecx.Message,
                 });
                 return resultObject;
@@ -6099,6 +6138,7 @@ namespace AndreasReitberger
                 {
                     Exception = jecx,
                     OriginalString = resultString,
+                    TargetType = nameof(KlipperDatabaseMainsailValuePreset),
                     Message = jecx.Message,
                 });
                 return resultObject;
@@ -6141,6 +6181,7 @@ namespace AndreasReitberger
                 {
                     Exception = jecx,
                     OriginalString = resultString,
+                    TargetType = nameof(KlipperDatabaseMainsailValueHeightmap),
                     Message = jecx.Message,
                 });
                 return resultObject;
@@ -6179,6 +6220,7 @@ namespace AndreasReitberger
                 {
                     Exception = jecx,
                     OriginalString = result.Result,
+                    TargetType = nameof(KlipperDatabaseItemRespone),
                     Message = jecx.Message,
                 });
                 return resultObject;
@@ -6217,6 +6259,7 @@ namespace AndreasReitberger
                 {
                     Exception = jecx,
                     OriginalString = result.Result,
+                    TargetType = nameof(KlipperDatabaseItemRespone),
                     Message = jecx.Message,
                 });
                 return resultObject;
@@ -6248,6 +6291,7 @@ namespace AndreasReitberger
                 {
                     Exception = jecx,
                     OriginalString = result.Result,
+                    TargetType = nameof(KlipperJobQueueRespone),
                     Message = jecx.Message,
                 });
                 return resultObject;
@@ -6317,6 +6361,7 @@ namespace AndreasReitberger
                 {
                     Exception = jecx,
                     OriginalString = result.Result,
+                    TargetType = nameof(KlipperJobQueueRespone),
                     Message = jecx.Message,
                 });
                 return resultObject;
@@ -6351,6 +6396,7 @@ namespace AndreasReitberger
                 {
                     Exception = jecx,
                     OriginalString = result.Result,
+                    TargetType = nameof(KlipperJobQueueRespone),
                     Message = jecx.Message,
                 });
                 return resultObject;
@@ -6385,6 +6431,7 @@ namespace AndreasReitberger
                 {
                     Exception = jecx,
                     OriginalString = result.Result,
+                    TargetType = nameof(KlipperJobQueueRespone),
                     Message = jecx.Message,
                 });
                 return resultObject;
@@ -6419,6 +6466,7 @@ namespace AndreasReitberger
                 {
                     Exception = jecx,
                     OriginalString = result.Result,
+                    TargetType = nameof(KlipperJobQueueRespone),
                     Message = jecx.Message,
                 });
                 return resultObject;
@@ -6449,6 +6497,7 @@ namespace AndreasReitberger
                 {
                     Exception = jecx,
                     OriginalString = result.Result,
+                    TargetType = nameof(KlipperJobQueueRespone),
                     Message = jecx.Message,
                 });
                 return resultObject;
@@ -6497,6 +6546,7 @@ namespace AndreasReitberger
                 {
                     Exception = jecx,
                     OriginalString = result.Result,
+                    TargetType = nameof(KlipperUpdateStatusRespone),
                     Message = jecx.Message,
                 });
                 return resultObject;
@@ -6632,6 +6682,7 @@ namespace AndreasReitberger
                 {
                     Exception = jecx,
                     OriginalString = result.Result,
+                    TargetType = nameof(KlipperDeviceListRespone),
                     Message = jecx.Message,
                 });
                 return resultObject;
@@ -6665,6 +6716,7 @@ namespace AndreasReitberger
                 {
                     Exception = jecx,
                     OriginalString = result.Result,
+                    TargetType = nameof(KlipperDeviceStatusRespone),
                     Message = jecx.Message,
                 });
                 return resultObject;
@@ -6699,6 +6751,7 @@ namespace AndreasReitberger
                 {
                     Exception = jecx,
                     OriginalString = result.Result,
+                    TargetType = nameof(KlipperDeviceStatusRespone),
                     Message = jecx.Message,
                 });
                 return resultObject;
@@ -6739,6 +6792,7 @@ namespace AndreasReitberger
                 {
                     Exception = jecx,
                     OriginalString = result.Result,
+                    TargetType = nameof(KlipperDeviceStatusRespone),
                     Message = jecx.Message,
                 });
                 return resultObject;
@@ -6777,6 +6831,7 @@ namespace AndreasReitberger
                 {
                     Exception = jecx,
                     OriginalString = result.Result,
+                    TargetType = nameof(KlipperDeviceStatusRespone),
                     Message = jecx.Message,
                 });
                 return resultObject;
@@ -6815,6 +6870,7 @@ namespace AndreasReitberger
                 {
                     Exception = jecx,
                     OriginalString = result.Result,
+                    TargetType = nameof(KlipperDeviceStatusRespone),
                     Message = jecx.Message,
                 });
                 return resultObject;
@@ -6847,6 +6903,7 @@ namespace AndreasReitberger
                 {
                     Exception = jecx,
                     OriginalString = result.Result,
+                    TargetType = nameof(OctoprintApiVersionResult),
                     Message = jecx.Message,
                 });
                 return resultObject;
@@ -6877,6 +6934,7 @@ namespace AndreasReitberger
                 {
                     Exception = jecx,
                     OriginalString = result.Result,
+                    TargetType = nameof(OctoprintApiServerStatusResult),
                     Message = jecx.Message,
                 });
                 return resultObject;
@@ -6907,6 +6965,7 @@ namespace AndreasReitberger
                 {
                     Exception = jecx,
                     OriginalString = result.Result,
+                    TargetType = nameof(OctoprintApiServerStatusResult),
                     Message = jecx.Message,
                 });
                 return resultObject;
@@ -6937,6 +6996,7 @@ namespace AndreasReitberger
                 {
                     Exception = jecx,
                     OriginalString = result.Result,
+                    TargetType = nameof(OctoprintApiSettingsResult),
                     Message = jecx.Message,
                 });
                 return resultObject;
@@ -6967,6 +7027,7 @@ namespace AndreasReitberger
                 {
                     Exception = jecx,
                     OriginalString = result.Result,
+                    TargetType = nameof(OctoprintApiJobResult),
                     Message = jecx.Message,
                 });
                 return resultObject;
@@ -6997,6 +7058,7 @@ namespace AndreasReitberger
                 {
                     Exception = jecx,
                     OriginalString = result.Result,
+                    TargetType = nameof(OctoprintApiPrinterStatusResult),
                     Message = jecx.Message,
                 });
                 return resultObject;
@@ -7052,6 +7114,7 @@ namespace AndreasReitberger
                 {
                     Exception = jecx,
                     OriginalString = result.Result,
+                    TargetType = nameof(OctoprintApiPrinterProfilesResult),
                     Message = jecx.Message,
                 });
                 return resultObject;
@@ -7106,6 +7169,7 @@ namespace AndreasReitberger
                 {
                     Exception = jecx,
                     OriginalString = result.Result,
+                    TargetType = nameof(KlipperHistoryRespone),
                     Message = jecx.Message,
                 });
                 return resultObject;
@@ -7136,6 +7200,7 @@ namespace AndreasReitberger
                 {
                     Exception = jecx,
                     OriginalString = result.Result,
+                    TargetType = nameof(KlipperHistoryTotalRespone),
                     Message = jecx.Message,
                 });
                 return resultObject;
@@ -7166,6 +7231,7 @@ namespace AndreasReitberger
                 {
                     Exception = jecx,
                     OriginalString = result.Result,
+                    TargetType = nameof(KlipperHistoryTotalRespone),
                     Message = jecx.Message,
                 });
                 return resultObject;
@@ -7199,6 +7265,7 @@ namespace AndreasReitberger
                 {
                     Exception = jecx,
                     OriginalString = result.Result,
+                    TargetType = nameof(KlipperHistorySingleJobRespone),
                     Message = jecx.Message,
                 });
                 return resultObject;
@@ -7239,6 +7306,7 @@ namespace AndreasReitberger
                 {
                     Exception = jecx,
                     OriginalString = result.Result,
+                    TargetType = nameof(KlipperHistoryJobDeletedRespone),
                     Message = jecx.Message,
                 });
                 return resultObject;

@@ -12,9 +12,9 @@
     <PackageTags>Moonraker, Klipper, MainsailOS, Remote, Web, API, Rest, Sharp</PackageTags>
     <PackageProjectUrl>https://github.com/AndreasReitberger/KlipperRestApiSharp</PackageProjectUrl>
     <RepositoryUrl>https://github.com/AndreasReitberger/KlipperRestApiSharp</RepositoryUrl>
-    <AssemblyVersion>1.0.2.0</AssemblyVersion>
-    <FileVersion>1.0.2.0</FileVersion>
-    <Version>1.0.2</Version>
+    <AssemblyVersion>1.0.3.0</AssemblyVersion>
+    <FileVersion>1.0.3.0</FileVersion>
+    <Version>1.0.3</Version>
     <LangVersion>9.0</LangVersion>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>

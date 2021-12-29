@@ -7,13 +7,13 @@ namespace AndreasReitberger.Models
     {
         #region Properties
         [JsonProperty("github_rate_limit")]
-        public long GithubRateLimit { get; set; }
+        public long? GithubRateLimit { get; set; }
 
         [JsonProperty("github_requests_remaining")]
-        public long GithubRequestsRemaining { get; set; }
+        public long? GithubRequestsRemaining { get; set; }
 
         [JsonProperty("github_limit_reset_time")]
-        public long GithubLimitResetTime { get; set; }
+        public long? GithubLimitResetTime { get; set; }
 
         [JsonProperty("version_info")]
         public Dictionary<string, KlipperUpdateVersionInfo> VersionInfo { get; set; }
