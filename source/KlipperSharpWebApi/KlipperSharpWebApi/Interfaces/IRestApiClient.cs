@@ -25,8 +25,8 @@ namespace AndreasReitberger.Interfaces
         #endregion
 
         #region Methods
-        public Task CheckOnlineAsync(int Timeout = 10000);
-        public Task CheckOnlineAsync(CancellationTokenSource cts);
+        public Task CheckOnlineAsync(int Timeout = 10000, bool resolveDnsFirst = true);
+        public Task CheckOnlineAsync(CancellationTokenSource cts, bool resolveDnsFirst = true);
         public bool CheckIfConfigurationHasChanged(KlipperClient temp);
         public void CancelCurrentRequests();
         #endregion

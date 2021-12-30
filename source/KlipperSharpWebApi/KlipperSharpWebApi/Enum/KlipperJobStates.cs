@@ -8,8 +8,10 @@ namespace AndreasReitberger.Enum
         Completed = 0,
         [EnumMember(Value = "klippy_shutdown")]
         KlippyShutdown = 1,
+        [EnumMember(Value = "in_progress")]
+        InProgress = 2,
         [EnumMember(Value = "cancelled")]
-        Cancelled = 2,
+        Cancelled = 3,
         [EnumMember(Value = "error")]
         Error = 99,
     }

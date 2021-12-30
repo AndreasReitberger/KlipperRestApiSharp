@@ -3285,31 +3285,48 @@ namespace AndreasReitberger
             return isReachable;
         }
 
-        public async Task CheckOnlineAsync(int Timeout = 10000)
+        public async Task CheckOnlineAsync(int Timeout = 10000, bool resolveDnsFirst = true)
         {
             CancellationTokenSource cts = new(new TimeSpan(0, 0, 0, 0, Timeout));
-            await CheckOnlineAsync(cts).ConfigureAwait(false);
+            await CheckOnlineAsync(cts, resolveDnsFirst).ConfigureAwait(false);
         }
 
-        public async Task CheckOnlineAsync(CancellationTokenSource cts)
+        public async Task CheckOnlineAsync(CancellationTokenSource cts, bool resolveDnsFirst = true)
         {
             if (IsConnecting) return; // Avoid multiple calls
             IsConnecting = true;
             bool isReachable = false;
             try
             {
-                // Cancel after timeout
-                //var cts = new CancellationTokenSource(new TimeSpan(0, 0, 0, 0, Timeout));
-                //string uriString = string.Format("{0}{1}:{2}", httpProtocol, ServerAddress, Port);
-                string uriString = FullWebAddress; // $"{(IsSecure ? "https" : "http")}://{ServerAddress}:{Port}";
+                string uriString = FullWebAddress;
                 try
                 {
-                    HttpResponseMessage response = await client.GetAsync(uriString, cts.Token).ConfigureAwait(false);
-                    response.EnsureSuccessStatusCode();
+                    // This will try to resolve the hostname before sending the reqeuest.
+                    if (resolveDnsFirst)
+                    {
+                        try
+                        {
+                            IPHostEntry host = Dns.GetHostEntry(ServerAddress);
+                            IPAddress address = host.AddressList.FirstOrDefault(ip => ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork);
+                            if (address != null)
+                            {
+                                uriString = $"{(IsSecure ? "https" : "http")}://{address}:{Port}";
+                            }
+                        }
+                        catch (Exception exc)
+                        {
+                            OnError(new UnhandledExceptionEventArgs(exc, false));
+                        }
+                    }
+                    await Task.Delay(10);
+                    HttpResponseMessage response =
+                        await client.GetAsync(uriString, HttpCompletionOption.ResponseHeadersRead, cts.Token).ConfigureAwait(false);
+                    _ = response.EnsureSuccessStatusCode();
                     if (response != null)
                     {
                         isReachable = response.IsSuccessStatusCode;
                     }
+                    await Task.Delay(50);
                 }
                 catch (InvalidOperationException iexc)
                 {
@@ -7317,7 +7334,7 @@ namespace AndreasReitberger
                 return resultObject;
             }
         }
-#endregion
+        #endregion
 
         #endregion
 

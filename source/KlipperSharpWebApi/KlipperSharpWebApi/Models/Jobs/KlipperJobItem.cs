@@ -8,7 +8,7 @@ namespace AndreasReitberger.Models
     {
         #region Properties
         [JsonProperty("end_time")]
-        public double EndTime { get; set; }
+        public double? EndTime { get; set; }
 
         [JsonProperty("filament_used")]
         public double FilamentUsed { get; set; }
@@ -28,7 +28,7 @@ namespace AndreasReitberger.Models
         //public string Status { get; set; }
 
         [JsonProperty("start_time")]
-        public double StartTime { get; set; }
+        public double? StartTime { get; set; }
 
         [JsonProperty("total_duration")]
         public double TotalDuration { get; set; }
