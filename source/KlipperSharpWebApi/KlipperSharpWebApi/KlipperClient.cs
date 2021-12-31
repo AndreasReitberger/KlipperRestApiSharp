@@ -41,7 +41,7 @@ namespace AndreasReitberger
         #endregion
 
         #region Variables
-        static HttpClient client = new();
+        //static HttpClient client = new();
         int _retries = 0;
 
         readonly bool _enableCooldown = true;
@@ -1157,6 +1157,90 @@ namespace AndreasReitberger
                         CallbackId = -1,
                     });
                 }
+                OnPropertyChanged();
+            }
+        }
+
+        [XmlIgnore, JsonIgnore]
+        Dictionary<string, KlipperStatusFan> _fans = new();
+        [XmlIgnore, JsonIgnore]
+        public Dictionary<string, KlipperStatusFan> Fans
+        {
+            get => _fans;
+            set
+            {
+                if (_fans == value) return;
+                _fans = value;
+                // WebSocket is updating this property in a high frequency, so a cooldown can be enabled
+                /*
+                if (_enableCooldown && !RefreshHeatersDirectly)
+                {
+                    if (_cooldownExtruder > 0)
+                        _cooldownExtruder--;
+                    else
+                    {
+                        _cooldownExtruder = _cooldownFallback;
+
+                        OnKlipperExtruderStatesChanged(new KlipperExtruderStatesChangedEventArgs()
+                        {
+                            ExtruderStates = value,
+                            SessonId = SessionId,
+                            CallbackId = -1,
+                        });
+                    }
+                }
+                else
+                {
+                    OnKlipperExtruderStatesChanged(new KlipperExtruderStatesChangedEventArgs()
+                    {
+                        ExtruderStates = value,
+                        SessonId = SessionId,
+                        CallbackId = -1,
+                    });
+                }
+                */
+                OnPropertyChanged();
+            }
+        }
+
+        [XmlIgnore, JsonIgnore]
+        Dictionary<string, KlipperStatusDriver> _drivers = new();
+        [XmlIgnore, JsonIgnore]
+        public Dictionary<string, KlipperStatusDriver> Drivers
+        {
+            get => _drivers;
+            set
+            {
+                if (_drivers == value) return;
+                _drivers = value;
+                // WebSocket is updating this property in a high frequency, so a cooldown can be enabled
+                /*
+                if (_enableCooldown && !RefreshHeatersDirectly)
+                {
+                    if (_cooldownExtruder > 0)
+                        _cooldownExtruder--;
+                    else
+                    {
+                        _cooldownExtruder = _cooldownFallback;
+
+                        OnKlipperExtruderStatesChanged(new KlipperExtruderStatesChangedEventArgs()
+                        {
+                            ExtruderStates = value,
+                            SessonId = SessionId,
+                            CallbackId = -1,
+                        });
+                    }
+                }
+                else
+                {
+                    OnKlipperExtruderStatesChanged(new KlipperExtruderStatesChangedEventArgs()
+                    {
+                        ExtruderStates = value,
+                        SessonId = SessionId,
+                        CallbackId = -1,
+                    });
+                }
+                */
                 OnPropertyChanged();
             }
         }
@@ -2315,6 +2399,7 @@ namespace AndreasReitberger
                                         string remotePrinter = jsonBody;
                                         //JobListState = state;
                                         break;
+                                    /* Moved below
                                     case "temperature_sensor raspberry_pi":
                                         KlipperStatusTemperatureSensor tempSensor =
                                             JsonConvert.DeserializeObject<KlipperStatusTemperatureSensor>(jsonBody);
@@ -2333,19 +2418,116 @@ namespace AndreasReitberger
                                             TemperatureSensors.Add(tempSensorName, tempSensor);
                                         }
                                         break;
+                                        */
                                     // Not relevant so far
                                     case "temperature_host raspberry_pi":
-                                    case "tmc2130 stepper_x":
-                                    case "tmc2130 stepper_y":
-                                    case "tmc2130 stepper_z":
-                                    case "tmc2130 extruder":
-                                    case "heater_fan nozzle_cooling_fan":
+                                    //case "tmc2130 stepper_x":
+                                    //case "tmc2130 stepper_y":
+                                    //case "tmc2130 stepper_z":
+                                    //case "tmc2130 extruder":
+                                    //case "heater_fan nozzle_cooling_fan":
                                     case "item":
 #if DEBUG
                                         //Console.WriteLine($"Ignored Json object: '{name}' => '{jsonBody}");
 #endif
                                         break;
                                     default:
+                                        bool nameFound = false;
+                                        try
+                                        {
+                                            if (name.StartsWith("heater_fan"))
+                                            {
+                                                string[] fan = name.Split(' ');
+                                                if (fan.Length >= 2)
+                                                {
+#if NETSTANDARD
+                                                    string fanName = fan[^1];
+#else
+                                                string fanName = fan[fan.Length -1];
+#endif
+                                                    KlipperStatusFan fanObject = JsonConvert.DeserializeObject<KlipperStatusFan>(jsonBody);
+                                                    if (fanObject != null)
+                                                    {
+                                                        if (Fans.ContainsKey(fanName))
+                                                        {
+                                                            Fans[fanName] = fanObject;
+                                                        }
+                                                        else
+                                                        {
+                                                            Fans.Add(fanName, fanObject);
+                                                        }
+                                                    }
+                                                    nameFound = true;
+                                                }
+                                            }
+                                            else if (name.StartsWith("temperature_sensor")) // || name.StartsWith("temperature_host"))
+                                            {
+                                                string[] sensor = name.Split(' ');
+                                                if (sensor.Length >= 2)
+                                                {
+#if NETSTANDARD
+                                                    string sensorName = sensor[^1];
+#else
+                                                string sensorName = sensor[sensor.Length - 1];
+#endif
+                                                    KlipperStatusTemperatureSensor tempObject = JsonConvert.DeserializeObject<KlipperStatusTemperatureSensor>(jsonBody);
+                                                    if (tempObject != null)
+                                                    {
+                                                        if (TemperatureSensors.ContainsKey(sensorName))
+                                                        {
+                                                            TemperatureSensors[sensorName] = tempObject;
+                                                        }
+                                                        else
+                                                        {
+                                                            TemperatureSensors.Add(sensorName, tempObject);
+                                                        }
+                                                        nameFound = true;
+                                                    }
+                                                }
+                                            }
+                                            else if (name.StartsWith("tmc2130"))
+                                            {
+                                                string[] driver = name.Split(' ');
+                                                if (driver.Length >= 2)
+                                                {
+#if NETSTANDARD
+                                                    string driverName = driver[^1];
+#else
+                                                string driverName = driver[driver.Length - 1];
+#endif
+                                                    KlipperStatusDriverRespone drvObject = JsonConvert.DeserializeObject<KlipperStatusDriverRespone>(jsonBody);
+                                                    if (drvObject != null)
+                                                    {
+                                                        if (Drivers.ContainsKey(driverName))
+                                                        {
+                                                            Drivers[driverName] = drvObject.DrvStatus;
+                                                        }
+                                                        else
+                                                        {
+                                                            Drivers.Add(driverName, drvObject.DrvStatus);
+                                                        }
+                                                        nameFound = true;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        catch (JsonException jecx)
+                                        {
+                                            OnError(new KlipprtJsonConvertEventArgs()
+                                            {
+                                                Exception = jecx,
+                                                OriginalString = jsonBody,
+                                                Message = jecx.Message,
+                                            });
+                                        }
+                                        catch (Exception exc)
+                                        {
+                                            OnError(new UnhandledExceptionEventArgs(exc, false));
+                                        }
+                                        if(nameFound)
+                                        {
+                                            break;
+                                        }
 #if DEBUG
                                         Console.WriteLine($"No Json object found for '{name}' => '{jsonBody}");
 #endif
@@ -2490,11 +2672,11 @@ namespace AndreasReitberger
         }
 #endregion
 
-        #region Methods
+#region Methods
 
-        #region Private
+#region Private
 
-        #region ValidateResult
+#region ValidateResult
 
         bool GetQueryResult(string result, bool EmptyResultIsValid = false)
         {
@@ -2524,9 +2706,9 @@ namespace AndreasReitberger
                 return false;
             }
         }
-        #endregion
+#endregion
 
-        #region RestApi
+#region RestApi
         async Task<KlipperApiRequestRespone> SendRestApiRequestAsync(
             MoonRakerCommandBase commandBase, Method method, string command, CancellationTokenSource cts, string jsonDataString = "",
             Dictionary<string, string> urlSegments = null, string requestTargetUri = "")
@@ -2946,9 +3128,9 @@ namespace AndreasReitberger
             }
             return apiRsponeResult;
         }
-        #endregion
+#endregion
 
-        #region Download
+#region Download
         byte[] DownloadFileFromUri(Uri downloadUri, int Timeout = 5000)
         {
             try
@@ -2971,7 +3153,7 @@ namespace AndreasReitberger
                 return null;
             }
         }
-        #endregion
+#endregion
 
 #region Proxy
         Uri GetProxyUri()
@@ -3004,14 +3186,11 @@ namespace AndreasReitberger
                     Proxy = GetCurrentProxy(),
                     AllowAutoRedirect = true,
                 };
-                client = new HttpClient(handler: handler, disposeHandler: true);
+                //client = new HttpClient(handler: handler, disposeHandler: true);
             }
             else
             {
-                if (HttpHandler == null)
-                    client = new HttpClient();
-                else
-                    client = new HttpClient(handler: HttpHandler, disposeHandler: true);
+                //client = HttpHandler == null ? new HttpClient() : new HttpClient(handler: HttpHandler, disposeHandler: true);
             }
         }
 #endregion
@@ -3123,13 +3302,13 @@ namespace AndreasReitberger
                 OnError(new UnhandledExceptionEventArgs(exc, false));
             }
         }
-        #endregion
+#endregion
 
-        #endregion
+#endregion
 
-        #region Public
+#region Public
 
-        #region Proxy
+#region Proxy
         public void SetProxy(bool Secure, string Address, int Port, bool Enable = true)
         {
             EnableProxy = Enable;
@@ -3154,7 +3333,7 @@ namespace AndreasReitberger
         }
 #endregion
 
-        #region Refresh
+#region Refresh
         public void StartListening(bool StopActiveListening = false)
         {
             if (IsListening)// avoid multiple sessions
@@ -3255,7 +3434,7 @@ namespace AndreasReitberger
             }
             IsRefreshing = false;
         }
-        #endregion
+#endregion
 
 #region Login
 
@@ -3333,11 +3512,13 @@ namespace AndreasReitberger
         {
             try
             {
+                /*
                 if (client != null)
                 {
                     client.CancelPendingRequests();
                     UpdateWebClientInstance();
                 }
+                */
             }
             catch (Exception exc)
             {
@@ -3347,31 +3528,6 @@ namespace AndreasReitberger
 #endregion
 
 #region CheckOnline
-
-        [Obsolete]
-        public async Task<bool> CheckOnlineWithApiCallAsync(int Timeout = 10000)
-        {
-            IsConnecting = true;
-            bool isReachable = false;
-            try
-            {
-                if (IsReady)
-                {
-                    // Send an empty command to check the respone
-                    string pingCommand = "{}";
-                    KlipperApiRequestRespone respone = await SendRestApiRequestAsync(MoonRakerCommandBase.printer, Method.POST, "ping", pingCommand, Timeout).ConfigureAwait(false);
-                    if (respone != null)
-                        isReachable = respone.IsOnline;
-                }
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-            }
-            IsConnecting = false;
-            IsOnline = isReachable;
-            return isReachable;
-        }
 
         public async Task CheckOnlineAsync(int Timeout = 10000, bool resolveDnsFirst = true)
         {
@@ -3424,6 +3580,8 @@ namespace AndreasReitberger
             }
         }
 
+        
+        /*
         [Obsolete]
         public async Task CheckOnlineOldAsync(CancellationTokenSource cts, bool resolveDnsFirst = true)
         {
@@ -3493,6 +3651,7 @@ namespace AndreasReitberger
                 await CheckOnlineAsync(2000).ConfigureAwait(false);
             }
         }
+        */
 
         public async Task<bool> CheckIfApiIsValidAsync(int Timeout = 10000)
         {
@@ -3500,7 +3659,8 @@ namespace AndreasReitberger
             {
                 if (IsOnline)
                 {
-                    KlipperApiRequestRespone respone = await SendRestApiRequestAsync(MoonRakerCommandBase.printer, Method.GET, "info", "", Timeout).ConfigureAwait(false);
+                    CancellationTokenSource cts = new(new TimeSpan(0, 0, 0, 0, Timeout));
+                    KlipperApiRequestRespone respone = await SendOnlineCheckRestApiRequestAsync(MoonRakerCommandBase.api, "version", cts).ConfigureAwait(false);
                     if (respone.HasAuthenticationError)
                     {
                         AuthenticationFailed = true;
@@ -7032,9 +7192,9 @@ namespace AndreasReitberger
                 return resultObject;
             }
         }
-        #endregion
+#endregion
 
-        #region Octoprint API emulation
+#region Octoprint API emulation
         public async Task<OctoprintApiVersionResult> GetOctoPrintApiVersionInfoAsync()
         {
             KlipperApiRequestRespone result = new();
@@ -7276,9 +7436,9 @@ namespace AndreasReitberger
                 return resultObject;
             }
         }
-        #endregion
+#endregion
 
-        #region History APIs
+#region History APIs
         public async Task<List<KlipperJobItem>> GetHistoryJobListAsync(int limit = 100, int start = 0, double since = -1, double before = -1, string order = "asc")
         {
             List<KlipperJobItem> resultObject = null;
@@ -7468,13 +7628,13 @@ namespace AndreasReitberger
                 return resultObject;
             }
         }
-        #endregion
+#endregion
 
-        #endregion
+#endregion
 
-        #endregion
+#endregion
 
-        #region Overrides
+#region Overrides
         public override string ToString()
         {
             try
@@ -7499,7 +7659,7 @@ namespace AndreasReitberger
         }
 #endregion
 
-        #region Dispose
+#region Dispose
         public void Dispose()
         {
             Dispose(true);
@@ -7517,6 +7677,6 @@ namespace AndreasReitberger
                 DisconnectWebSocket();
             }
         }
-        #endregion
+#endregion
     }
 }
