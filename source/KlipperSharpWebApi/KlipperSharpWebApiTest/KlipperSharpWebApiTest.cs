@@ -1188,7 +1188,6 @@ namespace RepetierServerSharpApiTest
         [TestMethod]
         public async Task OnlineTest()
         {
-            if (_skipOnlineTests) return;
             try
             {
                 KlipperClient _server = new(_host, _api, _port, _ssl);
@@ -1200,6 +1199,7 @@ namespace RepetierServerSharpApiTest
                 {
                     Assert.Fail(args.ToString());
                 };
+                await _server.CheckOnlineAsync(3500);
                 // Wait 10 minutes
                 CancellationTokenSource cts = new(new TimeSpan(0, 10, 0));
                 do

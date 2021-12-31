@@ -2494,7 +2494,7 @@ namespace AndreasReitberger
 
         #region Private
 
-#region ValidateResult
+        #region ValidateResult
 
         bool GetQueryResult(string result, bool EmptyResultIsValid = false)
         {
@@ -2524,9 +2524,9 @@ namespace AndreasReitberger
                 return false;
             }
         }
-#endregion
+        #endregion
 
-#region RestApi
+        #region RestApi
         async Task<KlipperApiRequestRespone> SendRestApiRequestAsync(
             MoonRakerCommandBase commandBase, Method method, string command, CancellationTokenSource cts, string jsonDataString = "",
             Dictionary<string, string> urlSegments = null, string requestTargetUri = "")
@@ -2624,6 +2624,94 @@ namespace AndreasReitberger
                 {
                     if (!IsOnline)
                         OnError(new UnhandledExceptionEventArgs(texp, false));
+                    // Throws exception on timeout, not actually an error but indicates if the server is reachable.
+                }
+
+            }
+            catch (Exception exc)
+            {
+                OnError(new UnhandledExceptionEventArgs(exc, false));
+            }
+            return apiRsponeResult;
+        }
+
+        async Task<KlipperApiRequestRespone> SendOnlineCheckRestApiRequestAsync(
+            MoonRakerCommandBase commandBase, string command, CancellationTokenSource cts, string requestTargetUri = "")
+        {
+            KlipperApiRequestRespone apiRsponeResult = new() { IsOnline = false };
+            try
+            {
+                // https://github.com/Arksine/moonraker/blob/master/docs/web_api.md
+                RestClient client = new(FullWebAddress);
+                if (EnableProxy)
+                {
+                    WebProxy proxy = GetCurrentProxy();
+                    client.Proxy = proxy;
+                }
+                RestRequest request = new(
+                    $"{(string.IsNullOrEmpty(requestTargetUri) ? commandBase.ToString() : requestTargetUri)}/{command}")
+                {
+                    RequestFormat = DataFormat.Json,
+                    Method = Method.GET
+                };
+                if (!string.IsNullOrEmpty(UserToken))
+                {
+                    request.AddHeader("Authorization", $"Bearer {UserToken}");
+                }
+                if (!string.IsNullOrEmpty(API))
+                {
+                    request.AddParameter("token", API, ParameterType.QueryString);
+                }
+                else if (!string.IsNullOrEmpty(SessionId))
+                {
+                    request.AddParameter("token", SessionId, ParameterType.QueryString);
+                }
+
+                Uri fullUri = client.BuildUri(request);
+                try
+                {
+                    IRestResponse respone = await client.ExecuteAsync(request, cts.Token).ConfigureAwait(false);
+
+                    if (respone.StatusCode == HttpStatusCode.OK && respone.ResponseStatus == ResponseStatus.Completed)
+                    {
+                        apiRsponeResult.IsOnline = true;
+                        AuthenticationFailed = false;
+                        apiRsponeResult.Result = respone.Content;
+                        apiRsponeResult.Succeeded = true;
+                        apiRsponeResult.EventArgs = new KlipperRestEventArgs()
+                        {
+                            Status = respone.ResponseStatus.ToString(),
+                            Exception = respone.ErrorException,
+                            Message = respone.ErrorMessage,
+                            Uri = fullUri,
+                        };
+                    }
+                    else if (respone.StatusCode == HttpStatusCode.NonAuthoritativeInformation || respone.StatusCode == HttpStatusCode.Forbidden)
+                    {
+                        apiRsponeResult.IsOnline = true;
+                        apiRsponeResult.HasAuthenticationError = true;
+                        apiRsponeResult.EventArgs = new KlipperRestEventArgs()
+                        {
+                            Status = respone.ResponseStatus.ToString(),
+                            Exception = respone.ErrorException,
+                            Message = respone.ErrorMessage,
+                            Uri = fullUri,
+                        };
+                    }
+                    else
+                    {
+                        OnRestApiError(new KlipperRestEventArgs()
+                        {
+                            Status = respone.ResponseStatus.ToString(),
+                            Exception = respone.ErrorException,
+                            Message = respone.ErrorMessage,
+                            Uri = fullUri,
+                        });
+                        //throw respone.ErrorException;
+                    }
+                }
+                catch (TaskCanceledException)
+                {
                     // Throws exception on timeout, not actually an error but indicates if the server is reachable.
                 }
 
@@ -2858,9 +2946,9 @@ namespace AndreasReitberger
             }
             return apiRsponeResult;
         }
-#endregion
+        #endregion
 
-#region Download
+        #region Download
         byte[] DownloadFileFromUri(Uri downloadUri, int Timeout = 5000)
         {
             try
@@ -2883,7 +2971,7 @@ namespace AndreasReitberger
                 return null;
             }
         }
-#endregion
+        #endregion
 
 #region Proxy
         Uri GetProxyUri()
@@ -2910,13 +2998,12 @@ namespace AndreasReitberger
             if (EnableProxy && !string.IsNullOrEmpty(ProxyAddress))
             {
                 //var proxy = GetCurrentProxy();
-                HttpMessageHandler handler = HttpHandler ?? new HttpClientHandler()
+                HttpMessageHandler handler = HttpHandler = new HttpClientHandler()
                 {
                     UseProxy = true,
                     Proxy = GetCurrentProxy(),
                     AllowAutoRedirect = true,
                 };
-
                 client = new HttpClient(handler: handler, disposeHandler: true);
             }
             else
@@ -3168,7 +3255,7 @@ namespace AndreasReitberger
             }
             IsRefreshing = false;
         }
-#endregion
+        #endregion
 
 #region Login
 
@@ -3261,6 +3348,7 @@ namespace AndreasReitberger
 
 #region CheckOnline
 
+        [Obsolete]
         public async Task<bool> CheckOnlineWithApiCallAsync(int Timeout = 10000)
         {
             IsConnecting = true;
@@ -3290,8 +3378,54 @@ namespace AndreasReitberger
             CancellationTokenSource cts = new(new TimeSpan(0, 0, 0, 0, Timeout));
             await CheckOnlineAsync(cts, resolveDnsFirst).ConfigureAwait(false);
         }
-
         public async Task CheckOnlineAsync(CancellationTokenSource cts, bool resolveDnsFirst = true)
+        {
+            if (IsConnecting) return; // Avoid multiple calls
+            IsConnecting = true;
+            bool isReachable = false;
+            try
+            {
+                string uriString = FullWebAddress;
+                try
+                {
+                    // Send a blank api request in order to check if the server is reachable
+                    KlipperApiRequestRespone respone = await SendOnlineCheckRestApiRequestAsync(MoonRakerCommandBase.api, "version", cts).ConfigureAwait(false);
+                    isReachable = respone?.IsOnline == true;
+                }
+                catch (InvalidOperationException iexc)
+                {
+                    OnError(new UnhandledExceptionEventArgs(iexc, false));
+                }
+                catch (HttpRequestException rexc)
+                {
+                    OnError(new UnhandledExceptionEventArgs(rexc, false));
+                }
+                catch (TaskCanceledException)
+                {
+                    // Throws an exception on timeout, not actually an error
+                }
+            }
+            catch (Exception exc)
+            {
+                OnError(new UnhandledExceptionEventArgs(exc, false));
+            }
+            IsConnecting = false;
+            // Avoid offline message for short connection loss
+            if (isReachable || _retries > RetriesWhenOffline)
+            {
+                _retries = 0;
+                IsOnline = isReachable;
+            }
+            else
+            {
+                // Retry with shorter timeout to see if the connection loss is real
+                _retries++;
+                await CheckOnlineAsync(2000).ConfigureAwait(false);
+            }
+        }
+
+        [Obsolete]
+        public async Task CheckOnlineOldAsync(CancellationTokenSource cts, bool resolveDnsFirst = true)
         {
             if (IsConnecting) return; // Avoid multiple calls
             IsConnecting = true;
