@@ -242,6 +242,7 @@ namespace AndreasReitberger
         #endregion
 
         #region Connection
+        /*
         [JsonIgnore]
         [XmlIgnore]
         HttpMessageHandler _httpHandler;
@@ -259,6 +260,7 @@ namespace AndreasReitberger
 
             }
         }
+        */
 
         [JsonIgnore]
         [XmlIgnore]
@@ -612,7 +614,7 @@ namespace AndreasReitberger
                 if (_enableProxy == value) return;
                 _enableProxy = value;
                 OnPropertyChanged();
-                UpdateWebClientInstance();
+                //UpdateWebClientInstance();
             }
         }
 
@@ -629,7 +631,7 @@ namespace AndreasReitberger
                 if (_proxyUseDefaultCredentials == value) return;
                 _proxyUseDefaultCredentials = value;
                 OnPropertyChanged();
-                UpdateWebClientInstance();
+                //UpdateWebClientInstance();
             }
         }
 
@@ -821,6 +823,22 @@ namespace AndreasReitberger
         #endregion
 
         #region Jobs
+        [JsonIgnore]
+        [XmlIgnore]
+        KlipperStatusJob _jobStatus;
+        [JsonIgnore]
+        [XmlIgnore]
+        public KlipperStatusJob JobStatus
+        {
+            get => _jobStatus;
+            set
+            {
+                if (_jobStatus == value) return;
+                _jobStatus = value;
+                OnPropertyChanged();
+            }
+        }
+
         [JsonIgnore]
         [XmlIgnore]
         string _jobListState = string.Empty;
@@ -1659,21 +1677,21 @@ namespace AndreasReitberger
         public KlipperClient()
         {
             Id = Guid.NewGuid();
-            UpdateWebClientInstance();
+            //UpdateWebClientInstance();
         }
 
         public KlipperClient(string serverAddress, string api, int port = 80, bool isSecure = false)
         {
             Id = Guid.NewGuid();
             InitInstance(serverAddress, port, api, isSecure);
-            UpdateWebClientInstance();
+            //UpdateWebClientInstance();
         }
 
         public KlipperClient(string serverAddress, int port = 80, bool isSecure = false)
         {
             Id = Guid.NewGuid();
             InitInstance(serverAddress, port, "", isSecure);
-            UpdateWebClientInstance();
+            //UpdateWebClientInstance();
         }
         #endregion
 
@@ -2381,10 +2399,14 @@ namespace AndreasReitberger
                                         KlipperStatusJob job =
                                             JsonConvert.DeserializeObject<KlipperStatusJob>(jsonBody);
                                         //ActiveJobName = job?.Filename;
-                                        OnJobFinished(new()
+                                        JobStatus = job;
+                                        if (JobStatus?.Status == KlipperJobStates.Completed)
                                         {
-                                            Job = job,
-                                        });
+                                            OnJobFinished(new()
+                                            {
+                                                Job = job,
+                                            });
+                                        }
                                         break;
                                     case "updated_queue":
                                         List<KlipperJobQueueItem> queueUpdate =
@@ -2706,9 +2728,9 @@ namespace AndreasReitberger
                 return false;
             }
         }
-#endregion
+        #endregion
 
-#region RestApi
+        #region RestApi
         async Task<KlipperApiRequestRespone> SendRestApiRequestAsync(
             MoonRakerCommandBase commandBase, Method method, string command, CancellationTokenSource cts, string jsonDataString = "",
             Dictionary<string, string> urlSegments = null, string requestTargetUri = "")
@@ -3163,24 +3185,30 @@ namespace AndreasReitberger
 
         WebProxy GetCurrentProxy()
         {
-            var proxy = new WebProxy()
+            WebProxy proxy = new()
             {
                 Address = GetProxyUri(),
                 BypassProxyOnLocal = false,
                 UseDefaultCredentials = ProxyUseDefaultCredentials,
             };
             if (ProxyUseDefaultCredentials && !string.IsNullOrEmpty(ProxyUser))
+            {
                 proxy.Credentials = new NetworkCredential(ProxyUser, ProxyPassword);
+            }
             else
+            {
                 proxy.UseDefaultCredentials = ProxyUseDefaultCredentials;
+            }
+
             return proxy;
         }
+        /*
         void UpdateWebClientInstance()
         {
             if (EnableProxy && !string.IsNullOrEmpty(ProxyAddress))
             {
                 //var proxy = GetCurrentProxy();
-                HttpMessageHandler handler = HttpHandler = new HttpClientHandler()
+                HttpHandler = new HttpClientHandler()
                 {
                     UseProxy = true,
                     Proxy = GetCurrentProxy(),
@@ -3193,9 +3221,10 @@ namespace AndreasReitberger
                 //client = HttpHandler == null ? new HttpClient() : new HttpClient(handler: HttpHandler, disposeHandler: true);
             }
         }
-#endregion
+        */
+        #endregion
 
-#region Timers
+        #region Timers
         void StopPingTimer()
         {
             if (PingTimer != null)
@@ -3318,7 +3347,7 @@ namespace AndreasReitberger
             ProxyUser = string.Empty;
             ProxyPassword = null;
             SecureProxyConnection = Secure;
-            UpdateWebClientInstance();
+            //UpdateWebClientInstance();
         }
         public void SetProxy(bool Secure, string Address, int Port, string User = "", SecureString Password = null, bool Enable = true)
         {
@@ -3329,7 +3358,7 @@ namespace AndreasReitberger
             ProxyUser = User;
             ProxyPassword = Password;
             SecureProxyConnection = Secure;
-            UpdateWebClientInstance();
+            //UpdateWebClientInstance();
         }
 #endregion
 

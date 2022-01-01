@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using AndreasReitberger.Enum;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace AndreasReitberger.Models
 {
@@ -21,7 +23,9 @@ namespace AndreasReitberger.Models
         public double PrintDuration { get; set; }
 
         [JsonProperty("status")]
-        public string Status { get; set; }
+        [JsonConverter(typeof(StringEnumConverter), true)]
+        public KlipperJobStates Status { get; set; }
+        //public string Status { get; set; }
 
         [JsonProperty("start_time")]
         public double? StartTime { get; set; }
