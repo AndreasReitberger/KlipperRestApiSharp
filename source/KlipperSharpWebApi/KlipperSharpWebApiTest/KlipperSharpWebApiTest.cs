@@ -741,9 +741,9 @@ namespace RepetierServerSharpApiTest
 
                     string thumbnail = meta.Thumbnails.FirstOrDefault()?.RelativePath;
                     // Get small image (30x30)
-                    byte[] image = _server.GetGcodeThumbnailImage(thumbnail);
-                    // Get big image (400x400)
-                    byte[] image2 = _server.GetGcodeThumbnailImage(meta, 1);
+                    byte[] image = await _server.GetGcodeThumbnailImageAsync(thumbnail);
+                    // Get big image (400x300)
+                    byte[] image2 = await _server.GetGcodeThumbnailImageAsync(meta, 1);
 
                     KlipperDirectoryActionResult deleted = await _server.DeleteFileAsync("gcodes", info.Name);
                     Assert.IsNotNull(deleted);
@@ -769,11 +769,11 @@ namespace RepetierServerSharpApiTest
                     await _server.RefreshAllAsync();
                     Assert.IsTrue(_server.InitialDataFetched);
 
-                    byte[] logFile = _server.DownloadLogFile(KlipperLogFileTypes.Klippy);
+                    byte[] logFile = await _server.DownloadLogFileAsync(KlipperLogFileTypes.Klippy);
                     await File.WriteAllBytesAsync("klippy.log", logFile);
                     Assert.IsNotNull(logFile);
 
-                    logFile = _server.DownloadLogFile(KlipperLogFileTypes.Moonraker);
+                    logFile = await _server.DownloadLogFileAsync(KlipperLogFileTypes.Moonraker);
                     await File.WriteAllBytesAsync("moonraker.log", logFile);
                     Assert.IsNotNull(logFile);
 
@@ -812,11 +812,17 @@ namespace RepetierServerSharpApiTest
                     List<KlipperUser> users = await _server.ListAvailableUsersAsync();
                     Assert.IsTrue(users?.Count > 0);
 
+                    KlipperUser currentUser = await _server.GetCurrentUserAsync();
+                    if(currentUser != null)
+                    {
+                        //Assert.IsNotNull(await _server.LogoutCurrentUserAsync());
+                    }
+
                     KlipperUserActionResult login = await _server.LoginUserAsync(username, password);
                     Assert.IsNotNull(login);
                     Assert.IsTrue(login.Username == username);
 
-                    KlipperUser currentUser = await _server.GetCurrentUserAsync();
+                    currentUser = await _server.GetCurrentUserAsync();
                     Assert.IsNotNull(currentUser);
 
                     KlipperUserActionResult newTokenResult = await _server.RefreshJSONWebTokenAsync();
@@ -1190,7 +1196,8 @@ namespace RepetierServerSharpApiTest
         {
             try
             {
-                KlipperClient _server = new(_host, _api, _port, _ssl);
+                string host = "mainsailos.local";
+                KlipperClient _server = new(host, _api, _port, _ssl);
                 _server.Error += (o, args) =>
                 {
                     Assert.Fail(args.ToString());
@@ -1200,13 +1207,16 @@ namespace RepetierServerSharpApiTest
                     Assert.Fail(args.ToString());
                 };
                 await _server.CheckOnlineAsync(3500);
+                await _server.CheckOnlineAsync(3500);
+                await _server.CheckOnlineAsync(3500);
                 // Wait 10 minutes
                 CancellationTokenSource cts = new(new TimeSpan(0, 10, 0));
                 do
                 {
                     await Task.Delay(10000);
                     await _server.CheckOnlineAsync();
-                    await _server.RefreshAllAsync();
+                    Debug.WriteLine($"Online: {_server.IsOnline}");
+                    //await _server.RefreshAllAsync();
                 } while (_server.IsOnline && !cts.IsCancellationRequested);
                 Assert.IsTrue(cts.IsCancellationRequested);
             }
@@ -1305,6 +1315,7 @@ namespace RepetierServerSharpApiTest
                 {
                     await Task.Delay(10000);
                     await _server.CheckOnlineAsync();
+                    Debug.WriteLine($"Online: {_server.IsOnline}");
                 } while (_server.IsOnline && !cts.IsCancellationRequested);
                 _server.StopListening();
 

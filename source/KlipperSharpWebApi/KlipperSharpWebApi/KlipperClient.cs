@@ -41,7 +41,8 @@ namespace AndreasReitberger
         #endregion
 
         #region Variables
-        //static HttpClient client = new();
+        RestClient restClient;
+        HttpClient httpClient;
         int _retries = 0;
 
         readonly bool _enableCooldown = true;
@@ -49,7 +50,6 @@ namespace AndreasReitberger
 
         int _cooldownExtruder = 4;
         int _cooldownTemperatureSensor = 4;
-        int _cooldownFilamentSensor = 4;
         int _cooldownHeaterBed = 4;
 
         #endregion
@@ -242,25 +242,6 @@ namespace AndreasReitberger
         #endregion
 
         #region Connection
-        /*
-        [JsonIgnore]
-        [XmlIgnore]
-        HttpMessageHandler _httpHandler;
-        [JsonIgnore]
-        [XmlIgnore]
-        public HttpMessageHandler HttpHandler
-        {
-            get => _httpHandler;
-            set
-            {
-                if (_httpHandler == value) return;
-                _httpHandler = value;
-                UpdateWebClientInstance();
-                OnPropertyChanged();
-
-            }
-        }
-        */
 
         [JsonIgnore]
         [XmlIgnore]
@@ -334,6 +315,7 @@ namespace AndreasReitberger
             {
                 if (_address == value) return;
                 _address = value;
+                UpdateRestClientInstance();
                 OnPropertyChanged();
             }
         }
@@ -363,6 +345,7 @@ namespace AndreasReitberger
                 if (_isSecure == value) return;
                 _isSecure = value;
                 OnPropertyChanged();
+                UpdateRestClientInstance();
             }
         }
 
@@ -392,24 +375,26 @@ namespace AndreasReitberger
                 {
                     _port = value;
                     OnPropertyChanged();
+                    UpdateRestClientInstance();
                 }
             }
         }
-        /*
-        [JsonProperty(nameof(Proxy))]
-        WebProxy _proxy;
+
+        [JsonProperty(nameof(DefaultTimeout))]
+        int _defaultTimeout = 10000;
         [JsonIgnore]
-        public WebProxy Proxy
+        public int DefaultTimeout
         {
-            get => _proxy;
+            get => _defaultTimeout;
             set
             {
-                if (_proxy == value) return;             
-                _proxy = value;
-                OnPropertyChanged();                
+                if (_defaultTimeout != value)
+                {
+                    _defaultTimeout = value;
+                    OnPropertyChanged();
+                }
             }
         }
-        */
 
         [JsonProperty(nameof(OverrideValidationRules))]
         [XmlAttribute(nameof(OverrideValidationRules))]
@@ -428,11 +413,9 @@ namespace AndreasReitberger
             }
         }
 
-        [JsonProperty(nameof(IsOnline))]
-        [XmlAttribute(nameof(IsOnline))]
+        [JsonIgnore, XmlIgnore]
         bool _isOnline = false;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public bool IsOnline
         {
             get => _isOnline;
@@ -459,11 +442,9 @@ namespace AndreasReitberger
             }
         }
 
-        [JsonProperty(nameof(IsConnecting))]
-        [XmlAttribute(nameof(IsConnecting))]
+        [JsonIgnore, XmlIgnore]
         bool _isConnecting = false;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public bool IsConnecting
         {
             get => _isConnecting;
@@ -475,11 +456,9 @@ namespace AndreasReitberger
             }
         }
 
-        [JsonProperty(nameof(AuthenticationFailed))]
-        [XmlAttribute(nameof(AuthenticationFailed))]
+        [JsonIgnore, XmlIgnore]
         bool _authenticationFailed = false;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public bool AuthenticationFailed
         {
             get => _authenticationFailed;
@@ -491,11 +470,9 @@ namespace AndreasReitberger
             }
         }
 
-        [JsonProperty(nameof(IsRefreshing))]
-        [XmlAttribute(nameof(IsRefreshing))]
+        [JsonIgnore, XmlIgnore]
         bool _isRefreshing = false;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public bool IsRefreshing
         {
             get => _isRefreshing;
@@ -1677,21 +1654,21 @@ namespace AndreasReitberger
         public KlipperClient()
         {
             Id = Guid.NewGuid();
-            //UpdateWebClientInstance();
+            UpdateRestClientInstance();
         }
 
         public KlipperClient(string serverAddress, string api, int port = 80, bool isSecure = false)
         {
             Id = Guid.NewGuid();
             InitInstance(serverAddress, port, api, isSecure);
-            //UpdateWebClientInstance();
+            UpdateRestClientInstance();
         }
 
         public KlipperClient(string serverAddress, int port = 80, bool isSecure = false)
         {
             Id = Guid.NewGuid();
             InitInstance(serverAddress, port, "", isSecure);
-            //UpdateWebClientInstance();
+            UpdateRestClientInstance();
         }
         #endregion
 
@@ -2057,27 +2034,6 @@ namespace AndreasReitberger
         #endregion
 
         #region WebSocket
-        /*
-        void PingServer()
-        {
-            try
-            {
-                if (WebSocket != null)
-                    if (WebSocket.State == WebSocketState.Open)
-                    {
-                        string infoCommand = $"{{\"jsonrpc\":\"2.0\",\"method\":\"server.info\",\"params\":{{}},\"id\":1}}";
-                        //string pingCommand = $"{{}}";
-                        WebSocket.Send(infoCommand);
-                    }
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-            }
-
-        }
-        */
-
         public void ConnectWebSocket()
         {
             try
@@ -2694,11 +2650,11 @@ namespace AndreasReitberger
         }
 #endregion
 
-#region Methods
+        #region Methods
 
-#region Private
+        #region Private
 
-#region ValidateResult
+        #region ValidateResult
 
         bool GetQueryResult(string result, bool EmptyResultIsValid = false)
         {
@@ -2732,20 +2688,28 @@ namespace AndreasReitberger
 
         #region RestApi
         async Task<KlipperApiRequestRespone> SendRestApiRequestAsync(
-            MoonRakerCommandBase commandBase, Method method, string command, CancellationTokenSource cts, string jsonDataString = "",
-            Dictionary<string, string> urlSegments = null, string requestTargetUri = "")
+            MoonRakerCommandBase commandBase,
+            Method method,
+            string command,
+            object jsonObject = null,
+            CancellationTokenSource cts = default,           
+            Dictionary<string, string> urlSegments = null,
+            string requestTargetUri = ""
+            )
         {
             KlipperApiRequestRespone apiRsponeResult = new() { IsOnline = IsOnline };
             if (!IsOnline) return apiRsponeResult;
 
             try
             {
-                // https://github.com/Arksine/moonraker/blob/master/docs/web_api.md
-                RestClient client = new(FullWebAddress);
-                if (EnableProxy)
+                if(cts == default)
                 {
-                    WebProxy proxy = GetCurrentProxy();
-                    client.Proxy = proxy;
+                    cts = new(DefaultTimeout);
+                }
+                // https://github.com/Arksine/moonraker/blob/master/docs/web_api.md
+                if(restClient == null)
+                {
+                    UpdateRestClientInstance();
                 }
                 RestRequest request = new(
                     $"{(string.IsNullOrEmpty(requestTargetUri) ? commandBase.ToString() : requestTargetUri)}/{command}")
@@ -2753,10 +2717,20 @@ namespace AndreasReitberger
                     RequestFormat = DataFormat.Json,
                     Method = method
                 };
+
+                bool validHeader = false;
+                // Prefer usertoken over api key
                 if (!string.IsNullOrEmpty(UserToken))
                 {
-                    request.AddHeader("Authorization", $"Bearer {UserToken}");
+                    request.AddHeader("Authorization", $"Bearer {UserToken}", false);
+                    validHeader = true;
                 }
+                else if (!string.IsNullOrEmpty(API))
+                {
+                    request.AddHeader("X-Api-Key", $"{API}", false);
+                    validHeader = true;
+                }
+
                 if (urlSegments != null)
                 {
                     foreach (KeyValuePair<string, string> pair in urlSegments)
@@ -2765,27 +2739,28 @@ namespace AndreasReitberger
                     }
                 }
 
-                //request.AddParameter("a", Command, ParameterType.QueryString);
-                //request.AddParameter("", command, ParameterType.QueryString);
-                if (!string.IsNullOrEmpty(jsonDataString))
+                if (jsonObject != null)
                 {
-                    request.AddJsonBody(jsonDataString);
+                    request.AddJsonBody(jsonObject, "application/json");
+                }
+                // https://moonraker.readthedocs.io/en/latest/web_api/#authorization
+                if (!validHeader)
+                {
+                    // Prefer usertoken over api key
+                    if (!string.IsNullOrEmpty(RefreshToken))
+                    {
+                        request.AddParameter("access_token", RefreshToken, ParameterType.QueryString);
+                    }
+                    else if (!string.IsNullOrEmpty(API))
+                    {
+                        request.AddParameter("token", API, ParameterType.QueryString);
+                    }
                 }
 
-                if (!string.IsNullOrEmpty(API))
-                {
-                    request.AddParameter("token", API, ParameterType.QueryString);
-                }
-                else if (!string.IsNullOrEmpty(SessionId))
-                {
-                    request.AddParameter("token", SessionId, ParameterType.QueryString);
-                }
-
-                Uri fullUri = client.BuildUri(request);
+                Uri fullUri = restClient.BuildUri(request);
                 try
                 {
-                    IRestResponse respone = await client.ExecuteAsync(request, cts.Token).ConfigureAwait(false);
-
+                    RestResponse respone = await restClient.ExecuteAsync(request, cts.Token).ConfigureAwait(false);
                     if (respone.StatusCode == HttpStatusCode.OK && respone.ResponseStatus == ResponseStatus.Completed)
                     {
                         apiRsponeResult.IsOnline = true;
@@ -2800,7 +2775,10 @@ namespace AndreasReitberger
                             Uri = fullUri,
                         };
                     }
-                    else if (respone.StatusCode == HttpStatusCode.NonAuthoritativeInformation || respone.StatusCode == HttpStatusCode.Forbidden)
+                    else if (respone.StatusCode == HttpStatusCode.NonAuthoritativeInformation 
+                        || respone.StatusCode == HttpStatusCode.Forbidden 
+                        || respone.StatusCode == HttpStatusCode.Unauthorized
+                        )
                     {
                         apiRsponeResult.IsOnline = true;
                         apiRsponeResult.HasAuthenticationError = true;
@@ -2826,11 +2804,28 @@ namespace AndreasReitberger
                 }
                 catch (TaskCanceledException texp)
                 {
-                    if (!IsOnline)
-                        OnError(new UnhandledExceptionEventArgs(texp, false));
                     // Throws exception on timeout, not actually an error but indicates if the server is reachable.
+                    if (!IsOnline)
+                    {
+                        OnError(new UnhandledExceptionEventArgs(texp, false));
+                    }
                 }
-
+                catch (HttpRequestException hexp)
+                {
+                    // Throws exception on timeout, not actually an error but indicates if the server is not reachable.
+                    if (!IsOnline)
+                    {
+                        OnError(new UnhandledExceptionEventArgs(hexp, false));
+                    }
+                }
+                catch (TimeoutException toexp)
+                {
+                    // Throws exception on timeout, not actually an error but indicates if the server is not reachable.
+                    if (!IsOnline)
+                    {
+                        OnError(new UnhandledExceptionEventArgs(toexp, false));
+                    }
+                }
             }
             catch (Exception exc)
             {
@@ -2840,42 +2835,62 @@ namespace AndreasReitberger
         }
 
         async Task<KlipperApiRequestRespone> SendOnlineCheckRestApiRequestAsync(
-            MoonRakerCommandBase commandBase, string command, CancellationTokenSource cts, string requestTargetUri = "")
+            MoonRakerCommandBase commandBase,
+            string command,
+            CancellationTokenSource cts,
+            string requestTargetUri = ""
+            )
         {
             KlipperApiRequestRespone apiRsponeResult = new() { IsOnline = false };
             try
             {
-                // https://github.com/Arksine/moonraker/blob/master/docs/web_api.md
-                RestClient client = new(FullWebAddress);
-                if (EnableProxy)
+                if (cts == default)
                 {
-                    WebProxy proxy = GetCurrentProxy();
-                    client.Proxy = proxy;
+                    cts = new(DefaultTimeout);
+                }
+                // https://github.com/Arksine/moonraker/blob/master/docs/web_api.md
+                if (restClient == null)
+                {
+                    UpdateRestClientInstance();
                 }
                 RestRequest request = new(
                     $"{(string.IsNullOrEmpty(requestTargetUri) ? commandBase.ToString() : requestTargetUri)}/{command}")
                 {
                     RequestFormat = DataFormat.Json,
-                    Method = Method.GET
+                    Method = Method.Get
                 };
+
+                bool validHeader = false;
+                // Prefer usertoken over api key
                 if (!string.IsNullOrEmpty(UserToken))
                 {
-                    request.AddHeader("Authorization", $"Bearer {UserToken}");
+                    request.AddHeader("Authorization", $"Bearer {UserToken}", false);
+                    validHeader = true;
                 }
-                if (!string.IsNullOrEmpty(API))
+                else if (!string.IsNullOrEmpty(API))
                 {
-                    request.AddParameter("token", API, ParameterType.QueryString);
-                }
-                else if (!string.IsNullOrEmpty(SessionId))
-                {
-                    request.AddParameter("token", SessionId, ParameterType.QueryString);
+                    request.AddHeader("X-Api-Key", $"{API}", false);
+                    validHeader = true;
                 }
 
-                Uri fullUri = client.BuildUri(request);
+                // https://moonraker.readthedocs.io/en/latest/web_api/#authorization
+                if (!validHeader)
+                {
+                    // Prefer usertoken over api key
+                    if (!string.IsNullOrEmpty(RefreshToken))
+                    {
+                        request.AddParameter("access_token", RefreshToken, ParameterType.QueryString);
+                    }
+                    else if (!string.IsNullOrEmpty(API))
+                    {
+                        request.AddParameter("token", API, ParameterType.QueryString);
+                    }
+                }
+
+                Uri fullUri = restClient.BuildUri(request);
                 try
                 {
-                    IRestResponse respone = await client.ExecuteAsync(request, cts.Token).ConfigureAwait(false);
-
+                    RestResponse respone = await restClient.ExecuteAsync(request, cts.Token).ConfigureAwait(false);
                     if (respone.StatusCode == HttpStatusCode.OK && respone.ResponseStatus == ResponseStatus.Completed)
                     {
                         apiRsponeResult.IsOnline = true;
@@ -2890,7 +2905,10 @@ namespace AndreasReitberger
                             Uri = fullUri,
                         };
                     }
-                    else if (respone.StatusCode == HttpStatusCode.NonAuthoritativeInformation || respone.StatusCode == HttpStatusCode.Forbidden)
+                    else if (respone.StatusCode == HttpStatusCode.NonAuthoritativeInformation
+                        || respone.StatusCode == HttpStatusCode.Forbidden
+                        || respone.StatusCode == HttpStatusCode.Unauthorized
+                        )
                     {
                         apiRsponeResult.IsOnline = true;
                         apiRsponeResult.HasAuthenticationError = true;
@@ -2916,7 +2934,15 @@ namespace AndreasReitberger
                 }
                 catch (TaskCanceledException)
                 {
-                    // Throws exception on timeout, not actually an error but indicates if the server is reachable.
+                    // Throws exception on timeout, not actually an error but indicates if the server is not reachable.
+                }
+                catch (HttpRequestException)
+                {
+                    // Throws exception on timeout, not actually an error but indicates if the server is not reachable.
+                }
+                catch (TimeoutException)
+                {
+                    // Throws exception on timeout, not actually an error but indicates if the server is not reachable.
                 }
 
             }
@@ -2927,46 +2953,53 @@ namespace AndreasReitberger
             return apiRsponeResult;
         }
 
-        async Task<KlipperApiRequestRespone> SendRestApiRequestAsync(
-            MoonRakerCommandBase commandBase, Method method, string command, string jsonDataString = "", int timeout = 10000, Dictionary<string, string> urlSegments = null, string requestTargetUri = "")
-        {
-            CancellationTokenSource cts = new(new TimeSpan(0, 0, 0, 0, timeout));
-            return await SendRestApiRequestAsync(commandBase, method, command, cts, jsonDataString, urlSegments, requestTargetUri)
-                .ConfigureAwait(false);
-        }
-
-        async Task<KlipperApiRequestRespone> SendRestApiRequestAsync(
-            MoonRakerCommandBase commandBase, Method method, string command, object jsonData, int timeout = 10000, Dictionary<string, string> urlSegments = null, string requestTargetUri = "")
-        {
-            return await SendRestApiRequestAsync(commandBase, method, command, JsonConvert.SerializeObject(jsonData), timeout, urlSegments, requestTargetUri)
-                .ConfigureAwait(false);
-        }
-
         async Task<KlipperApiRequestRespone> SendMultipartFormDataFileRestApiRequestAsync(
             string filePath,
             string root = "gcodes",
             string path = "",
-            int timeout = 100000)
+            int timeout = 100000
+            )
         {
             KlipperApiRequestRespone apiRsponeResult = new();
             if (!IsOnline) return apiRsponeResult;
 
             try
             {
+                if (restClient == null)
+                {
+                    UpdateRestClientInstance();
+                }
                 CancellationTokenSource cts = new(new TimeSpan(0, 0, 0, 0, timeout));
-                RestClient client = new(FullWebAddress);
-
                 RestRequest request = new("/server/files/upload");
+                
+                bool validHeader = false;
+                // Prefer usertoken over api key
                 if (!string.IsNullOrEmpty(UserToken))
                 {
-                    request.AddHeader("Authorization", $"Bearer {UserToken}");
+                    request.AddHeader("Authorization", $"Bearer {UserToken}", false);
+                    validHeader = true;
                 }
-                else
+                else if (!string.IsNullOrEmpty(API))
                 {
-                    request.AddHeader("X-Api-Key", API);
+                    request.AddHeader("X-Api-Key", $"{API}", false);
+                    validHeader = true;
                 }
+                // https://moonraker.readthedocs.io/en/latest/web_api/#authorization
+                if (!validHeader)
+                {
+                    // Prefer usertoken over api key
+                    if (!string.IsNullOrEmpty(RefreshToken))
+                    {
+                        request.AddParameter("access_token", RefreshToken, ParameterType.QueryString);
+                    }
+                    else if (!string.IsNullOrEmpty(API))
+                    {
+                        request.AddParameter("token", API, ParameterType.QueryString);
+                    }
+                }
+
                 request.RequestFormat = DataFormat.Json;
-                request.Method = Method.POST;
+                request.Method = Method.Post;
                 request.AlwaysMultipartFormData = true;
 
                 //Multiform
@@ -2975,10 +3008,10 @@ namespace AndreasReitberger
                 request.AddParameter("root", root, "multipart/form-data", ParameterType.GetOrPost);
                 request.AddParameter("path", path, "multipart/form-data", ParameterType.GetOrPost);
 
-                Uri fullUri = client.BuildUri(request);
+                Uri fullUri = restClient.BuildUri(request);
                 try
                 {
-                    IRestResponse respone = await client.ExecuteAsync(request, cts.Token);
+                    RestResponse respone = await restClient.ExecuteAsync(request, cts.Token);
                     if ((
                         respone.StatusCode == HttpStatusCode.OK || respone.StatusCode == HttpStatusCode.NoContent) &&
                         respone.ResponseStatus == ResponseStatus.Completed)
@@ -2995,7 +3028,10 @@ namespace AndreasReitberger
                             Uri = fullUri,
                         };
                     }
-                    else if (respone.StatusCode == HttpStatusCode.NonAuthoritativeInformation || respone.StatusCode == HttpStatusCode.Forbidden)
+                    else if (respone.StatusCode == HttpStatusCode.NonAuthoritativeInformation
+                        || respone.StatusCode == HttpStatusCode.Forbidden
+                        || respone.StatusCode == HttpStatusCode.Unauthorized
+                        )
                     {
                         apiRsponeResult.IsOnline = true;
                         apiRsponeResult.HasAuthenticationError = true;
@@ -3034,9 +3070,27 @@ namespace AndreasReitberger
                 }
                 catch (TaskCanceledException texp)
                 {
-                    if (!IsOnline)
-                        OnError(new UnhandledExceptionEventArgs(texp, false));
                     // Throws exception on timeout, not actually an error but indicates if the server is reachable.
+                    if (!IsOnline)
+                    {
+                        OnError(new UnhandledExceptionEventArgs(texp, false));
+                    }
+                }
+                catch (HttpRequestException hexp)
+                {
+                    // Throws exception on timeout, not actually an error but indicates if the server is not reachable.
+                    if (!IsOnline)
+                    {
+                        OnError(new UnhandledExceptionEventArgs(hexp, false));
+                    }
+                }
+                catch (TimeoutException toexp)
+                {
+                    // Throws exception on timeout, not actually an error but indicates if the server is not reachable.
+                    if (!IsOnline)
+                    {
+                        OnError(new UnhandledExceptionEventArgs(toexp, false));
+                    }
                 }
             }
             catch (Exception exc)
@@ -3051,27 +3105,49 @@ namespace AndreasReitberger
             byte[] file,
             string root = "gcodes",
             string path = "",
-            int timeout = 100000)
+            int timeout = 100000
+            )
         {
             KlipperApiRequestRespone apiRsponeResult = new();
             if (!IsOnline) return apiRsponeResult;
 
             try
             {
+                if (restClient == null)
+                {
+                    UpdateRestClientInstance();
+                }
                 CancellationTokenSource cts = new(new TimeSpan(0, 0, 0, 0, timeout));
-                RestClient client = new(FullWebAddress);
-
                 RestRequest request = new("/server/files/upload");
+                
+                bool validHeader = false;
+                // Prefer usertoken over api key
                 if (!string.IsNullOrEmpty(UserToken))
                 {
-                    request.AddHeader("Authorization", $"Bearer {UserToken}");
+                    request.AddHeader("Authorization", $"Bearer {UserToken}", false);
+                    validHeader = true;
                 }
-                else
+                else if (!string.IsNullOrEmpty(API))
                 {
-                    request.AddHeader("X-Api-Key", API);
+                    request.AddHeader("X-Api-Key", $"{API}", false);
+                    validHeader = true;
                 }
+                // https://moonraker.readthedocs.io/en/latest/web_api/#authorization
+                if (!validHeader)
+                {
+                    // Prefer usertoken over api key
+                    if (!string.IsNullOrEmpty(RefreshToken))
+                    {
+                        request.AddParameter("access_token", RefreshToken, ParameterType.QueryString);
+                    }
+                    else if (!string.IsNullOrEmpty(API))
+                    {
+                        request.AddParameter("token", API, ParameterType.QueryString);
+                    }
+                }
+
                 request.RequestFormat = DataFormat.Json;
-                request.Method = Method.POST;
+                request.Method = Method.Post;
                 request.AlwaysMultipartFormData = true;
 
                 //Multiform
@@ -3080,10 +3156,10 @@ namespace AndreasReitberger
                 request.AddParameter("root", root, "multipart/form-data", ParameterType.GetOrPost);
                 request.AddParameter("path", path, "multipart/form-data", ParameterType.GetOrPost);
 
-                Uri fullUri = client.BuildUri(request);
+                Uri fullUri = restClient.BuildUri(request);
                 try
                 {
-                    IRestResponse respone = await client.ExecuteAsync(request, cts.Token);
+                    RestResponse respone = await restClient.ExecuteAsync(request, cts.Token);
                     if ((
                         respone.StatusCode == HttpStatusCode.OK || respone.StatusCode == HttpStatusCode.NoContent) &&
                         respone.ResponseStatus == ResponseStatus.Completed)
@@ -3100,7 +3176,10 @@ namespace AndreasReitberger
                             Uri = fullUri,
                         };
                     }
-                    else if (respone.StatusCode == HttpStatusCode.NonAuthoritativeInformation || respone.StatusCode == HttpStatusCode.Forbidden)
+                    else if (respone.StatusCode == HttpStatusCode.NonAuthoritativeInformation
+                        || respone.StatusCode == HttpStatusCode.Forbidden
+                        || respone.StatusCode == HttpStatusCode.Unauthorized
+                        )
                     {
                         apiRsponeResult.IsOnline = true;
                         apiRsponeResult.HasAuthenticationError = true;
@@ -3139,9 +3218,27 @@ namespace AndreasReitberger
                 }
                 catch (TaskCanceledException texp)
                 {
-                    if (!IsOnline)
-                        OnError(new UnhandledExceptionEventArgs(texp, false));
                     // Throws exception on timeout, not actually an error but indicates if the server is reachable.
+                    if (!IsOnline)
+                    {
+                        OnError(new UnhandledExceptionEventArgs(texp, false));
+                    }
+                }
+                catch (HttpRequestException hexp)
+                {
+                    // Throws exception on timeout, not actually an error but indicates if the server is not reachable.
+                    if (!IsOnline)
+                    {
+                        OnError(new UnhandledExceptionEventArgs(hexp, false));
+                    }
+                }
+                catch (TimeoutException toexp)
+                {
+                    // Throws exception on timeout, not actually an error but indicates if the server is not reachable.
+                    if (!IsOnline)
+                    {
+                        OnError(new UnhandledExceptionEventArgs(toexp, false));
+                    }
                 }
             }
             catch (Exception exc)
@@ -3150,22 +3247,55 @@ namespace AndreasReitberger
             }
             return apiRsponeResult;
         }
-#endregion
+        
+        #endregion
 
-#region Download
-        byte[] DownloadFileFromUri(Uri downloadUri, int Timeout = 5000)
+        #region Download
+        public async Task<byte[]> DownloadFileFromUriAsync(string path, int timeout = 10000)
         {
             try
             {
-                RestClient client = new(downloadUri);
-                RestRequest request = new("");
-                request.AddHeader("X-Api-Key", API);
-                request.RequestFormat = DataFormat.Json;
-                request.Method = Method.GET;
-                request.Timeout = Timeout;
+                if (restClient == null)
+                {
+                    UpdateRestClientInstance();
+                }
+                RestRequest request = new(path);
+                
+                bool validHeader = false;
+                // Prefer usertoken over api key
+                if (!string.IsNullOrEmpty(UserToken))
+                {
+                    request.AddHeader("Authorization", $"Bearer {UserToken}", false);
+                    validHeader = true;
+                }
+                else if (!string.IsNullOrEmpty(API))
+                {
+                    request.AddHeader("X-Api-Key", $"{API}", false);
+                    validHeader = true;
+                }
+                // https://moonraker.readthedocs.io/en/latest/web_api/#authorization
+                if (!validHeader)
+                {
+                    // Prefer usertoken over api key
+                    if (!string.IsNullOrEmpty(RefreshToken))
+                    {
+                        request.AddParameter("access_token", RefreshToken, ParameterType.QueryString);
+                    }
+                    else if (!string.IsNullOrEmpty(API))
+                    {
+                        request.AddParameter("token", API, ParameterType.QueryString);
+                    }
+                }
 
-                Uri fullUrl = client.BuildUri(request);
-                byte[] respone = client.DownloadData(request);
+                request.RequestFormat = DataFormat.Json;
+                request.Method = Method.Get;
+                request.Timeout = timeout;
+
+                Uri fullUrl = restClient.BuildUri(request);
+                CancellationTokenSource cts = new(timeout);
+                byte[] respone = await restClient.DownloadDataAsync(request, cts.Token)
+                    .ConfigureAwait(false)
+                    ;
 
                 return respone;
             }
@@ -3175,9 +3305,9 @@ namespace AndreasReitberger
                 return null;
             }
         }
-#endregion
+        #endregion
 
-#region Proxy
+        #region Proxy
         Uri GetProxyUri()
         {
             return ProxyAddress.StartsWith("http://") || ProxyAddress.StartsWith("https://") ? new Uri($"{ProxyAddress}:{ProxyPort}") : new Uri($"{(SecureProxyConnection ? "https" : "http")}://{ProxyAddress}:{ProxyPort}");
@@ -3202,26 +3332,37 @@ namespace AndreasReitberger
 
             return proxy;
         }
-        /*
-        void UpdateWebClientInstance()
+
+        void UpdateRestClientInstance()
         {
+            if (string.IsNullOrEmpty(ServerAddress))
+            {
+                return;
+            }
             if (EnableProxy && !string.IsNullOrEmpty(ProxyAddress))
             {
-                //var proxy = GetCurrentProxy();
-                HttpHandler = new HttpClientHandler()
+                RestClientOptions options = new(FullWebAddress)
+                {
+                    ThrowOnAnyError = true,
+                    Timeout = 10000,
+                };
+                HttpClientHandler httpHandler = new()
                 {
                     UseProxy = true,
                     Proxy = GetCurrentProxy(),
                     AllowAutoRedirect = true,
                 };
-                //client = new HttpClient(handler: handler, disposeHandler: true);
+                
+                httpClient = new(handler: httpHandler, disposeHandler: true);
+                restClient = new(httpClient: httpClient, options: options);
             }
             else
             {
-                //client = HttpHandler == null ? new HttpClient() : new HttpClient(handler: HttpHandler, disposeHandler: true);
+                httpClient = null;
+                restClient = new(baseUrl: FullWebAddress);
             }
         }
-        */
+        
         #endregion
 
         #region Timers
@@ -3259,7 +3400,7 @@ namespace AndreasReitberger
         }
 #endregion
 
-#region State & Config
+        #region State & Config
         void UpdateServerConfig(KlipperServerConfig newConfig)
         {
             try
@@ -3394,9 +3535,6 @@ namespace AndreasReitberger
                         {
                             RefreshExtruderStatusAsync(),
                             RefreshHeaterBedStatusAsync(),
-                            //CheckServerOnlineAsync(),
-                            //RefreshPrinterStateAsync(),
-                            //RefreshCurrentPrintInfosAsync(),
                         };
                         await Task.WhenAll(tasks).ConfigureAwait(false);
                     }
@@ -3466,46 +3604,7 @@ namespace AndreasReitberger
 #endregion
 
 #region Login
-
-        /*
-        public void Login(string UserName, SecureString Password, string SessionId, bool remember = true)
-        {
-            if (string.IsNullOrEmpty(SessionId)) SessionId = this.SessionId;
-            if (string.IsNullOrEmpty(SessionId) || !IsListeningToWebsocket)
-                throw new Exception($"Current session is null! Please start the Listener first to establish a WebSocket connection!");
-
-            // Password is MD5(sessionId + MD5(login + password))
-            string encryptedPassword = EncryptPassword(UserName, Password, SessionId);
-            string command =
-                $"{{\"action\":\"login\",\"data\":{{\"login\":\"{UserName}\",\"password\":\"{encryptedPassword}\",\"rememberMe\":{(remember ? "true" : "false")}}},\"printer\":\"{GetActivePrinterSlug()}\",\"callback_id\":{99}}}";
-            if (WebSocket.State == WebSocketState.Open)
-            {
-                WebSocket.Send(command);
-            }
-        }
-
-        public async Task LogoutAsync()
-        {
-            if (string.IsNullOrEmpty(SessionId) || !IsListeningToWebsocket)
-                throw new Exception($"Current session is null! Please start the Listener first to establish a WebSocket connection!");
-            _ = await SendRestApiRequestAsync("", "logout").ConfigureAwait(false);
-        }
-
-        public void Logout()
-        {
-            if (string.IsNullOrEmpty(SessionId) || !IsListeningToWebsocket)
-                throw new Exception($"Current session is null! Please start the Listener first to establish a WebSocket connection!");
-
-            string command =
-                $"{{\"action\":\"logout\",\"data\":{{}},\"printer\":\"{GetActivePrinterSlug()}\",\"callback_id\":{PingCounter++}}}";
-
-            if (WebSocket.State == WebSocketState.Open)
-            {
-                WebSocket.Send(command);
-            }
-        }
-        */
-
+        [Obsolete("Not needed anymore, will be removed")]
         string EncryptPassword(string UserName, SecureString Password, string SessionId)
         {
             // Password is MD5(sessionId + MD5(login + password))
@@ -3541,13 +3640,12 @@ namespace AndreasReitberger
         {
             try
             {
-                /*
-                if (client != null)
+                /* */
+                if (httpClient != null)
                 {
-                    client.CancelPendingRequests();
-                    UpdateWebClientInstance();
+                    httpClient.CancelPendingRequests();
+                    UpdateRestClientInstance();
                 }
-                */
             }
             catch (Exception exc)
             {
@@ -3558,12 +3656,13 @@ namespace AndreasReitberger
 
 #region CheckOnline
 
-        public async Task CheckOnlineAsync(int Timeout = 10000, bool resolveDnsFirst = true)
+        public async Task CheckOnlineAsync(int Timeout = 10000)
         {
             CancellationTokenSource cts = new(new TimeSpan(0, 0, 0, 0, Timeout));
-            await CheckOnlineAsync(cts, resolveDnsFirst).ConfigureAwait(false);
+            await CheckOnlineAsync(cts).ConfigureAwait(false);
+            cts?.Dispose();
         }
-        public async Task CheckOnlineAsync(CancellationTokenSource cts, bool resolveDnsFirst = true)
+        public async Task CheckOnlineAsync(CancellationTokenSource cts)
         {
             if (IsConnecting) return; // Avoid multiple calls
             IsConnecting = true;
@@ -3596,8 +3695,9 @@ namespace AndreasReitberger
             }
             IsConnecting = false;
             // Avoid offline message for short connection loss
-            if (isReachable || _retries > RetriesWhenOffline)
+            if (!IsOnline || isReachable || _retries > RetriesWhenOffline)
             {
+                // Do not check if the previous state was already offline
                 _retries = 0;
                 IsOnline = isReachable;
             }
@@ -3605,11 +3705,10 @@ namespace AndreasReitberger
             {
                 // Retry with shorter timeout to see if the connection loss is real
                 _retries++;
-                await CheckOnlineAsync(2000).ConfigureAwait(false);
+                await CheckOnlineAsync(3500).ConfigureAwait(false);
             }
         }
 
-        
         /*
         [Obsolete]
         public async Task CheckOnlineOldAsync(CancellationTokenSource cts, bool resolveDnsFirst = true)
@@ -3797,7 +3896,7 @@ namespace AndreasReitberger
             try
             {
                 //object cmd = new { name = ScriptName };
-                result = await SendRestApiRequestAsync(MoonRakerCommandBase.access, Method.GET, "oneshot_token").ConfigureAwait(false);
+                result = await SendRestApiRequestAsync(MoonRakerCommandBase.access, Method.Get, "oneshot_token").ConfigureAwait(false);
                 KlipperAccessTokenResult accessToken = JsonConvert.DeserializeObject<KlipperAccessTokenResult>(result.Result);
                 SessionId = accessToken?.Result;
                 return accessToken;
@@ -3827,9 +3926,9 @@ namespace AndreasReitberger
             try
             {
                 //object cmd = new { name = ScriptName };
-                result = await SendRestApiRequestAsync(MoonRakerCommandBase.access, Method.GET, "api_key").ConfigureAwait(false);
+                result = await SendRestApiRequestAsync(MoonRakerCommandBase.access, Method.Get, "api_key").ConfigureAwait(false);
                 KlipperAccessTokenResult accessToken = JsonConvert.DeserializeObject<KlipperAccessTokenResult>(result.Result);
-                SessionId = accessToken?.Result;
+                //API = accessToken?.Result;
                 return accessToken;
             }
             catch (JsonException jecx)
@@ -3847,6 +3946,19 @@ namespace AndreasReitberger
             {
                 OnError(new UnhandledExceptionEventArgs(exc, false));
                 return resultObject;
+            }
+        }
+
+        public async Task RefreshApiKeyAsync()
+        {
+            try
+            {
+                KlipperAccessTokenResult result = await GetApiKeyAsync().ConfigureAwait(false);
+                API = result?.Result;
+            }
+            catch (Exception exc)
+            {
+                OnError(new UnhandledExceptionEventArgs(exc, false));
             }
         }
 
@@ -3875,7 +3987,7 @@ namespace AndreasReitberger
             try
             {
                 //object cmd = new { name = ScriptName };
-                result = await SendRestApiRequestAsync(MoonRakerCommandBase.printer, Method.GET, "info")
+                result = await SendRestApiRequestAsync(MoonRakerCommandBase.printer, Method.Get, "info")
                     .ConfigureAwait(false);
 
                 KlipperPrinterStateMessageRespone state = JsonConvert.DeserializeObject<KlipperPrinterStateMessageRespone>(result.Result);
@@ -3905,7 +4017,7 @@ namespace AndreasReitberger
             {
                 //object cmd = new { name = ScriptName };
                 KlipperApiRequestRespone result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.printer, Method.POST, "emergency_stop")
+                    await SendRestApiRequestAsync(MoonRakerCommandBase.printer, Method.Post, "emergency_stop")
                     .ConfigureAwait(false);
                 return GetQueryResult(result.Result);
             }
@@ -3922,7 +4034,7 @@ namespace AndreasReitberger
             {
                 //object cmd = new { name = ScriptName };
                 KlipperApiRequestRespone result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.printer, Method.POST, "restart")
+                    await SendRestApiRequestAsync(MoonRakerCommandBase.printer, Method.Post, "restart")
                     .ConfigureAwait(false);
                 return GetQueryResult(result.Result);
             }
@@ -3939,7 +4051,7 @@ namespace AndreasReitberger
             {
                 //object cmd = new { name = ScriptName };
                 KlipperApiRequestRespone result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.printer, Method.POST, "firmware_restart")
+                    await SendRestApiRequestAsync(MoonRakerCommandBase.printer, Method.Post, "firmware_restart")
                     .ConfigureAwait(false);
                 return GetQueryResult(result.Result);
             }
@@ -4056,7 +4168,7 @@ namespace AndreasReitberger
             {
                 //object cmd = new { name = ScriptName };
                 result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.printer, Method.GET, "objects/list")
+                    await SendRestApiRequestAsync(MoonRakerCommandBase.printer, Method.Get, "objects/list")
                     .ConfigureAwait(false);
 
                 KlipperActionListRespone state = JsonConvert.DeserializeObject<KlipperActionListRespone>(result.Result);
@@ -4126,7 +4238,7 @@ namespace AndreasReitberger
                     if (obj.Key.StartsWith("gcode_macro")) continue;
                     urlSegments.Add(obj.Key, obj.Value);
                 }
-                result = await SendRestApiRequestAsync(MoonRakerCommandBase.printer, Method.GET, "objects/query", "", 10000, urlSegments)
+                result = await SendRestApiRequestAsync(MoonRakerCommandBase.printer, Method.Get, "objects/query", jsonObject: null, cts: default, urlSegments: urlSegments)
                     .ConfigureAwait(false);
 
                 KlipperPrinterStatusRespone queryResult = JsonConvert.DeserializeObject<KlipperPrinterStatusRespone>(result.Result);
@@ -4449,7 +4561,7 @@ namespace AndreasReitberger
                 {
                     urlSegments.Add("filament_switch_sensor", string.Empty);
                 }
-                result = await SendRestApiRequestAsync(MoonRakerCommandBase.printer, Method.GET, "objects/query", "", 10000, urlSegments)
+                result = await SendRestApiRequestAsync(MoonRakerCommandBase.printer, Method.Get, "objects/query", jsonObject: null, cts: default, urlSegments: urlSegments)
                     .ConfigureAwait(false);
 
                 KlipperFilamentSensorsRespone queryResult = JsonConvert.DeserializeObject<KlipperFilamentSensorsRespone>(result.Result);
@@ -4876,7 +4988,8 @@ namespace AndreasReitberger
                     urlSegments.Add(key, value);
                 }
 
-                result = await SendRestApiRequestAsync(MoonRakerCommandBase.printer, Method.POST, "objects/subscribe", "", 10000, urlSegments).ConfigureAwait(false);
+                result = await SendRestApiRequestAsync(MoonRakerCommandBase.printer, Method.Post, "objects/subscribe", jsonObject: null, cts: default, urlSegments: urlSegments)
+                    .ConfigureAwait(false);
                 return result?.Result;
             }
             catch (Exception exc)
@@ -4897,7 +5010,7 @@ namespace AndreasReitberger
             KlipperEndstopQueryResult resultObject = null;
             try
             {
-                result = await SendRestApiRequestAsync(MoonRakerCommandBase.printer, Method.GET, "query_endstops/status").ConfigureAwait(false);
+                result = await SendRestApiRequestAsync(MoonRakerCommandBase.printer, Method.Get, "query_endstops/status").ConfigureAwait(false);
                 KlipperEndstopQueryRespone queryResult = JsonConvert.DeserializeObject<KlipperEndstopQueryRespone>(result.Result);
                 return queryResult?.Result;
             }
@@ -4941,7 +5054,7 @@ namespace AndreasReitberger
             KlipperServerConfig resultObject = null;
             try
             {
-                result = await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.GET, "config").ConfigureAwait(false);
+                result = await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.Get, "config").ConfigureAwait(false);
                 KlipperServerConfigRespone config = JsonConvert.DeserializeObject<KlipperServerConfigRespone>(result.Result);
                 return config?.Result?.Config;
             }
@@ -4970,7 +5083,7 @@ namespace AndreasReitberger
             try
             {
                 //object cmd = new { name = ScriptName };
-                result = await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.GET, "temperature_store").ConfigureAwait(false);
+                result = await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.Get, "temperature_store").ConfigureAwait(false);
                 KlipperServerTempDataRespone tempData = JsonConvert.DeserializeObject<KlipperServerTempDataRespone>(result.Result);
                 return tempData?.Result;
             }
@@ -4999,7 +5112,7 @@ namespace AndreasReitberger
             try
             {
                 //object cmd = new { name = ScriptName };
-                result = await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.GET, $"gcode_store?count={count}").ConfigureAwait(false);
+                result = await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.Get, $"gcode_store?count={count}").ConfigureAwait(false);
                 KlipperGcodesRespone tempData = JsonConvert.DeserializeObject<KlipperGcodesRespone>(result.Result);
                 return tempData?.Result?.Gcodes;
             }
@@ -5027,7 +5140,7 @@ namespace AndreasReitberger
             {
                 //object cmd = new { name = ScriptName };
                 KlipperApiRequestRespone result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.POST, "restart")
+                    await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.Post, "restart")
                     .ConfigureAwait(false);
                 return GetQueryResult(result.Result);
             }
@@ -5065,7 +5178,7 @@ namespace AndreasReitberger
             try
             {
                 //object cmd = new { name = ScriptName };
-                result = await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.GET, "websocket_id").ConfigureAwait(false);
+                result = await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.Get, "websocket_id").ConfigureAwait(false);
                 KlipperAccessTokenResult accessToken = JsonConvert.DeserializeObject<KlipperAccessTokenResult>(result.Result);
                 SessionId = accessToken?.Result;
                 return accessToken;
@@ -5098,7 +5211,7 @@ namespace AndreasReitberger
                 urlSegements.Add("script", script);
 
                 KlipperApiRequestRespone result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.printer, Method.POST, "gcode/script", "", 10000, urlSegements)
+                    await SendRestApiRequestAsync(MoonRakerCommandBase.printer, Method.Post, "gcode/script", default, null, urlSegements)
                     .ConfigureAwait(false);
                 return GetQueryResult(result.Result);
             }
@@ -5177,7 +5290,7 @@ namespace AndreasReitberger
             try
             {
                 //object cmd = new { name = ScriptName };
-                result = await SendRestApiRequestAsync(MoonRakerCommandBase.printer, Method.GET, "gcode/help").ConfigureAwait(false);
+                result = await SendRestApiRequestAsync(MoonRakerCommandBase.printer, Method.Get, "gcode/help").ConfigureAwait(false);
                 KlipperGcodeHelpRespone config = JsonConvert.DeserializeObject<KlipperGcodeHelpRespone>(result.Result);
                 return config?.Result;
             }
@@ -5209,7 +5322,7 @@ namespace AndreasReitberger
                 urlSegements.Add("filename", fileName);
 
                 KlipperApiRequestRespone result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.printer, Method.POST, "print/start", "", 10000, urlSegements)
+                    await SendRestApiRequestAsync(MoonRakerCommandBase.printer, Method.Post, "print/start", default, null, urlSegements)
                     .ConfigureAwait(false);
                 return GetQueryResult(result.Result);
             }
@@ -5224,7 +5337,7 @@ namespace AndreasReitberger
             try
             {
                 KlipperApiRequestRespone result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.printer, Method.POST, "print/pause")
+                    await SendRestApiRequestAsync(MoonRakerCommandBase.printer, Method.Post, "print/pause")
                     .ConfigureAwait(false);
                 return GetQueryResult(result.Result);
             }
@@ -5239,7 +5352,7 @@ namespace AndreasReitberger
             try
             {
                 KlipperApiRequestRespone result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.printer, Method.POST, "print/resume")
+                    await SendRestApiRequestAsync(MoonRakerCommandBase.printer, Method.Post, "print/resume")
                     .ConfigureAwait(false);
                 return GetQueryResult(result.Result);
             }
@@ -5254,7 +5367,7 @@ namespace AndreasReitberger
             try
             {
                 KlipperApiRequestRespone result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.printer, Method.POST, "print/cancel")
+                    await SendRestApiRequestAsync(MoonRakerCommandBase.printer, Method.Post, "print/cancel")
                     .ConfigureAwait(false);
                 return GetQueryResult(result.Result);
             }
@@ -5327,7 +5440,7 @@ namespace AndreasReitberger
             KlipperMachineInfo resultObject = null;
             try
             {
-                result = await SendRestApiRequestAsync(MoonRakerCommandBase.machine, Method.GET, "system_info").ConfigureAwait(false);
+                result = await SendRestApiRequestAsync(MoonRakerCommandBase.machine, Method.Get, "system_info").ConfigureAwait(false);
                 KlipperMachineInfoRespone config = JsonConvert.DeserializeObject<KlipperMachineInfoRespone>(result.Result);
                 return config?.Result?.SystemInfo;
             }
@@ -5354,7 +5467,7 @@ namespace AndreasReitberger
             try
             {
                 KlipperApiRequestRespone result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.machine, Method.POST, "shutdown")
+                    await SendRestApiRequestAsync(MoonRakerCommandBase.machine, Method.Post, "shutdown")
                     .ConfigureAwait(false);
                 return GetQueryResult(result.Result);
             }
@@ -5370,7 +5483,7 @@ namespace AndreasReitberger
             try
             {
                 KlipperApiRequestRespone result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.machine, Method.POST, "reboot")
+                    await SendRestApiRequestAsync(MoonRakerCommandBase.machine, Method.Post, "reboot")
                     .ConfigureAwait(false);
                 return GetQueryResult(result.Result);
             }
@@ -5389,7 +5502,7 @@ namespace AndreasReitberger
                 urlSegements.Add("service", service);
 
                 KlipperApiRequestRespone result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.machine, Method.POST, "services/restart", "", 10000, urlSegements)
+                    await SendRestApiRequestAsync(MoonRakerCommandBase.machine, Method.Post, "services/restart", default, null, urlSegements)
                     .ConfigureAwait(false);
                 return GetQueryResult(result.Result);
             }
@@ -5412,7 +5525,7 @@ namespace AndreasReitberger
                 urlSegements.Add("service", service);
 
                 KlipperApiRequestRespone result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.machine, Method.POST, "services/stop", "", 10000, urlSegements)
+                    await SendRestApiRequestAsync(MoonRakerCommandBase.machine, Method.Post, "services/stop", default, null, urlSegements)
                     .ConfigureAwait(false);
                 return GetQueryResult(result.Result);
             }
@@ -5435,7 +5548,7 @@ namespace AndreasReitberger
                 urlSegements.Add("service", service);
 
                 KlipperApiRequestRespone result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.machine, Method.POST, "services/start", "", 10000, urlSegements)
+                    await SendRestApiRequestAsync(MoonRakerCommandBase.machine, Method.Post, "services/start", default, null, urlSegements)
                     .ConfigureAwait(false);
                 return GetQueryResult(result.Result);
             }
@@ -5456,7 +5569,7 @@ namespace AndreasReitberger
             KlipperMoonrakerProcessStatsResult resultObject = null;
             try
             {
-                result = await SendRestApiRequestAsync(MoonRakerCommandBase.machine, Method.GET, "proc_stats").ConfigureAwait(false);
+                result = await SendRestApiRequestAsync(MoonRakerCommandBase.machine, Method.Get, "proc_stats").ConfigureAwait(false);
                 KlipperMoonrakerProcessStatsRespone config = JsonConvert.DeserializeObject<KlipperMoonrakerProcessStatsRespone>(result.Result);
                 return config?.Result;
             }
@@ -5508,7 +5621,7 @@ namespace AndreasReitberger
                     urlSegements.Add("root", rootPath);
                 }
 
-                result = await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.GET, "files/list", "", 10000, urlSegements).ConfigureAwait(false);
+                result = await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.Get, "files/list", default, null, urlSegements).ConfigureAwait(false);
                 KlipperFileListRespone files = JsonConvert.DeserializeObject<KlipperFileListRespone>(result.Result);
                 if (includeGcodeMeta)
                 {
@@ -5518,7 +5631,9 @@ namespace AndreasReitberger
                         current.GcodeMeta = await GetGcodeMetadataAsync(current.Path).ConfigureAwait(false);
                         if (current.GcodeMeta?.Thumbnails?.Count > 0)
                         {
-                            current.Image = GetGcodeThumbnailImage(current.GcodeMeta, 1);
+                            current.Image = await GetGcodeThumbnailImageAsync(current.GcodeMeta, 1)
+                                .ConfigureAwait(false)
+                                ;
                         }
                     }
                 }
@@ -5567,7 +5682,7 @@ namespace AndreasReitberger
                 Dictionary<string, string> urlSegements = new();
                 urlSegements.Add("filename", fileName);
 
-                result = await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.GET, "files/metadata", "", 10000, urlSegements).ConfigureAwait(false);
+                result = await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.Get, "files/metadata", default, null, urlSegements).ConfigureAwait(false);
                 KlipperGcodeMetaRespone queryResult = JsonConvert.DeserializeObject<KlipperGcodeMetaRespone>(result.Result);
                 return queryResult?.Result;
             }
@@ -5603,12 +5718,15 @@ namespace AndreasReitberger
             }
         }
 
-        public byte[] GetGcodeThumbnailImage(string relativePath, int timeout = 10000)
+        public async Task<byte[]> GetGcodeThumbnailImageAsync(string relativePath, int timeout = 10000)
         {
             try
             {
-                Uri target = new($"{FullWebAddress}/server/files/gcodes/{relativePath}");
-                byte[] thumb = DownloadFileFromUri(target, timeout);
+                //Uri target = new($"{FullWebAddress}/server/files/gcodes/{relativePath}");
+                string target = $"{FullWebAddress}/server/files/gcodes/{relativePath}";
+                byte[] thumb = await DownloadFileFromUriAsync(target, timeout)
+                    .ConfigureAwait(false)
+                    ;
 
                 return thumb;
             }
@@ -5618,11 +5736,13 @@ namespace AndreasReitberger
                 return new byte[0];
             }
         }
-        public byte[] GetGcodeThumbnailImage(KlipperGcodeMetaResult gcodeMeta, int index = 0, int timeout = 10000)
+        public async Task<byte[]> GetGcodeThumbnailImageAsync(KlipperGcodeMetaResult gcodeMeta, int index = 0, int timeout = 10000)
         {
             string path = gcodeMeta.Thumbnails.Count > index ?
                 gcodeMeta.Thumbnails[index].RelativePath : gcodeMeta.Thumbnails.FirstOrDefault().RelativePath;
-            return string.IsNullOrEmpty(path) ? null : GetGcodeThumbnailImage(path, timeout);
+            return string.IsNullOrEmpty(path) ? null : await GetGcodeThumbnailImageAsync(path, timeout)
+                .ConfigureAwait(false)
+                ;
         }
         public async Task RefreshDirectoryInformationAsync(string path = "", bool extended = true)
         {
@@ -5648,7 +5768,7 @@ namespace AndreasReitberger
                 urlSegements.Add("path", path);
                 urlSegements.Add("extended", extended ? "true" : "false");
 
-                result = await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.GET, "files/directory", "", 10000, urlSegements).ConfigureAwait(false);
+                result = await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.Get, "files/directory", default, null, urlSegements).ConfigureAwait(false);
 
                 KlipperDirectoryInfoRespone queryResult = JsonConvert.DeserializeObject<KlipperDirectoryInfoRespone>(result.Result);
                 if (queryResult?.Result?.DiskUsage != null)
@@ -5724,7 +5844,7 @@ namespace AndreasReitberger
                 urlSegments.Add("path", directory);
 
                 result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.POST, $"files/directory", "", 10000, urlSegments)
+                    await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.Post, $"files/directory", jsonObject: null, cts: default, urlSegments: urlSegments)
                     .ConfigureAwait(false);
 
                 KlipperDirectoryActionRespone queryResult = JsonConvert.DeserializeObject<KlipperDirectoryActionRespone>(result.Result);
@@ -5759,7 +5879,7 @@ namespace AndreasReitberger
                 urlSegments.Add("force", force ? "true" : "false");
 
                 result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.DELETE, $"files/directory", "", 10000, urlSegments)
+                    await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.Delete, $"files/directory", jsonObject: null, cts: default, urlSegments: urlSegments)
                     .ConfigureAwait(false);
                 KlipperDirectoryActionRespone queryResult = JsonConvert.DeserializeObject<KlipperDirectoryActionRespone>(result.Result);
                 return queryResult?.Result;
@@ -5793,7 +5913,7 @@ namespace AndreasReitberger
                 urlSegments.Add("dest", destination);
 
                 result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.POST, $"files/move", "", 10000, urlSegments)
+                    await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.Post, $"files/move", jsonObject: null, cts: default, urlSegments: urlSegments)
                     .ConfigureAwait(false);
                 KlipperDirectoryActionRespone queryResult = JsonConvert.DeserializeObject<KlipperDirectoryActionRespone>(result.Result);
                 return queryResult?.Result;
@@ -5827,7 +5947,7 @@ namespace AndreasReitberger
                 urlSegments.Add("dest", destination);
 
                 result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.POST, $"files/copy", "", 10000, urlSegments)
+                    await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.Post, $"files/copy", jsonObject: null, cts: default, urlSegments: urlSegments)
                     .ConfigureAwait(false);
                 KlipperDirectoryActionRespone queryResult = JsonConvert.DeserializeObject<KlipperDirectoryActionRespone>(result.Result);
                 return queryResult?.Result;
@@ -5850,12 +5970,15 @@ namespace AndreasReitberger
             }
         }
 
-        public byte[] DownloadFile(string relativeFilePath)
+        public async Task<byte[]> DownloadFileAsync(string relativeFilePath)
         {
             try
             {
-                Uri uri = new($"{FullWebAddress}/server/files/{relativeFilePath}");
-                byte[] file = DownloadFileFromUri(uri);
+                //Uri uri = new($"{FullWebAddress}/server/files/{relativeFilePath}");
+                string uri = $"{FullWebAddress}/server/files/{relativeFilePath}";
+                byte[] file = await DownloadFileFromUriAsync(uri)
+                    .ConfigureAwait(false)
+                    ;
                 return file;
             }
             catch (Exception exc)
@@ -5930,7 +6053,7 @@ namespace AndreasReitberger
             try
             {
                 result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.DELETE, $"files/{root}/{filePath}")
+                    await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.Delete, $"files/{root}/{filePath}")
                     .ConfigureAwait(false);
                 KlipperDirectoryActionRespone queryResult = JsonConvert.DeserializeObject<KlipperDirectoryActionRespone>(result.Result);
                 return queryResult?.Result;
@@ -5963,7 +6086,7 @@ namespace AndreasReitberger
             try
             {
                 result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.DELETE, $"files/{filePath}")
+                    await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.Delete, $"files/{filePath}")
                     .ConfigureAwait(false);
                 KlipperDirectoryActionRespone queryResult = JsonConvert.DeserializeObject<KlipperDirectoryActionRespone>(result.Result);
                 return queryResult?.Result;
@@ -5986,12 +6109,15 @@ namespace AndreasReitberger
             }
         }
 
-        public byte[] DownloadLogFile(KlipperLogFileTypes logType)
+        public async Task<byte[]> DownloadLogFileAsync(KlipperLogFileTypes logType)
         {
             try
             {
-                Uri uri = new($"{FullWebAddress}/server/files/{logType.ToString().ToLower()}.log");
-                byte[] file = DownloadFileFromUri(uri);
+                //Uri uri = new($"{FullWebAddress}/server/files/{logType.ToString().ToLower()}.log");
+                string uri = $"{FullWebAddress}/server/files/{logType.ToString().ToLower()}.log";
+                byte[] file = await DownloadFileFromUriAsync(uri)
+                    .ConfigureAwait(false);
+                    ;
                 return file;
             }
             catch (Exception exc)
@@ -6000,9 +6126,9 @@ namespace AndreasReitberger
                 return null;
             }
         }
-#endregion
+        #endregion
 
-#region Authorization
+        #region Authorization
 
         public async Task<KlipperUserActionResult> LoginUserAsync(string username, string password)
         {
@@ -6015,11 +6141,10 @@ namespace AndreasReitberger
                     username = username,
                     password = password
                 };
-                result = await SendRestApiRequestAsync(MoonRakerCommandBase.access, Method.POST, "login", cmd).ConfigureAwait(false);
+                result = await SendRestApiRequestAsync(MoonRakerCommandBase.access, Method.Post, "login", cmd, default).ConfigureAwait(false);
                 KlipperUserActionRespone queryResult = JsonConvert.DeserializeObject<KlipperUserActionRespone>(result.Result);
                 UserToken = queryResult?.Result?.Token;
                 RefreshToken = queryResult?.Result?.RefreshToken;
-
                 return queryResult?.Result;
             }
             catch (JsonException jecx)
@@ -6051,7 +6176,7 @@ namespace AndreasReitberger
                 {
                     refresh_token = token,
                 };
-                result = await SendRestApiRequestAsync(MoonRakerCommandBase.access, Method.POST, "refresh_jwt", cmd).ConfigureAwait(false);
+                result = await SendRestApiRequestAsync(MoonRakerCommandBase.access, Method.Post, "refresh_jwt", cmd).ConfigureAwait(false);
                 KlipperUserActionRespone queryResult = JsonConvert.DeserializeObject<KlipperUserActionRespone>(result.Result);
 
                 UserToken = queryResult?.Result?.Token;
@@ -6088,7 +6213,7 @@ namespace AndreasReitberger
                     password = password,
                     new_password = newPassword,
                 };
-                result = await SendRestApiRequestAsync(MoonRakerCommandBase.access, Method.POST, "user/password", cmd).ConfigureAwait(false);
+                result = await SendRestApiRequestAsync(MoonRakerCommandBase.access, Method.Post, "user/password", cmd).ConfigureAwait(false);
                 KlipperUserActionRespone queryResult = JsonConvert.DeserializeObject<KlipperUserActionRespone>(result.Result);
 
                 return queryResult?.Result;
@@ -6117,7 +6242,7 @@ namespace AndreasReitberger
             KlipperUserActionResult resultObject = null;
             try
             {
-                result = await SendRestApiRequestAsync(MoonRakerCommandBase.access, Method.POST, "logout").ConfigureAwait(false);
+                result = await SendRestApiRequestAsync(MoonRakerCommandBase.access, Method.Post, "logout").ConfigureAwait(false);
                 UserToken = string.Empty;
 
                 KlipperUserActionRespone queryResult = JsonConvert.DeserializeObject<KlipperUserActionRespone>(result.Result);
@@ -6147,7 +6272,7 @@ namespace AndreasReitberger
             KlipperUser resultObject = null;
             try
             {
-                result = await SendRestApiRequestAsync(MoonRakerCommandBase.access, Method.GET, "user").ConfigureAwait(false);
+                result = await SendRestApiRequestAsync(MoonRakerCommandBase.access, Method.Get, "user").ConfigureAwait(false);
                 KlipperUserRespone queryResult = JsonConvert.DeserializeObject<KlipperUserRespone>(result.Result);
                 return queryResult?.Result;
             }
@@ -6185,7 +6310,13 @@ namespace AndreasReitberger
                     password = password
                 };
 
-                result = await SendRestApiRequestAsync(MoonRakerCommandBase.access, Method.POST, "user", cmd).ConfigureAwait(false);
+                // This operation needs a valid token / api key
+                if (string.IsNullOrEmpty(API))
+                {
+                    KlipperAccessTokenResult token = await GetOneshotTokenAsync().ConfigureAwait(false);
+                    API = token?.Result;
+                }
+                result = await SendRestApiRequestAsync(MoonRakerCommandBase.access, Method.Post, "user", cmd).ConfigureAwait(false);
                 //return result?.Result;
                 KlipperUserActionRespone queryResult = JsonConvert.DeserializeObject<KlipperUserActionRespone>(result.Result);
                 return queryResult?.Result;
@@ -6222,7 +6353,7 @@ namespace AndreasReitberger
                 {
                     username = username,
                 };
-                result = await SendRestApiRequestAsync(MoonRakerCommandBase.access, Method.DELETE, "user", cmd).ConfigureAwait(false);
+                result = await SendRestApiRequestAsync(MoonRakerCommandBase.access, Method.Delete, "user", cmd).ConfigureAwait(false);
 
                 KlipperUserActionRespone queryResult = JsonConvert.DeserializeObject<KlipperUserActionRespone>(result.Result);
                 return queryResult?.Result;
@@ -6251,7 +6382,7 @@ namespace AndreasReitberger
             List<KlipperUser> resultObject = null;
             try
             {
-                result = await SendRestApiRequestAsync(MoonRakerCommandBase.access, Method.GET, "users/list").ConfigureAwait(false);
+                result = await SendRestApiRequestAsync(MoonRakerCommandBase.access, Method.Get, "users/list").ConfigureAwait(false);
                 KlipperUserListRespone queryResult = JsonConvert.DeserializeObject<KlipperUserListRespone>(result.Result);
                 return queryResult?.Result?.Users;
 
@@ -6283,7 +6414,7 @@ namespace AndreasReitberger
             try
             {
                 result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.GET, $"database/list")
+                    await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.Get, $"database/list")
                     .ConfigureAwait(false);
                 KlipperDatabaseNamespaceListRespone queryResult = JsonConvert.DeserializeObject<KlipperDatabaseNamespaceListRespone>(result.Result);
                 return queryResult?.Result?.Namespaces;
@@ -6316,7 +6447,7 @@ namespace AndreasReitberger
                 if (!string.IsNullOrEmpty(key)) urlSegements.Add("key", key);
 
                 result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.GET, $"database/item", "", 10000, urlSegements)
+                    await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.Get, $"database/item", default, null, urlSegements)
                     .ConfigureAwait(false);
                 KlipperDatabaseItemRespone queryResult = JsonConvert.DeserializeObject<KlipperDatabaseItemRespone>(result.Result);
                 if (queryResult != null)
@@ -6545,7 +6676,7 @@ namespace AndreasReitberger
                     key = key,
                     value = value,
                 };
-                result = await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.POST, "database/item", cmd).ConfigureAwait(false);
+                result = await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.Post, "database/item", cmd).ConfigureAwait(false);
                 KlipperDatabaseItemRespone queryResult = JsonConvert.DeserializeObject<KlipperDatabaseItemRespone>(result.Result);
                 if (queryResult != null)
                 {
@@ -6583,7 +6714,7 @@ namespace AndreasReitberger
                 if (!string.IsNullOrEmpty(key)) urlSegements.Add("key", key);
 
                 result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.DELETE, $"database/item", "", 10000, urlSegements)
+                    await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.Delete, $"database/item", default, null, urlSegements)
                     .ConfigureAwait(false);
                 KlipperDatabaseItemRespone queryResult = JsonConvert.DeserializeObject<KlipperDatabaseItemRespone>(result.Result);
                 if (queryResult != null)
@@ -6620,7 +6751,7 @@ namespace AndreasReitberger
             KlipperJobQueueResult resultObject = null;
             try
             {
-                result = await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.GET, "job_queue/status").ConfigureAwait(false);
+                result = await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.Get, "job_queue/status").ConfigureAwait(false);
 
                 KlipperJobQueueRespone queryResult = JsonConvert.DeserializeObject<KlipperJobQueueRespone>(result.Result);
                 return queryResult?.Result;
@@ -6690,7 +6821,7 @@ namespace AndreasReitberger
                 {
                     filenames = jobs,
                 };
-                result = await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.POST, "job_queue/job", cmd).ConfigureAwait(false);
+                result = await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.Post, "job_queue/job", cmd).ConfigureAwait(false);
                 KlipperJobQueueRespone queryResult = JsonConvert.DeserializeObject<KlipperJobQueueRespone>(result.Result);
 
                 return queryResult?.Result;
@@ -6723,7 +6854,7 @@ namespace AndreasReitberger
                 urlSegments.Add("all", "true");
 
                 result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.DELETE, $"job_queue/job", "", 10000, urlSegments)
+                    await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.Delete, $"job_queue/job", jsonObject: null, cts: default, urlSegments: urlSegments)
                     .ConfigureAwait(false);
                 KlipperJobQueueRespone queryResult = JsonConvert.DeserializeObject<KlipperJobQueueRespone>(result.Result);
 
@@ -6758,7 +6889,7 @@ namespace AndreasReitberger
                 urlSegments.Add("job_ids", string.Join(",", jobIds));
 
                 result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.DELETE, $"job_queue/job", "", 10000, urlSegments)
+                    await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.Delete, $"job_queue/job", jsonObject: null, cts: default, urlSegments: urlSegments)
                     .ConfigureAwait(false);
                 KlipperJobQueueRespone queryResult = JsonConvert.DeserializeObject<KlipperJobQueueRespone>(result.Result);
 
@@ -6794,7 +6925,7 @@ namespace AndreasReitberger
             try
             {
                 result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.POST, $"job_queue/pause")
+                    await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.Post, $"job_queue/pause")
                     .ConfigureAwait(false);
                 KlipperJobQueueRespone queryResult = JsonConvert.DeserializeObject<KlipperJobQueueRespone>(result.Result);
 
@@ -6825,7 +6956,7 @@ namespace AndreasReitberger
             try
             {
                 result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.POST, $"job_queue/start")
+                    await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.Post, $"job_queue/start")
                     .ConfigureAwait(false);
                 KlipperJobQueueRespone queryResult = JsonConvert.DeserializeObject<KlipperJobQueueRespone>(result.Result);
 
@@ -6861,7 +6992,7 @@ namespace AndreasReitberger
                 urlSegments.Add("refresh", refresh ? "true" : "false");
 
                 result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.machine, Method.GET, $"update/status", "", 10000, urlSegments)
+                    await SendRestApiRequestAsync(MoonRakerCommandBase.machine, Method.Get, $"update/status", jsonObject: null, cts: default, urlSegments: urlSegments)
                     .ConfigureAwait(false);
                 KlipperUpdateStatusRespone queryResult = JsonConvert.DeserializeObject<KlipperUpdateStatusRespone>(result.Result);
                 if(queryResult?.Result?.VersionInfo != null)
@@ -6903,7 +7034,7 @@ namespace AndreasReitberger
             try
             {
                 KlipperApiRequestRespone result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.machine, Method.POST, $"update/full")
+                    await SendRestApiRequestAsync(MoonRakerCommandBase.machine, Method.Post, $"update/full")
                     .ConfigureAwait(false);
                 return GetQueryResult(result.Result);
             }
@@ -6919,7 +7050,7 @@ namespace AndreasReitberger
             try
             {
                 KlipperApiRequestRespone result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.machine, Method.POST, $"update/moonraker")
+                    await SendRestApiRequestAsync(MoonRakerCommandBase.machine, Method.Post, $"update/moonraker")
                     .ConfigureAwait(false);
                 return GetQueryResult(result.Result);
             }
@@ -6935,7 +7066,7 @@ namespace AndreasReitberger
             try
             {
                 KlipperApiRequestRespone result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.machine, Method.POST, $"update/klipper")
+                    await SendRestApiRequestAsync(MoonRakerCommandBase.machine, Method.Post, $"update/klipper")
                     .ConfigureAwait(false);
                 return GetQueryResult(result.Result);
             }
@@ -6954,7 +7085,7 @@ namespace AndreasReitberger
                 urlSegments.Add("name", clientName);
 
                 KlipperApiRequestRespone result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.machine, Method.POST, $"update/client", "", 10000, urlSegments)
+                    await SendRestApiRequestAsync(MoonRakerCommandBase.machine, Method.Post, $"update/client", jsonObject: null, cts: default, urlSegments: urlSegments)
                     .ConfigureAwait(false);
                 return GetQueryResult(result.Result);
             }
@@ -6970,7 +7101,7 @@ namespace AndreasReitberger
             try
             {
                 KlipperApiRequestRespone result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.machine, Method.POST, $"update/system")
+                    await SendRestApiRequestAsync(MoonRakerCommandBase.machine, Method.Post, $"update/system")
                     .ConfigureAwait(false);
                 return GetQueryResult(result.Result);
             }
@@ -6990,7 +7121,7 @@ namespace AndreasReitberger
                 urlSegments.Add("hard", hard ? "true" : "false");
 
                 KlipperApiRequestRespone result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.machine, Method.POST, $"update/recover", "", 10000, urlSegments)
+                    await SendRestApiRequestAsync(MoonRakerCommandBase.machine, Method.Post, $"update/recover", jsonObject: null, cts: default, urlSegments: urlSegments)
                     .ConfigureAwait(false);
                 return GetQueryResult(result.Result);
             }
@@ -7010,7 +7141,7 @@ namespace AndreasReitberger
             try
             {
                 result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.machine, Method.GET, $"device_power/devices")
+                    await SendRestApiRequestAsync(MoonRakerCommandBase.machine, Method.Get, $"device_power/devices")
                     .ConfigureAwait(false);
                 KlipperDeviceListRespone queryResult = JsonConvert.DeserializeObject<KlipperDeviceListRespone>(result.Result);
 
@@ -7044,7 +7175,7 @@ namespace AndreasReitberger
                 urlSegments.Add("device", device);
 
                 result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.machine, Method.GET, $"device_power/device", "", 10000, urlSegments)
+                    await SendRestApiRequestAsync(MoonRakerCommandBase.machine, Method.Get, $"device_power/device", jsonObject: null, cts: default, urlSegments: urlSegments)
                     .ConfigureAwait(false);
                 KlipperDeviceStatusRespone queryResult = JsonConvert.DeserializeObject<KlipperDeviceStatusRespone>(result.Result);
 
@@ -7079,7 +7210,7 @@ namespace AndreasReitberger
                 urlSegments.Add("action", action.ToString().ToLower());
 
                 result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.machine, Method.POST, $"device_power/device", "", 10000, urlSegments)
+                    await SendRestApiRequestAsync(MoonRakerCommandBase.machine, Method.Post, $"device_power/device", jsonObject: null, cts: default, urlSegments: urlSegments)
                     .ConfigureAwait(false);
                 KlipperDeviceStatusRespone queryResult = JsonConvert.DeserializeObject<KlipperDeviceStatusRespone>(result.Result);
 
@@ -7120,7 +7251,7 @@ namespace AndreasReitberger
                 }
 
                 result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.machine, Method.GET, $"device_power/status?{deviceList}")
+                    await SendRestApiRequestAsync(MoonRakerCommandBase.machine, Method.Get, $"device_power/status?{deviceList}")
                     .ConfigureAwait(false);
                 KlipperDeviceStatusRespone queryResult = JsonConvert.DeserializeObject<KlipperDeviceStatusRespone>(result.Result);
 
@@ -7159,7 +7290,7 @@ namespace AndreasReitberger
                 }
 
                 result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.machine, Method.POST, $"device_power/on?{deviceList}")
+                    await SendRestApiRequestAsync(MoonRakerCommandBase.machine, Method.Post, $"device_power/on?{deviceList}")
                     .ConfigureAwait(false);
                 KlipperDeviceStatusRespone queryResult = JsonConvert.DeserializeObject<KlipperDeviceStatusRespone>(result.Result);
 
@@ -7198,7 +7329,7 @@ namespace AndreasReitberger
                 }
 
                 result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.machine, Method.POST, $"device_power/off?{deviceList}")
+                    await SendRestApiRequestAsync(MoonRakerCommandBase.machine, Method.Post, $"device_power/off?{deviceList}")
                     .ConfigureAwait(false);
                 KlipperDeviceStatusRespone queryResult = JsonConvert.DeserializeObject<KlipperDeviceStatusRespone>(result.Result);
 
@@ -7231,7 +7362,7 @@ namespace AndreasReitberger
             try
             {
                 result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.api, Method.GET, $"version")
+                    await SendRestApiRequestAsync(MoonRakerCommandBase.api, Method.Get, $"version")
                     .ConfigureAwait(false);
                 OctoprintApiVersionResult queryResult = JsonConvert.DeserializeObject<OctoprintApiVersionResult>(result.Result);
 
@@ -7262,7 +7393,7 @@ namespace AndreasReitberger
             try
             {
                 result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.api, Method.GET, $"server")
+                    await SendRestApiRequestAsync(MoonRakerCommandBase.api, Method.Get, $"server")
                     .ConfigureAwait(false);
                 OctoprintApiServerStatusResult queryResult = JsonConvert.DeserializeObject<OctoprintApiServerStatusResult>(result.Result);
 
@@ -7293,7 +7424,7 @@ namespace AndreasReitberger
             try
             {
                 result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.api, Method.GET, $"login")
+                    await SendRestApiRequestAsync(MoonRakerCommandBase.api, Method.Get, $"login")
                     .ConfigureAwait(false);
                 OctoprintApiServerStatusResult queryResult = JsonConvert.DeserializeObject<OctoprintApiServerStatusResult>(result.Result);
 
@@ -7324,7 +7455,7 @@ namespace AndreasReitberger
             try
             {
                 result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.api, Method.GET, $"settings")
+                    await SendRestApiRequestAsync(MoonRakerCommandBase.api, Method.Get, $"settings")
                     .ConfigureAwait(false);
                 OctoprintApiSettingsResult queryResult = JsonConvert.DeserializeObject<OctoprintApiSettingsResult>(result.Result);
 
@@ -7355,7 +7486,7 @@ namespace AndreasReitberger
             try
             {
                 result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.api, Method.GET, $"job")
+                    await SendRestApiRequestAsync(MoonRakerCommandBase.api, Method.Get, $"job")
                     .ConfigureAwait(false);
                 OctoprintApiJobResult queryResult = JsonConvert.DeserializeObject<OctoprintApiJobResult>(result.Result);
 
@@ -7386,7 +7517,7 @@ namespace AndreasReitberger
             try
             {
                 result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.api, Method.GET, $"printer")
+                    await SendRestApiRequestAsync(MoonRakerCommandBase.api, Method.Get, $"printer")
                     .ConfigureAwait(false);
                 OctoprintApiPrinterStatusResult queryResult = JsonConvert.DeserializeObject<OctoprintApiPrinterStatusResult>(result.Result);
 
@@ -7419,7 +7550,7 @@ namespace AndreasReitberger
                     commands = commands
                 };
                 KlipperApiRequestRespone result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.api, Method.POST, "printer/command", cmd)
+                    await SendRestApiRequestAsync(MoonRakerCommandBase.api, Method.Post, "printer/command", cmd)
                     .ConfigureAwait(false);
                 return GetQueryResult(result.Result, true);
             }
@@ -7442,7 +7573,7 @@ namespace AndreasReitberger
             try
             {
                 result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.api, Method.GET, $"printerprofiles")
+                    await SendRestApiRequestAsync(MoonRakerCommandBase.api, Method.Get, $"printerprofiles")
                     .ConfigureAwait(false);
                 OctoprintApiPrinterProfilesResult queryResult = JsonConvert.DeserializeObject<OctoprintApiPrinterProfilesResult>(result.Result);
 
@@ -7496,7 +7627,7 @@ namespace AndreasReitberger
                 urlSegments.Add("order", order);
 
                 result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.GET, $"history/list", "", 10000, urlSegments)
+                    await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.Get, $"history/list", jsonObject: null, cts: default, urlSegments: urlSegments)
                     .ConfigureAwait(false);
                 KlipperHistoryRespone queryResult = JsonConvert.DeserializeObject<KlipperHistoryRespone>(result.Result);
 
@@ -7527,7 +7658,7 @@ namespace AndreasReitberger
             try
             {
                 result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.GET, $"history/totals")
+                    await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.Get, $"history/totals")
                     .ConfigureAwait(false);
                 KlipperHistoryTotalRespone queryResult = JsonConvert.DeserializeObject<KlipperHistoryTotalRespone>(result.Result);
 
@@ -7558,7 +7689,7 @@ namespace AndreasReitberger
             try
             {
                 result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.GET, $"history/reset_totals")
+                    await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.Get, $"history/reset_totals")
                     .ConfigureAwait(false);
                 KlipperHistoryTotalRespone queryResult = JsonConvert.DeserializeObject<KlipperHistoryTotalRespone>(result.Result);
 
@@ -7592,7 +7723,7 @@ namespace AndreasReitberger
                 urlSegments.Add("uid", uid);
 
                 result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.GET, $"history/job", "", 10000, urlSegments)
+                    await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.Get, $"history/job", jsonObject: null, cts: default, urlSegments: urlSegments)
                     .ConfigureAwait(false);
                 KlipperHistorySingleJobRespone queryResult = JsonConvert.DeserializeObject<KlipperHistorySingleJobRespone>(result.Result);
 
@@ -7633,7 +7764,7 @@ namespace AndreasReitberger
                 urlSegments.Add("uid", uid);
 
                 result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.DELETE, $"history/job", "", 10000, urlSegments)
+                    await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.Delete, $"history/job", jsonObject: null, cts: default, urlSegments: urlSegments)
                     .ConfigureAwait(false);
                 KlipperHistoryJobDeletedRespone queryResult = JsonConvert.DeserializeObject<KlipperHistoryJobDeletedRespone>(result.Result);
 

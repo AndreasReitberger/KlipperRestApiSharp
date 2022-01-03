@@ -1,0 +1,16 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "141a5cfd-0d86-47b8-908c-718f585a3daa": {
+      "ProjectGuid": "141a5cfd-0d86-47b8-908c-718f585a3daa",
+      "DisplayName": "KlipperSharpWebApiTest",
+      "ColorIndex": 0
+    },
+    "e9c9645b-c3b7-4727-9524-2870a4a01e5c": {
+      "ProjectGuid": "e9c9645b-c3b7-4727-9524-2870a4a01e5c",
+      "DisplayName": "KlipperSharpWebApi",
+      "ColorIndex": 1
+    }
+  },
+  "NextColorIndex": 2
+}
