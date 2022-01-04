@@ -1,5 +1,5 @@
 # KlipperRestApiSharp
-A C# based library to communicate with a klipper using MainsailOS.
+A C# based library to communicate with a klipper using the Moonraker WebApi.
 
 # Moonrakers Documentation
 This C# library wraps the available Web API functions listed in the
