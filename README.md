@@ -48,8 +48,8 @@ Following you'll find the list of migrated functions from the WebAPI.
 | ----------------------------------- |:-----:| -------:|
 | Print a file                        | ✅   | ✅      |
 | Pause a print                       | ✅   | ✅      |
-| Resume a print                      | ✅   | No      |
-| Cancel a print                      | ✅   | No      |
+| Resume a print                      | ✅   | ✅      |
+| Cancel a print                      | ✅   | ✅      |
 
 ## Machine Commands
 
@@ -74,7 +74,7 @@ Following you'll find the list of migrated functions from the WebAPI.
 | Delete directory                    | ✅   | ✅      |
 | Move a file or directory            | ✅   | ✅      |
 | Copy a file or directory            | ✅   | ✅      |
-| File download                       | ✅   | No      |
+| File download                       | ✅   | ✅      |
 | File upload                         | ✅   | ✅      |
 | File delete                         | ✅   | ✅      |
 | Download klippy.log                 | ✅   | ✅      |
@@ -120,8 +120,8 @@ Following you'll find the list of migrated functions from the WebAPI.
 
 | Function                            | Added?| Tested? |
 | ----------------------------------- |:-----:| -------:|
-| Get update status                   | ✅    | No      |
-| Perform a full update               | ✅    | No      |
+| Get update status                   | ✅    | ✅     |
+| Perform a full update               | ✅    | ✅     |
 | Update Moonraker                    | ✅    | No      |
 | Update Klipper                      | ✅    | No      |
 | Update Client                       | ✅    | No      |
