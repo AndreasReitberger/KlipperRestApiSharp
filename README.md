@@ -8,6 +8,19 @@ https://moonraker.readthedocs.io/en/latest/web_api/
 
 You can see the current migration progress in the following table.
 
+# App's using this library
+
+![FeaturedImage](https://andreas-reitberger.de/wp-content/uploads/2022/01/feature-graphic_modified.png)
+
+I also created an iOS app to interact with a moonraker based OS.
+The app is available for testing here:<br>
+TestFlight: https://testflight.apple.com/join/TyguKzt9
+
+## Note for Android
+There is an android version in development, however due to the poor 
+performance using Xamarin.Android, I decided to wait till .NET MAUI 
+is available.
+
 # WebAPI migration status
 Following you'll find the list of migrated functions from the WebAPI.
 
