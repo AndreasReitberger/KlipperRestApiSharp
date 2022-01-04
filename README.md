@@ -1,6 +1,11 @@
 # KlipperRestApiSharp
 A C# based library to communicate with a klipper using the Moonraker WebApi.
 
+# Nuget
+Get the latest version from nuget.org<br>
+[![NuGet](https://img.shields.io/nuget/v/KlipperSharpWebApi.svg?style=flat-square&label=nuget)](https://www.nuget.org/packages/KlipperSharpWebApi/)
+
+
 # Moonrakers Documentation
 This C# library wraps the available Web API functions listed in the
 Moonraker's documentation below. 
