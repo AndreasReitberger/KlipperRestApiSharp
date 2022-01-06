@@ -1,5 +1,10 @@
 # KlipperRestApiSharp
-A C# based library to communicate with a klipper using MainsailOS.
+A C# based library to communicate with a klipper using the Moonraker WebApi.
+
+# Nuget
+Get the latest version from nuget.org<br>
+[![NuGet](https://img.shields.io/nuget/v/KlipperSharpWebApi.svg?style=flat-square&label=nuget)](https://www.nuget.org/packages/KlipperSharpWebApi/)
+[![NuGet](https://img.shields.io/nuget/dt/KlipperSharpWebApi.svg)](https://www.nuget.org/packages/KlipperSharpWebApi)
 
 # Moonrakers Documentation
 This C# library wraps the available Web API functions listed in the
@@ -7,6 +12,30 @@ Moonraker's documentation below.
 https://moonraker.readthedocs.io/en/latest/web_api/
 
 You can see the current migration progress in the following table.
+
+## Supported OS
+Basically all OS using the Moonraker WebApi are theoretically supported. 
+
+### Tested with our app
+- [x] MainsailOS
+- [x] FluiddPi
+
+### Untested, but using Moonraker WebApi
+- [ ] 
+
+
+# App's using this library
+
+![FeaturedImage](https://andreas-reitberger.de/wp-content/uploads/2022/01/feature-graphic_modified.png)
+
+I also created an iOS app to interact with a moonraker based OS.
+The app is available for testing here:<br>
+TestFlight: https://testflight.apple.com/join/TyguKzt9
+
+## Note for Android
+There is an android version in development, however due to the poor 
+performance using Xamarin.Android, I decided to wait till .NET MAUI 
+is available.
 
 # WebAPI migration status
 Following you'll find the list of migrated functions from the WebAPI.
@@ -48,8 +77,8 @@ Following you'll find the list of migrated functions from the WebAPI.
 | ----------------------------------- |:-----:| -------:|
 | Print a file                        | ✅   | ✅      |
 | Pause a print                       | ✅   | ✅      |
-| Resume a print                      | ✅   | No      |
-| Cancel a print                      | ✅   | No      |
+| Resume a print                      | ✅   | ✅      |
+| Cancel a print                      | ✅   | ✅      |
 
 ## Machine Commands
 
@@ -74,7 +103,7 @@ Following you'll find the list of migrated functions from the WebAPI.
 | Delete directory                    | ✅   | ✅      |
 | Move a file or directory            | ✅   | ✅      |
 | Copy a file or directory            | ✅   | ✅      |
-| File download                       | ✅   | No      |
+| File download                       | ✅   | ✅      |
 | File upload                         | ✅   | ✅      |
 | File delete                         | ✅   | ✅      |
 | Download klippy.log                 | ✅   | ✅      |
@@ -120,8 +149,8 @@ Following you'll find the list of migrated functions from the WebAPI.
 
 | Function                            | Added?| Tested? |
 | ----------------------------------- |:-----:| -------:|
-| Get update status                   | ✅    | No      |
-| Perform a full update               | ✅    | No      |
+| Get update status                   | ✅    | ✅     |
+| Perform a full update               | ✅    | ✅     |
 | Update Moonraker                    | ✅    | No      |
 | Update Klipper                      | ✅    | No      |
 | Update Client                       | ✅    | No      |
