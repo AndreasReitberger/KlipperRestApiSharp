@@ -4,9 +4,12 @@ using System.Collections.Generic;
 
 namespace AndreasReitberger.Models
 {
-    public partial class KlipperDatabaseMainsailValuePreset
+    public partial class KlipperDatabaseFluiddValuePreset
     {
         #region Properties
+        [JsonProperty("id")]
+        public Guid Id { get; set; } = Guid.Empty;
+
         [JsonProperty("name")]
         public string Name { get; set; }
 
@@ -14,7 +17,7 @@ namespace AndreasReitberger.Models
         public string Gcode { get; set; }
 
         [JsonProperty("values")]
-        public Dictionary<string, KlipperDatabaseMainsailHeaterElement> Values { get; set; } = new();
+        public Dictionary<string, KlipperDatabaseFluiddHeaterElement> Values { get; set; } = new();
         //public KlipperDatabaseMainsailValuePresetValues Values { get; set; }
         #endregion
 

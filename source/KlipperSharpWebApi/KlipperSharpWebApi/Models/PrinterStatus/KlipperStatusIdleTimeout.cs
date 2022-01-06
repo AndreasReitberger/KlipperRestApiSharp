@@ -10,10 +10,10 @@ namespace AndreasReitberger.Models
         [JsonProperty("state")]
         [JsonConverter(typeof(StringEnumConverter), true)]
         //public string State { get; set; }
-        public KlipperIdletates State { get; set; }
+        public KlipperIdleStates State { get; set; }
 
         [JsonProperty("printing_time")]
-        public double PrintingTime { get; set; }
+        public double? PrintingTime { get; set; }
 
         [JsonIgnore]
         public bool ValidState { get; set; } = false;

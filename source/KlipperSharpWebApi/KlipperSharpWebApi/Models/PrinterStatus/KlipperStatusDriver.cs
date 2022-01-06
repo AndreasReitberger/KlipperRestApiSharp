@@ -6,10 +6,10 @@ namespace AndreasReitberger.Models
     {
         #region Properties
         [JsonProperty("cs_actual")]
-        public long CsActual { get; set; }
+        public long? CsActual { get; set; }
 
         [JsonProperty("sg_result")]
-        public long SgResult { get; set; }
+        public long? SgResult { get; set; }
         #endregion
 
         #region Overrides

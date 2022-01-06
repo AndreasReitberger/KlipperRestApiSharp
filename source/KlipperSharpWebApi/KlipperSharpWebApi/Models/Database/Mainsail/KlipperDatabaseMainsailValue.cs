@@ -13,7 +13,7 @@ namespace AndreasReitberger.Models
         public KlipperDatabaseMainsailValueGeneral General { get; set; }
 
         [JsonProperty("heightmap")]
-        public KlipperDatabaseMainsailValueHeightmap Heightmap { get; set; }
+        public KlipperDatabaseMainsailValueHeightmapSettings Heightmap { get; set; }
 
         [JsonProperty("init")]
         public bool Init { get; set; }

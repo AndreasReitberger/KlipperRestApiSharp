@@ -7,13 +7,13 @@ namespace AndreasReitberger.Models
     {
         #region Properties
         [JsonProperty("time")]
-        public double Time { get; set; }
+        public double? Time { get; set; }
 
         [JsonProperty("cpu_usage")]
-        public double CpuUsage { get; set; }
+        public double? CpuUsage { get; set; }
 
         [JsonProperty("memory")]
-        public long Memory { get; set; }
+        public long? Memory { get; set; }
 
         [JsonProperty("mem_units")]
         public MoonrakerMemUnits MemUnits { get; set; }

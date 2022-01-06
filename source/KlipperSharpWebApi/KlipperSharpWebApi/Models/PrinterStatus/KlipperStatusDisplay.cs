@@ -10,7 +10,7 @@ namespace AndreasReitberger.Models
         public int PercentageProgress => GetPercentageProgress();
 
         [JsonProperty("progress")]
-        public double Progress { get; set; }
+        public double? Progress { get; set; }
 
         [JsonProperty("message")]
         public string Message { get; set; }
@@ -21,7 +21,7 @@ namespace AndreasReitberger.Models
         {
             try
             {
-                if (Progress <= 0) return 0;
+                if (Progress == null || Progress <= 0) return 0;
                 int calc = Convert.ToInt32(Progress * 100);
                 return calc;
             }

@@ -2,16 +2,16 @@
 
 namespace AndreasReitberger.Models
 {
-    public partial class KlipperDatabaseMainsailValuePresetValues
+    public partial class KlipperDatabaseFluiddValuePresetValues
     {
         #region Properties
         [JsonProperty("extruder")]
-        public KlipperDatabaseMainsailHeaterElement Extruder { get; set; }
+        public KlipperDatabaseFluiddHeaterElement Extruder { get; set; }
         [JsonProperty("extruder1")]
-        public KlipperDatabaseMainsailHeaterElement Extruder1 { get; set; }
+        public KlipperDatabaseFluiddHeaterElement Extruder1 { get; set; }
 
         [JsonProperty("heater_bed")]
-        public KlipperDatabaseMainsailHeaterElement HeaterBed { get; set; }
+        public KlipperDatabaseFluiddHeaterElement HeaterBed { get; set; }
         #endregion
 
         #region Overrides

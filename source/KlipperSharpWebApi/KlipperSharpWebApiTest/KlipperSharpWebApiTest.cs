@@ -867,44 +867,58 @@ namespace RepetierServerSharpApiTest
             try
             {
                 KlipperClient _server = new(_host, _port, _ssl);
+                _server.Error += (sender, e) =>
+                {
+                    if(e is UnhandledExceptionEventArgs args)
+                        Console.WriteLine(args.ExceptionObject?.ToString());
+                    Assert.Fail(e.ToString());
+                };
                 await _server.CheckOnlineAsync();
                 if (_server.IsOnline)
                 {
                     await _server.RefreshAllAsync();
                     Assert.IsTrue(_server.InitialDataFetched);
 
-                    List<string> namespaces = await _server.ListDatabaseNamespacesAsync();
-                    Assert.IsNotNull(namespaces);
+                    //List<string> namespaces = await _server.ListDatabaseNamespacesAsync();
+                    Assert.IsTrue(_server.AvailableNamespaces?.Count > 0);
 
-                    Dictionary<string, object> items = await _server.GetDatabaseItemAsync("mainsail");
+                    string currentNamespace = _server.OperatingSystem == MoonrakerOperatingSystems.MainsailOS ? "mainsail" : "fluidd";
+                    Dictionary<string, object> items = await _server.GetDatabaseItemAsync(currentNamespace);
                     Assert.IsNotNull(items);
 
-                    Dictionary<string, object> webcams = await _server.GetDatabaseItemAsync("mainsail", "webcam");
+                    Dictionary<string, object> moonrakerItems = await _server.GetDatabaseItemAsync("moonraker");
+
+                    Dictionary<string, object> webcams = await _server.GetDatabaseItemAsync(currentNamespace,
+                        _server.OperatingSystem == MoonrakerOperatingSystems.MainsailOS ? "webcam" : "cameras");
                     Assert.IsNotNull(webcams);
 
-                    Dictionary<string, object> remotePrinters = await _server.GetDatabaseItemAsync("mainsail", "remote_printers");
+                    /*
+                    Dictionary<string, object> remotePrinters = await _server.GetDatabaseItemAsync(currentNamespace, "remote_printers");
                     Assert.IsNotNull(remotePrinters);
 
                     List<KlipperDatabaseMainsailValueRemotePrinter> remotePrinters2 = await _server.GetRemotePrintersAsync();
                     Assert.IsNotNull(remotePrinters2);
-
-                    KlipperDatabaseMainsailValueWebcam webcamConfig = JsonConvert.DeserializeObject<KlipperDatabaseMainsailValueWebcam>(webcams.FirstOrDefault().Value.ToString());
+                    */
+                    var webcamConfig = await _server.GetWebCamSettingsAsync();
                     Assert.IsNotNull(webcamConfig);
+                    if(webcamConfig.Count > 0)
+                        Assert.IsTrue(!string.IsNullOrEmpty(webcamConfig.FirstOrDefault()?.Url));
 
-                    webcamConfig = await _server.GetWebCamSettingsAsync();
-                    Assert.IsNotNull(webcamConfig);
-
-                    List<KlipperDatabaseMainsailValuePreset> presets = await _server.GetDashboardPresetsAsync();
+                    List<KlipperDatabaseTemperaturePreset> presets = await _server.GetDashboardPresetsAsync();
                     Assert.IsNotNull(presets);
 
-                    KlipperDatabaseMainsailValueHeightmap heightmap = await _server.GetMeshHeightMapAsync();
-                    Assert.IsNotNull(heightmap);
+                    if (_server.OperatingSystem == MoonrakerOperatingSystems.MainsailOS)
+                    {
+                        KlipperDatabaseMainsailValueHeightmapSettings heightmap = await _server.GetMeshHeightMapSettingsAsync();
+                        Assert.IsNotNull(heightmap);
+                    }
 
-                    Dictionary<string, object> add = await _server.AddDatabaseItemAsync("mainsail", "testkey", 56);
+                    Dictionary<string, object> add = await _server.AddDatabaseItemAsync(currentNamespace, "testkey", 56);
                     Assert.IsNotNull(add);
 
-                    Dictionary<string, object> delete = await _server.DeleteDatabaseItemAsync("mainsail", "testkey");
+                    Dictionary<string, object> delete = await _server.DeleteDatabaseItemAsync(currentNamespace, "testkey");
                     Assert.IsNotNull(delete);
+                    
                 }
                 else
                     Assert.Fail($"Server {_server.FullWebAddress} is offline.");

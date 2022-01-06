@@ -1,6 +1,6 @@
 ﻿namespace AndreasReitberger.Enum
 {
-    public enum MoonRakerCommandBase
+    public enum MoonrakerCommandBase
     {
         printer,
         access,

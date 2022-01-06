@@ -1,6 +1,7 @@
-﻿using AndreasReitberger.Core.Utilities;
+﻿using AndreasReitberger.Core.Enums;
+using AndreasReitberger.Core.Interfaces;
+using AndreasReitberger.Core.Utilities;
 using AndreasReitberger.Enum;
-using AndreasReitberger.Interfaces;
 using AndreasReitberger.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -28,7 +29,7 @@ namespace AndreasReitberger
 {
     // Needs: https://github.com/Arksine/moonraker/blob/master/docs/web_api.md
     // Docs: https://moonraker.readthedocs.io/en/latest/configuration/
-    public class KlipperClient : IRestApiClient
+    public partial class KlipperClient : IRestApiClient
     {
         #region INotifyPropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;
@@ -278,8 +279,7 @@ namespace AndreasReitberger
         [JsonIgnore]
         [XmlIgnore]
         string _refreshToken = string.Empty;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public string RefreshToken
         {
             get => _refreshToken;
@@ -287,6 +287,20 @@ namespace AndreasReitberger
             {
                 if (_refreshToken == value) return;
                 _refreshToken = value;
+                OnPropertyChanged();
+            }
+        }
+
+        [JsonProperty(nameof(OperatingSystem))]
+        MoonrakerOperatingSystems _operatingSystem = MoonrakerOperatingSystems.MainsailOS;
+        [JsonIgnore, XmlIgnore]
+        public MoonrakerOperatingSystems OperatingSystem
+        {
+            get => _operatingSystem;
+            set
+            {
+                if (_operatingSystem == value) return;
+                _operatingSystem = value;
                 OnPropertyChanged();
             }
         }
@@ -800,17 +814,23 @@ namespace AndreasReitberger
         #endregion
 
         #region Jobs
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         KlipperStatusJob _jobStatus;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public KlipperStatusJob JobStatus
         {
             get => _jobStatus;
             set
             {
                 if (_jobStatus == value) return;
+                OnKlipperJobStatusChanged(new KlipperJobStatusChangedEventArgs()
+                {
+                    NewJobStatus = value,
+                    PreviousJobStatus = _jobStatus,
+                    SessonId = SessionId,
+                    CallbackId = -1,
+                    Token = !string.IsNullOrEmpty(UserToken) ? UserToken : API,
+                });
                 _jobStatus = value;
                 OnPropertyChanged();
             }
@@ -862,33 +882,12 @@ namespace AndreasReitberger
                 OnPropertyChanged();
             }
         }
-
-        /*
-        [JsonIgnore]
-        [XmlIgnore]
-        string _jobQueueStatus = string.Empty;
-        [JsonIgnore]
-        [XmlIgnore]
-        public string JobQueueStatus
-        {
-            get => _jobQueueStatus;
-            set
-            {
-                if (_jobQueueStatus == value) return;
-                _jobQueueStatus = value;
-                OnPropertyChanged();
-            }
-        }
-        */
-
         #endregion
 
         #region State & Config
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         string _klipperState;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public string KlipperState
         {
             get => _klipperState;
@@ -905,11 +904,9 @@ namespace AndreasReitberger
             }
         }
 
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         double _cpuTemp = 0;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public double CpuTemp
         {
             get => _cpuTemp;
@@ -925,11 +922,9 @@ namespace AndreasReitberger
             }
         }
 
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         KlipperServerConfig _config;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public KlipperServerConfig Config
         {
             get => _config;
@@ -948,11 +943,9 @@ namespace AndreasReitberger
             }
         }
 
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         KlipperPrinterStateMessageResult _printerInfo;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public KlipperPrinterStateMessageResult PrinterInfo
         {
             get => _printerInfo;
@@ -971,11 +964,9 @@ namespace AndreasReitberger
             }
         }
 
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         KlipperGcodeMetaResult _gcodeMeta;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public KlipperGcodeMetaResult GcodeMeta
         {
             get => _gcodeMeta;
@@ -993,11 +984,9 @@ namespace AndreasReitberger
             }
         }
 
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         KlipperStatusGcodeMove _gcodeMove;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public KlipperStatusGcodeMove GcodeMove
         {
             get => _gcodeMove;
@@ -1015,11 +1004,9 @@ namespace AndreasReitberger
             }
         }
 
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         KlipperStatusVirtualSdcard _virtualSdCard;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public KlipperStatusVirtualSdcard VirtualSdCard
         {
             get => _virtualSdCard;
@@ -1115,11 +1102,9 @@ namespace AndreasReitberger
             }
         }
 
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         KlipperStatusHeaterBed _heaterBed;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public KlipperStatusHeaterBed HeaterBed
         {
             get => _heaterBed;
@@ -1240,11 +1225,9 @@ namespace AndreasReitberger
             }
         }
 
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         bool _isPrinting = false;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public bool IsPrinting
         {
             get => _isPrinting;
@@ -1264,11 +1247,9 @@ namespace AndreasReitberger
             }
         }
 
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         bool _isPaused = false;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public bool IsPaused
         {
             get => _isPaused;
@@ -1287,11 +1268,9 @@ namespace AndreasReitberger
             }
         }
 
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         KlipperStatusPrintStats _printStats;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public KlipperStatusPrintStats PrintStats
         {
             get => _printStats;
@@ -1315,11 +1294,9 @@ namespace AndreasReitberger
             }
         }
 
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         KlipperStatusFan _fan;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public KlipperStatusFan Fan
         {
             get => _fan;
@@ -1337,11 +1314,9 @@ namespace AndreasReitberger
             }
         }
 
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         KlipperStatusMotionReport _motionReport;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public KlipperStatusMotionReport MotionReport
         {
             get => _motionReport;
@@ -1360,11 +1335,9 @@ namespace AndreasReitberger
             }
         }
 
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         KlipperStatusIdleTimeout _idleState;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public KlipperStatusIdleTimeout IdleState
         {
             get => _idleState;
@@ -1383,11 +1356,9 @@ namespace AndreasReitberger
             }
         }
 
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         KlipperStatusToolhead _toolHead;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public KlipperStatusToolhead ToolHead
         {
             get => _toolHead;
@@ -1408,8 +1379,7 @@ namespace AndreasReitberger
         [JsonIgnore]
         [XmlIgnore]
         string _activeJobName;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public string ActiveJobName
         {
             get => _activeJobName;
@@ -1428,11 +1398,9 @@ namespace AndreasReitberger
             }
         }
 
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         KlipperStatusDisplay _displayStatus;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public KlipperStatusDisplay DisplayStatus
         {
             get => _displayStatus;
@@ -1451,11 +1419,9 @@ namespace AndreasReitberger
             }
         }
 
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         KlipperStatusFilamentSensor _filamentSensor = new() { FilamentDetected = false };
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public KlipperStatusFilamentSensor FilamentSensor
         {
             get => _filamentSensor;
@@ -1474,12 +1440,10 @@ namespace AndreasReitberger
             }
         }
 
-        [JsonIgnore]
-        [XmlIgnore]
-        List<KlipperDatabaseMainsailValueWebcamConfig> _webCamConfigs;
-        [JsonIgnore]
-        [XmlIgnore]
-        public List<KlipperDatabaseMainsailValueWebcamConfig> WebCamConfigs
+        [JsonIgnore, XmlIgnore]
+        List<KlipperDatabaseWebcamConfig> _webCamConfigs = new();
+        [JsonIgnore, XmlIgnore]
+        public List<KlipperDatabaseWebcamConfig> WebCamConfigs
         {
             get => _webCamConfigs;
             set
@@ -1494,12 +1458,10 @@ namespace AndreasReitberger
             }
         }
 
-        [JsonIgnore]
-        [XmlIgnore]
-        List<KlipperDatabaseMainsailValuePreset> _presets;
-        [JsonIgnore]
-        [XmlIgnore]
-        public List<KlipperDatabaseMainsailValuePreset> Presets
+        [JsonIgnore, XmlIgnore]
+        List<KlipperDatabaseTemperaturePreset> _presets = new();
+        [JsonIgnore, XmlIgnore]
+        public List<KlipperDatabaseTemperaturePreset> Presets
         {
             get => _presets;
             set
@@ -1510,6 +1472,23 @@ namespace AndreasReitberger
                     NewPresets = value,
                 });
                 _presets = value;
+                OnPropertyChanged();
+            }
+        }
+        #endregion
+
+        #region Database
+
+        [JsonIgnore, XmlIgnore]
+        List<string> _availableNamespaces = new();
+        [JsonIgnore, XmlIgnore]
+        public List<string> AvailableNamespaces
+        {
+            get => _availableNamespaces;
+            set
+            {
+                if (_availableNamespaces == value) return;
+                _availableNamespaces = value;
                 OnPropertyChanged();
             }
         }
@@ -1959,6 +1938,12 @@ namespace AndreasReitberger
             KlipperJobListStateChanged?.Invoke(this, e);
         }
 
+        public event EventHandler<KlipperJobStatusChangedEventArgs> KlipperJobStatusChanged;
+        protected virtual void OnKlipperJobStatusChanged(KlipperJobStatusChangedEventArgs e)
+        {
+            KlipperJobStatusChanged?.Invoke(this, e);
+        }
+
         public event EventHandler<KlipperJobListChangedEventArgs> KlipperJobListChanged;
         protected virtual void OnKlipperJobListChanged(KlipperJobListChangedEventArgs e)
         {
@@ -2055,7 +2040,7 @@ namespace AndreasReitberger
                 string target = $"{(IsSecure ? "wss" : "ws")}://{ServerAddress}:{Port}/websocket{(!string.IsNullOrEmpty(API) ? $"?token={API}" : "")}";
                 WebSocket = new WebSocket(target)
                 {
-                    EnableAutoSendPing = false
+                    EnableAutoSendPing = false,
                 };
 
                 if (IsSecure)
@@ -2171,6 +2156,8 @@ namespace AndreasReitberger
                 }
                 if (e.Message.ToLower().Contains("method"))
                 {
+                    string name = string.Empty;
+                    string jsonBody = string.Empty;
                     try
                     {
                         Dictionary<int, KlipperStatusExtruder> extruderStats = new();
@@ -2184,8 +2171,8 @@ namespace AndreasReitberger
                             // Parse each property individually
                             foreach (JProperty property in jsonObject.Children<JProperty>())
                             {
-                                string name = property.Name;
-                                string jsonBody = property.Value.ToString();
+                                name = property.Name;
+                                jsonBody = property.Value.ToString();
                                 switch (name)
                                 {
                                     case "klippy_state":
@@ -2365,6 +2352,11 @@ namespace AndreasReitberger
                                         }
                                         break;
                                     case "updated_queue":
+                                        if (string.IsNullOrEmpty(jsonBody))
+                                        {
+                                            JobList = new();
+                                            break;
+                                        }
                                         List<KlipperJobQueueItem> queueUpdate =
                                             JsonConvert.DeserializeObject<List<KlipperJobQueueItem>>(jsonBody);
                                         JobList = new(queueUpdate);
@@ -2377,36 +2369,12 @@ namespace AndreasReitberger
                                         string remotePrinter = jsonBody;
                                         //JobListState = state;
                                         break;
-                                    /* Moved below
-                                    case "temperature_sensor raspberry_pi":
-                                        KlipperStatusTemperatureSensor tempSensor =
-                                            JsonConvert.DeserializeObject<KlipperStatusTemperatureSensor>(jsonBody);
-                                        string[] tempSensors = name.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
-#if NETSTANDARD
-                                        string tempSensorName = tempSensors[^1];
-#else
-                                        string tempSensorName = tempSensors[tempSensors.Length  - 1];
-#endif
-                                        if (TemperatureSensors.ContainsKey(tempSensorName))
-                                        {
-                                            TemperatureSensors[tempSensorName] = tempSensor;
-                                        }
-                                        else
-                                        {
-                                            TemperatureSensors.Add(tempSensorName, tempSensor);
-                                        }
-                                        break;
-                                        */
+
                                     // Not relevant so far
                                     case "temperature_host raspberry_pi":
-                                    //case "tmc2130 stepper_x":
-                                    //case "tmc2130 stepper_y":
-                                    //case "tmc2130 stepper_z":
-                                    //case "tmc2130 extruder":
-                                    //case "heater_fan nozzle_cooling_fan":
                                     case "item":
 #if DEBUG
-                                        //Console.WriteLine($"Ignored Json object: '{name}' => '{jsonBody}");
+                                        Console.WriteLine($"Ignored Json object: '{name}' => '{jsonBody}");
 #endif
                                         break;
                                     default:
@@ -2532,7 +2500,8 @@ namespace AndreasReitberger
                         OnError(new KlipprtJsonConvertEventArgs()
                         {
                             Exception = jecx,
-                            OriginalString = e.Message,
+                            OriginalString = jsonBody,
+                            TargetType = name,
                             Message = jecx.Message,
                         });
                     }
@@ -2688,7 +2657,7 @@ namespace AndreasReitberger
 
         #region RestApi
         async Task<KlipperApiRequestRespone> SendRestApiRequestAsync(
-            MoonRakerCommandBase commandBase,
+            MoonrakerCommandBase commandBase,
             Method method,
             string command,
             object jsonObject = null,
@@ -2835,7 +2804,7 @@ namespace AndreasReitberger
         }
 
         async Task<KlipperApiRequestRespone> SendOnlineCheckRestApiRequestAsync(
-            MoonRakerCommandBase commandBase,
+            MoonrakerCommandBase commandBase,
             string command,
             CancellationTokenSource cts,
             string requestTargetUri = ""
@@ -3005,9 +2974,12 @@ namespace AndreasReitberger
                 //Multiform
                 request.AddHeader("Content-Type", "multipart/form-data");
                 request.AddFile("file", filePath, "application/octet-stream");
+                request.AddParameter("root", root, ParameterType.GetOrPost);
+                request.AddParameter("path", path, ParameterType.GetOrPost);
+                /*
                 request.AddParameter("root", root, "multipart/form-data", ParameterType.GetOrPost);
                 request.AddParameter("path", path, "multipart/form-data", ParameterType.GetOrPost);
-
+                */
                 Uri fullUri = restClient.BuildUri(request);
                 try
                 {
@@ -3153,8 +3125,12 @@ namespace AndreasReitberger
                 //Multiform
                 request.AddHeader("Content-Type", "multipart/form-data");
                 request.AddFileBytes("file", file, fileName, "application/octet-stream");
+                request.AddParameter("root", root, ParameterType.GetOrPost);
+                request.AddParameter("path", path, ParameterType.GetOrPost);
+                /*
                 request.AddParameter("root", root, "multipart/form-data", ParameterType.GetOrPost);
                 request.AddParameter("path", path, "multipart/form-data", ParameterType.GetOrPost);
+                */
 
                 Uri fullUri = restClient.BuildUri(request);
                 try
@@ -3298,6 +3274,12 @@ namespace AndreasReitberger
                     ;
 
                 return respone;
+                /*
+                // Workaround, because the RestClient returns bad requests
+                using WebClient client = new();
+                byte[] bytes = await client.DownloadDataTaskAsync(fullUrl);
+                return bytes;
+                */
             }
             catch (Exception exc)
             {
@@ -3474,11 +3456,11 @@ namespace AndreasReitberger
         }
 #endregion
 
-#endregion
+        #endregion
 
-#region Public
+        #region Public
 
-#region Proxy
+        #region Proxy
         public void SetProxy(bool Secure, string Address, int Port, bool Enable = true)
         {
             EnableProxy = Enable;
@@ -3503,7 +3485,7 @@ namespace AndreasReitberger
         }
 #endregion
 
-#region Refresh
+        #region Refresh
         public void StartListening(bool StopActiveListening = false)
         {
             if (IsListening)// avoid multiple sessions
@@ -3563,6 +3545,8 @@ namespace AndreasReitberger
                 // Avoid multiple calls
                 if (IsRefreshing) return;
                 IsRefreshing = true;
+                // Detects current operating system, must be called before each other Database method
+                await RefreshDatabaseNamespacesAsync();
                 //await RefreshPrinterListAsync();
                 List<Task> task = new()
                 {
@@ -3601,9 +3585,9 @@ namespace AndreasReitberger
             }
             IsRefreshing = false;
         }
-#endregion
+        #endregion
 
-#region Login
+        #region Login
         [Obsolete("Not needed anymore, will be removed")]
         string EncryptPassword(string UserName, SecureString Password, string SessionId)
         {
@@ -3633,9 +3617,9 @@ namespace AndreasReitberger
             }
             return strBuilder.ToString();
         }
-#endregion
+        #endregion
 
-#region Cancel
+        #region Cancel
         public void CancelCurrentRequests()
         {
             try
@@ -3652,9 +3636,9 @@ namespace AndreasReitberger
                 OnError(new UnhandledExceptionEventArgs(exc, false));
             }
         }
-#endregion
+        #endregion
 
-#region CheckOnline
+        #region CheckOnline
 
         public async Task CheckOnlineAsync(int Timeout = 10000)
         {
@@ -3673,7 +3657,7 @@ namespace AndreasReitberger
                 try
                 {
                     // Send a blank api request in order to check if the server is reachable
-                    KlipperApiRequestRespone respone = await SendOnlineCheckRestApiRequestAsync(MoonRakerCommandBase.api, "version", cts).ConfigureAwait(false);
+                    KlipperApiRequestRespone respone = await SendOnlineCheckRestApiRequestAsync(MoonrakerCommandBase.api, "version", cts).ConfigureAwait(false);
                     isReachable = respone?.IsOnline == true;
                 }
                 catch (InvalidOperationException iexc)
@@ -3708,79 +3692,6 @@ namespace AndreasReitberger
                 await CheckOnlineAsync(3500).ConfigureAwait(false);
             }
         }
-
-        /*
-        [Obsolete]
-        public async Task CheckOnlineOldAsync(CancellationTokenSource cts, bool resolveDnsFirst = true)
-        {
-            if (IsConnecting) return; // Avoid multiple calls
-            IsConnecting = true;
-            bool isReachable = false;
-            try
-            {
-                string uriString = FullWebAddress;
-                try
-                {
-                    // This will try to resolve the hostname before sending the reqeuest.
-                    if (resolveDnsFirst)
-                    {
-                        try
-                        {
-                            IPHostEntry host = Dns.GetHostEntry(ServerAddress);
-                            IPAddress address = host.AddressList.FirstOrDefault(ip => ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork);
-                            if (address != null)
-                            {
-                                uriString = $"{(IsSecure ? "https" : "http")}://{address}:{Port}";
-                            }
-                        }
-                        catch (Exception exc)
-                        {
-                            OnError(new UnhandledExceptionEventArgs(exc, false));
-                        }
-                    }
-                    await Task.Delay(10);
-                    HttpResponseMessage response =
-                        await client.GetAsync(uriString, HttpCompletionOption.ResponseHeadersRead, cts.Token).ConfigureAwait(false);
-                    _ = response.EnsureSuccessStatusCode();
-                    if (response != null)
-                    {
-                        isReachable = response.IsSuccessStatusCode;
-                    }
-                    await Task.Delay(50);
-                }
-                catch (InvalidOperationException iexc)
-                {
-                    OnError(new UnhandledExceptionEventArgs(iexc, false));
-                }
-                catch (HttpRequestException rexc)
-                {
-                    OnError(new UnhandledExceptionEventArgs(rexc, false));
-                }
-                catch (TaskCanceledException)
-                {
-                    // Throws an exception on timeout, not actually an error
-                }
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-            }
-            IsConnecting = false;
-            // Avoid offline message for short connection loss
-            if (isReachable || _retries > RetriesWhenOffline)
-            {
-                _retries = 0;
-                IsOnline = isReachable;
-            }
-            else
-            {
-                // Retry with shorter timeout to see if the connection loss is real
-                _retries++;
-                await CheckOnlineAsync(2000).ConfigureAwait(false);
-            }
-        }
-        */
-
         public async Task<bool> CheckIfApiIsValidAsync(int Timeout = 10000)
         {
             try
@@ -3788,7 +3699,7 @@ namespace AndreasReitberger
                 if (IsOnline)
                 {
                     CancellationTokenSource cts = new(new TimeSpan(0, 0, 0, 0, Timeout));
-                    KlipperApiRequestRespone respone = await SendOnlineCheckRestApiRequestAsync(MoonRakerCommandBase.api, "version", cts).ConfigureAwait(false);
+                    KlipperApiRequestRespone respone = await SendOnlineCheckRestApiRequestAsync(MoonrakerCommandBase.api, "version", cts).ConfigureAwait(false);
                     if (respone.HasAuthenticationError)
                     {
                         AuthenticationFailed = true;
@@ -3817,9 +3728,9 @@ namespace AndreasReitberger
         {
             _ = await CheckIfApiIsValidAsync(Timeout).ConfigureAwait(false);
         }
-#endregion
+        #endregion
 
-#region WebCam
+        #region WebCam
         public string GetDefaultWebCamUri()
         {
             try
@@ -3841,7 +3752,7 @@ namespace AndreasReitberger
                 {
                     await RefreshWebCamConfigAsync().ConfigureAwait(false);
                 }
-                KlipperDatabaseMainsailValueWebcamConfig config = null;
+                KlipperDatabaseWebcamConfig config = null;
                 if (WebCamConfigs?.Count > index)
                 {
                     config = WebCamConfigs[index];
@@ -3867,16 +3778,17 @@ namespace AndreasReitberger
 #endregion
 
 #region DetectChanges
-        public bool CheckIfConfigurationHasChanged(KlipperClient temp)
+        public bool CheckIfConfigurationHasChanged(object temp)
         {
             try
             {
-                if (temp == null) return false;
+                if (temp is not KlipperClient tempKlipper) return false;
                 else return
-                    !(ServerAddress == temp.ServerAddress &&
-                        Port == temp.Port &&
-                        API == temp.API &&
-                        IsSecure == temp.IsSecure
+                    !(ServerAddress == tempKlipper.ServerAddress &&
+                        Port == tempKlipper.Port &&
+                        API == tempKlipper.API &&
+                        IsSecure == tempKlipper.IsSecure &&
+                        LoginRequired == tempKlipper.LoginRequired
                         )
                     ;
             }
@@ -3896,7 +3808,7 @@ namespace AndreasReitberger
             try
             {
                 //object cmd = new { name = ScriptName };
-                result = await SendRestApiRequestAsync(MoonRakerCommandBase.access, Method.Get, "oneshot_token").ConfigureAwait(false);
+                result = await SendRestApiRequestAsync(MoonrakerCommandBase.access, Method.Get, "oneshot_token").ConfigureAwait(false);
                 KlipperAccessTokenResult accessToken = JsonConvert.DeserializeObject<KlipperAccessTokenResult>(result.Result);
                 SessionId = accessToken?.Result;
                 return accessToken;
@@ -3926,7 +3838,7 @@ namespace AndreasReitberger
             try
             {
                 //object cmd = new { name = ScriptName };
-                result = await SendRestApiRequestAsync(MoonRakerCommandBase.access, Method.Get, "api_key").ConfigureAwait(false);
+                result = await SendRestApiRequestAsync(MoonrakerCommandBase.access, Method.Get, "api_key").ConfigureAwait(false);
                 KlipperAccessTokenResult accessToken = JsonConvert.DeserializeObject<KlipperAccessTokenResult>(result.Result);
                 //API = accessToken?.Result;
                 return accessToken;
@@ -3987,7 +3899,7 @@ namespace AndreasReitberger
             try
             {
                 //object cmd = new { name = ScriptName };
-                result = await SendRestApiRequestAsync(MoonRakerCommandBase.printer, Method.Get, "info")
+                result = await SendRestApiRequestAsync(MoonrakerCommandBase.printer, Method.Get, "info")
                     .ConfigureAwait(false);
 
                 KlipperPrinterStateMessageRespone state = JsonConvert.DeserializeObject<KlipperPrinterStateMessageRespone>(result.Result);
@@ -4017,7 +3929,7 @@ namespace AndreasReitberger
             {
                 //object cmd = new { name = ScriptName };
                 KlipperApiRequestRespone result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.printer, Method.Post, "emergency_stop")
+                    await SendRestApiRequestAsync(MoonrakerCommandBase.printer, Method.Post, "emergency_stop")
                     .ConfigureAwait(false);
                 return GetQueryResult(result.Result);
             }
@@ -4034,7 +3946,7 @@ namespace AndreasReitberger
             {
                 //object cmd = new { name = ScriptName };
                 KlipperApiRequestRespone result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.printer, Method.Post, "restart")
+                    await SendRestApiRequestAsync(MoonrakerCommandBase.printer, Method.Post, "restart")
                     .ConfigureAwait(false);
                 return GetQueryResult(result.Result);
             }
@@ -4051,7 +3963,7 @@ namespace AndreasReitberger
             {
                 //object cmd = new { name = ScriptName };
                 KlipperApiRequestRespone result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.printer, Method.Post, "firmware_restart")
+                    await SendRestApiRequestAsync(MoonrakerCommandBase.printer, Method.Post, "firmware_restart")
                     .ConfigureAwait(false);
                 return GetQueryResult(result.Result);
             }
@@ -4168,7 +4080,7 @@ namespace AndreasReitberger
             {
                 //object cmd = new { name = ScriptName };
                 result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.printer, Method.Get, "objects/list")
+                    await SendRestApiRequestAsync(MoonrakerCommandBase.printer, Method.Get, "objects/list")
                     .ConfigureAwait(false);
 
                 KlipperActionListRespone state = JsonConvert.DeserializeObject<KlipperActionListRespone>(result.Result);
@@ -4201,30 +4113,6 @@ namespace AndreasReitberger
             }
         }
 
-        /*
-        public async Task RefreshPrinterStateAsync()
-        {
-            try
-            {
-                Dictionary<string, string> queryObjects = new();
-                queryObjects.Add("webhooks", "");
-                queryObjects.Add("virtual_sdcarde", "");
-                queryObjects.Add("toolhead", "");
-                queryObjects.Add("extruder", "");
-                queryObjects.Add("heater_bed", "");
-                queryObjects.Add("fan", "");
-                queryObjects.Add("print_stats", "");
-                queryObjects.Add("display_status", "");
-                queryObjects.Add("job", "");
-
-                Dictionary<string, object> result = await QueryPrinterObjectStatusAsync(queryObjects).ConfigureAwait(false);
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-            }
-        }
-        */
         public async Task<Dictionary<string, object>> QueryPrinterObjectStatusAsync(Dictionary<string, string> objects)
         {
             KlipperApiRequestRespone result = new();
@@ -4238,7 +4126,7 @@ namespace AndreasReitberger
                     if (obj.Key.StartsWith("gcode_macro")) continue;
                     urlSegments.Add(obj.Key, obj.Value);
                 }
-                result = await SendRestApiRequestAsync(MoonRakerCommandBase.printer, Method.Get, "objects/query", jsonObject: null, cts: default, urlSegments: urlSegments)
+                result = await SendRestApiRequestAsync(MoonrakerCommandBase.printer, Method.Get, "objects/query", jsonObject: null, cts: default, urlSegments: urlSegments)
                     .ConfigureAwait(false);
 
                 KlipperPrinterStatusRespone queryResult = JsonConvert.DeserializeObject<KlipperPrinterStatusRespone>(result.Result);
@@ -4561,7 +4449,7 @@ namespace AndreasReitberger
                 {
                     urlSegments.Add("filament_switch_sensor", string.Empty);
                 }
-                result = await SendRestApiRequestAsync(MoonRakerCommandBase.printer, Method.Get, "objects/query", jsonObject: null, cts: default, urlSegments: urlSegments)
+                result = await SendRestApiRequestAsync(MoonrakerCommandBase.printer, Method.Get, "objects/query", jsonObject: null, cts: default, urlSegments: urlSegments)
                     .ConfigureAwait(false);
 
                 KlipperFilamentSensorsRespone queryResult = JsonConvert.DeserializeObject<KlipperFilamentSensorsRespone>(result.Result);
@@ -4591,13 +4479,14 @@ namespace AndreasReitberger
             KlipperStatusPrintStats resultObject = null;
             try
             {
+                // Doc: https://moonraker.readthedocs.io/en/latest/printer_objects/#print_stats
                 string key = "print_stats";
                 Dictionary<string, string> queryObjects = new();
                 queryObjects.Add(key, "");
 
                 Dictionary<string, object> result = await QueryPrinterObjectStatusAsync(queryObjects)
                     .ConfigureAwait(false);
-                if (result?[key] is KlipperStatusPrintStats stateObj)
+                if (result.ContainsKey(key) && result?[key] is KlipperStatusPrintStats stateObj)
                 {
                     stateObj.ValidPrintState = true;
                     //IsPrinting = stateObj.State == KlipperPrintStates.Printing;
@@ -4642,7 +4531,7 @@ namespace AndreasReitberger
 
                 Dictionary<string, object> result = await QueryPrinterObjectStatusAsync(queryObjects)
                     .ConfigureAwait(false);
-                if (result?[key] is KlipperStatusExtruder stateObj)
+                if (result.ContainsKey(key) && result?[key] is KlipperStatusExtruder stateObj)
                     resultObject = stateObj;
                 return resultObject;
             }
@@ -4682,7 +4571,7 @@ namespace AndreasReitberger
 
                 Dictionary<string, object> result = await QueryPrinterObjectStatusAsync(queryObjects)
                     .ConfigureAwait(false);
-                if (result?[key] is KlipperStatusFan stateObj)
+                if (result.ContainsKey(key) && result?[key] is KlipperStatusFan stateObj)
                     resultObject = stateObj;
                 return resultObject;
             }
@@ -4718,7 +4607,7 @@ namespace AndreasReitberger
                 Dictionary<string, object> result = await QueryPrinterObjectStatusAsync(queryObjects)
                     .ConfigureAwait(false);
 
-                if (result?[key] is KlipperStatusIdleTimeout stateObj)
+                if (result.ContainsKey(key) && result?[key] is KlipperStatusIdleTimeout stateObj)
                 {
                     stateObj.ValidState = true;
                     resultObject = stateObj;
@@ -4758,7 +4647,7 @@ namespace AndreasReitberger
                 Dictionary<string, object> result = await QueryPrinterObjectStatusAsync(queryObjects)
                     .ConfigureAwait(false);
 
-                if (result?[key] is KlipperStatusDisplay stateObj)
+                if (result.ContainsKey(key) && result?[key] is KlipperStatusDisplay stateObj)
                     resultObject = stateObj;
                 return resultObject;
 
@@ -4795,7 +4684,7 @@ namespace AndreasReitberger
                 Dictionary<string, object> result = await QueryPrinterObjectStatusAsync(queryObjects)
                     .ConfigureAwait(false);
 
-                if (result?[key] is KlipperStatusToolhead stateObj)
+                if (result.ContainsKey(key) && result?[key] is KlipperStatusToolhead stateObj)
                     resultObject = stateObj;
                 return resultObject;
 
@@ -4832,7 +4721,7 @@ namespace AndreasReitberger
                 Dictionary<string, object> result = await QueryPrinterObjectStatusAsync(queryObjects)
                     .ConfigureAwait(false);
 
-                if (result?[key] is KlipperStatusGcodeMove stateObj)
+                if (result.ContainsKey(key) && result?[key] is KlipperStatusGcodeMove stateObj)
                     resultObject = stateObj;
                 return resultObject;
 
@@ -4869,7 +4758,7 @@ namespace AndreasReitberger
                 Dictionary<string, object> result = await QueryPrinterObjectStatusAsync(queryObjects)
                     .ConfigureAwait(false);
 
-                if (result?[key] is KlipperStatusMotionReport stateObj)
+                if (result.ContainsKey(key) && result?[key] is KlipperStatusMotionReport stateObj)
                     resultObject = stateObj;
                 return resultObject;
 
@@ -4906,7 +4795,7 @@ namespace AndreasReitberger
                 Dictionary<string, object> result = await QueryPrinterObjectStatusAsync(queryObjects)
                     .ConfigureAwait(false);
 
-                if (result?[key] is KlipperStatusVirtualSdcard stateObj)
+                if (result.ContainsKey(key) && result?[key] is KlipperStatusVirtualSdcard stateObj)
                     resultObject = stateObj;
                 return resultObject;
 
@@ -4943,10 +4832,11 @@ namespace AndreasReitberger
                 Dictionary<string, object> result = await QueryPrinterObjectStatusAsync(queryObjects)
                     .ConfigureAwait(false);
 
-                if (result?[key] is KlipperStatusHeaterBed stateObj)
+                if (result.ContainsKey(key) && result?[key] is KlipperStatusHeaterBed stateObj)
+                {
                     resultObject = stateObj;
+                }
                 return resultObject;
-
             }
             catch (Exception exc)
             {
@@ -4988,7 +4878,7 @@ namespace AndreasReitberger
                     urlSegments.Add(key, value);
                 }
 
-                result = await SendRestApiRequestAsync(MoonRakerCommandBase.printer, Method.Post, "objects/subscribe", jsonObject: null, cts: default, urlSegments: urlSegments)
+                result = await SendRestApiRequestAsync(MoonrakerCommandBase.printer, Method.Post, "objects/subscribe", jsonObject: null, cts: default, urlSegments: urlSegments)
                     .ConfigureAwait(false);
                 return result?.Result;
             }
@@ -5010,7 +4900,7 @@ namespace AndreasReitberger
             KlipperEndstopQueryResult resultObject = null;
             try
             {
-                result = await SendRestApiRequestAsync(MoonRakerCommandBase.printer, Method.Get, "query_endstops/status").ConfigureAwait(false);
+                result = await SendRestApiRequestAsync(MoonrakerCommandBase.printer, Method.Get, "query_endstops/status").ConfigureAwait(false);
                 KlipperEndstopQueryRespone queryResult = JsonConvert.DeserializeObject<KlipperEndstopQueryRespone>(result.Result);
                 return queryResult?.Result;
             }
@@ -5054,7 +4944,7 @@ namespace AndreasReitberger
             KlipperServerConfig resultObject = null;
             try
             {
-                result = await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.Get, "config").ConfigureAwait(false);
+                result = await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Get, "config").ConfigureAwait(false);
                 KlipperServerConfigRespone config = JsonConvert.DeserializeObject<KlipperServerConfigRespone>(result.Result);
                 return config?.Result?.Config;
             }
@@ -5083,7 +4973,7 @@ namespace AndreasReitberger
             try
             {
                 //object cmd = new { name = ScriptName };
-                result = await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.Get, "temperature_store").ConfigureAwait(false);
+                result = await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Get, "temperature_store").ConfigureAwait(false);
                 KlipperServerTempDataRespone tempData = JsonConvert.DeserializeObject<KlipperServerTempDataRespone>(result.Result);
                 return tempData?.Result;
             }
@@ -5112,7 +5002,7 @@ namespace AndreasReitberger
             try
             {
                 //object cmd = new { name = ScriptName };
-                result = await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.Get, $"gcode_store?count={count}").ConfigureAwait(false);
+                result = await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Get, $"gcode_store?count={count}").ConfigureAwait(false);
                 KlipperGcodesRespone tempData = JsonConvert.DeserializeObject<KlipperGcodesRespone>(result.Result);
                 return tempData?.Result?.Gcodes;
             }
@@ -5140,7 +5030,7 @@ namespace AndreasReitberger
             {
                 //object cmd = new { name = ScriptName };
                 KlipperApiRequestRespone result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.Post, "restart")
+                    await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Post, "restart")
                     .ConfigureAwait(false);
                 return GetQueryResult(result.Result);
             }
@@ -5211,7 +5101,7 @@ namespace AndreasReitberger
                 urlSegements.Add("script", script);
 
                 KlipperApiRequestRespone result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.printer, Method.Post, "gcode/script", default, null, urlSegements)
+                    await SendRestApiRequestAsync(MoonrakerCommandBase.printer, Method.Post, "gcode/script", default, null, urlSegements)
                     .ConfigureAwait(false);
                 return GetQueryResult(result.Result);
             }
@@ -5239,7 +5129,7 @@ namespace AndreasReitberger
                 return false;
             }
         }
-        public async Task<bool> RunPresetAsync(KlipperDatabaseMainsailValuePreset presetProfile)
+        public async Task<bool> RunPresetAsync(KlipperDatabaseTemperaturePreset presetProfile)
         {
             try
             {
@@ -5253,17 +5143,17 @@ namespace AndreasReitberger
                 {
                     cmds.Add(presetProfile.Gcode);
                 }
-                if (presetProfile?.Values?.Extruder != null && presetProfile?.Values?.Extruder?.Bool == true)
+                if (presetProfile?.Values?.ContainsKey("extruder") != null && presetProfile?.Values?["extruder"]?.Active == true)
                 {
-                    cmds.Add($"SET_HEATER_TEMPERATURE HEATER=extruder TARGET={presetProfile.Values.Extruder.Value}");
+                    cmds.Add($"SET_HEATER_TEMPERATURE HEATER=extruder TARGET={presetProfile.Values["extruder"].Value}");
                 }
-                if (presetProfile?.Values?.Extruder1 != null && presetProfile?.Values?.Extruder1?.Bool == true)
+                if (presetProfile?.Values?.ContainsKey("extruder1") != null && presetProfile?.Values?["extruder1"]?.Active == true)
                 {
-                    cmds.Add($"SET_HEATER_TEMPERATURE HEATER=extruder1 TARGET={presetProfile.Values.Extruder1.Value}");
+                    cmds.Add($"SET_HEATER_TEMPERATURE HEATER=extruder1 TARGET={presetProfile.Values["extruder1"].Value}");
                 }
-                if (presetProfile?.Values?.HeaterBed != null && presetProfile?.Values?.HeaterBed?.Bool == true)
+                if (presetProfile?.Values?.ContainsKey("heater_bed") != null && presetProfile?.Values?["heater_bed"]?.Active == true)
                 {
-                    cmds.Add($"SET_HEATER_TEMPERATURE HEATER=heater_bed TARGET={presetProfile.Values.HeaterBed.Value}");
+                    cmds.Add($"SET_HEATER_TEMPERATURE HEATER=heater_bed TARGET={presetProfile.Values["heater_bed"].Value}");
                 }
                 //bool result = await SendGcodeCommandAsync(cmds.ToArray()).ConfigureAwait(false);
                 //return result;
@@ -5290,7 +5180,7 @@ namespace AndreasReitberger
             try
             {
                 //object cmd = new { name = ScriptName };
-                result = await SendRestApiRequestAsync(MoonRakerCommandBase.printer, Method.Get, "gcode/help").ConfigureAwait(false);
+                result = await SendRestApiRequestAsync(MoonrakerCommandBase.printer, Method.Get, "gcode/help").ConfigureAwait(false);
                 KlipperGcodeHelpRespone config = JsonConvert.DeserializeObject<KlipperGcodeHelpRespone>(result.Result);
                 return config?.Result;
             }
@@ -5322,7 +5212,7 @@ namespace AndreasReitberger
                 urlSegements.Add("filename", fileName);
 
                 KlipperApiRequestRespone result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.printer, Method.Post, "print/start", default, null, urlSegements)
+                    await SendRestApiRequestAsync(MoonrakerCommandBase.printer, Method.Post, "print/start", default, null, urlSegements)
                     .ConfigureAwait(false);
                 return GetQueryResult(result.Result);
             }
@@ -5337,7 +5227,7 @@ namespace AndreasReitberger
             try
             {
                 KlipperApiRequestRespone result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.printer, Method.Post, "print/pause")
+                    await SendRestApiRequestAsync(MoonrakerCommandBase.printer, Method.Post, "print/pause")
                     .ConfigureAwait(false);
                 return GetQueryResult(result.Result);
             }
@@ -5352,7 +5242,7 @@ namespace AndreasReitberger
             try
             {
                 KlipperApiRequestRespone result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.printer, Method.Post, "print/resume")
+                    await SendRestApiRequestAsync(MoonrakerCommandBase.printer, Method.Post, "print/resume")
                     .ConfigureAwait(false);
                 return GetQueryResult(result.Result);
             }
@@ -5367,7 +5257,7 @@ namespace AndreasReitberger
             try
             {
                 KlipperApiRequestRespone result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.printer, Method.Post, "print/cancel")
+                    await SendRestApiRequestAsync(MoonrakerCommandBase.printer, Method.Post, "print/cancel")
                     .ConfigureAwait(false);
                 return GetQueryResult(result.Result);
             }
@@ -5440,7 +5330,7 @@ namespace AndreasReitberger
             KlipperMachineInfo resultObject = null;
             try
             {
-                result = await SendRestApiRequestAsync(MoonRakerCommandBase.machine, Method.Get, "system_info").ConfigureAwait(false);
+                result = await SendRestApiRequestAsync(MoonrakerCommandBase.machine, Method.Get, "system_info").ConfigureAwait(false);
                 KlipperMachineInfoRespone config = JsonConvert.DeserializeObject<KlipperMachineInfoRespone>(result.Result);
                 return config?.Result?.SystemInfo;
             }
@@ -5467,7 +5357,7 @@ namespace AndreasReitberger
             try
             {
                 KlipperApiRequestRespone result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.machine, Method.Post, "shutdown")
+                    await SendRestApiRequestAsync(MoonrakerCommandBase.machine, Method.Post, "shutdown")
                     .ConfigureAwait(false);
                 return GetQueryResult(result.Result);
             }
@@ -5483,7 +5373,7 @@ namespace AndreasReitberger
             try
             {
                 KlipperApiRequestRespone result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.machine, Method.Post, "reboot")
+                    await SendRestApiRequestAsync(MoonrakerCommandBase.machine, Method.Post, "reboot")
                     .ConfigureAwait(false);
                 return GetQueryResult(result.Result);
             }
@@ -5502,7 +5392,7 @@ namespace AndreasReitberger
                 urlSegements.Add("service", service);
 
                 KlipperApiRequestRespone result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.machine, Method.Post, "services/restart", default, null, urlSegements)
+                    await SendRestApiRequestAsync(MoonrakerCommandBase.machine, Method.Post, "services/restart", default, null, urlSegements)
                     .ConfigureAwait(false);
                 return GetQueryResult(result.Result);
             }
@@ -5525,7 +5415,7 @@ namespace AndreasReitberger
                 urlSegements.Add("service", service);
 
                 KlipperApiRequestRespone result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.machine, Method.Post, "services/stop", default, null, urlSegements)
+                    await SendRestApiRequestAsync(MoonrakerCommandBase.machine, Method.Post, "services/stop", default, null, urlSegements)
                     .ConfigureAwait(false);
                 return GetQueryResult(result.Result);
             }
@@ -5548,7 +5438,7 @@ namespace AndreasReitberger
                 urlSegements.Add("service", service);
 
                 KlipperApiRequestRespone result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.machine, Method.Post, "services/start", default, null, urlSegements)
+                    await SendRestApiRequestAsync(MoonrakerCommandBase.machine, Method.Post, "services/start", default, null, urlSegements)
                     .ConfigureAwait(false);
                 return GetQueryResult(result.Result);
             }
@@ -5569,7 +5459,7 @@ namespace AndreasReitberger
             KlipperMoonrakerProcessStatsResult resultObject = null;
             try
             {
-                result = await SendRestApiRequestAsync(MoonRakerCommandBase.machine, Method.Get, "proc_stats").ConfigureAwait(false);
+                result = await SendRestApiRequestAsync(MoonrakerCommandBase.machine, Method.Get, "proc_stats").ConfigureAwait(false);
                 KlipperMoonrakerProcessStatsRespone config = JsonConvert.DeserializeObject<KlipperMoonrakerProcessStatsRespone>(result.Result);
                 return config?.Result;
             }
@@ -5621,7 +5511,7 @@ namespace AndreasReitberger
                     urlSegements.Add("root", rootPath);
                 }
 
-                result = await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.Get, "files/list", default, null, urlSegements).ConfigureAwait(false);
+                result = await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Get, "files/list", default, null, urlSegements).ConfigureAwait(false);
                 KlipperFileListRespone files = JsonConvert.DeserializeObject<KlipperFileListRespone>(result.Result);
                 if (includeGcodeMeta)
                 {
@@ -5682,7 +5572,7 @@ namespace AndreasReitberger
                 Dictionary<string, string> urlSegements = new();
                 urlSegements.Add("filename", fileName);
 
-                result = await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.Get, "files/metadata", default, null, urlSegements).ConfigureAwait(false);
+                result = await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Get, "files/metadata", default, null, urlSegements).ConfigureAwait(false);
                 KlipperGcodeMetaRespone queryResult = JsonConvert.DeserializeObject<KlipperGcodeMetaRespone>(result.Result);
                 return queryResult?.Result;
             }
@@ -5768,7 +5658,7 @@ namespace AndreasReitberger
                 urlSegements.Add("path", path);
                 urlSegements.Add("extended", extended ? "true" : "false");
 
-                result = await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.Get, "files/directory", default, null, urlSegements).ConfigureAwait(false);
+                result = await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Get, "files/directory", default, null, urlSegements).ConfigureAwait(false);
 
                 KlipperDirectoryInfoRespone queryResult = JsonConvert.DeserializeObject<KlipperDirectoryInfoRespone>(result.Result);
                 if (queryResult?.Result?.DiskUsage != null)
@@ -5844,7 +5734,7 @@ namespace AndreasReitberger
                 urlSegments.Add("path", directory);
 
                 result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.Post, $"files/directory", jsonObject: null, cts: default, urlSegments: urlSegments)
+                    await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Post, $"files/directory", jsonObject: null, cts: default, urlSegments: urlSegments)
                     .ConfigureAwait(false);
 
                 KlipperDirectoryActionRespone queryResult = JsonConvert.DeserializeObject<KlipperDirectoryActionRespone>(result.Result);
@@ -5879,7 +5769,7 @@ namespace AndreasReitberger
                 urlSegments.Add("force", force ? "true" : "false");
 
                 result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.Delete, $"files/directory", jsonObject: null, cts: default, urlSegments: urlSegments)
+                    await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Delete, $"files/directory", jsonObject: null, cts: default, urlSegments: urlSegments)
                     .ConfigureAwait(false);
                 KlipperDirectoryActionRespone queryResult = JsonConvert.DeserializeObject<KlipperDirectoryActionRespone>(result.Result);
                 return queryResult?.Result;
@@ -5913,7 +5803,7 @@ namespace AndreasReitberger
                 urlSegments.Add("dest", destination);
 
                 result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.Post, $"files/move", jsonObject: null, cts: default, urlSegments: urlSegments)
+                    await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Post, $"files/move", jsonObject: null, cts: default, urlSegments: urlSegments)
                     .ConfigureAwait(false);
                 KlipperDirectoryActionRespone queryResult = JsonConvert.DeserializeObject<KlipperDirectoryActionRespone>(result.Result);
                 return queryResult?.Result;
@@ -5947,7 +5837,7 @@ namespace AndreasReitberger
                 urlSegments.Add("dest", destination);
 
                 result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.Post, $"files/copy", jsonObject: null, cts: default, urlSegments: urlSegments)
+                    await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Post, $"files/copy", jsonObject: null, cts: default, urlSegments: urlSegments)
                     .ConfigureAwait(false);
                 KlipperDirectoryActionRespone queryResult = JsonConvert.DeserializeObject<KlipperDirectoryActionRespone>(result.Result);
                 return queryResult?.Result;
@@ -6053,7 +5943,7 @@ namespace AndreasReitberger
             try
             {
                 result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.Delete, $"files/{root}/{filePath}")
+                    await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Delete, $"files/{root}/{filePath}")
                     .ConfigureAwait(false);
                 KlipperDirectoryActionRespone queryResult = JsonConvert.DeserializeObject<KlipperDirectoryActionRespone>(result.Result);
                 return queryResult?.Result;
@@ -6086,7 +5976,7 @@ namespace AndreasReitberger
             try
             {
                 result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.Delete, $"files/{filePath}")
+                    await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Delete, $"files/{filePath}")
                     .ConfigureAwait(false);
                 KlipperDirectoryActionRespone queryResult = JsonConvert.DeserializeObject<KlipperDirectoryActionRespone>(result.Result);
                 return queryResult?.Result;
@@ -6141,7 +6031,7 @@ namespace AndreasReitberger
                     username = username,
                     password = password
                 };
-                result = await SendRestApiRequestAsync(MoonRakerCommandBase.access, Method.Post, "login", cmd, default).ConfigureAwait(false);
+                result = await SendRestApiRequestAsync(MoonrakerCommandBase.access, Method.Post, "login", cmd, default).ConfigureAwait(false);
                 KlipperUserActionRespone queryResult = JsonConvert.DeserializeObject<KlipperUserActionRespone>(result.Result);
                 UserToken = queryResult?.Result?.Token;
                 RefreshToken = queryResult?.Result?.RefreshToken;
@@ -6176,7 +6066,7 @@ namespace AndreasReitberger
                 {
                     refresh_token = token,
                 };
-                result = await SendRestApiRequestAsync(MoonRakerCommandBase.access, Method.Post, "refresh_jwt", cmd).ConfigureAwait(false);
+                result = await SendRestApiRequestAsync(MoonrakerCommandBase.access, Method.Post, "refresh_jwt", cmd).ConfigureAwait(false);
                 KlipperUserActionRespone queryResult = JsonConvert.DeserializeObject<KlipperUserActionRespone>(result.Result);
 
                 UserToken = queryResult?.Result?.Token;
@@ -6213,7 +6103,7 @@ namespace AndreasReitberger
                     password = password,
                     new_password = newPassword,
                 };
-                result = await SendRestApiRequestAsync(MoonRakerCommandBase.access, Method.Post, "user/password", cmd).ConfigureAwait(false);
+                result = await SendRestApiRequestAsync(MoonrakerCommandBase.access, Method.Post, "user/password", cmd).ConfigureAwait(false);
                 KlipperUserActionRespone queryResult = JsonConvert.DeserializeObject<KlipperUserActionRespone>(result.Result);
 
                 return queryResult?.Result;
@@ -6242,7 +6132,7 @@ namespace AndreasReitberger
             KlipperUserActionResult resultObject = null;
             try
             {
-                result = await SendRestApiRequestAsync(MoonRakerCommandBase.access, Method.Post, "logout").ConfigureAwait(false);
+                result = await SendRestApiRequestAsync(MoonrakerCommandBase.access, Method.Post, "logout").ConfigureAwait(false);
                 UserToken = string.Empty;
 
                 KlipperUserActionRespone queryResult = JsonConvert.DeserializeObject<KlipperUserActionRespone>(result.Result);
@@ -6272,7 +6162,7 @@ namespace AndreasReitberger
             KlipperUser resultObject = null;
             try
             {
-                result = await SendRestApiRequestAsync(MoonRakerCommandBase.access, Method.Get, "user").ConfigureAwait(false);
+                result = await SendRestApiRequestAsync(MoonrakerCommandBase.access, Method.Get, "user").ConfigureAwait(false);
                 KlipperUserRespone queryResult = JsonConvert.DeserializeObject<KlipperUserRespone>(result.Result);
                 return queryResult?.Result;
             }
@@ -6316,7 +6206,7 @@ namespace AndreasReitberger
                     KlipperAccessTokenResult token = await GetOneshotTokenAsync().ConfigureAwait(false);
                     API = token?.Result;
                 }
-                result = await SendRestApiRequestAsync(MoonRakerCommandBase.access, Method.Post, "user", cmd).ConfigureAwait(false);
+                result = await SendRestApiRequestAsync(MoonrakerCommandBase.access, Method.Post, "user", cmd).ConfigureAwait(false);
                 //return result?.Result;
                 KlipperUserActionRespone queryResult = JsonConvert.DeserializeObject<KlipperUserActionRespone>(result.Result);
                 return queryResult?.Result;
@@ -6353,7 +6243,7 @@ namespace AndreasReitberger
                 {
                     username = username,
                 };
-                result = await SendRestApiRequestAsync(MoonRakerCommandBase.access, Method.Delete, "user", cmd).ConfigureAwait(false);
+                result = await SendRestApiRequestAsync(MoonrakerCommandBase.access, Method.Delete, "user", cmd).ConfigureAwait(false);
 
                 KlipperUserActionRespone queryResult = JsonConvert.DeserializeObject<KlipperUserActionRespone>(result.Result);
                 return queryResult?.Result;
@@ -6382,7 +6272,7 @@ namespace AndreasReitberger
             List<KlipperUser> resultObject = null;
             try
             {
-                result = await SendRestApiRequestAsync(MoonRakerCommandBase.access, Method.Get, "users/list").ConfigureAwait(false);
+                result = await SendRestApiRequestAsync(MoonrakerCommandBase.access, Method.Get, "users/list").ConfigureAwait(false);
                 KlipperUserListRespone queryResult = JsonConvert.DeserializeObject<KlipperUserListRespone>(result.Result);
                 return queryResult?.Result?.Users;
 
@@ -6406,15 +6296,15 @@ namespace AndreasReitberger
         }
 #endregion
 
-#region Database APIs
+        #region Database APIs
         public async Task<List<string>> ListDatabaseNamespacesAsync()
         {
             KlipperApiRequestRespone result = new();
-            List<string> resultObject = null;
+            List<string> resultObject = new();
             try
             {
                 result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.Get, $"database/list")
+                    await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Get, $"database/list")
                     .ConfigureAwait(false);
                 KlipperDatabaseNamespaceListRespone queryResult = JsonConvert.DeserializeObject<KlipperDatabaseNamespaceListRespone>(result.Result);
                 return queryResult?.Result?.Namespaces;
@@ -6436,18 +6326,49 @@ namespace AndreasReitberger
                 return resultObject;
             }
         }
+        public async Task RefreshDatabaseNamespacesAsync()
+        {
+            try
+            {
+                List<string> result = await ListDatabaseNamespacesAsync().ConfigureAwait(false);
+                AvailableNamespaces = result ?? new();
+                if(AvailableNamespaces?.Count > 0)
+                {
+                    // Try to detect the current operating system
+                    OperatingSystem = AvailableNamespaces.Contains("mainsail") ? 
+                        MoonrakerOperatingSystems.MainsailOS :
+                        MoonrakerOperatingSystems.FluiddPi
+                        ;
+                }
+            }
+            catch (Exception exc)
+            {
+                OnError(new UnhandledExceptionEventArgs(exc, false));
+                AvailableNamespaces = new();
+            }
+        }
+
         public async Task<Dictionary<string, object>> GetDatabaseItemAsync(string namespaceName, string key = "")
         {
             KlipperApiRequestRespone result = new();
             Dictionary<string, object> resultObject = null;
             try
             {
+                if(AvailableNamespaces?.Count == 0)
+                {
+                    AvailableNamespaces = await ListDatabaseNamespacesAsync();
+                }
+                if (!AvailableNamespaces.Contains(namespaceName))
+                {
+                    throw new ArgumentOutOfRangeException(namespaceName, "The requested namespace name was not found in the database!");
+                }
+                
                 Dictionary<string, string> urlSegements = new();
                 urlSegements.Add("namespace", namespaceName);
                 if (!string.IsNullOrEmpty(key)) urlSegements.Add("key", key);
 
                 result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.Get, $"database/item", default, null, urlSegements)
+                    await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Get, $"database/item", default, null, urlSegements)
                     .ConfigureAwait(false);
                 KlipperDatabaseItemRespone queryResult = JsonConvert.DeserializeObject<KlipperDatabaseItemRespone>(result.Result);
                 if (queryResult != null)
@@ -6475,15 +6396,61 @@ namespace AndreasReitberger
             }
         }
 
-        public async Task<KlipperDatabaseMainsailValueWebcam> GetWebCamSettingsAsync()
+        public async Task<List<KlipperDatabaseWebcamConfig>> GetWebCamSettingsAsync()
         {
             string resultString = string.Empty;
-            KlipperDatabaseMainsailValueWebcam resultObject = null;
+            List<KlipperDatabaseWebcamConfig> resultObject = null;
             try
             {
-                Dictionary<string, object> result = await GetDatabaseItemAsync("mainsail", "webcam").ConfigureAwait(false);
+                // Both operating systems handles their datababase namespaces and keys differently....
+                string currentNameSpace = OperatingSystem == MoonrakerOperatingSystems.MainsailOS ? "mainsail" : "fluidd";
+                string currentKey = OperatingSystem == MoonrakerOperatingSystems.MainsailOS ? "webcam" : "cameras";
+
+                Dictionary<string, object> result = await GetDatabaseItemAsync(currentNameSpace, currentKey).ConfigureAwait(false);
                 resultString = result.FirstOrDefault().Value.ToString();
-                resultObject = JsonConvert.DeserializeObject<KlipperDatabaseMainsailValueWebcam>(resultString);
+
+                switch (OperatingSystem)
+                {
+                    case MoonrakerOperatingSystems.MainsailOS:
+                        KlipperDatabaseMainsailValueWebcam mainsailObject = JsonConvert.DeserializeObject<KlipperDatabaseMainsailValueWebcam>(resultString);
+                        if(mainsailObject?.Configs != null)
+                        {
+                            IEnumerable<KlipperDatabaseWebcamConfig> temp = mainsailObject.Configs.Select(item => new KlipperDatabaseWebcamConfig()
+                            {
+                                Enabled = true,
+                                Name = item.Name,
+                                Icon = item.Icon,
+                                FlipX = item.FlipX,
+                                FlipY = item.FlipY,
+                                Service = item.Service,
+                                TargetFps = item.TargetFps,
+                                Url = item.Url,
+                            });
+                            resultObject = new(temp);
+                        }
+                        break;
+                    case MoonrakerOperatingSystems.FluiddPi:
+                        KlipperDatabaseFluiddValueWebcam fluiddObject = JsonConvert.DeserializeObject<KlipperDatabaseFluiddValueWebcam>(resultString);
+                        if(fluiddObject?.Cameras != null)
+                        {
+                            IEnumerable<KlipperDatabaseWebcamConfig> temp = fluiddObject.Cameras.Select(item => new KlipperDatabaseWebcamConfig()
+                            {
+                                Id = item.Id,
+                                Enabled = item.Enabled,
+                                Name = item.Name,
+                                FlipX = item.FlipX,
+                                FlipY = item.FlipY,
+                                Service = item.Type,
+                                TargetFps = item.Fpstarget,
+                                Url = item.Url,
+                            });
+                            resultObject = new(temp);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+
                 return resultObject;
             }
             catch (JsonException jecx)
@@ -6508,25 +6475,55 @@ namespace AndreasReitberger
         {
             try
             {
-                KlipperDatabaseMainsailValueWebcam result = await GetWebCamSettingsAsync().ConfigureAwait(false);
-                WebCamConfigs = result?.Configs;
+                List<KlipperDatabaseWebcamConfig> result = await GetWebCamSettingsAsync().ConfigureAwait(false);
+                WebCamConfigs = result ?? new();
             }
             catch (Exception exc)
             {
                 OnError(new UnhandledExceptionEventArgs(exc, false));
-                WebCamConfigs = null;
+                WebCamConfigs = new();
             }
         }
 
-        public async Task<KlipperDatabaseMainsailValueGeneral> GetGeneralSettingsAsync()
+        public async Task<KlipperDatabaseSettingsGeneral> GetGeneralSettingsAsync()
         {
             string resultString = string.Empty;
-            KlipperDatabaseMainsailValueGeneral resultObject = null;
+            KlipperDatabaseSettingsGeneral resultObject = null;
             try
             {
-                Dictionary<string, object> result = await GetDatabaseItemAsync("mainsail", "general").ConfigureAwait(false);
-                resultString = result.FirstOrDefault().Value.ToString();
-                resultObject = JsonConvert.DeserializeObject<KlipperDatabaseMainsailValueGeneral>(resultString);
+                string currentNamespace = OperatingSystem == MoonrakerOperatingSystems.MainsailOS ? "mainsail" : "fluidd";
+                string currentKey = OperatingSystem == MoonrakerOperatingSystems.MainsailOS ? "general" : "uiSettings";
+
+                Dictionary<string, object> result = await GetDatabaseItemAsync(currentNamespace, currentKey).ConfigureAwait(false);
+                resultString = result?.FirstOrDefault().Value.ToString();
+
+                switch (OperatingSystem)
+                {
+                    case MoonrakerOperatingSystems.MainsailOS:
+                        KlipperDatabaseMainsailValueGeneral mainsailObject = JsonConvert.DeserializeObject<KlipperDatabaseMainsailValueGeneral>(resultString);
+                        if (mainsailObject != null)
+                        {
+                            resultObject = new()
+                            {
+                                DisplayCancelPrint = mainsailObject.DisplayCancelPrint,
+                                Printername = mainsailObject.Printername,
+                            };
+                        }
+                        break;
+                    case MoonrakerOperatingSystems.FluiddPi:
+                        KlipperDatabaseFluiddValueUiSettings fluiddObject = JsonConvert.DeserializeObject<KlipperDatabaseFluiddValueUiSettings>(resultString);
+                        if (fluiddObject?.General != null)
+                        {
+                            resultObject = new()
+                            {
+                                Locale = fluiddObject.General.Locale,
+                                Printername = fluiddObject.General.InstanceName,
+                            };
+                        }
+                        break;
+                    default:
+                        break;
+                }
                 return resultObject;
             }
             catch (JsonException jecx)
@@ -6551,7 +6548,7 @@ namespace AndreasReitberger
         {
             try
             {
-                KlipperDatabaseMainsailValueGeneral result = await GetGeneralSettingsAsync().ConfigureAwait(false);
+                KlipperDatabaseSettingsGeneral result = await GetGeneralSettingsAsync().ConfigureAwait(false);
                 HostName = result?.Printername;
             }
             catch (Exception exc)
@@ -6567,7 +6564,11 @@ namespace AndreasReitberger
             List<KlipperDatabaseMainsailValueRemotePrinter> resultObject = null;
             try
             {
-                //string key = "mainsail|remote_printers";
+                if (OperatingSystem != MoonrakerOperatingSystems.MainsailOS)
+                {
+                    throw new NotSupportedException($"The method '{nameof(GetRemotePrintersAsync)}() is only support on '{MoonrakerOperatingSystems.MainsailOS}!");
+                }
+
                 Dictionary<string, object> result = await GetDatabaseItemAsync("mainsail", "remote_printers").ConfigureAwait(false);
                 resultString = result.FirstOrDefault().Value.ToString();
                 resultObject = JsonConvert.DeserializeObject<List<KlipperDatabaseMainsailValueRemotePrinter>>(resultString);
@@ -6591,16 +6592,83 @@ namespace AndreasReitberger
             }
         }
 
-        public async Task<List<KlipperDatabaseMainsailValuePreset>> GetDashboardPresetsAsync()
+        public async Task<List<KlipperDatabaseTemperaturePreset>> GetDashboardPresetsAsync()
         {
             string resultString = string.Empty;
-            List<KlipperDatabaseMainsailValuePreset> resultObject = null;
+            List<KlipperDatabaseTemperaturePreset> resultObject = null;
             try
             {
-                Dictionary<string, object> result = await GetDatabaseItemAsync("mainsail", "presets").ConfigureAwait(false);
+                string currentNamespace = OperatingSystem == MoonrakerOperatingSystems.MainsailOS ? "mainsail" : "fluidd";
+                string currentKey = OperatingSystem == MoonrakerOperatingSystems.MainsailOS ? "presets" : "uiSettings";
 
-                resultString = result.FirstOrDefault().Value.ToString();
-                resultObject = JsonConvert.DeserializeObject<List<KlipperDatabaseMainsailValuePreset>>(resultString);
+                Dictionary<string, object> result = await GetDatabaseItemAsync(currentNamespace, currentKey).ConfigureAwait(false);
+                resultString = result?.FirstOrDefault().Value.ToString();
+
+                switch (OperatingSystem)
+                {
+                    case MoonrakerOperatingSystems.MainsailOS:
+                        List<KlipperDatabaseMainsailValuePreset> mainsailObject = JsonConvert.DeserializeObject<List<KlipperDatabaseMainsailValuePreset>>(resultString);
+                        if (mainsailObject != null)
+                        {
+                            IEnumerable<KlipperDatabaseTemperaturePreset> temp = mainsailObject.Select(item => new KlipperDatabaseTemperaturePreset()
+                            {                               
+                                Name = item.Name,
+                                Gcode = item.Gcode,
+                                Values = new(item.Values.Select(valuePair => new KeyValuePair<string, KlipperDatabaseTemperaturePresetHeater>(
+                                    valuePair.Key, new KlipperDatabaseTemperaturePresetHeater()
+                                {
+                                    Name = valuePair.Key,
+                                    Active = valuePair.Value.Bool,
+                                    Type = valuePair.Value.Type,
+                                    Value = valuePair.Value.Value,
+                                }))),
+                                /*
+                                Values = new(item.Values.Select(valuePair => new KlipperDatabaseTemperaturePresetHeater()
+                                {
+                                    Name = valuePair.Key,
+                                    Active = valuePair.Value.Bool,
+                                    Type = valuePair.Value.Type,
+                                    Value = valuePair.Value.Value,
+                                })),
+                                */
+                            });
+                            
+                            resultObject = new(temp);
+                        }
+                        break;
+                    case MoonrakerOperatingSystems.FluiddPi:
+                        KlipperDatabaseFluiddValueUiSettings fluiddObject = JsonConvert.DeserializeObject<KlipperDatabaseFluiddValueUiSettings>(resultString);
+                        if (fluiddObject?.Dashboard?.TempPresets != null)
+                        {
+                            IEnumerable<KlipperDatabaseTemperaturePreset> temp = fluiddObject.Dashboard.TempPresets.Select(item => new KlipperDatabaseTemperaturePreset()
+                            {
+                                Id = item.Id,
+                                Name = item.Name,
+                                Gcode = item.Gcode,
+                                Values = new(item.Values.Select(valuePair => new KeyValuePair<string, KlipperDatabaseTemperaturePresetHeater>(
+                                    valuePair.Key, new KlipperDatabaseTemperaturePresetHeater()
+                                    {
+                                        Name = valuePair.Key,
+                                        Active = valuePair.Value.Active,
+                                        Type = valuePair.Value.Type,
+                                        Value = valuePair.Value.Value,
+                                    }))),
+                                /*
+                                Values = new(item.Values.Select(valuePair => new KlipperDatabaseTemperaturePresetHeater()
+                                {
+                                    Name = valuePair.Key,
+                                    Active = valuePair.Value.Active,
+                                    Type = valuePair.Value.Type,
+                                    Value = valuePair.Value.Value,
+                                })),
+                                */
+                            });
+                            resultObject = new(temp);
+                        }
+                        break;
+                    default:
+                        break;
+                }
                 return resultObject;
             }
             catch (JsonException jecx)
@@ -6624,26 +6692,31 @@ namespace AndreasReitberger
         {
             try
             {
-                List<KlipperDatabaseMainsailValuePreset> result = await GetDashboardPresetsAsync().ConfigureAwait(false);
-                Presets = result;
+                // Could be null if no presets have been defined yet
+                List<KlipperDatabaseTemperaturePreset> result = await GetDashboardPresetsAsync().ConfigureAwait(false);
+                Presets = result ?? new();
             }
             catch (Exception exc)
             {
                 OnError(new UnhandledExceptionEventArgs(exc, false));
-                Presets = null;
+                Presets = new();
             }
         }
 
-        public async Task<KlipperDatabaseMainsailValueHeightmap> GetMeshHeightMapAsync()
+        public async Task<KlipperDatabaseMainsailValueHeightmapSettings> GetMeshHeightMapSettingsAsync()
         {
             string resultString = string.Empty;
-            KlipperDatabaseMainsailValueHeightmap resultObject = null;
+            KlipperDatabaseMainsailValueHeightmapSettings resultObject = null;
             try
             {
-                //string key = "mainsail|heightmap";
+                if (OperatingSystem != MoonrakerOperatingSystems.MainsailOS)
+                {
+                    throw new NotSupportedException($"The method '{nameof(GetMeshHeightMapSettingsAsync)}() is only support on '{MoonrakerOperatingSystems.MainsailOS}!");
+                }
+
                 Dictionary<string, object> result = await GetDatabaseItemAsync("mainsail", "heightmap").ConfigureAwait(false);
                 resultString = result.FirstOrDefault().Value.ToString();
-                resultObject = JsonConvert.DeserializeObject<KlipperDatabaseMainsailValueHeightmap>(resultString);
+                resultObject = JsonConvert.DeserializeObject<KlipperDatabaseMainsailValueHeightmapSettings>(resultString);
                 return resultObject;
             }
             catch (JsonException jecx)
@@ -6652,7 +6725,7 @@ namespace AndreasReitberger
                 {
                     Exception = jecx,
                     OriginalString = resultString,
-                    TargetType = nameof(KlipperDatabaseMainsailValueHeightmap),
+                    TargetType = nameof(KlipperDatabaseMainsailValueHeightmapSettings),
                     Message = jecx.Message,
                 });
                 return resultObject;
@@ -6676,7 +6749,7 @@ namespace AndreasReitberger
                     key = key,
                     value = value,
                 };
-                result = await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.Post, "database/item", cmd).ConfigureAwait(false);
+                result = await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Post, "database/item", cmd).ConfigureAwait(false);
                 KlipperDatabaseItemRespone queryResult = JsonConvert.DeserializeObject<KlipperDatabaseItemRespone>(result.Result);
                 if (queryResult != null)
                 {
@@ -6714,7 +6787,7 @@ namespace AndreasReitberger
                 if (!string.IsNullOrEmpty(key)) urlSegements.Add("key", key);
 
                 result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.Delete, $"database/item", default, null, urlSegements)
+                    await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Delete, $"database/item", default, null, urlSegements)
                     .ConfigureAwait(false);
                 KlipperDatabaseItemRespone queryResult = JsonConvert.DeserializeObject<KlipperDatabaseItemRespone>(result.Result);
                 if (queryResult != null)
@@ -6751,7 +6824,7 @@ namespace AndreasReitberger
             KlipperJobQueueResult resultObject = null;
             try
             {
-                result = await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.Get, "job_queue/status").ConfigureAwait(false);
+                result = await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Get, "job_queue/status").ConfigureAwait(false);
 
                 KlipperJobQueueRespone queryResult = JsonConvert.DeserializeObject<KlipperJobQueueRespone>(result.Result);
                 return queryResult?.Result;
@@ -6821,7 +6894,7 @@ namespace AndreasReitberger
                 {
                     filenames = jobs,
                 };
-                result = await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.Post, "job_queue/job", cmd).ConfigureAwait(false);
+                result = await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Post, "job_queue/job", cmd).ConfigureAwait(false);
                 KlipperJobQueueRespone queryResult = JsonConvert.DeserializeObject<KlipperJobQueueRespone>(result.Result);
 
                 return queryResult?.Result;
@@ -6854,7 +6927,7 @@ namespace AndreasReitberger
                 urlSegments.Add("all", "true");
 
                 result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.Delete, $"job_queue/job", jsonObject: null, cts: default, urlSegments: urlSegments)
+                    await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Delete, $"job_queue/job", jsonObject: null, cts: default, urlSegments: urlSegments)
                     .ConfigureAwait(false);
                 KlipperJobQueueRespone queryResult = JsonConvert.DeserializeObject<KlipperJobQueueRespone>(result.Result);
 
@@ -6889,7 +6962,7 @@ namespace AndreasReitberger
                 urlSegments.Add("job_ids", string.Join(",", jobIds));
 
                 result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.Delete, $"job_queue/job", jsonObject: null, cts: default, urlSegments: urlSegments)
+                    await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Delete, $"job_queue/job", jsonObject: null, cts: default, urlSegments: urlSegments)
                     .ConfigureAwait(false);
                 KlipperJobQueueRespone queryResult = JsonConvert.DeserializeObject<KlipperJobQueueRespone>(result.Result);
 
@@ -6925,7 +6998,7 @@ namespace AndreasReitberger
             try
             {
                 result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.Post, $"job_queue/pause")
+                    await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Post, $"job_queue/pause")
                     .ConfigureAwait(false);
                 KlipperJobQueueRespone queryResult = JsonConvert.DeserializeObject<KlipperJobQueueRespone>(result.Result);
 
@@ -6956,7 +7029,7 @@ namespace AndreasReitberger
             try
             {
                 result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.Post, $"job_queue/start")
+                    await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Post, $"job_queue/start")
                     .ConfigureAwait(false);
                 KlipperJobQueueRespone queryResult = JsonConvert.DeserializeObject<KlipperJobQueueRespone>(result.Result);
 
@@ -6992,7 +7065,7 @@ namespace AndreasReitberger
                 urlSegments.Add("refresh", refresh ? "true" : "false");
 
                 result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.machine, Method.Get, $"update/status", jsonObject: null, cts: default, urlSegments: urlSegments)
+                    await SendRestApiRequestAsync(MoonrakerCommandBase.machine, Method.Get, $"update/status", jsonObject: null, cts: default, urlSegments: urlSegments)
                     .ConfigureAwait(false);
                 KlipperUpdateStatusRespone queryResult = JsonConvert.DeserializeObject<KlipperUpdateStatusRespone>(result.Result);
                 if(queryResult?.Result?.VersionInfo != null)
@@ -7034,7 +7107,7 @@ namespace AndreasReitberger
             try
             {
                 KlipperApiRequestRespone result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.machine, Method.Post, $"update/full")
+                    await SendRestApiRequestAsync(MoonrakerCommandBase.machine, Method.Post, $"update/full")
                     .ConfigureAwait(false);
                 return GetQueryResult(result.Result);
             }
@@ -7050,7 +7123,7 @@ namespace AndreasReitberger
             try
             {
                 KlipperApiRequestRespone result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.machine, Method.Post, $"update/moonraker")
+                    await SendRestApiRequestAsync(MoonrakerCommandBase.machine, Method.Post, $"update/moonraker")
                     .ConfigureAwait(false);
                 return GetQueryResult(result.Result);
             }
@@ -7066,7 +7139,7 @@ namespace AndreasReitberger
             try
             {
                 KlipperApiRequestRespone result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.machine, Method.Post, $"update/klipper")
+                    await SendRestApiRequestAsync(MoonrakerCommandBase.machine, Method.Post, $"update/klipper")
                     .ConfigureAwait(false);
                 return GetQueryResult(result.Result);
             }
@@ -7085,7 +7158,7 @@ namespace AndreasReitberger
                 urlSegments.Add("name", clientName);
 
                 KlipperApiRequestRespone result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.machine, Method.Post, $"update/client", jsonObject: null, cts: default, urlSegments: urlSegments)
+                    await SendRestApiRequestAsync(MoonrakerCommandBase.machine, Method.Post, $"update/client", jsonObject: null, cts: default, urlSegments: urlSegments)
                     .ConfigureAwait(false);
                 return GetQueryResult(result.Result);
             }
@@ -7101,7 +7174,7 @@ namespace AndreasReitberger
             try
             {
                 KlipperApiRequestRespone result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.machine, Method.Post, $"update/system")
+                    await SendRestApiRequestAsync(MoonrakerCommandBase.machine, Method.Post, $"update/system")
                     .ConfigureAwait(false);
                 return GetQueryResult(result.Result);
             }
@@ -7121,7 +7194,7 @@ namespace AndreasReitberger
                 urlSegments.Add("hard", hard ? "true" : "false");
 
                 KlipperApiRequestRespone result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.machine, Method.Post, $"update/recover", jsonObject: null, cts: default, urlSegments: urlSegments)
+                    await SendRestApiRequestAsync(MoonrakerCommandBase.machine, Method.Post, $"update/recover", jsonObject: null, cts: default, urlSegments: urlSegments)
                     .ConfigureAwait(false);
                 return GetQueryResult(result.Result);
             }
@@ -7141,7 +7214,7 @@ namespace AndreasReitberger
             try
             {
                 result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.machine, Method.Get, $"device_power/devices")
+                    await SendRestApiRequestAsync(MoonrakerCommandBase.machine, Method.Get, $"device_power/devices")
                     .ConfigureAwait(false);
                 KlipperDeviceListRespone queryResult = JsonConvert.DeserializeObject<KlipperDeviceListRespone>(result.Result);
 
@@ -7175,7 +7248,7 @@ namespace AndreasReitberger
                 urlSegments.Add("device", device);
 
                 result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.machine, Method.Get, $"device_power/device", jsonObject: null, cts: default, urlSegments: urlSegments)
+                    await SendRestApiRequestAsync(MoonrakerCommandBase.machine, Method.Get, $"device_power/device", jsonObject: null, cts: default, urlSegments: urlSegments)
                     .ConfigureAwait(false);
                 KlipperDeviceStatusRespone queryResult = JsonConvert.DeserializeObject<KlipperDeviceStatusRespone>(result.Result);
 
@@ -7210,7 +7283,7 @@ namespace AndreasReitberger
                 urlSegments.Add("action", action.ToString().ToLower());
 
                 result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.machine, Method.Post, $"device_power/device", jsonObject: null, cts: default, urlSegments: urlSegments)
+                    await SendRestApiRequestAsync(MoonrakerCommandBase.machine, Method.Post, $"device_power/device", jsonObject: null, cts: default, urlSegments: urlSegments)
                     .ConfigureAwait(false);
                 KlipperDeviceStatusRespone queryResult = JsonConvert.DeserializeObject<KlipperDeviceStatusRespone>(result.Result);
 
@@ -7251,7 +7324,7 @@ namespace AndreasReitberger
                 }
 
                 result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.machine, Method.Get, $"device_power/status?{deviceList}")
+                    await SendRestApiRequestAsync(MoonrakerCommandBase.machine, Method.Get, $"device_power/status?{deviceList}")
                     .ConfigureAwait(false);
                 KlipperDeviceStatusRespone queryResult = JsonConvert.DeserializeObject<KlipperDeviceStatusRespone>(result.Result);
 
@@ -7290,7 +7363,7 @@ namespace AndreasReitberger
                 }
 
                 result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.machine, Method.Post, $"device_power/on?{deviceList}")
+                    await SendRestApiRequestAsync(MoonrakerCommandBase.machine, Method.Post, $"device_power/on?{deviceList}")
                     .ConfigureAwait(false);
                 KlipperDeviceStatusRespone queryResult = JsonConvert.DeserializeObject<KlipperDeviceStatusRespone>(result.Result);
 
@@ -7329,7 +7402,7 @@ namespace AndreasReitberger
                 }
 
                 result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.machine, Method.Post, $"device_power/off?{deviceList}")
+                    await SendRestApiRequestAsync(MoonrakerCommandBase.machine, Method.Post, $"device_power/off?{deviceList}")
                     .ConfigureAwait(false);
                 KlipperDeviceStatusRespone queryResult = JsonConvert.DeserializeObject<KlipperDeviceStatusRespone>(result.Result);
 
@@ -7362,7 +7435,7 @@ namespace AndreasReitberger
             try
             {
                 result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.api, Method.Get, $"version")
+                    await SendRestApiRequestAsync(MoonrakerCommandBase.api, Method.Get, $"version")
                     .ConfigureAwait(false);
                 OctoprintApiVersionResult queryResult = JsonConvert.DeserializeObject<OctoprintApiVersionResult>(result.Result);
 
@@ -7393,7 +7466,7 @@ namespace AndreasReitberger
             try
             {
                 result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.api, Method.Get, $"server")
+                    await SendRestApiRequestAsync(MoonrakerCommandBase.api, Method.Get, $"server")
                     .ConfigureAwait(false);
                 OctoprintApiServerStatusResult queryResult = JsonConvert.DeserializeObject<OctoprintApiServerStatusResult>(result.Result);
 
@@ -7424,7 +7497,7 @@ namespace AndreasReitberger
             try
             {
                 result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.api, Method.Get, $"login")
+                    await SendRestApiRequestAsync(MoonrakerCommandBase.api, Method.Get, $"login")
                     .ConfigureAwait(false);
                 OctoprintApiServerStatusResult queryResult = JsonConvert.DeserializeObject<OctoprintApiServerStatusResult>(result.Result);
 
@@ -7455,7 +7528,7 @@ namespace AndreasReitberger
             try
             {
                 result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.api, Method.Get, $"settings")
+                    await SendRestApiRequestAsync(MoonrakerCommandBase.api, Method.Get, $"settings")
                     .ConfigureAwait(false);
                 OctoprintApiSettingsResult queryResult = JsonConvert.DeserializeObject<OctoprintApiSettingsResult>(result.Result);
 
@@ -7486,7 +7559,7 @@ namespace AndreasReitberger
             try
             {
                 result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.api, Method.Get, $"job")
+                    await SendRestApiRequestAsync(MoonrakerCommandBase.api, Method.Get, $"job")
                     .ConfigureAwait(false);
                 OctoprintApiJobResult queryResult = JsonConvert.DeserializeObject<OctoprintApiJobResult>(result.Result);
 
@@ -7517,7 +7590,7 @@ namespace AndreasReitberger
             try
             {
                 result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.api, Method.Get, $"printer")
+                    await SendRestApiRequestAsync(MoonrakerCommandBase.api, Method.Get, $"printer")
                     .ConfigureAwait(false);
                 OctoprintApiPrinterStatusResult queryResult = JsonConvert.DeserializeObject<OctoprintApiPrinterStatusResult>(result.Result);
 
@@ -7550,7 +7623,7 @@ namespace AndreasReitberger
                     commands = commands
                 };
                 KlipperApiRequestRespone result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.api, Method.Post, "printer/command", cmd)
+                    await SendRestApiRequestAsync(MoonrakerCommandBase.api, Method.Post, "printer/command", cmd)
                     .ConfigureAwait(false);
                 return GetQueryResult(result.Result, true);
             }
@@ -7573,7 +7646,7 @@ namespace AndreasReitberger
             try
             {
                 result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.api, Method.Get, $"printerprofiles")
+                    await SendRestApiRequestAsync(MoonrakerCommandBase.api, Method.Get, $"printerprofiles")
                     .ConfigureAwait(false);
                 OctoprintApiPrinterProfilesResult queryResult = JsonConvert.DeserializeObject<OctoprintApiPrinterProfilesResult>(result.Result);
 
@@ -7627,7 +7700,7 @@ namespace AndreasReitberger
                 urlSegments.Add("order", order);
 
                 result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.Get, $"history/list", jsonObject: null, cts: default, urlSegments: urlSegments)
+                    await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Get, $"history/list", jsonObject: null, cts: default, urlSegments: urlSegments)
                     .ConfigureAwait(false);
                 KlipperHistoryRespone queryResult = JsonConvert.DeserializeObject<KlipperHistoryRespone>(result.Result);
 
@@ -7658,7 +7731,7 @@ namespace AndreasReitberger
             try
             {
                 result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.Get, $"history/totals")
+                    await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Get, $"history/totals")
                     .ConfigureAwait(false);
                 KlipperHistoryTotalRespone queryResult = JsonConvert.DeserializeObject<KlipperHistoryTotalRespone>(result.Result);
 
@@ -7689,7 +7762,7 @@ namespace AndreasReitberger
             try
             {
                 result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.Get, $"history/reset_totals")
+                    await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Get, $"history/reset_totals")
                     .ConfigureAwait(false);
                 KlipperHistoryTotalRespone queryResult = JsonConvert.DeserializeObject<KlipperHistoryTotalRespone>(result.Result);
 
@@ -7723,7 +7796,7 @@ namespace AndreasReitberger
                 urlSegments.Add("uid", uid);
 
                 result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.Get, $"history/job", jsonObject: null, cts: default, urlSegments: urlSegments)
+                    await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Get, $"history/job", jsonObject: null, cts: default, urlSegments: urlSegments)
                     .ConfigureAwait(false);
                 KlipperHistorySingleJobRespone queryResult = JsonConvert.DeserializeObject<KlipperHistorySingleJobRespone>(result.Result);
 
@@ -7764,7 +7837,7 @@ namespace AndreasReitberger
                 urlSegments.Add("uid", uid);
 
                 result =
-                    await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.Delete, $"history/job", jsonObject: null, cts: default, urlSegments: urlSegments)
+                    await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Delete, $"history/job", jsonObject: null, cts: default, urlSegments: urlSegments)
                     .ConfigureAwait(false);
                 KlipperHistoryJobDeletedRespone queryResult = JsonConvert.DeserializeObject<KlipperHistoryJobDeletedRespone>(result.Result);
 
@@ -7794,7 +7867,7 @@ namespace AndreasReitberger
 
 #endregion
 
-#region Overrides
+        #region Overrides
         public override string ToString()
         {
             try
@@ -7817,9 +7890,9 @@ namespace AndreasReitberger
         {
             return Id.GetHashCode();
         }
-#endregion
+        #endregion
 
-#region Dispose
+        #region Dispose
         public void Dispose()
         {
             Dispose(true);
@@ -7837,6 +7910,6 @@ namespace AndreasReitberger
                 DisconnectWebSocket();
             }
         }
-#endregion
+        #endregion
     }
 }

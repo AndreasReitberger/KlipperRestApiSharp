@@ -6,7 +6,7 @@ namespace AndreasReitberger.Models
     {
         #region Properties
         [JsonProperty("last_z_result")]
-        public double LastZResult { get; set; }
+        public double? LastZResult { get; set; }
 
         [JsonProperty("last_query")]
         public bool LastQuery { get; set; }

@@ -10,7 +10,7 @@ namespace AndreasReitberger.Models
         public List<double> HomingOrigin { get; set; } = new();
 
         [JsonProperty("speed_factor")]
-        public double SpeedFactor { get; set; }
+        public double? SpeedFactor { get; set; }
 
         [JsonProperty("gcode_position")]
         public List<double> GcodePosition { get; set; } = new();
@@ -25,10 +25,10 @@ namespace AndreasReitberger.Models
         public List<double> Position { get; set; } = new();
 
         [JsonProperty("speed")]
-        public double Speed { get; set; }
+        public double? Speed { get; set; }
 
         [JsonProperty("extrude_factor")]
-        public double ExtrudeFactor { get; set; }
+        public double? ExtrudeFactor { get; set; }
         #endregion 
 
         #region Overrides

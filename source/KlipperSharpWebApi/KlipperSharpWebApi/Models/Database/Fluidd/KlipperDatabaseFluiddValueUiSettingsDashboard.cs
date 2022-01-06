@@ -3,10 +3,12 @@ using System.Collections.Generic;
 
 namespace AndreasReitberger.Models
 {
-    public class KlipperPresetsChangedEventArgs : KlipperEventArgs
+    public partial class KlipperDatabaseFluiddValueUiSettingsDashboard
     {
         #region Properties
-        public List<KlipperDatabaseTemperaturePreset> NewPresets { get; set; } = new();
+        [JsonProperty("tempPresets")]
+        public List<KlipperDatabaseFluiddValuePreset> TempPresets { get; set; }
+
         #endregion
 
         #region Overrides

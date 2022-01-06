@@ -2,7 +2,7 @@
 
 namespace AndreasReitberger.Models
 {
-    public partial class KlipperDatabaseMainsailValueHeightmap
+    public partial class KlipperDatabaseMainsailValueHeightmapSettings
     {
         #region Properties
         [JsonProperty("mesh")]

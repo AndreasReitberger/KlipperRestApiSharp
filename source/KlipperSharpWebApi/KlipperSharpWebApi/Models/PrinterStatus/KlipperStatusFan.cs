@@ -21,7 +21,7 @@ namespace AndreasReitberger.Models
         {
             try
             {
-                if (Speed == null) return 0;
+                if (Speed == null || Speed <= 0) return 0;
                 int calc = Convert.ToInt32(Speed * 100);
                 return calc;
             }

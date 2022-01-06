@@ -9,7 +9,7 @@ namespace AndreasReitberger.Models
         public KlipperPrinterStatusSubscriptionStatus Status { get; set; }
 
         [JsonProperty("eventtime")]
-        public double Eventtime { get; set; }
+        public double? Eventtime { get; set; }
         #endregion 
 
         #region Overrides

@@ -6,7 +6,7 @@ namespace AndreasReitberger.Models
     public class KlipperWebCamConfigChangedEventArgs : KlipperEventArgs
     {
         #region Properties
-        public List<KlipperDatabaseMainsailValueWebcamConfig> NewConfig { get; set; }
+        public List<KlipperDatabaseWebcamConfig> NewConfig { get; set; }
         #endregion
 
         #region Overrides

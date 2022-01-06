@@ -11,7 +11,7 @@ namespace AndreasReitberger.Models
         public double? EndTime { get; set; }
 
         [JsonProperty("filament_used")]
-        public long FilamentUsed { get; set; }
+        public long? FilamentUsed { get; set; }
 
         [JsonProperty("filename")]
         public string Filename { get; set; }
@@ -20,18 +20,17 @@ namespace AndreasReitberger.Models
         public KlipperGcodeMetaResult Metadata { get; set; }
 
         [JsonProperty("print_duration")]
-        public double PrintDuration { get; set; }
+        public double? PrintDuration { get; set; }
 
         [JsonProperty("status")]
         [JsonConverter(typeof(StringEnumConverter), true)]
         public KlipperJobStates Status { get; set; }
-        //public string Status { get; set; }
 
         [JsonProperty("start_time")]
         public double? StartTime { get; set; }
 
         [JsonProperty("total_duration")]
-        public double TotalDuration { get; set; }
+        public double? TotalDuration { get; set; }
 
         [JsonProperty("job_id")]
         public string JobId { get; set; }

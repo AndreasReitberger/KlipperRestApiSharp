@@ -2,7 +2,7 @@
 
 namespace AndreasReitberger.Enum
 {
-    public enum KlipperIdletates
+    public enum KlipperIdleStates
     {
         [EnumMember(Value = "Idle")]
         Idle = 0,
@@ -10,5 +10,7 @@ namespace AndreasReitberger.Enum
         Ready = 1,
         [EnumMember(Value = "Printing")]
         Printing = 2,
+        [EnumMember(Value = "Shutdown")]
+        Shutdown = 2,
     }
 }

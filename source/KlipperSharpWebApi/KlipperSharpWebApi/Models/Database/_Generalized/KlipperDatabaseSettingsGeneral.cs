@@ -2,17 +2,14 @@
 
 namespace AndreasReitberger.Models
 {
-    public partial class KlipperHeaterElement
+    public class KlipperDatabaseSettingsGeneral
     {
         #region Properties
-        [JsonProperty("bool")]
-        public bool Bool { get; set; }
+        public string Printername { get; set; } = string.Empty;
 
-        [JsonProperty("value")]
-        public long? Value { get; set; }
+        public bool DisplayCancelPrint { get; set; }
 
-        [JsonProperty("type")]
-        public string Type { get; set; }
+        public string Locale { get; set; } = string.Empty;
         #endregion
 
         #region Overrides

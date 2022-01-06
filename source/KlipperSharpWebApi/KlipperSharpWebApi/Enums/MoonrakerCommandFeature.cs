@@ -1,6 +1,6 @@
 ﻿namespace AndreasReitberger.Enum
 {
-    public enum MoonRakerCommandFeature
+    public enum MoonrakerCommandFeature
     {
         info,
     }

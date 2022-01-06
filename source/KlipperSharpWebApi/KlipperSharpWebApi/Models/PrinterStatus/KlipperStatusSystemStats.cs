@@ -6,13 +6,13 @@ namespace AndreasReitberger.Models
     {
         #region Properties
         [JsonProperty("sysload")]
-        public double Sysload { get; set; }
+        public double? Sysload { get; set; }
 
         [JsonProperty("memavail")]
-        public long Memavail { get; set; }
+        public long? Memavail { get; set; }
 
         [JsonProperty("cputime")]
-        public double Cputime { get; set; }
+        public double? Cputime { get; set; }
         #endregion
 
         #region Overrides

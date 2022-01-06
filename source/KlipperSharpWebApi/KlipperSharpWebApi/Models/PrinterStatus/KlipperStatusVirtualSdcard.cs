@@ -10,10 +10,10 @@ namespace AndreasReitberger.Models
         public int PercentageProgress => GetPercentageProgress();
 
         [JsonProperty("progress")]
-        public double Progress { get; set; }
+        public double? Progress { get; set; }
 
         [JsonProperty("file_position")]
-        public long FilePosition { get; set; }
+        public long? FilePosition { get; set; }
 
         [JsonProperty("is_active")]
         public bool IsActive { get; set; }
@@ -22,7 +22,7 @@ namespace AndreasReitberger.Models
         public string FilePath { get; set; }
 
         [JsonProperty("file_size")]
-        public long FileSize { get; set; }
+        public long? FileSize { get; set; }
         #endregion
 
         #region Methods
@@ -30,7 +30,7 @@ namespace AndreasReitberger.Models
         {
             try
             {
-                if (Progress <= 0) return 0;
+                if (Progress == null || Progress <= 0) return 0;
                 int calc = Convert.ToInt32(Progress * 100);
                 return calc;
             }

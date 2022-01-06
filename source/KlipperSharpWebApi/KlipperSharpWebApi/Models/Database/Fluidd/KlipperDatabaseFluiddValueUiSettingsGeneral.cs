@@ -1,12 +1,16 @@
 ﻿using Newtonsoft.Json;
-using System.Collections.Generic;
 
 namespace AndreasReitberger.Models
 {
-    public class KlipperPresetsChangedEventArgs : KlipperEventArgs
+    public partial class KlipperDatabaseFluiddValueUiSettingsGeneral
     {
         #region Properties
-        public List<KlipperDatabaseTemperaturePreset> NewPresets { get; set; } = new();
+        [JsonProperty("locale")]
+        public string Locale { get; set; }
+
+        [JsonProperty("instanceName")]
+        public string InstanceName { get; set; }
+
         #endregion
 
         #region Overrides

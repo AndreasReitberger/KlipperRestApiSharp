@@ -3,10 +3,12 @@ using System.Collections.Generic;
 
 namespace AndreasReitberger.Models
 {
-    public class KlipperPresetsChangedEventArgs : KlipperEventArgs
+    public partial class KlipperDatabaseFluiddValueWebcam
     {
         #region Properties
-        public List<KlipperDatabaseTemperaturePreset> NewPresets { get; set; } = new();
+        [JsonProperty("cameras")]
+        public List<KlipperDatabaseFluiddValueWebcamConfig> Cameras { get; set; }
+
         #endregion
 
         #region Overrides
