@@ -13,6 +13,17 @@ https://moonraker.readthedocs.io/en/latest/web_api/
 
 You can see the current migration progress in the following table.
 
+## Supported OS
+Basically all OS using the Moonraker WebApi are theoretically supported. 
+
+### Tested with our app
+- [x] MainsailOS
+- [x] FluiddPi
+
+### Untested, but using Moonraker WebApi
+- [ ] 
+
+
 # App's using this library
 
 ![FeaturedImage](https://andreas-reitberger.de/wp-content/uploads/2022/01/feature-graphic_modified.png)
