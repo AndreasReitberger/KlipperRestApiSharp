@@ -1,14 +1,17 @@
 ﻿using Newtonsoft.Json;
-using System.Collections.Generic;
 
 namespace AndreasReitberger.Models
 {
-    public partial class KlipperServerTempDataRespone
+    public class KlipperDatabaseRemotePrinter
     {
         #region Properties
-        [JsonProperty("result")]
-        public Dictionary<string, KlipperTemperatureSensorHistory> Result { get; set; } = new();
-        //public KlipperServerTempData Result { get; set; }
+        public string Hostname { get; set; }
+
+        public long Port { get; set; }
+
+        public long WebPort { get; set; }
+
+        public object Settings { get; set; }
         #endregion
 
         #region Overrides

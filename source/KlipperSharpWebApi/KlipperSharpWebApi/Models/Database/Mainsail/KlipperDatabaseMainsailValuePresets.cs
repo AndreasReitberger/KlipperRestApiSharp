@@ -1,14 +1,14 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 
 namespace AndreasReitberger.Models
 {
-    public partial class KlipperServerTempDataRespone
+    public partial class KlipperDatabaseMainsailValuePresets
     {
         #region Properties
-        [JsonProperty("result")]
-        public Dictionary<string, KlipperTemperatureSensorHistory> Result { get; set; } = new();
-        //public KlipperServerTempData Result { get; set; }
+        [JsonProperty("presets")]
+        public Dictionary<Guid, KlipperDatabaseMainsailValuePreset> Presets { get; set; } = new();
         #endregion
 
         #region Overrides

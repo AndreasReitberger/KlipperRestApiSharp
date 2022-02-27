@@ -14,6 +14,7 @@ using AndreasReitberger.Enum;
 using System.Linq;
 using Newtonsoft.Json;
 using System.Text;
+using Newtonsoft.Json.Linq;
 
 namespace RepetierServerSharpApiTest
 {
@@ -21,9 +22,9 @@ namespace RepetierServerSharpApiTest
     public class KlipperSharpWebApiTest
     {
 
-        private readonly string _host = "192.168.10.113";
+        private readonly string _host = "192.168.10.44";
         private readonly int _port = 80;
-        private readonly string _api = "";
+        private readonly string _api = "1c8fc5833641429a95d00991e1f3aa0f";
         private readonly bool _ssl = false;
 
         private readonly bool _skipOnlineTests = true;
@@ -346,6 +347,45 @@ namespace RepetierServerSharpApiTest
                 Assert.Fail(exc.Message);
             }
         }
+
+        [TestMethod]
+        public async Task GcodeMetaTest()
+        {
+            try
+            {
+                KlipperClient _server = new(_host, _port, _ssl);
+                _server.Error += (sender, e) => 
+                {
+                    Assert.Fail(e.ToString());
+                };
+                await _server.CheckOnlineAsync();
+                if (_server.IsOnline)
+                {
+                    await _server.RefreshAllAsync();
+                    Assert.IsTrue(_server.InitialDataFetched);
+
+                    _server.RestJsonConvertError += (o, args) =>
+                    {
+                        Assert.Fail(args.Message);
+                    };
+
+                    ObservableCollection<KlipperFile> models = await _server.GetAvailableFilesAsync("gcodes", true);
+                    //var childItems = models?.Where(model => model.Path.Contains("/")).ToList();
+
+                    foreach (KlipperFile gcodeFile in models)
+                    {
+                        byte[] thumbnail = await _server.GetGcodeThumbnailImageAsync(gcodeFile.GcodeMeta);
+                        Assert.IsNotNull(thumbnail);
+                    }
+                }
+                else
+                    Assert.Fail($"Server {_server.FullWebAddress} is offline.");
+            }
+            catch (Exception exc)
+            {
+                Assert.Fail(exc.Message);
+            }
+        }
         
         [TestMethod]
         public async Task PrinterInfoTest()
@@ -542,8 +582,9 @@ namespace RepetierServerSharpApiTest
                     KlipperServerConfig config = await _server.GetServerConfigAsync();
                     Assert.IsNotNull(config);
 
-                    KlipperServerTempData tempData = await _server.GetServerCachedTemperatureDataAsync();
-                    Assert.IsNotNull(tempData);
+                    Dictionary<string, KlipperTemperatureSensorHistory> tempData = await _server.GetServerCachedTemperatureDataAsync();
+                    //Assert.IsNotNull(tempData);
+                    Assert.IsTrue(tempData?.Count > 0);
 
                     List<KlipperGcode> cachedGcodes = await _server.GetServerCachedGcodesAsync();
                     Assert.IsNotNull(cachedGcodes);
@@ -871,7 +912,7 @@ namespace RepetierServerSharpApiTest
                 {
                     if(e is UnhandledExceptionEventArgs args)
                         Console.WriteLine(args.ExceptionObject?.ToString());
-                    Assert.Fail(e.ToString());
+                    //Assert.Fail(e.ToString());
                 };
                 await _server.CheckOnlineAsync();
                 if (_server.IsOnline)
@@ -881,10 +922,26 @@ namespace RepetierServerSharpApiTest
 
                     //List<string> namespaces = await _server.ListDatabaseNamespacesAsync();
                     Assert.IsTrue(_server.AvailableNamespaces?.Count > 0);
+                    if(_server.OperatingSystem == MoonrakerOperatingSystems.FluiddPi)
+                    {
+                        _server.API = _api;
+                    }
 
                     string currentNamespace = _server.OperatingSystem == MoonrakerOperatingSystems.MainsailOS ? "mainsail" : "fluidd";
                     Dictionary<string, object> items = await _server.GetDatabaseItemAsync(currentNamespace);
                     Assert.IsNotNull(items);
+
+                    foreach(KeyValuePair<string, object> pair in items)
+                    {
+                        var type = pair.Value.GetType();
+                        if (pair.Value is JObject jObject)
+                        {
+                            foreach(var property in jObject.Properties())
+                            {
+                                Dictionary<string, object> childItems = await _server.GetDatabaseItemAsync(currentNamespace, property.Name);
+                            }
+                        }
+                    }
 
                     Dictionary<string, object> moonrakerItems = await _server.GetDatabaseItemAsync("moonraker");
 
@@ -918,6 +975,46 @@ namespace RepetierServerSharpApiTest
 
                     Dictionary<string, object> delete = await _server.DeleteDatabaseItemAsync(currentNamespace, "testkey");
                     Assert.IsNotNull(delete);
+                    
+                }
+                else
+                    Assert.Fail($"Server {_server.FullWebAddress} is offline.");
+            }
+            catch (Exception exc)
+            {
+                Assert.Fail(exc.Message);
+            }
+            finally
+            {
+
+            }
+        }
+
+        [TestMethod]
+        public async Task RemotePrintersTest()
+        {
+            try
+            {
+                KlipperClient _server = new(_host, _port, _ssl);
+                _server.Error += (sender, e) =>
+                {
+                    if(e is UnhandledExceptionEventArgs args)
+                        Console.WriteLine(args.ExceptionObject?.ToString());
+                    Assert.Fail(e.ToString());
+                };
+                await _server.CheckOnlineAsync();
+                if (_server.IsOnline)
+                {
+                    await _server.RefreshAllAsync();
+                    Assert.IsTrue(_server.InitialDataFetched);
+
+                    //List<string> namespaces = await _server.ListDatabaseNamespacesAsync();
+                    Assert.IsTrue(_server.AvailableNamespaces?.Count > 0);
+
+                    string currentNamespace = _server.OperatingSystem == MoonrakerOperatingSystems.MainsailOS ? "mainsail" : "fluidd";
+                    List<KlipperDatabaseRemotePrinter> printers = await _server.GetRemotePrintersAsync();
+                    Assert.IsNotNull(printers);
+
                     
                 }
                 else

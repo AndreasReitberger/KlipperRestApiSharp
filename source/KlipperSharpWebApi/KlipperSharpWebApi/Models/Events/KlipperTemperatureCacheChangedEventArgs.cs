@@ -3,12 +3,10 @@ using System.Collections.Generic;
 
 namespace AndreasReitberger.Models
 {
-    public partial class KlipperServerTempDataRespone
+    public class KlipperTemperatureCacheChangedEventArgs : KlipperEventArgs
     {
         #region Properties
-        [JsonProperty("result")]
-        public Dictionary<string, KlipperTemperatureSensorHistory> Result { get; set; } = new();
-        //public KlipperServerTempData Result { get; set; }
+        public Dictionary<string, KlipperTemperatureSensorHistory> CachedTemperatures { get; set; } = new();
         #endregion
 
         #region Overrides
