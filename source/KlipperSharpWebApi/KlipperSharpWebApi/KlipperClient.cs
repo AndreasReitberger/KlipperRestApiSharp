@@ -51,6 +51,8 @@ namespace AndreasReitberger
 
         int _cooldownExtruder = 4;
         int _cooldownTemperatureSensor = 4;
+        int _cooldownCpuUsage = 4;
+        int _cooldownSystemMemory = 4;
         int _cooldownHeaterBed = 4;
 
         #endregion
@@ -315,6 +317,20 @@ namespace AndreasReitberger
             {
                 if (_hostName == value) return;
                 _hostName = value;
+                OnPropertyChanged();
+            }
+        }
+
+        [JsonProperty(nameof(ServerName))]
+        string _serverName= string.Empty;
+        [JsonIgnore]
+        public string ServerName
+        {
+            get => _serverName;
+            set
+            {
+                if (_serverName == value) return;
+                _serverName = value;
                 OnPropertyChanged();
             }
         }
@@ -1102,6 +1118,85 @@ namespace AndreasReitberger
             }
         }
 
+
+        [JsonIgnore, XmlIgnore]
+        Dictionary<string, double?> _cpuUsage = new();
+        [JsonIgnore, XmlIgnore]
+        public Dictionary<string, double?> CpuUsage
+        {
+            get => _cpuUsage;
+            set
+            {
+                if (_cpuUsage == value) return;
+                _cpuUsage = value;
+                // WebSocket is updating this property in a high frequency, so a cooldown can be enabled
+                if (_enableCooldown)
+                {
+                    if (_cooldownCpuUsage > 0)
+                        _cooldownCpuUsage--;
+                    else
+                    {
+                        _cooldownCpuUsage = _cooldownFallback;
+                        OnKlipperServerCpuUsageChanged(new KlipperCpuUsageChangedEventArgs()
+                        {
+                            CpuUsage = value,
+                            SessonId = SessionId,
+                            CallbackId = -1,
+                        });
+                    }
+                }
+                else
+                {
+                    OnKlipperServerCpuUsageChanged(new KlipperCpuUsageChangedEventArgs()
+                    {
+                        CpuUsage = value,
+                        SessonId = SessionId,
+                        CallbackId = -1,
+                    });
+                }
+                OnPropertyChanged();
+            }
+        }
+
+        [JsonIgnore, XmlIgnore]
+        Dictionary<string, long?> _systemMemory = new();
+        [JsonIgnore, XmlIgnore]
+        public Dictionary<string, long?> SystemMemory
+        {
+            get => _systemMemory;
+            set
+            {
+                if (_systemMemory == value) return;
+                _systemMemory = value;
+                // WebSocket is updating this property in a high frequency, so a cooldown can be enabled
+                if (_enableCooldown)
+                {
+                    if (_cooldownSystemMemory > 0)
+                        _cooldownSystemMemory--;
+                    else
+                    {
+                        _cooldownSystemMemory = _cooldownFallback;
+                        OnKlipperServerSystemMemoryChanged(new KlipperSystemMemoryChangedEventArgs()
+                        {
+                            SystemMemory = value,
+                            SessonId = SessionId,
+                            CallbackId = -1,
+                        });
+                    }
+                }
+                else
+                {
+                    OnKlipperServerSystemMemoryChanged(new KlipperSystemMemoryChangedEventArgs()
+                    {
+                        SystemMemory = value,
+                        SessonId = SessionId,
+                        CallbackId = -1,
+                    });
+                }
+                OnPropertyChanged();
+            }
+        }
+
         [XmlIgnore, JsonIgnore]
         Dictionary<int, KlipperStatusExtruder> _extruders = new();
         [XmlIgnore, JsonIgnore]
@@ -1859,6 +1954,18 @@ namespace AndreasReitberger
             KlipperServerTemperatureCacheChanged?.Invoke(this, e);
         }
 
+        public event EventHandler<KlipperCpuUsageChangedEventArgs> KlipperServerCpuUsageChanged;
+        protected virtual void OnKlipperServerCpuUsageChanged(KlipperCpuUsageChangedEventArgs e)
+        {
+            KlipperServerCpuUsageChanged?.Invoke(this, e);
+        }
+
+        public event EventHandler<KlipperSystemMemoryChangedEventArgs> KlipperServerSystemMemoryChanged;
+        protected virtual void OnKlipperServerSystemMemoryChanged(KlipperSystemMemoryChangedEventArgs e)
+        {
+            KlipperServerSystemMemoryChanged?.Invoke(this, e);
+        }
+
         public event EventHandler<KlipperPrinterInfoChangedEventArgs> KlipperPrinterInfoChanged;
         protected virtual void OnKlipperPrinterInfoChanged(KlipperPrinterInfoChangedEventArgs e)
         {
@@ -2273,6 +2380,42 @@ namespace AndreasReitberger
                                         CpuTemp =
                                             JsonConvert.DeserializeObject<double>(jsonBody.Replace(",", "."));
                                         break;
+                                    case "system_cpu_usage":
+                                        var tempUsageObject = JsonConvert.DeserializeObject<Dictionary<string, double?>>(jsonBody);
+                                        if (tempUsageObject != null)
+                                        {
+                                            foreach (var cpuUsageItem in tempUsageObject)
+                                            {
+                                                string cpuUsageIdentifier = cpuUsageItem.Key;
+                                                if (CpuUsage.ContainsKey(cpuUsageIdentifier))
+                                                {
+                                                    CpuUsage[cpuUsageIdentifier] = cpuUsageItem.Value;
+                                                }
+                                                else
+                                                {
+                                                    CpuUsage.Add(cpuUsageIdentifier, cpuUsageItem.Value);
+                                                }
+                                            }
+                                        }
+                                        break;
+                                    case "system_memory":
+                                        var tempMemoryObject = JsonConvert.DeserializeObject<Dictionary<string, long?>>(jsonBody);
+                                        if (tempMemoryObject != null)
+                                        {
+                                            foreach (var cpuUsageItem in tempMemoryObject)
+                                            {
+                                                string cpuUsageIdentifier = cpuUsageItem.Key;
+                                                if (CpuUsage.ContainsKey(cpuUsageIdentifier))
+                                                {
+                                                    CpuUsage[cpuUsageIdentifier] = cpuUsageItem.Value;
+                                                }
+                                                else
+                                                {
+                                                    CpuUsage.Add(cpuUsageIdentifier, cpuUsageItem.Value);
+                                                }
+                                            }
+                                        }
+                                        break;
                                     case "moonraker_version":
                                         MoonrakerVersion = jsonBody;
                                         break;
@@ -2424,7 +2567,7 @@ namespace AndreasReitberger
                                         break;
 
                                     // Not relevant so far
-                                    case "temperature_host raspberry_pi":
+                                    //case "temperature_host raspberry_pi":
                                     case "item":
 #if DEBUG
                                         Console.WriteLine($"Ignored Json object: '{name}' => '{jsonBody}");
@@ -2459,7 +2602,7 @@ namespace AndreasReitberger
                                                     nameFound = true;
                                                 }
                                             }
-                                            else if (name.StartsWith("temperature_sensor")) // || name.StartsWith("temperature_host"))
+                                            else if (name.StartsWith("temperature_sensor") || name.StartsWith("temperature_host"))
                                             {
                                                 string[] sensor = name.Split(' ');
                                                 if (sensor.Length >= 2)
@@ -2467,7 +2610,7 @@ namespace AndreasReitberger
 #if NETSTANDARD
                                                     string sensorName = sensor[^1];
 #else
-                                                string sensorName = sensor[sensor.Length - 1];
+                                                    string sensorName = sensor[sensor.Length - 1];
 #endif
                                                     KlipperStatusTemperatureSensor tempObject = JsonConvert.DeserializeObject<KlipperStatusTemperatureSensor>(jsonBody);
                                                     if (tempObject != null)
@@ -2849,49 +2992,7 @@ namespace AndreasReitberger
                 try
                 {
                     RestResponse respone = await restClient.ExecuteAsync(request, cts.Token).ConfigureAwait(false);
-                    apiRsponeResult = ValidateRespone(respone, fullUri);
-                    /*
-                    if (respone.StatusCode == HttpStatusCode.OK && respone.ResponseStatus == ResponseStatus.Completed)
-                    {
-                        apiRsponeResult.IsOnline = true;
-                        AuthenticationFailed = false;
-                        apiRsponeResult.Result = respone.Content;
-                        apiRsponeResult.Succeeded = true;
-                        apiRsponeResult.EventArgs = new KlipperRestEventArgs()
-                        {
-                            Status = respone.ResponseStatus.ToString(),
-                            Exception = respone.ErrorException,
-                            Message = respone.ErrorMessage,
-                            Uri = fullUri,
-                        };
-                    }
-                    else if (respone.StatusCode == HttpStatusCode.NonAuthoritativeInformation 
-                        || respone.StatusCode == HttpStatusCode.Forbidden 
-                        || respone.StatusCode == HttpStatusCode.Unauthorized
-                        )
-                    {
-                        apiRsponeResult.IsOnline = true;
-                        apiRsponeResult.HasAuthenticationError = true;
-                        apiRsponeResult.EventArgs = new KlipperRestEventArgs()
-                        {
-                            Status = respone.ResponseStatus.ToString(),
-                            Exception = respone.ErrorException,
-                            Message = respone.ErrorMessage,
-                            Uri = fullUri,
-                        };
-                    }
-                    else
-                    {
-                        OnRestApiError(new KlipperRestEventArgs()
-                        {
-                            Status = respone.ResponseStatus.ToString(),
-                            Exception = respone.ErrorException,
-                            Message = respone.ErrorMessage,
-                            Uri = fullUri,
-                        });
-                        //throw respone.ErrorException;
-                    }
-                    */
+                    apiRsponeResult = ValidateRespone(respone, fullUri);     
                 }
                 catch (TaskCanceledException texp)
                 {
@@ -2984,48 +3085,6 @@ namespace AndreasReitberger
                 {
                     RestResponse respone = await restClient.ExecuteAsync(request, cts.Token).ConfigureAwait(false);
                     apiRsponeResult = ValidateRespone(respone, fullUri);
-                    /*
-                    if (respone.StatusCode == HttpStatusCode.OK && respone.ResponseStatus == ResponseStatus.Completed)
-                    {
-                        apiRsponeResult.IsOnline = true;
-                        AuthenticationFailed = false;
-                        apiRsponeResult.Result = respone.Content;
-                        apiRsponeResult.Succeeded = true;
-                        apiRsponeResult.EventArgs = new KlipperRestEventArgs()
-                        {
-                            Status = respone.ResponseStatus.ToString(),
-                            Exception = respone.ErrorException,
-                            Message = respone.ErrorMessage,
-                            Uri = fullUri,
-                        };
-                    }
-                    else if (respone.StatusCode == HttpStatusCode.NonAuthoritativeInformation
-                        || respone.StatusCode == HttpStatusCode.Forbidden
-                        || respone.StatusCode == HttpStatusCode.Unauthorized
-                        )
-                    {
-                        apiRsponeResult.IsOnline = true;
-                        apiRsponeResult.HasAuthenticationError = true;
-                        apiRsponeResult.EventArgs = new KlipperRestEventArgs()
-                        {
-                            Status = respone.ResponseStatus.ToString(),
-                            Exception = respone.ErrorException,
-                            Message = respone.ErrorMessage,
-                            Uri = fullUri,
-                        };
-                    }
-                    else
-                    {
-                        OnRestApiError(new KlipperRestEventArgs()
-                        {
-                            Status = respone.ResponseStatus.ToString(),
-                            Exception = respone.ErrorException,
-                            Message = respone.ErrorMessage,
-                            Uri = fullUri,
-                        });
-                        //throw respone.ErrorException;
-                    }
-                    */
                 }
                 catch (TaskCanceledException)
                 {
@@ -6515,7 +6574,7 @@ namespace AndreasReitberger
             Dictionary<string, object> resultObject = null;
             try
             {
-                if(AvailableNamespaces?.Count == 0)
+                if(AvailableNamespaces?.Count == 0 || AvailableNamespaces == null)
                 {
                     AvailableNamespaces = await ListDatabaseNamespacesAsync();
                 }

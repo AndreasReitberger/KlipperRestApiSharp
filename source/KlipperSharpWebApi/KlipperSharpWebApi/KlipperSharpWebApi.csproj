@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.1;net5</TargetFrameworks>
+    <TargetFrameworks>netstandard2.1;net5;net6</TargetFrameworks>
     <RootNamespace>AndreasReitberger</RootNamespace>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
@@ -12,9 +12,9 @@
     <PackageTags>Moonraker, Klipper, MainsailOS, Remote, Web, API, Rest, Sharp</PackageTags>
     <PackageProjectUrl>https://github.com/AndreasReitberger/KlipperRestApiSharp</PackageProjectUrl>
     <RepositoryUrl>https://github.com/AndreasReitberger/KlipperRestApiSharp</RepositoryUrl>
-    <AssemblyVersion>1.0.8.0</AssemblyVersion>
-    <FileVersion>1.0.8.0</FileVersion>
-    <Version>1.0.8</Version>
+    <AssemblyVersion>1.0.9.0</AssemblyVersion>
+    <FileVersion>1.0.9.0</FileVersion>
+    <Version>1.0.9</Version>
     <LangVersion>9.0</LangVersion>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
@@ -22,8 +22,8 @@
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="RCoreSharp" Version="1.0.7" />
-    <PackageReference Include="RestSharp" Version="107.3.0" />
+    <PackageReference Include="RCoreSharp" Version="1.0.8" />
+    <PackageReference Include="RestSharp" Version="108.0.1" />
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
     <PackageReference Include="WebSocket4Net" Version="0.15.2" />
     <None Include="..\..\..\README.md" Pack="true" PackagePath="\" />
