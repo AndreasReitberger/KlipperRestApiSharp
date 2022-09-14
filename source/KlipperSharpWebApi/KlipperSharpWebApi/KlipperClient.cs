@@ -246,11 +246,9 @@ namespace AndreasReitberger
 
         #region Connection
 
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         string _sessionId = string.Empty;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public string SessionId
         {
             get => _sessionId;
@@ -258,37 +256,6 @@ namespace AndreasReitberger
             {
                 if (_sessionId == value) return;
                 _sessionId = value;
-                OnPropertyChanged();
-            }
-        }
-
-        [JsonIgnore]
-        [XmlIgnore]
-        string _userToken = string.Empty;
-        [JsonIgnore]
-        [XmlIgnore]
-        public string UserToken
-        {
-            get => _userToken;
-            set
-            {
-                if (_userToken == value) return;
-                _userToken = value;
-                OnPropertyChanged();
-            }
-        }
-
-        [JsonIgnore]
-        [XmlIgnore]
-        string _refreshToken = string.Empty;
-        [JsonIgnore, XmlIgnore]
-        public string RefreshToken
-        {
-            get => _refreshToken;
-            set
-            {
-                if (_refreshToken == value) return;
-                _refreshToken = value;
                 OnPropertyChanged();
             }
         }
@@ -346,20 +313,6 @@ namespace AndreasReitberger
                 if (_address == value) return;
                 _address = value;
                 UpdateRestClientInstance();
-                OnPropertyChanged();
-            }
-        }
-
-        [JsonProperty(nameof(LoginRequired))]
-        bool _loginRequired = false;
-        [JsonIgnore]
-        public bool LoginRequired
-        {
-            get => _loginRequired;
-            set
-            {
-                if (_loginRequired == value) return;
-                _loginRequired = value;
                 OnPropertyChanged();
             }
         }
@@ -2176,6 +2129,14 @@ namespace AndreasReitberger
         }
         #endregion
 
+        #region Login
+        public event EventHandler<KlipperLoginEventArgs> LoginChanged;
+        protected virtual void OnLoginChanged(KlipperLoginEventArgs e)
+        {
+            LoginChanged?.Invoke(this, e);
+        }
+        #endregion
+
         #endregion
 
         #region WebSocket
@@ -2197,11 +2158,20 @@ namespace AndreasReitberger
                 // https://github.com/Arksine/moonraker/blob/master/docs/web_api.md#appendix
                 // ws://host:port/websocket?token={32 character base32 string}
                 //string target = $"ws://192.168.10.113:80/websocket?token={API}";
-                string target = $"{(IsSecure ? "wss" : "ws")}://{ServerAddress}:{Port}/websocket{(!string.IsNullOrEmpty(API) ? $"?token={API}" : "")}";
+                //string target = $"{(IsSecure ? "wss" : "ws")}://{ServerAddress}:{Port}/websocket{(!string.IsNullOrEmpty(API) ? $"?token={(LoginRequired ? UserToken : API)}" : "")}";
+                var token = GetOneshotTokenAsync();
+                string target = LoginRequired ?
+                        $"{(IsSecure ? "wss" : "ws")}://{ServerAddress}:{Port}/websocket?token={token?.Result}" :
+                        $"{(IsSecure ? "wss" : "ws")}://{ServerAddress}:{Port}/websocket{(!string.IsNullOrEmpty(API) ? $"?token={API}" : "")}";
                 WebSocket = new WebSocket(target)
                 {
                     EnableAutoSendPing = false,
+                    
                 };
+                if(LoginRequired)
+                {
+                    //WebSocket.Security.Credential = new NetworkCredential(Username, Password);
+                }
 
                 if (IsSecure)
                 {
@@ -3853,6 +3823,19 @@ namespace AndreasReitberger
                 string uriString = FullWebAddress;
                 try
                 {
+                    /*
+                    if(!IsLoggedIn && LoginRequired && string.IsNullOrEmpty(UserToken))
+                    {
+                        try
+                        {
+                            KlipperUserActionResult loginResult = await LoginUserAsync(Username, SecureStringHelper.ConvertToString(Password)).ConfigureAwait(false);
+                        }
+                        catch (Exception exc)
+                        {
+                            OnError(new UnhandledExceptionEventArgs(exc, false));
+                        }
+                    }
+                    */
                     // Send a blank api request in order to check if the server is reachable
                     KlipperApiRequestRespone respone = 
                         await SendOnlineCheckRestApiRequestAsync(MoonrakerCommandBase.api, "version", cts)
@@ -6240,21 +6223,44 @@ namespace AndreasReitberger
 
         #region Authorization
 
+        // Doc: https://moonraker.readthedocs.io/en/latest/web_api/#login-user
         public async Task<KlipperUserActionResult> LoginUserAsync(string username, string password)
         {
             KlipperApiRequestRespone result = new();
             KlipperUserActionResult resultObject = null;
             try
             {
+                Username = username;
+                Password = SecureStringHelper.ConvertToSecureString(password);
+
                 object cmd = new
                 {
                     username = username,
-                    password = password
+                    password = password,
+                    source = "moonraker",
                 };
                 result = await SendRestApiRequestAsync(MoonrakerCommandBase.access, Method.Post, "login", cmd, default).ConfigureAwait(false);
                 KlipperUserActionRespone queryResult = JsonConvert.DeserializeObject<KlipperUserActionRespone>(result.Result);
+                
+                IsLoggedIn = queryResult != null;
+                if (IsLoggedIn)
+                {
+                    // Needed for websocket connection
+                    KlipperAccessTokenResult oneshot = await GetOneshotTokenAsync();
+                    OneShotToken = oneshot?.Result;
+                }
                 UserToken = queryResult?.Result?.Token;
                 RefreshToken = queryResult?.Result?.RefreshToken;
+
+                OnLoginChanged(new()
+                {
+                    UserName = username,
+                    Action = "login",
+                    UserToken = UserToken,
+                    RefreshToken = RefreshToken,
+                    Succeeded = queryResult != null,
+                });
+
                 return queryResult?.Result;
             }
             catch (JsonException jecx)
@@ -6354,8 +6360,18 @@ namespace AndreasReitberger
             {
                 result = await SendRestApiRequestAsync(MoonrakerCommandBase.access, Method.Post, "logout").ConfigureAwait(false);
                 UserToken = string.Empty;
+                RefreshToken = string.Empty;
 
                 KlipperUserActionRespone queryResult = JsonConvert.DeserializeObject<KlipperUserActionRespone>(result.Result);
+                IsLoggedIn = !(queryResult != null);
+                OnLoginChanged(new()
+                {
+                    UserName = queryResult?.Result?.Username,
+                    Action = "logout",
+                    UserToken = UserToken,
+                    RefreshToken = RefreshToken,
+                    Succeeded = queryResult != null,
+                });
                 return queryResult?.Result;
             }
             catch (JsonException jecx)

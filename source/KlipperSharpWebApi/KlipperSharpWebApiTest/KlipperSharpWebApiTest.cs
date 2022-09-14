@@ -22,7 +22,7 @@ namespace RepetierServerSharpApiTest
     public class KlipperSharpWebApiTest
     {
 
-        private readonly string _host = "192.168.10.44";
+        private readonly string _host = "192.168.10.113";
         private readonly int _port = 80;
         private readonly string _api = "1c8fc5833641429a95d00991e1f3aa0f";
         private readonly bool _ssl = false;
@@ -473,7 +473,6 @@ namespace RepetierServerSharpApiTest
         }
         #endregion
 
-
         #region Print Management Tests
         [TestMethod]
         public async Task PrinterManagementTest()
@@ -841,11 +840,13 @@ namespace RepetierServerSharpApiTest
                 await _server.CheckOnlineAsync();
                 if (_server.IsOnline)
                 {
-                    await _server.RefreshAllAsync();
-                    Assert.IsTrue(_server.InitialDataFetched);
-
                     string username = "TestUser";
                     string password = "TestPassword";
+
+                    KlipperUserActionResult login2 = await _server.LoginUserAsync(username, password);
+
+                    await _server.RefreshAllAsync();
+                    Assert.IsTrue(_server.InitialDataFetched);
 
                     KlipperUserActionResult userCreated = await _server.CreateUserAsync(username, password);
                     Assert.IsNotNull(userCreated);
