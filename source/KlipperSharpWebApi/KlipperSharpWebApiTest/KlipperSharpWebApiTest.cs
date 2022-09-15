@@ -117,7 +117,7 @@ namespace RepetierServerSharpApiTest
         {
             try
             {
-                KlipperClient _server = new(_host, _port, _ssl);
+                KlipperClient _server = new(_host, _api, _port, _ssl);
                 await _server.CheckOnlineAsync();
                 if (_server.IsOnline)
                 {
@@ -149,7 +149,7 @@ namespace RepetierServerSharpApiTest
         {
             try
             {
-                KlipperClient _server = new(_host, _port, _ssl);
+                KlipperClient _server = new(_host, _api, _port, _ssl);
                 await _server.CheckOnlineAsync();
                 if (_server.IsOnline)
                 {
@@ -207,7 +207,7 @@ namespace RepetierServerSharpApiTest
         {
             try
             {
-                KlipperClient _server = new(_host, _port, _ssl);
+                KlipperClient _server = new(_host, _api, _port, _ssl);
                 await _server.CheckOnlineAsync();
                 if (_server.IsOnline)
                 {
@@ -243,7 +243,7 @@ namespace RepetierServerSharpApiTest
         {
             try
             {
-                KlipperClient _server = new(_host, _port, _ssl);
+                KlipperClient _server = new(_host, _api, _port, _ssl);
                 await _server.CheckOnlineAsync();
                 if (_server.IsOnline)
                 {
@@ -310,7 +310,7 @@ namespace RepetierServerSharpApiTest
         {
             try
             {
-                KlipperClient _server = new(_host, _port, _ssl);
+                KlipperClient _server = new(_host, _api, _port, _ssl);
                 await _server.CheckOnlineAsync();
                 if (_server.IsOnline)
                 {
@@ -353,7 +353,7 @@ namespace RepetierServerSharpApiTest
         {
             try
             {
-                KlipperClient _server = new(_host, _port, _ssl);
+                KlipperClient _server = new(_host, _api, _port, _ssl);
                 _server.Error += (sender, e) => 
                 {
                     Assert.Fail(e.ToString());
@@ -392,7 +392,7 @@ namespace RepetierServerSharpApiTest
         {
             try
             {
-                KlipperClient _server = new(_host, _port, _ssl);
+                KlipperClient _server = new(_host, _api, _port, _ssl);
                 await _server.CheckOnlineAsync();
                 if (_server.IsOnline)
                 {
@@ -419,7 +419,7 @@ namespace RepetierServerSharpApiTest
         {
             try
             {
-                KlipperClient _server = new(_host, _port, _ssl);
+                KlipperClient _server = new(_host, _api, _port, _ssl);
                 await _server.CheckOnlineAsync();
                 if (_server.IsOnline)
                 {
@@ -450,7 +450,7 @@ namespace RepetierServerSharpApiTest
         {
             try
             {
-                KlipperClient _server = new(_host, _port, _ssl);
+                KlipperClient _server = new(_host, _api, _port, _ssl);
                 await _server.CheckOnlineAsync();
                 if (_server.IsOnline)
                 {
@@ -479,7 +479,7 @@ namespace RepetierServerSharpApiTest
         {
             try
             {
-                KlipperClient _server = new(_host, _port, _ssl);
+                KlipperClient _server = new(_host, _api, _port, _ssl);
                 await _server.CheckOnlineAsync();
                 if (_server.IsOnline)
                 {
@@ -546,7 +546,7 @@ namespace RepetierServerSharpApiTest
         {
             try
             {
-                KlipperClient _server = new(_host, _port, _ssl);
+                KlipperClient _server = new(_host, _api, _port, _ssl);
                 await _server.CheckOnlineAsync();
                 if (_server.IsOnline)
                 {
@@ -571,7 +571,7 @@ namespace RepetierServerSharpApiTest
         {
             try
             {
-                KlipperClient _server = new(_host, _port, _ssl);
+                KlipperClient _server = new(_host, _api, _port, _ssl);
                 await _server.CheckOnlineAsync();
                 if (_server.IsOnline)
                 {
@@ -606,7 +606,7 @@ namespace RepetierServerSharpApiTest
         {
             try
             {
-                KlipperClient _server = new(_host, _port, _ssl);
+                KlipperClient _server = new(_host, _api, _port, _ssl);
                 await _server.CheckOnlineAsync();
                 if (_server.IsOnline)
                 {
@@ -633,7 +633,7 @@ namespace RepetierServerSharpApiTest
         {
             try
             {
-                KlipperClient _server = new(_host, _port, _ssl);
+                KlipperClient _server = new(_host, _api, _port, _ssl);
                 await _server.CheckOnlineAsync();
                 if (_server.IsOnline)
                 {
@@ -676,7 +676,7 @@ namespace RepetierServerSharpApiTest
         {
             try
             {
-                KlipperClient _server = new(_host, _port, _ssl);
+                KlipperClient _server = new(_host, _api, _port, _ssl);
                 await _server.CheckOnlineAsync();
                 if (_server.IsOnline)
                 {
@@ -700,7 +700,7 @@ namespace RepetierServerSharpApiTest
         {
             try
             {
-                KlipperClient _server = new(_host, _port, _ssl);
+                KlipperClient _server = new(_host, _api, _port, _ssl);
                 await _server.CheckOnlineAsync();
                 if (_server.IsOnline)
                 {
@@ -757,7 +757,7 @@ namespace RepetierServerSharpApiTest
         {
             try
             {
-                KlipperClient _server = new(_host, _port, _ssl);
+                KlipperClient _server = new(_host, _api, _port, _ssl);
                 await _server.CheckOnlineAsync();
                 if (_server.IsOnline)
                 {
@@ -802,7 +802,7 @@ namespace RepetierServerSharpApiTest
         {
             try
             {
-                KlipperClient _server = new(_host, _port, _ssl);
+                KlipperClient _server = new(_host, _api, _port, _ssl);
                 await _server.CheckOnlineAsync();
                 if (_server.IsOnline)
                 {
@@ -836,7 +836,7 @@ namespace RepetierServerSharpApiTest
         {
             try
             {
-                KlipperClient _server = new(_host, _port, _ssl);
+                KlipperClient _server = new(_host, _api, _port, _ssl);
                 await _server.CheckOnlineAsync();
                 if (_server.IsOnline)
                 {
@@ -908,7 +908,7 @@ namespace RepetierServerSharpApiTest
         {
             try
             {
-                KlipperClient _server = new(_host, _port, _ssl);
+                KlipperClient _server = new(_host, _api, _port, _ssl);
                 _server.Error += (sender, e) =>
                 {
                     if(e is UnhandledExceptionEventArgs args)
@@ -996,7 +996,7 @@ namespace RepetierServerSharpApiTest
         {
             try
             {
-                KlipperClient _server = new(_host, _port, _ssl);
+                KlipperClient _server = new(_host, _api, _port, _ssl);
                 _server.Error += (sender, e) =>
                 {
                     if(e is UnhandledExceptionEventArgs args)
@@ -1038,7 +1038,7 @@ namespace RepetierServerSharpApiTest
         {
             try
             {
-                KlipperClient _server = new(_host, _port, _ssl);
+                KlipperClient _server = new(_host, _api, _port, _ssl);
                 await _server.CheckOnlineAsync();
                 if (_server.IsOnline)
                 {
@@ -1065,7 +1065,7 @@ namespace RepetierServerSharpApiTest
         {
             try
             {
-                KlipperClient _server = new(_host, _port, _ssl);
+                KlipperClient _server = new(_host, _api, _port, _ssl);
                 await _server.CheckOnlineAsync();
                 if (_server.IsOnline)
                 {
@@ -1118,7 +1118,7 @@ namespace RepetierServerSharpApiTest
         {
             try
             {
-                KlipperClient _server = new(_host, _port, _ssl);
+                KlipperClient _server = new(_host, _api, _port, _ssl);
                 await _server.CheckOnlineAsync();
                 if (_server.IsOnline)
                 {
@@ -1161,7 +1161,7 @@ namespace RepetierServerSharpApiTest
         {
             try
             {
-                KlipperClient _server = new(_host, _port, _ssl);
+                KlipperClient _server = new(_host, _api, _port, _ssl);
                 await _server.CheckOnlineAsync();
                 if (_server.IsOnline)
                 {
@@ -1191,7 +1191,7 @@ namespace RepetierServerSharpApiTest
         {
             try
             {
-                KlipperClient _server = new(_host, _port, _ssl);
+                KlipperClient _server = new(_host, _api, _port, _ssl);
                 await _server.CheckOnlineAsync();
                 if (_server.IsOnline)
                 {
@@ -1242,7 +1242,7 @@ namespace RepetierServerSharpApiTest
         {
             try
             {
-                KlipperClient _server = new(_host, _port, _ssl);
+                KlipperClient _server = new(_host, _api, _port, _ssl);
                 await _server.CheckOnlineAsync();
                 if (_server.IsOnline)
                 {
@@ -1344,7 +1344,10 @@ namespace RepetierServerSharpApiTest
             try
             {
                 Dictionary<DateTime, string> websocketMessages = new();
-                KlipperClient _server = new(_host, _api, _port, _ssl);
+                KlipperClient _server = new(_host, _api, _port, _ssl)
+                {
+                    LoginRequired = false,
+                };
 
                 await _server.CheckOnlineAsync();
                 Assert.IsTrue(_server.IsOnline);
@@ -1353,7 +1356,13 @@ namespace RepetierServerSharpApiTest
 
                 //var test = await _server.GetActiveJobStatusAsync();
 
-                _server.StartListening();
+                if (_server.LoginRequired)
+                {
+                    await _server.LoginUserAsync("TestUser", "TestPassword");
+                }
+                //KlipperAccessTokenResult oneshot = await _server.GetOneshotTokenAsync();
+                //_server.OneShotToken = oneshot.Result;
+                await _server.StartListeningAsync();
 
                 _server.WebSocketConnectionIdChanged += (o, args) =>
                 {
@@ -1416,7 +1425,7 @@ namespace RepetierServerSharpApiTest
                 };
 
                 // Wait a few minutes
-                CancellationTokenSource cts = new(new TimeSpan(0, 15, 0));
+                CancellationTokenSource cts = new(new TimeSpan(0, 10, 0));
                 _server.WebSocketDisconnected += (o, args) =>
                 {
                     if (!cts.IsCancellationRequested)
@@ -1429,7 +1438,7 @@ namespace RepetierServerSharpApiTest
                     await _server.CheckOnlineAsync();
                     Debug.WriteLine($"Online: {_server.IsOnline}");
                 } while (_server.IsOnline && !cts.IsCancellationRequested);
-                _server.StopListening();
+                await _server.StopListeningAsync();
 
                 StringBuilder sb = new();
                 foreach(var pair in websocketMessages)

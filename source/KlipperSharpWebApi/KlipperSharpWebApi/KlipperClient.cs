@@ -82,8 +82,7 @@ namespace AndreasReitberger
             {
                 lock (Lock)
                 {
-                    if (_instance == null)
-                        _instance = new KlipperClient();
+                    _instance ??= new KlipperClient();
                 }
                 return _instance;
             }
@@ -1609,11 +1608,9 @@ namespace AndreasReitberger
         #endregion
 
         #region WebSocket
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         WebSocket _webSocket;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public WebSocket WebSocket
         {
             get => _webSocket;
@@ -1625,11 +1622,9 @@ namespace AndreasReitberger
             }
         }
 
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         long? _webSocketConnectionId;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public long? WebSocketConnectionId
         {
             get => _webSocketConnectionId;
@@ -1645,11 +1640,9 @@ namespace AndreasReitberger
             }
         }
 
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         Timer _pingTimer;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public Timer PingTimer
         {
             get => _pingTimer;
@@ -1661,11 +1654,9 @@ namespace AndreasReitberger
             }
         }
 
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         int _pingCounter = 0;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public int PingCounter
         {
             get => _pingCounter;
@@ -1677,11 +1668,9 @@ namespace AndreasReitberger
             }
         }
 
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         int _refreshCounter = 0;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public int RefreshCounter
         {
             get => _refreshCounter;
@@ -1693,11 +1682,9 @@ namespace AndreasReitberger
             }
         }
 
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         bool _isListeningToWebSocket = false;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public bool IsListeningToWebsocket
         {
             get => _isListeningToWebSocket;
@@ -1723,6 +1710,14 @@ namespace AndreasReitberger
             UpdateRestClientInstance();
         }
 
+        /// <summary>
+        /// Creates a new instance of KlipperClient. If using this constructor.
+        /// </summary>
+        /// <param name="serverAddress">Host address</param>
+        /// <param name="username">Username</param>
+        /// <param name="password">Password</param>
+        /// <param name="port">Port</param>
+        /// <param name="isSecure">True if https is used</param>
         public KlipperClient(string serverAddress, string api, int port = 80, bool isSecure = false)
         {
             Id = Guid.NewGuid();
@@ -1730,10 +1725,21 @@ namespace AndreasReitberger
             UpdateRestClientInstance();
         }
 
-        public KlipperClient(string serverAddress, int port = 80, bool isSecure = false)
+        /// <summary>
+        /// Creates a new instance of KlipperClient. If using this constructor, call LoginUserForApiKey to set the api key afterwards
+        /// </summary>
+        /// <param name="serverAddress">Host address</param>
+        /// <param name="username">Username</param>
+        /// <param name="password">Password</param>
+        /// <param name="port">Port</param>
+        /// <param name="isSecure">True if https is used</param>
+        public KlipperClient(string serverAddress, string username, SecureString password, int port = 80, bool isSecure = false)
         {
             Id = Guid.NewGuid();
             InitInstance(serverAddress, port, "", isSecure);
+            LoginRequired = true;
+            Username = username;
+            Password = password;
             UpdateRestClientInstance();
         }
         #endregion
@@ -1784,7 +1790,7 @@ namespace AndreasReitberger
                 //OnError(new UnhandledExceptionEventArgs(exc, false));
             }
         }
-        public void InitInstance(string serverAddress, int port = 3344, string api = "", bool isSecure = false)
+        public void InitInstance(string serverAddress, int port = 80, string api = "", bool isSecure = false)
         {
             try
             {
@@ -2140,6 +2146,7 @@ namespace AndreasReitberger
         #endregion
 
         #region WebSocket
+        [Obsolete("Use ConnectWebSocketAsync instead")]
         public void ConnectWebSocket()
         {
             try
@@ -2162,9 +2169,11 @@ namespace AndreasReitberger
                 //var token = GetOneshotTokenAsync();
 
                 // If logged in, even if passing an api key, the websocket returns 401?!
+                // The OneShotToken seems to work in both cases
                 string target = LoginRequired ?
-                        $"{(IsSecure ? "wss" : "ws")}://{ServerAddress}:{Port}/websocket?token={API}" :
-                        $"{(IsSecure ? "wss" : "ws")}://{ServerAddress}:{Port}/websocket{(!string.IsNullOrEmpty(API) ? $"?token={API}" : "")}";
+                        $"{(IsSecure ? "wss" : "ws")}://{ServerAddress}:{Port}/websocket?token={OneShotToken}" :
+                        //$"{(IsSecure ? "wss" : "ws")}://{ServerAddress}:{Port}/websocket{(!string.IsNullOrEmpty(API) ? $"?token={API}" : "")}";
+                        $"{(IsSecure ? "wss" : "ws")}://{ServerAddress}:{Port}/websocket{(!string.IsNullOrEmpty(OneShotToken) ? $"?token={OneShotToken}" : $"?token={API}")}";
                 WebSocket = new WebSocket(target)
                 {
                     EnableAutoSendPing = false,
@@ -2204,6 +2213,7 @@ namespace AndreasReitberger
                 OnError(new UnhandledExceptionEventArgs(exc, false));
             }
         }
+        [Obsolete("Use DisconnectWebSocketAsync instead")]
         public void DisconnectWebSocket()
         {
             try
@@ -2216,6 +2226,86 @@ namespace AndreasReitberger
 #else
                         WebSocket.Close();
 #endif
+                    StopPingTimer();
+
+                    WebSocket.MessageReceived -= WebSocket_MessageReceived;
+                    //WebSocket.DataReceived -= WebSocket_DataReceived;
+                    WebSocket.Opened -= WebSocket_Opened;
+                    WebSocket.Closed -= WebSocket_Closed;
+                    WebSocket.Error -= WebSocket_Error;
+
+                    WebSocket = null;
+                }
+                //WebSocket = null;
+            }
+            catch (Exception exc)
+            {
+                OnError(new UnhandledExceptionEventArgs(exc, false));
+            }
+        }
+        
+        public async Task ConnectWebSocketAsync()
+        {
+            try
+            {
+                //if (!IsReady) return;
+                if (!string.IsNullOrEmpty(FullWebAddress) && (
+                    Regex.IsMatch(FullWebAddress, RegexHelper.IPv4AddressRegex) ||
+                    Regex.IsMatch(FullWebAddress, RegexHelper.IPv6AddressRegex) ||
+                    Regex.IsMatch(FullWebAddress, RegexHelper.Fqdn)))
+                {
+                    return;
+                }
+                //if (!IsReady || IsListeningToWebsocket) return;
+
+                DisconnectWebSocket();
+                // https://github.com/Arksine/moonraker/blob/master/docs/web_api.md#appendix
+                // ws://host:port/websocket?token={32 character base32 string}
+                //string target = $"ws://192.168.10.113:80/websocket?token={API}";
+                //string target = $"{(IsSecure ? "wss" : "ws")}://{ServerAddress}:{Port}/websocket{(!string.IsNullOrEmpty(API) ? $"?token={(LoginRequired ? UserToken : API)}" : "")}";
+
+                KlipperAccessTokenResult oneshotToken = await GetOneshotTokenAsync();
+                OneShotToken = oneshotToken?.Result;
+
+                string target = $"{(IsSecure ? "wss" : "ws")}://{ServerAddress}:{Port}/websocket?token={OneShotToken}";
+                WebSocket = new WebSocket(target)
+                {
+                    EnableAutoSendPing = false,
+                    
+                };
+
+                if (IsSecure)
+                {
+                    // https://github.com/sta/websocket-sharp/issues/219#issuecomment-453535816
+                    SslProtocols sslProtocolHack = (SslProtocols)(SslProtocolsHack.Tls12 | SslProtocolsHack.Tls11 | SslProtocolsHack.Tls);
+                    //Avoid TlsHandshakeFailure
+                    if (WebSocket.Security.EnabledSslProtocols != sslProtocolHack)
+                    {
+                        WebSocket.Security.EnabledSslProtocols = sslProtocolHack;
+                    }
+                }
+
+                WebSocket.MessageReceived += WebSocket_MessageReceived;
+                //WebSocket.DataReceived += WebSocket_DataReceived;
+                WebSocket.Opened += WebSocket_Opened;
+                WebSocket.Closed += WebSocket_Closed;
+                WebSocket.Error += WebSocket_Error;
+
+                await WebSocket.OpenAsync();
+            }
+            catch (Exception exc)
+            {
+                OnError(new UnhandledExceptionEventArgs(exc, false));
+            }
+        }
+        public async Task DisconnectWebSocketAsync()
+        {
+            try
+            {
+                if (WebSocket != null)
+                {
+                    if (WebSocket.State == WebSocketState.Open)
+                    await WebSocket.CloseAsync();
                     StopPingTimer();
 
                     WebSocket.MessageReceived -= WebSocket_MessageReceived;
@@ -2785,7 +2875,7 @@ namespace AndreasReitberger
                 OnError(new UnhandledExceptionEventArgs(exc, false));
             }
         }
-#endregion
+        #endregion
 
         #region Methods
 
@@ -3489,7 +3579,7 @@ namespace AndreasReitberger
                 RestClientOptions options = new(FullWebAddress)
                 {
                     ThrowOnAnyError = true,
-                    Timeout = 10000,
+                    MaxTimeout = 10000,
                 };
                 HttpClientHandler httpHandler = new()
                 {
@@ -3646,9 +3736,10 @@ namespace AndreasReitberger
             SecureProxyConnection = Secure;
             //UpdateWebClientInstance();
         }
-#endregion
+        #endregion
 
         #region Refresh
+        [Obsolete("Use StartListeningAsync instead")]
         public void StartListening(bool StopActiveListening = false)
         {
             if (IsListening)// avoid multiple sessions
@@ -3695,6 +3786,7 @@ namespace AndreasReitberger
             }, null, 0, RefreshInterval * 1000);
             IsListening = true;
         }
+        [Obsolete("Use StopListeningAsync instead")]
         public void StopListening()
         {
             CancelCurrentRequests();
@@ -3703,6 +3795,65 @@ namespace AndreasReitberger
 
             if (IsListeningToWebsocket)
                 DisconnectWebSocket();
+            IsListening = false;
+        }
+
+        public async Task StartListeningAsync(bool StopActiveListening = false)
+        {
+            if (IsListening)// avoid multiple sessions
+            {
+                if (StopActiveListening)
+                {
+                    await StopListeningAsync();
+                }
+                else
+                {
+                    return; // StopListening();
+                }
+            }
+            await ConnectWebSocketAsync().ConfigureAwait(false);
+            Timer = new Timer(async (action) =>
+            {
+                // Do not check the online state ever tick
+                if (RefreshCounter > 5)
+                {
+                    RefreshCounter = 0;
+                    await CheckOnlineAsync(3500).ConfigureAwait(false);
+                }
+                else RefreshCounter++;
+                if (IsOnline)
+                {
+                    if(RefreshCounter%2 == 0)
+                    {
+                        await RefreshServerCachedTemperatureDataAsync().ConfigureAwait(false);
+                    }
+                    if (RefreshHeatersDirectly)
+                    {
+                        List<Task> tasks = new()
+                        {
+                            RefreshExtruderStatusAsync(),
+                            RefreshHeaterBedStatusAsync(),
+                        };
+                        await Task.WhenAll(tasks).ConfigureAwait(false);
+                    }
+                }
+                else if (IsListening)
+                {
+                    StopListening();
+                }
+            }, null, 0, RefreshInterval * 1000);
+            IsListening = true;
+        }
+        public async Task StopListeningAsync()
+        {
+            CancelCurrentRequests();
+            StopPingTimer();
+            StopTimer();
+
+            if (IsListeningToWebsocket)
+            {
+                await DisconnectWebSocketAsync().ConfigureAwait(false);
+            }
             IsListening = false;
         }
         public async Task RefreshAllAsync()
@@ -6298,6 +6449,26 @@ namespace AndreasReitberger
             }
         }
 
+        public async Task<string> LoginUserForApiKeyAsync(string username, string password)
+        {
+            try
+            {
+                KlipperUserActionResult result = await LoginUserAsync(username, password).ConfigureAwait(false);
+
+                if (IsLoggedIn)
+                {
+                    KlipperAccessTokenResult apiToken = await GetApiKeyAsync();
+                    return apiToken?.Result;
+                }
+                return string.Empty;
+            }
+            catch (Exception exc)
+            {
+                OnError(new UnhandledExceptionEventArgs(exc, false));
+                return string.Empty;
+            }
+        }
+
         public async Task<KlipperUserActionResult> RefreshJSONWebTokenAsync(string refreshToken = "")
         {
             KlipperApiRequestRespone result = new();
@@ -6656,8 +6827,10 @@ namespace AndreasReitberger
             try
             {
                 // Both operating systems handles their datababase namespaces and keys differently....
-                string currentNameSpace = OperatingSystem == MoonrakerOperatingSystems.MainsailOS ? "mainsail" : "fluidd";
-                string currentKey = OperatingSystem == MoonrakerOperatingSystems.MainsailOS ? "webcam" : "cameras";
+                // @fluidd
+                // It seems that the webcams setting are also stored in the namespace=webcams
+                string currentNameSpace = OperatingSystem == MoonrakerOperatingSystems.MainsailOS ? "mainsail" : "webcams";
+                string currentKey = OperatingSystem == MoonrakerOperatingSystems.MainsailOS ? "webcam" : "";
 
                 Dictionary<string, object> result = await GetDatabaseItemAsync(currentNameSpace, currentKey).ConfigureAwait(false);
                 KeyValuePair<string, object>? pair = result?.FirstOrDefault();
@@ -6687,10 +6860,26 @@ namespace AndreasReitberger
                         }
                         break;
                     case MoonrakerOperatingSystems.FluiddPi:
-                        KlipperDatabaseFluiddValueWebcam fluiddObject = JsonConvert.DeserializeObject<KlipperDatabaseFluiddValueWebcam>(resultString);
-                        if(fluiddObject?.Cameras != null)
+                        //KlipperDatabaseFluiddValueWebcam fluiddObject = JsonConvert.DeserializeObject<KlipperDatabaseFluiddValueWebcam>(resultString);
+                        Dictionary<Guid, KlipperDatabaseFluiddValueWebcamConfig> fluiddObject = JsonConvert.DeserializeObject<Dictionary<Guid, KlipperDatabaseFluiddValueWebcamConfig>>(resultString);
+                        //if(fluiddObject?.Cameras != null)
+                        if(fluiddObject?.Count > 0)
                         {
-                            IEnumerable<KlipperDatabaseWebcamConfig> temp = fluiddObject.Cameras.Select(item => new KlipperDatabaseWebcamConfig()
+                            IEnumerable<KlipperDatabaseWebcamConfig> temp = fluiddObject.Select(item => new KlipperDatabaseWebcamConfig()
+                            {
+                                Id = item.Key,
+                                Enabled = item.Value.Enabled,
+                                Name = item.Value.Name,
+                                FlipX = item.Value.FlipX,
+                                FlipY = item.Value.FlipY,
+                                Service = item.Value.Service,
+                                TargetFps = item.Value.Fpstarget,
+                                Url = item.Value.UrlStream,
+                                UrlSnapshot = item.Value.UrlSnapshot,
+                                Rotation = item.Value.Rotation,
+                            });
+                            /*
+                            IEnumerable<KlipperDatabaseWebcamConfig> temp = fluiddObject.Select(item => new KlipperDatabaseWebcamConfig()
                             {
                                 Id = item.Id,
                                 Enabled = item.Enabled,
@@ -6701,8 +6890,35 @@ namespace AndreasReitberger
                                 TargetFps = item.Fpstarget,
                                 Url = item.Url,
                             });
+                            */
                             resultObject = new(temp);
                         }
+                        /*
+                        else
+                        {
+                            Dictionary<string, object> secondTry = await GetDatabaseItemAsync("webcams").ConfigureAwait(false);
+                            KeyValuePair<string, object>? valuePair = result?.FirstOrDefault();
+                            if (valuePair == null) return resultObject;
+
+                            fluiddObject = JsonConvert.DeserializeObject<KlipperDatabaseFluiddValueWebcam>(resultString);
+                            if (fluiddObject?.Cameras != null)
+                            {
+                                IEnumerable<KlipperDatabaseWebcamConfig> temp = fluiddObject.Cameras.Select(item => new KlipperDatabaseWebcamConfig()
+                                {
+                                    Id = item.Id,
+                                    Enabled = item.Enabled,
+                                    Name = item.Name,
+                                    FlipX = item.FlipX,
+                                    FlipY = item.FlipY,
+                                    Service = item.Type,
+                                    TargetFps = item.Fpstarget,
+                                    Url = item.Url,
+                                });
+                                resultObject = new(temp);
+                            }
+
+                        }
+                        */
                         break;
                     default:
                         break;
@@ -8219,8 +8435,8 @@ namespace AndreasReitberger
             // Release disposable objects.
             if (disposing)
             {
-                StopListening();
-                DisconnectWebSocket();
+                StopListeningAsync();
+                DisconnectWebSocketAsync();
             }
         }
         #endregion

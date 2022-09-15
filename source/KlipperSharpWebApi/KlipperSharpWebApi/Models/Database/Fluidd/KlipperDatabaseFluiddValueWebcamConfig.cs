@@ -15,20 +15,26 @@ namespace AndreasReitberger.Models
         [JsonProperty("name")]
         public string Name { get; set; }
 
-        [JsonProperty("type")]
-        public string Type { get; set; }
+        [JsonProperty("service")]
+        public string Service { get; set; }
 
-        [JsonProperty("fpstarget")]
+        [JsonProperty("targetFps")]
         public long Fpstarget { get; set; }
 
-        [JsonProperty("url")]
-        public string Url { get; set; }
+        [JsonProperty("urlStream")]
+        public string UrlStream { get; set; }
+
+        [JsonProperty("urlSnapshot")]
+        public string UrlSnapshot { get; set; }
 
         [JsonProperty("flipX")]
         public bool FlipX { get; set; }
 
         [JsonProperty("flipY")]
         public bool FlipY { get; set; }
+
+        [JsonProperty("rotation")]
+        public int? Rotation { get; set; } = 0;
         #endregion
 
         #region Overrides
