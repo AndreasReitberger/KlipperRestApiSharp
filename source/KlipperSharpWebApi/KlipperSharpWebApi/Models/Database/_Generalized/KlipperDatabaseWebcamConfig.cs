@@ -17,10 +17,12 @@ namespace AndreasReitberger.Models
         public long TargetFps { get; set; }
 
         public string Url { get; set; } = string.Empty;
+        public string UrlSnapshot { get; set; } = string.Empty;
 
         public bool FlipX { get; set; }
 
         public bool FlipY { get; set; }
+        public int? Rotation { get; set; }
         #endregion
 
         #region Overrides
