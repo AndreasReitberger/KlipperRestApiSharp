@@ -2159,9 +2159,11 @@ namespace AndreasReitberger
                 // ws://host:port/websocket?token={32 character base32 string}
                 //string target = $"ws://192.168.10.113:80/websocket?token={API}";
                 //string target = $"{(IsSecure ? "wss" : "ws")}://{ServerAddress}:{Port}/websocket{(!string.IsNullOrEmpty(API) ? $"?token={(LoginRequired ? UserToken : API)}" : "")}";
-                var token = GetOneshotTokenAsync();
+                //var token = GetOneshotTokenAsync();
+
+                // If logged in, even if passing an api key, the websocket returns 401?!
                 string target = LoginRequired ?
-                        $"{(IsSecure ? "wss" : "ws")}://{ServerAddress}:{Port}/websocket?token={token?.Result}" :
+                        $"{(IsSecure ? "wss" : "ws")}://{ServerAddress}:{Port}/websocket?token={API}" :
                         $"{(IsSecure ? "wss" : "ws")}://{ServerAddress}:{Port}/websocket{(!string.IsNullOrEmpty(API) ? $"?token={API}" : "")}";
                 WebSocket = new WebSocket(target)
                 {
@@ -3943,6 +3945,20 @@ namespace AndreasReitberger
                 {
                     config = WebCamConfigs.FirstOrDefault();
                 }
+                // If nothing is found, try the default setup
+                else
+                {
+                    config = new KlipperDatabaseWebcamConfig()
+                    {
+                        Id = Guid.NewGuid(),
+                        Name = "Default",
+                        Enabled = true,
+                        FlipX = false,
+                        FlipY = false,
+                        TargetFps = 15,
+                        Url = "/webcam?action=stream"
+                    };
+                }
 
                 string token = !string.IsNullOrEmpty(API) ? API : UserToken;
                 return config == null ? GetDefaultWebCamUri() : $"{FullWebAddress}{config.Url}{(!string.IsNullOrEmpty(token) ? $"?t={token}" : "")}";
@@ -5237,7 +5253,7 @@ namespace AndreasReitberger
         }
 #endregion
 
-#region WebSocket
+        #region WebSocket
 
         public void SendWebSocketCommand(string command)
         {
@@ -5285,9 +5301,9 @@ namespace AndreasReitberger
             }
         }
         */
-#endregion
+        #endregion
 
-#region Gcode API
+        #region Gcode API
         public async Task<bool> RunGcodeScriptAsync(string script)
         {
             try
@@ -5396,9 +5412,9 @@ namespace AndreasReitberger
                 return resultObject;
             }
         }
-#endregion
+        #endregion
 
-#region Print Management
+        #region Print Management
         public async Task<bool> PrintFileAsync(string fileName)
         {
             try
@@ -5463,9 +5479,9 @@ namespace AndreasReitberger
             }
         }
 
-#endregion
+        #endregion
 
-#region Movement
+        #region Movement
         public async Task<bool> HomeAxesAsync(bool X, bool Y, bool Z)
         {
             try
@@ -5516,9 +5532,9 @@ namespace AndreasReitberger
             return false;
         }
 
-#endregion
+        #endregion
 
-#region Machine Commands
+        #region Machine Commands
         public async Task<KlipperMachineInfo> GetMachineSystemInfoAsync()
         {
             KlipperApiRequestRespone result = new();
@@ -5675,9 +5691,9 @@ namespace AndreasReitberger
                 return resultObject;
             }
         }
-#endregion
+        #endregion
 
-#region File Operations
+        #region File Operations
         // Doc: https://github.com/Arksine/moonraker/blob/master/docs/web_api.md#list-available-files
 
         public async Task RefreshAvailableFilesAsync(string rootPath = "", bool includeGcodeMeta = true)
@@ -6246,8 +6262,9 @@ namespace AndreasReitberger
                 if (IsLoggedIn)
                 {
                     // Needed for websocket connection
-                    KlipperAccessTokenResult oneshot = await GetOneshotTokenAsync();
-                    OneShotToken = oneshot?.Result;
+                    KlipperAccessTokenResult apiToken = await GetApiKeyAsync();
+                    //KlipperAccessTokenResult oneshot = await GetOneshotTokenAsync();
+                    API = apiToken?.Result;
                 }
                 UserToken = queryResult?.Result?.Token;
                 RefreshToken = queryResult?.Result?.RefreshToken;
@@ -6530,7 +6547,7 @@ namespace AndreasReitberger
                 return resultObject;
             }
         }
-#endregion
+        #endregion
 
         #region Database APIs
         public async Task<List<string>> ListDatabaseNamespacesAsync()
