@@ -20,10 +20,6 @@ Basically all OS using the Moonraker WebApi are theoretically supported.
 - [x] MainsailOS
 - [x] FluiddPi
 
-### Untested, but using Moonraker WebApi
-- [ ] 
-
-
 # App's using this library
 
 ![FeaturedImage](https://andreas-reitberger.de/wp-content/uploads/2022/01/feature-graphic_modified.png)
