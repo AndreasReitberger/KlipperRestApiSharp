@@ -1,5 +1,15 @@
-# KlipperRestApiSharp
-A C# based library to communicate with a klipper using the Moonraker WebApi.
+# MoonrakerRestApiSharp (former KlipperRestApiSharp)
+A C# based library to communicate with the Moonraker WebApi, available with Fluidd and MainsailOS.
+
+# Important!
+With the upcoming version, starting from `1.1.0`, `KlipperClient` become `MoonrakerClient`. also the namespaces will changed and generalized with our other print server api nugets.
+
+| Old                             | New                              |
+| ------------------------------- |:--------------------------------:|
+| `AndreasReitberger`             | `AndreasReitberger.API.Moonraker`|
+| `KlipperClient`                 | `MoonrakerClient`                |
+| `Klipper...`                    | `Moonraker...`                   |
+
 
 # Nuget
 Get the latest version from nuget.org<br>
