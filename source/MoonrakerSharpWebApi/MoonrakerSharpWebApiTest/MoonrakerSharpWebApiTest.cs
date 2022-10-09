@@ -219,6 +219,9 @@ namespace RepetierServerSharpApiTest
                     await _server.RefreshAllAsync();
                     Assert.IsTrue(_server.InitialDataFetched);
 
+                    var webcamConfigs = await _server.GetWebCamSettingsAsync();
+                    Assert.IsTrue(webcamConfigs.Count > 0);
+
                     string webcamUri = await _server.GetWebCamUriAsync(0, false);
                     Assert.IsNotNull(_server.WebCamConfigs);
                     Assert.IsTrue(_server.WebCamConfigs?.Count > 0);
