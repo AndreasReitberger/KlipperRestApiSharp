@@ -6816,8 +6816,12 @@ namespace AndreasReitberger.API.Moonraker
                 // Both operating systems handles their datababase namespaces and keys differently....
                 // @fluidd
                 // It seems that the webcams setting are also stored in the namespace=webcams
-                string currentNameSpace = OperatingSystem == MoonrakerOperatingSystems.MainsailOS ? "mainsail" : "webcams";
-                string currentKey = OperatingSystem == MoonrakerOperatingSystems.MainsailOS ? "webcam" : "";
+                //string currentNameSpace = OperatingSystem == MoonrakerOperatingSystems.MainsailOS ? "mainsail" : "webcams";
+                //string currentKey = OperatingSystem == MoonrakerOperatingSystems.MainsailOS ? "webcam" : "";
+                
+                // Seems to be the write way for both, MainsailOS and Fluidd
+                string currentNameSpace = "webcams";
+                string currentKey = "";
 
                 Dictionary<string, object> result = await GetDatabaseItemAsync(currentNameSpace, currentKey).ConfigureAwait(false);
                 KeyValuePair<string, object>? pair = result?.FirstOrDefault();
@@ -6828,6 +6832,7 @@ namespace AndreasReitberger.API.Moonraker
 
                 switch (OperatingSystem)
                 {
+                    /*
                     case MoonrakerOperatingSystems.MainsailOS:
                         KlipperDatabaseMainsailValueWebcam mainsailObject = JsonConvert.DeserializeObject<KlipperDatabaseMainsailValueWebcam>(resultString);
                         if(mainsailObject?.Configs != null)
@@ -6846,10 +6851,10 @@ namespace AndreasReitberger.API.Moonraker
                             resultObject = new(temp);
                         }
                         break;
+                    */
+                    case MoonrakerOperatingSystems.MainsailOS:
                     case MoonrakerOperatingSystems.FluiddPi:
-                        //KlipperDatabaseFluiddValueWebcam fluiddObject = JsonConvert.DeserializeObject<KlipperDatabaseFluiddValueWebcam>(resultString);
                         Dictionary<Guid, KlipperDatabaseFluiddValueWebcamConfig> fluiddObject = JsonConvert.DeserializeObject<Dictionary<Guid, KlipperDatabaseFluiddValueWebcamConfig>>(resultString);
-                        //if(fluiddObject?.Cameras != null)
                         if(fluiddObject?.Count > 0)
                         {
                             IEnumerable<KlipperDatabaseWebcamConfig> temp = fluiddObject.Select(item => new KlipperDatabaseWebcamConfig()
@@ -6865,47 +6870,8 @@ namespace AndreasReitberger.API.Moonraker
                                 UrlSnapshot = item.Value.UrlSnapshot,
                                 Rotation = item.Value.Rotation,
                             });
-                            /*
-                            IEnumerable<KlipperDatabaseWebcamConfig> temp = fluiddObject.Select(item => new KlipperDatabaseWebcamConfig()
-                            {
-                                Id = item.Id,
-                                Enabled = item.Enabled,
-                                Name = item.Name,
-                                FlipX = item.FlipX,
-                                FlipY = item.FlipY,
-                                Service = item.Type,
-                                TargetFps = item.Fpstarget,
-                                Url = item.Url,
-                            });
-                            */
                             resultObject = new(temp);
                         }
-                        /*
-                        else
-                        {
-                            Dictionary<string, object> secondTry = await GetDatabaseItemAsync("webcams").ConfigureAwait(false);
-                            KeyValuePair<string, object>? valuePair = result?.FirstOrDefault();
-                            if (valuePair == null) return resultObject;
-
-                            fluiddObject = JsonConvert.DeserializeObject<KlipperDatabaseFluiddValueWebcam>(resultString);
-                            if (fluiddObject?.Cameras != null)
-                            {
-                                IEnumerable<KlipperDatabaseWebcamConfig> temp = fluiddObject.Cameras.Select(item => new KlipperDatabaseWebcamConfig()
-                                {
-                                    Id = item.Id,
-                                    Enabled = item.Enabled,
-                                    Name = item.Name,
-                                    FlipX = item.FlipX,
-                                    FlipY = item.FlipY,
-                                    Service = item.Type,
-                                    TargetFps = item.Fpstarget,
-                                    Url = item.Url,
-                                });
-                                resultObject = new(temp);
-                            }
-
-                        }
-                        */
                         break;
                     default:
                         break;
@@ -7332,7 +7298,7 @@ namespace AndreasReitberger.API.Moonraker
         }
 #endregion
 
-#region Job Queue APIs
+        #region Job Queue APIs
 
         public async Task<KlipperJobQueueResult> GetJobQueueStatusAsync()
         {
@@ -7568,9 +7534,9 @@ namespace AndreasReitberger.API.Moonraker
                 return resultObject;
             }
         }
-#endregion
+        #endregion
 
-#region Update Manager API
+        #region Update Manager API
         public async Task<KlipperUpdateStatusResult> GetUpdateStatusAsync(bool refresh = false)
         {
             KlipperApiRequestRespone result = new();
@@ -7720,9 +7686,9 @@ namespace AndreasReitberger.API.Moonraker
                 return false;
             }
         }
-#endregion
+        #endregion
 
-#region Power APIs
+        #region Power APIs
         public async Task<List<KlipperDevice>> GetDeviceListAsync()
         {
             KlipperApiRequestRespone result = new();
@@ -7941,9 +7907,9 @@ namespace AndreasReitberger.API.Moonraker
                 return resultObject;
             }
         }
-#endregion
+        #endregion
 
-#region Octoprint API emulation
+        #region Octoprint API emulation
         public async Task<OctoprintApiVersionResult> GetOctoPrintApiVersionInfoAsync()
         {
             KlipperApiRequestRespone result = new();
@@ -8185,9 +8151,9 @@ namespace AndreasReitberger.API.Moonraker
                 return resultObject;
             }
         }
-#endregion
+        #endregion
 
-#region History APIs
+        #region History APIs
         public async Task<List<KlipperJobItem>> GetHistoryJobListAsync(int limit = 100, int start = 0, double since = -1, double before = -1, string order = "asc")
         {
             List<KlipperJobItem> resultObject = null;
@@ -8208,9 +8174,11 @@ namespace AndreasReitberger.API.Moonraker
             KlipperHistoryResult resultObject = null;
             try
             {
-                Dictionary<string, string> urlSegments = new();
-                urlSegments.Add("limit", $"{limit}");
-                urlSegments.Add("start", $"{start}");
+                Dictionary<string, string> urlSegments = new()
+                {
+                    { "limit", $"{limit}" },
+                    { "start", $"{start}" }
+                };
                 if (since >= 0) urlSegments.Add("since", $"{since}");
                 if (before >= 0) urlSegments.Add("before", $"{before}");
                 urlSegments.Add("order", order);
@@ -8377,9 +8345,9 @@ namespace AndreasReitberger.API.Moonraker
                 return resultObject;
             }
         }
-#endregion
+        #endregion
 
-#endregion
+        #endregion
 
         #endregion
 
