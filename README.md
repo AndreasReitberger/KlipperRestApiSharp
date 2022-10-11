@@ -12,12 +12,10 @@ With the upcoming version, starting from `1.1.0`, `KlipperClient` become `Moonra
 
 
 # Nuget MoonrakerRestApiSharp
-<br>
 [![NuGet](https://img.shields.io/nuget/v/MoonrakerSharpWebApi.svg?style=flat-square&label=nuget)](https://www.nuget.org/packages/MoonrakerSharpWebApi/)
 [![NuGet](https://img.shields.io/nuget/dt/MoonrakerSharpWebApi.svg)](https://www.nuget.org/packages/MoonrakerSharpWebApi)
 
 # Nuget KlipperRestApiSharp (deprecated)
-<br>
 [![NuGet](https://img.shields.io/nuget/v/KlipperSharpWebApi.svg?style=flat-square&label=nuget)](https://www.nuget.org/packages/KlipperSharpWebApi/)
 [![NuGet](https://img.shields.io/nuget/dt/KlipperSharpWebApi.svg)](https://www.nuget.org/packages/KlipperSharpWebApi)
 
