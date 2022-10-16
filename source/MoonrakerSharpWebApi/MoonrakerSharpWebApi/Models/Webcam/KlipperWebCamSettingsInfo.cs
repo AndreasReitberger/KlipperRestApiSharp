@@ -133,6 +133,34 @@ namespace AndreasReitberger.API.Moonraker.Models
             }
         }
 
+        [JsonProperty(nameof(OverwriteWebCamUri))]
+        bool _overwriteWebCamUri = false;
+        [JsonIgnore]
+        public bool OverwriteWebCamUri
+        {
+            get => _overwriteWebCamUri;
+            set
+            {
+                if (_overwriteWebCamUri == value) return;
+                _overwriteWebCamUri = value;
+                OnPropertyChanged();
+            }
+        }
+
+        [JsonProperty(nameof(WebCamUri))]
+        string _webcamUri;
+        [JsonIgnore]
+        public string WebCamUri
+        {
+            get => _webcamUri;
+            set
+            {
+                if (_webcamUri == value) return;
+                _webcamUri = value;
+                OnPropertyChanged();
+            }
+        }
+
         #endregion
 
         #region Overrides
