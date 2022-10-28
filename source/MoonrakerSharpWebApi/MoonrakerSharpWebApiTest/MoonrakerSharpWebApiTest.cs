@@ -23,11 +23,9 @@ namespace RepetierServerSharpApiTest
     public class MoonrakerSharpWebApiTest
     {
 
-        // private readonly string _host = "192.168.10.113";
-        private readonly string _host = "192.168.0.108";
+        private readonly string _host = "192.168.10.113";
         private readonly int _port = 80;
-        // private readonly string _api = "1c8fc5833641429a95d00991e1f3aa0f";
-        private readonly string _api = "";
+        private readonly string _api = "1c8fc5833641429a95d00991e1f3aa0f";
         private readonly bool _ssl = false;
 
         private readonly bool _skipOnlineTests = true;
