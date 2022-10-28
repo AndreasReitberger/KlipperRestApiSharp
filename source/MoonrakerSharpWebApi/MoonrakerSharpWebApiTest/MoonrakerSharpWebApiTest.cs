@@ -15,6 +15,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
+using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 
 namespace RepetierServerSharpApiTest
 {
@@ -460,11 +461,42 @@ namespace RepetierServerSharpApiTest
                     await _server.RefreshAllAsync();
                     Assert.IsTrue(_server.InitialDataFetched);
 
-                    bool homed = await _server.HomeAxesAsync(true, true, true);
-                    Assert.IsTrue(homed);
-
-                    bool moved = await _server.MoveAxesAsync(6000, 100);
-                    Assert.IsTrue(moved);
+                    var homed = await _server.HomeAxesAsync(true, true, true);
+                    Assert.IsTrue(homed, "Not homed!");
+                    
+                    // Move all 3 axes to ensure they all move correctly
+                    var newX = 100;
+                    var newY = 100;
+                    var newZ = 100;
+                    var moved = await _server.MoveAxesAsync(
+                        speed: 6000, 
+                        x: newX, 
+                        y: newY, 
+                        z: newZ,
+                        relative: false);
+                    var end = await _server.GetToolHeadStatusAsync();
+                    Assert.IsTrue(moved, "Did not move");
+                    Assert.AreEqual(newX, end.Position[0], message: "X didn't move as expected");
+                    Assert.AreEqual(newY, end.Position[1], message: "Y didn't move as expected");
+                    Assert.AreEqual(newZ, end.Position[2], message: "Z didn't move as expected");
+                    
+                    // Move all 3 axes independently to make sure they move as expected
+                    newX = 50;
+                    newY = 50;
+                    newZ = 50;
+                    await _server.MoveAxesAsync(
+                        speed: 6000, 
+                        x: newX);
+                    await _server.MoveAxesAsync(
+                        speed: 6000, 
+                        y: newY);
+                    await _server.MoveAxesAsync(
+                        speed: 6000, 
+                        z: newZ);
+                    end = await _server.GetToolHeadStatusAsync();
+                    Assert.AreEqual(newX, end.Position[0], message: "X didn't move as expected");
+                    Assert.AreEqual(newY, end.Position[1], message: "Y didn't move as expected");
+                    Assert.AreEqual(newZ, end.Position[2], message: "Z didn't move as expected");
                 }
                 else
                     Assert.Fail($"Server {_server.FullWebAddress} is offline.");
@@ -1391,12 +1423,12 @@ namespace RepetierServerSharpApiTest
                 {
                     foreach (var pair in args.ExtruderStates)
                     {
-                        Debug.WriteLine($"Extruder{pair.Key}: {pair.Value?.Temperature} °C (Target: {pair.Value?.Target} °C)");
+                        Debug.WriteLine($"Extruder{pair.Key}: {pair.Value?.Temperature} ï¿½C (Target: {pair.Value?.Target} ï¿½C)");
                     }
                 };
                 _server.KlipperHeaterBedStateChanged += (o, args) =>
                 {
-                    Debug.WriteLine($"HeatedBed: {args.NewHeaterBedState.Temperature} °C (Target: {args.NewHeaterBedState.Target} °C)");
+                    Debug.WriteLine($"HeatedBed: {args.NewHeaterBedState.Temperature} ï¿½C (Target: {args.NewHeaterBedState.Target} ï¿½C)");
                 };
                 _server.KlipperDisplayStatusChanged += (o, args) =>
                 {
