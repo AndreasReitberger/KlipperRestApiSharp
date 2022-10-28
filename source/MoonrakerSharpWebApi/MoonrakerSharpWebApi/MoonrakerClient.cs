@@ -5657,7 +5657,7 @@ namespace AndreasReitberger.API.Moonraker
                 StringBuilder gcodeCommand = new();
                 if (x != double.PositiveInfinity) gcodeCommand.Append($"G1 X{(relative ? "" : "+")}{x} F{speed};");
                 if (y != double.PositiveInfinity) gcodeCommand.Append($"G1 Y{(relative ? "" : "+")}{y} F{speed};");
-                if (z != double.PositiveInfinity) gcodeCommand.Append($"G1 Y{(relative ? "" : "+")}{z} F{speed};");
+                if (z != double.PositiveInfinity) gcodeCommand.Append($"G1 Z{(relative ? "" : "+")}{z} F{speed};");
                 if (e != double.PositiveInfinity) gcodeCommand.Append($"M83\nG1 E{e} F{speed};");
 
                 bool result = await RunGcodeScriptAsync(gcodeCommand.ToString()).ConfigureAwait(false);
