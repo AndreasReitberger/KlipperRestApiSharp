@@ -2464,16 +2464,16 @@ namespace AndreasReitberger.API.Moonraker
                                         var tempMemoryObject = JsonConvert.DeserializeObject<Dictionary<string, long?>>(jsonBody);
                                         if (tempMemoryObject != null)
                                         {
-                                            foreach (var cpuUsageItem in tempMemoryObject)
+                                            foreach (var memoryUsage in tempMemoryObject)
                                             {
-                                                string cpuUsageIdentifier = cpuUsageItem.Key;
-                                                if (CpuUsage.ContainsKey(cpuUsageIdentifier))
+                                                string memoryIdentifier = memoryUsage.Key;
+                                                if (SystemMemory.ContainsKey(memoryIdentifier))
                                                 {
-                                                    CpuUsage[cpuUsageIdentifier] = cpuUsageItem.Value;
+                                                    SystemMemory[memoryIdentifier] = memoryUsage.Value;
                                                 }
                                                 else
                                                 {
-                                                    CpuUsage.Add(cpuUsageIdentifier, cpuUsageItem.Value);
+                                                    SystemMemory.Add(memoryIdentifier, memoryUsage.Value);
                                                 }
                                             }
                                         }
