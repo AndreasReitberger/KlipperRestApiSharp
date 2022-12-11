@@ -242,9 +242,23 @@ namespace AndreasReitberger.API.Moonraker
         [ObservableProperty]
         string _apiKey = string.Empty;
 
-        //[JsonProperty(nameof(Port))]
-        [ObservableProperty]
+        [JsonProperty(nameof(Port))]
+        //[ObservableProperty]
         int _port = 80;
+        [JsonIgnore]
+        public int Port
+        {
+            get => _port;
+            set
+            {
+                if (_port != value)
+                {
+                    _port = value;
+                    OnPropertyChanged();
+                    UpdateRestClientInstance();
+                }
+            }
+        }
 
         //[JsonProperty(nameof(DefaultTimeout))]
         [ObservableProperty]
