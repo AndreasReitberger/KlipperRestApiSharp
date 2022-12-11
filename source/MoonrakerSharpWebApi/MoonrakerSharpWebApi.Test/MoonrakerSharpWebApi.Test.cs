@@ -1,28 +1,18 @@
-using AndreasReitberger.API.Moonraker;
+﻿using AndreasReitberger.API.Moonraker;
 using AndreasReitberger.API.Moonraker.Enum;
 using AndreasReitberger.API.Moonraker.Models;
 using AndreasReitberger.Core.Utilities;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Xml.Serialization;
-using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 
-namespace RepetierServerSharpApiTest
+namespace MoonrakerSharpWebApi.Test
 {
-    [TestClass]
-    public class MoonrakerSharpWebApiTest
+    public class Tests
     {
-
         private readonly string _host = "192.168.10.113";
         private readonly int _port = 80;
         private readonly string _api = "1c8fc5833641429a95d00991e1f3aa0f";
@@ -30,7 +20,12 @@ namespace RepetierServerSharpApiTest
 
         private readonly bool _skipOnlineTests = true;
 
-        [TestMethod]
+        [SetUp]
+        public void Setup()
+        {
+        }
+
+        [Test]
         public void SerializeJsonTest()
         {
 
@@ -45,6 +40,37 @@ namespace RepetierServerSharpApiTest
                 {
                     FreeDiskSpace = 1523165212,
                     TotalDiskSpace = 65621361616161,
+                    ServerName = "My moonraker server",
+                };
+                MoonrakerClient.Instance.SetProxy(true, "https://testproxy.de", 447, "User", SecureStringHelper.ConvertToSecureString("my_awesome_pwd"), true);
+
+                var serializedString = System.Text.Json.JsonSerializer.Serialize(MoonrakerClient.Instance);
+                var serializedObject = System.Text.Json.JsonSerializer.Deserialize<MoonrakerClient>(serializedString);
+                Assert.IsTrue(serializedObject is MoonrakerClient server && server != null);
+
+            }
+            catch (Exception exc)
+            {
+                Assert.Fail(exc.Message);
+            }
+        }
+
+        [Test]
+        public void SerializeJsonNewtonsoftTest()
+        {
+
+            var dir = @"TestResults\Serialization\";
+            Directory.CreateDirectory(dir);
+            string serverConfig = Path.Combine(dir, "server.xml");
+            if (File.Exists(serverConfig)) File.Delete(serverConfig);
+            try
+            {
+
+                MoonrakerClient.Instance = new MoonrakerClient(_host, _api, _port, _ssl)
+                {
+                    FreeDiskSpace = 1523165212,
+                    TotalDiskSpace = 65621361616161,
+                    ServerName = "My moonraker server",
                 };
                 MoonrakerClient.Instance.SetProxy(true, "https://testproxy.de", 447, "User", SecureStringHelper.ConvertToSecureString("my_awesome_pwd"), true);
 
@@ -59,7 +85,7 @@ namespace RepetierServerSharpApiTest
             }
         }
 
-        [TestMethod]
+        [Test]
         public void SerializeTest()
         {
 
@@ -77,6 +103,7 @@ namespace RepetierServerSharpApiTest
                         UsedDiskSpace = 1523152132,
                         FreeDiskSpace = 1523165212,
                         TotalDiskSpace = 65621361616161,
+                        ServerName = "My moonraker server",
                     };
                     MoonrakerClient.Instance.SetProxy(true, "https://testproxy.de", 447, "User", SecureStringHelper.ConvertToSecureString("my_awesome_pwd"), true);
 
@@ -96,7 +123,7 @@ namespace RepetierServerSharpApiTest
             }
         }
 
-        [TestMethod]
+        [Test]
         public void ExtendedSerializeTest()
         {
             try
@@ -113,7 +140,7 @@ namespace RepetierServerSharpApiTest
             }
         }
 
-        [TestMethod]
+        [Test]
         public async Task ServerInitTest()
         {
             try
@@ -145,7 +172,7 @@ namespace RepetierServerSharpApiTest
             }
         }
 
-        [TestMethod]
+        [Test]
         public async Task RefreshTest()
         {
             try
@@ -203,7 +230,7 @@ namespace RepetierServerSharpApiTest
         }
 
         #region WebCam
-        [TestMethod]
+        [Test]
         public async Task WebCamTest()
         {
             try
@@ -242,7 +269,7 @@ namespace RepetierServerSharpApiTest
         #endregion
 
         #region Printer Tests
-        [TestMethod]
+        [Test]
         public async Task PrinterStatusTest()
         {
             try
@@ -309,7 +336,7 @@ namespace RepetierServerSharpApiTest
             }
         }
 
-        [TestMethod]
+        [Test]
         public async Task GcodeMacroTest()
         {
             try
@@ -352,13 +379,13 @@ namespace RepetierServerSharpApiTest
             }
         }
 
-        [TestMethod]
+        [Test]
         public async Task GcodeMetaTest()
         {
             try
             {
                 MoonrakerClient _server = new(_host, _api, _port, _ssl);
-                _server.Error += (sender, e) => 
+                _server.Error += (sender, e) =>
                 {
                     Assert.Fail(e.ToString());
                 };
@@ -390,8 +417,8 @@ namespace RepetierServerSharpApiTest
                 Assert.Fail(exc.Message);
             }
         }
-        
-        [TestMethod]
+
+        [Test]
         public async Task PrinterInfoTest()
         {
             try
@@ -418,7 +445,7 @@ namespace RepetierServerSharpApiTest
             }
         }
 
-        [TestMethod]
+        [Test]
         public async Task SendGcodeCommandTest()
         {
             try
@@ -449,7 +476,7 @@ namespace RepetierServerSharpApiTest
             }
         }
 
-        [TestMethod]
+        [Test]
         public async Task MovePrinterTest()
         {
             try
@@ -463,15 +490,15 @@ namespace RepetierServerSharpApiTest
 
                     var homed = await _server.HomeAxesAsync(true, true, true);
                     Assert.IsTrue(homed, "Not homed!");
-                    
+
                     // Move all 3 axes to ensure they all move correctly
                     var newX = 100;
                     var newY = 100;
                     var newZ = 100;
                     var moved = await _server.MoveAxesAsync(
-                        speed: 6000, 
-                        x: newX, 
-                        y: newY, 
+                        speed: 6000,
+                        x: newX,
+                        y: newY,
                         z: newZ,
                         relative: false);
                     var end = await _server.GetToolHeadStatusAsync();
@@ -479,19 +506,19 @@ namespace RepetierServerSharpApiTest
                     Assert.AreEqual(newX, end.Position[0], message: "X didn't move as expected");
                     Assert.AreEqual(newY, end.Position[1], message: "Y didn't move as expected");
                     Assert.AreEqual(newZ, end.Position[2], message: "Z didn't move as expected");
-                    
+
                     // Move all 3 axes independently to make sure they move as expected
                     newX = 50;
                     newY = 50;
                     newZ = 50;
                     await _server.MoveAxesAsync(
-                        speed: 6000, 
+                        speed: 6000,
                         x: newX);
                     await _server.MoveAxesAsync(
-                        speed: 6000, 
+                        speed: 6000,
                         y: newY);
                     await _server.MoveAxesAsync(
-                        speed: 6000, 
+                        speed: 6000,
                         z: newZ);
                     end = await _server.GetToolHeadStatusAsync();
                     Assert.AreEqual(newX, end.Position[0], message: "X didn't move as expected");
@@ -509,7 +536,7 @@ namespace RepetierServerSharpApiTest
         #endregion
 
         #region Print Management Tests
-        [TestMethod]
+        [Test]
         public async Task PrinterManagementTest()
         {
             try
@@ -576,7 +603,7 @@ namespace RepetierServerSharpApiTest
         #endregion
 
         #region Server Tests
-        [TestMethod]
+        [Test]
         public async Task ServerApiTest()
         {
             try
@@ -601,7 +628,7 @@ namespace RepetierServerSharpApiTest
             }
         }
 
-        [TestMethod]
+        [Test]
         public async Task ServerConfigTest()
         {
             try
@@ -636,7 +663,7 @@ namespace RepetierServerSharpApiTest
             }
         }
 
-        [TestMethod]
+        [Test]
         public async Task ServerGcodeApiTest()
         {
             try
@@ -663,7 +690,7 @@ namespace RepetierServerSharpApiTest
             }
         }
 
-        [TestMethod]
+        [Test]
         public async Task ServerMachineCommandTest()
         {
             try
@@ -706,7 +733,7 @@ namespace RepetierServerSharpApiTest
             }
         }
 
-        [TestMethod]
+        [Test]
         public async Task ServerMachineMoonrakerTest()
         {
             try
@@ -730,7 +757,7 @@ namespace RepetierServerSharpApiTest
             }
         }
 
-        [TestMethod]
+        [Test]
         public async Task ServerFilesTest()
         {
             try
@@ -787,7 +814,7 @@ namespace RepetierServerSharpApiTest
 
         #region Files
 
-        [TestMethod]
+        [Test]
         public async Task UploadFileTest()
         {
             try
@@ -832,7 +859,7 @@ namespace RepetierServerSharpApiTest
             }
         }
 
-        [TestMethod]
+        [Test]
         public async Task DownloadLogFileTest()
         {
             try
@@ -866,7 +893,7 @@ namespace RepetierServerSharpApiTest
         #endregion
 
         #region Authorization
-        [TestMethod]
+        [Test]
         public async Task AuthTest()
         {
             try
@@ -890,7 +917,7 @@ namespace RepetierServerSharpApiTest
                     Assert.IsTrue(users?.Count > 0);
 
                     KlipperUser currentUser = await _server.GetCurrentUserAsync();
-                    if(currentUser != null)
+                    if (currentUser != null)
                     {
                         //Assert.IsNotNull(await _server.LogoutCurrentUserAsync());
                     }
@@ -938,7 +965,7 @@ namespace RepetierServerSharpApiTest
         #endregion
 
         #region Database APIs
-        [TestMethod]
+        [Test]
         public async Task DatabaseTest()
         {
             try
@@ -946,7 +973,7 @@ namespace RepetierServerSharpApiTest
                 MoonrakerClient _server = new(_host, _api, _port, _ssl);
                 _server.Error += (sender, e) =>
                 {
-                    if(e is UnhandledExceptionEventArgs args)
+                    if (e is UnhandledExceptionEventArgs args)
                         Console.WriteLine(args.ExceptionObject?.ToString());
                     //Assert.Fail(e.ToString());
                 };
@@ -958,21 +985,21 @@ namespace RepetierServerSharpApiTest
 
                     //List<string> namespaces = await _server.ListDatabaseNamespacesAsync();
                     Assert.IsTrue(_server.AvailableNamespaces?.Count > 0);
-                    if(_server.OperatingSystem == MoonrakerOperatingSystems.FluiddPi)
+                    if (_server.OperatingSystem == MoonrakerOperatingSystems.FluiddPi)
                     {
-                        _server.API = _api;
+                        _server.ApiKey = _api;
                     }
 
                     string currentNamespace = _server.OperatingSystem == MoonrakerOperatingSystems.MainsailOS ? "mainsail" : "fluidd";
                     Dictionary<string, object> items = await _server.GetDatabaseItemAsync(currentNamespace);
                     Assert.IsNotNull(items);
 
-                    foreach(KeyValuePair<string, object> pair in items)
+                    foreach (KeyValuePair<string, object> pair in items)
                     {
                         var type = pair.Value.GetType();
                         if (pair.Value is JObject jObject)
                         {
-                            foreach(var property in jObject.Properties())
+                            foreach (var property in jObject.Properties())
                             {
                                 Dictionary<string, object> childItems = await _server.GetDatabaseItemAsync(currentNamespace, property.Name);
                             }
@@ -994,7 +1021,7 @@ namespace RepetierServerSharpApiTest
                     */
                     List<KlipperDatabaseWebcamConfig> webcamConfig = await _server.GetWebCamSettingsAsync();
                     Assert.IsNotNull(webcamConfig);
-                    if(webcamConfig.Count > 0)
+                    if (webcamConfig.Count > 0)
                         Assert.IsTrue(!string.IsNullOrEmpty(webcamConfig.FirstOrDefault()?.Url));
 
                     List<KlipperDatabaseTemperaturePreset> presets = await _server.GetDashboardPresetsAsync();
@@ -1011,7 +1038,7 @@ namespace RepetierServerSharpApiTest
 
                     Dictionary<string, object> delete = await _server.DeleteDatabaseItemAsync(currentNamespace, "testkey");
                     Assert.IsNotNull(delete);
-                    
+
                 }
                 else
                     Assert.Fail($"Server {_server.FullWebAddress} is offline.");
@@ -1026,7 +1053,7 @@ namespace RepetierServerSharpApiTest
             }
         }
 
-        [TestMethod]
+        [Test]
         public async Task RemotePrintersTest()
         {
             try
@@ -1034,7 +1061,7 @@ namespace RepetierServerSharpApiTest
                 MoonrakerClient _server = new(_host, _api, _port, _ssl);
                 _server.Error += (sender, e) =>
                 {
-                    if(e is UnhandledExceptionEventArgs args)
+                    if (e is UnhandledExceptionEventArgs args)
                         Console.WriteLine(args.ExceptionObject?.ToString());
                     Assert.Fail(e.ToString());
                 };
@@ -1051,7 +1078,7 @@ namespace RepetierServerSharpApiTest
                     List<KlipperDatabaseRemotePrinter> printers = await _server.GetRemotePrintersAsync();
                     Assert.IsNotNull(printers);
 
-                    
+
                 }
                 else
                     Assert.Fail($"Server {_server.FullWebAddress} is offline.");
@@ -1068,7 +1095,7 @@ namespace RepetierServerSharpApiTest
         #endregion
 
         #region Job Queue
-        [TestMethod]
+        [Test]
         public async Task ActiveJobTest()
         {
             try
@@ -1095,7 +1122,7 @@ namespace RepetierServerSharpApiTest
 
             }
         }
-        [TestMethod]
+        [Test]
         public async Task JobQueueTest()
         {
             try
@@ -1148,7 +1175,7 @@ namespace RepetierServerSharpApiTest
         #endregion
 
         #region Power APIs
-        [TestMethod]
+        [Test]
         public async Task PowerApisTest()
         {
             try
@@ -1191,7 +1218,7 @@ namespace RepetierServerSharpApiTest
         #endregion
 
         #region Update Manager API
-        [TestMethod]
+        [Test]
         public async Task UpdateManagerApiTest()
         {
             try
@@ -1221,7 +1248,7 @@ namespace RepetierServerSharpApiTest
         #endregion
 
         #region Octoprint
-        [TestMethod]
+        [Test]
         public async Task OctoprintApiTest()
         {
             try
@@ -1272,7 +1299,7 @@ namespace RepetierServerSharpApiTest
         #endregion
 
         #region History APIs
-        [TestMethod]
+        [Test]
         public async Task HistoryApiTest()
         {
             try
@@ -1312,7 +1339,7 @@ namespace RepetierServerSharpApiTest
         #endregion
 
         /*
-        [TestMethod]
+        [Test]
         public async Task DownloadPrintReport()
         {
             try
@@ -1338,7 +1365,7 @@ namespace RepetierServerSharpApiTest
             }
         }
         */
-        [TestMethod]
+        [Test]
         public async Task OnlineTest()
         {
             try
@@ -1373,7 +1400,7 @@ namespace RepetierServerSharpApiTest
             }
         }
 
-        [TestMethod]
+        [Test]
         public async Task WebsocketTest()
         {
             try
@@ -1432,10 +1459,10 @@ namespace RepetierServerSharpApiTest
                 };
                 _server.KlipperDisplayStatusChanged += (o, args) =>
                 {
-                    if(args.NewDisplayStatus != null)
+                    if (args.NewDisplayStatus != null)
                         Debug.WriteLine($"Progress: {args.NewDisplayStatus.Progress * 100} % (Msg: {args.NewDisplayStatus.Message})");
                 };
-                
+
                 _server.KlipperToolHeadStateChanged += (o, args) =>
                 {
                     //Debug.WriteLine($"Toolhead: {args.ToolheadStates.EstimatedPrintTime}");
@@ -1476,7 +1503,7 @@ namespace RepetierServerSharpApiTest
                 await _server.StopListeningAsync();
 
                 StringBuilder sb = new();
-                foreach(var pair in websocketMessages)
+                foreach (var pair in websocketMessages)
                 {
                     sb.AppendLine($"{pair.Key}: {pair.Value}");
                 }

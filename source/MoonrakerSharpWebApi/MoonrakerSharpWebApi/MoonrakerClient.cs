@@ -1,19 +1,17 @@
-﻿using AndreasReitberger.Core.Enums;
-using AndreasReitberger.Core.Interfaces;
-using AndreasReitberger.Core.Utilities;
-using AndreasReitberger.API.Moonraker.Enum;
+﻿using AndreasReitberger.API.Moonraker.Enum;
 using AndreasReitberger.API.Moonraker.Models;
+using AndreasReitberger.Core.Enums;
+using AndreasReitberger.Core.Utilities;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Runtime.CompilerServices;
 using System.Security;
 using System.Security.Authentication;
 using System.Security.Cryptography;
@@ -29,18 +27,9 @@ namespace AndreasReitberger.API.Moonraker
 {
     // Needs: https://github.com/Arksine/moonraker/blob/master/docs/web_api.md
     // Docs: https://moonraker.readthedocs.io/en/latest/configuration/
-    public partial class MoonrakerClient : IRestApiClient
+    [ObservableObject]
+    public partial class MoonrakerClient : IDisposable// IRestApiClient
     {
-        #region INotifyPropertyChanged
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        #endregion
-
         #region Variables
         RestClient restClient;
         HttpClient httpClient;
@@ -58,19 +47,10 @@ namespace AndreasReitberger.API.Moonraker
         #endregion
 
         #region Id
-        [JsonProperty(nameof(Id))]
+        //[JsonProperty(nameof(Id))]
+        [ObservableProperty]
         Guid _id = Guid.Empty;
-        [JsonIgnore]
-        public Guid Id
-        {
-            get => _id;
-            set
-            {
-                if (_id == value) return;
-                _id = value;
-                OnPropertyChanged();
-            }
-        }
+
         #endregion
 
         #region Instance
@@ -98,18 +78,8 @@ namespace AndreasReitberger.API.Moonraker
 
         }
 
+        [ObservableProperty]
         bool _isActive = false;
-        public bool IsActive
-        {
-            get => _isActive;
-            set
-            {
-                if (_isActive == value)
-                    return;
-                _isActive = value;
-                OnPropertyChanged();
-            }
-        }
 
         bool _updateInstance = false;
         public bool UpdateInstance
@@ -122,47 +92,27 @@ namespace AndreasReitberger.API.Moonraker
                 _updateInstance = value;
                 // Update the instance to the latest settings
                 if (_updateInstance)
-                    InitInstance(ServerAddress, Port, API, IsSecure);
+                    InitInstance(ServerAddress, Port, ApiKey, IsSecure);
 
                 OnPropertyChanged();
             }
         }
 
+        [ObservableProperty]
         bool _isInitialized = false;
-        public bool IsInitialized
-        {
-            get => _isInitialized;
-            set
-            {
-                if (_isInitialized == value)
-                    return;
-                _isInitialized = value;
-                OnPropertyChanged();
-            }
-        }
 
         #endregion
 
         #region RefreshTimer
-        [JsonIgnore]
-        [XmlIgnore]
+
+        [ObservableProperty]
+        [property: JsonIgnore]
+        [property: XmlIgnore]
         Timer _timer;
-        [JsonIgnore]
-        [XmlIgnore]
-        public Timer Timer
-        {
-            get => _timer;
-            set
-            {
-                if (_timer == value) return;
-                _timer = value;
-                OnPropertyChanged();
-            }
-        }
 
         [JsonProperty(nameof(RefreshInterval))]
         int _refreshInterval = 3;
-        [JsonIgnore]
+        [JsonIgnore, XmlIgnore]
         public int RefreshInterval
         {
             get => _refreshInterval;
@@ -172,18 +122,16 @@ namespace AndreasReitberger.API.Moonraker
                 _refreshInterval = value;
                 if (IsListening)
                 {
-                    StopListening();
-                    StartListening();
+                    StopListeningAsync();
+                    StartListeningAsync();
                 }
                 OnPropertyChanged();
             }
         }
 
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         bool _isListening = false;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public bool IsListening
         {
             get => _isListening;
@@ -201,11 +149,9 @@ namespace AndreasReitberger.API.Moonraker
             }
         }
 
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         bool _initialDataFetched = false;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public bool InitialDataFetched
         {
             get => _initialDataFetched;
@@ -222,11 +168,9 @@ namespace AndreasReitberger.API.Moonraker
         #region Properties
 
         #region Debug
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         Dictionary<string, string> _ignoredJsonResults = new();
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public Dictionary<string, string> IgnoredJsonResults
         {
             get => _ignoredJsonResults;
@@ -245,63 +189,25 @@ namespace AndreasReitberger.API.Moonraker
 
         #region Connection
 
-        [JsonIgnore, XmlIgnore]
+        [ObservableProperty]
+        [property: JsonIgnore]
+        [property: XmlIgnore]
         string _sessionId = string.Empty;
-        [JsonIgnore, XmlIgnore]
-        public string SessionId
-        {
-            get => _sessionId;
-            set
-            {
-                if (_sessionId == value) return;
-                _sessionId = value;
-                OnPropertyChanged();
-            }
-        }
 
-        [JsonProperty(nameof(OperatingSystem))]
+        //[JsonProperty(nameof(OperatingSystem))]
+        [ObservableProperty]
         MoonrakerOperatingSystems _operatingSystem = MoonrakerOperatingSystems.MainsailOS;
-        [JsonIgnore, XmlIgnore]
-        public MoonrakerOperatingSystems OperatingSystem
-        {
-            get => _operatingSystem;
-            set
-            {
-                if (_operatingSystem == value) return;
-                _operatingSystem = value;
-                OnPropertyChanged();
-            }
-        }
 
-        [JsonProperty(nameof(HostName))]
+        //[JsonProperty(nameof(HostName))]
+        [ObservableProperty]
         string _hostName = string.Empty;
-        [JsonIgnore]
-        public string HostName
-        {
-            get => _hostName;
-            set
-            {
-                if (_hostName == value) return;
-                _hostName = value;
-                OnPropertyChanged();
-            }
-        }
 
-        [JsonProperty(nameof(ServerName))]
+        //[JsonProperty(nameof(ServerName))]
+        [ObservableProperty]
         string _serverName= string.Empty;
-        [JsonIgnore]
-        public string ServerName
-        {
-            get => _serverName;
-            set
-            {
-                if (_serverName == value) return;
-                _serverName = value;
-                OnPropertyChanged();
-            }
-        }
 
         [JsonProperty(nameof(ServerAddress))]
+        //[ObservableProperty]
         string _address = string.Empty;
         [JsonIgnore]
         public string ServerAddress
@@ -317,6 +223,7 @@ namespace AndreasReitberger.API.Moonraker
         }
 
         [JsonProperty(nameof(IsSecure))]
+        //[ObservableProperty]
         bool _isSecure = false;
         [JsonIgnore]
         public bool IsSecure
@@ -331,21 +238,12 @@ namespace AndreasReitberger.API.Moonraker
             }
         }
 
-        [JsonProperty(nameof(API))]
-        string _api = string.Empty;
-        [JsonIgnore]
-        public string API
-        {
-            get => _api;
-            set
-            {
-                if (_api == value) return;
-                _api = value;
-                OnPropertyChanged();
-            }
-        }
+        //[JsonProperty(nameof(ApiKey))]
+        [ObservableProperty]
+        string _apiKey = string.Empty;
 
         [JsonProperty(nameof(Port))]
+        //[ObservableProperty]
         int _port = 80;
         [JsonIgnore]
         public int Port
@@ -362,38 +260,15 @@ namespace AndreasReitberger.API.Moonraker
             }
         }
 
-        [JsonProperty(nameof(DefaultTimeout))]
+        //[JsonProperty(nameof(DefaultTimeout))]
+        [ObservableProperty]
         int _defaultTimeout = 10000;
-        [JsonIgnore]
-        public int DefaultTimeout
-        {
-            get => _defaultTimeout;
-            set
-            {
-                if (_defaultTimeout != value)
-                {
-                    _defaultTimeout = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
 
-        [JsonProperty(nameof(OverrideValidationRules))]
-        [XmlAttribute(nameof(OverrideValidationRules))]
+
+        //[JsonProperty(nameof(OverrideValidationRules))]
+        //[XmlAttribute(nameof(OverrideValidationRules))]
+        [ObservableProperty]
         bool _overrideValidationRules = false;
-        [JsonIgnore]
-        [XmlIgnore]
-        public bool OverrideValidationRules
-        {
-            get => _overrideValidationRules;
-            set
-            {
-                if (_overrideValidationRules == value)
-                    return;
-                _overrideValidationRules = value;
-                OnPropertyChanged();
-            }
-        }
 
         [JsonIgnore, XmlIgnore]
         bool _isOnline = false;
@@ -424,72 +299,32 @@ namespace AndreasReitberger.API.Moonraker
             }
         }
 
-        [JsonIgnore, XmlIgnore]
+        [ObservableProperty]
+        [property: JsonIgnore]
+        [property: XmlIgnore]
         bool _isConnecting = false;
-        [JsonIgnore, XmlIgnore]
-        public bool IsConnecting
-        {
-            get => _isConnecting;
-            set
-            {
-                if (_isConnecting == value) return;
-                _isConnecting = value;
-                OnPropertyChanged();
-            }
-        }
 
-        [JsonIgnore, XmlIgnore]
+        [ObservableProperty]
+        [property: JsonIgnore]
+        [property: XmlIgnore]
         bool _authenticationFailed = false;
-        [JsonIgnore, XmlIgnore]
-        public bool AuthenticationFailed
-        {
-            get => _authenticationFailed;
-            set
-            {
-                if (_authenticationFailed == value) return;
-                _authenticationFailed = value;
-                OnPropertyChanged();
-            }
-        }
 
-        [JsonIgnore, XmlIgnore]
+        [ObservableProperty]
+        [property: JsonIgnore]
+        [property: XmlIgnore]
         bool _isRefreshing = false;
-        [JsonIgnore, XmlIgnore]
-        public bool IsRefreshing
-        {
-            get => _isRefreshing;
-            set
-            {
-                if (_isRefreshing == value) return;
-                _isRefreshing = value;
-                OnPropertyChanged();
-            }
-        }
 
-        [JsonProperty(nameof(RetriesWhenOffline))]
-        [XmlAttribute(nameof(RetriesWhenOffline))]
+        //[JsonProperty(nameof(RetriesWhenOffline))]
+        //[XmlAttribute(nameof(RetriesWhenOffline))]
+        [ObservableProperty]
         int _retriesWhenOffline = 2;
-        [JsonIgnore]
-        [XmlIgnore]
-        public int RetriesWhenOffline
-        {
-            get => _retriesWhenOffline;
-            set
-            {
-                if (_retriesWhenOffline == value) return;
-                _retriesWhenOffline = value;
-                OnPropertyChanged();
-            }
-        }
 
         #endregion
 
         #region General
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         bool _updateAvailable = false;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public bool UpdateAvailable
         {
             get => _updateAvailable;
@@ -507,114 +342,47 @@ namespace AndreasReitberger.API.Moonraker
             }
         }
 
-        [JsonProperty(nameof(RefreshHeatersDirectly)), XmlAttribute(nameof(RefreshHeatersDirectly))]
+        //[JsonProperty(nameof(RefreshHeatersDirectly)), XmlAttribute(nameof(RefreshHeatersDirectly))]
+        [ObservableProperty]
         bool _refreshHeatersDirectly = true;
-        [JsonIgnore, XmlIgnore]
-        public bool RefreshHeatersDirectly
-        {
-            get => _refreshHeatersDirectly;
-            private set
-            {
-                if (_refreshHeatersDirectly == value) return;
-                _refreshHeatersDirectly = value;
-                OnPropertyChanged();
-            }
-        }
 
         #endregion
 
         #region Api & Version
 
-        [JsonIgnore]
-        [XmlIgnore]
+        [ObservableProperty]
+        [property: JsonIgnore]
+        [property: XmlIgnore]
         string _moonrakerVersion = string.Empty;
-        [JsonIgnore]
-        [XmlIgnore]
-        public string MoonrakerVersion
-        {
-            get => _moonrakerVersion;
-            set
-            {
-                if (_moonrakerVersion == value) return;
-                _moonrakerVersion = value;
-                OnPropertyChanged();
-            }
-        }
 
-        [JsonIgnore]
-        [XmlIgnore]
+        [ObservableProperty]
+        [property: JsonIgnore]
+        [property: XmlIgnore]
         List<string> _registeredDirectories = new();
-        [JsonIgnore]
-        [XmlIgnore]
-        public List<string> RegisteredDirectories
-        {
-            get => _registeredDirectories;
-            set
-            {
-                if (_registeredDirectories == value) return;
-                _registeredDirectories = value;
-                OnPropertyChanged();
-            }
-        }
 
         #endregion
 
         #region Proxy
-        [JsonProperty(nameof(EnableProxy))]
-        [XmlAttribute(nameof(EnableProxy))]
+        //[JsonProperty(nameof(EnableProxy))]
+        //[XmlAttribute(nameof(EnableProxy))]
+        [ObservableProperty]
         bool _enableProxy = false;
-        [JsonIgnore]
-        [XmlIgnore]
-        public bool EnableProxy
-        {
-            get => _enableProxy;
-            set
-            {
-                if (_enableProxy == value) return;
-                _enableProxy = value;
-                OnPropertyChanged();
-                //UpdateWebClientInstance();
-            }
-        }
 
-        [JsonProperty(nameof(ProxyUseDefaultCredentials))]
-        [XmlAttribute(nameof(ProxyUseDefaultCredentials))]
+        //[JsonProperty(nameof(ProxyUseDefaultCredentials))]
+        //[XmlAttribute(nameof(ProxyUseDefaultCredentials))]
+        [ObservableProperty]
         bool _proxyUseDefaultCredentials = true;
-        [JsonIgnore]
-        [XmlIgnore]
-        public bool ProxyUseDefaultCredentials
-        {
-            get => _proxyUseDefaultCredentials;
-            set
-            {
-                if (_proxyUseDefaultCredentials == value) return;
-                _proxyUseDefaultCredentials = value;
-                OnPropertyChanged();
-                //UpdateWebClientInstance();
-            }
-        }
 
-        [JsonProperty(nameof(SecureProxyConnection))]
-        [XmlAttribute(nameof(SecureProxyConnection))]
+        //[JsonProperty(nameof(SecureProxyConnection))]
+        //[XmlAttribute(nameof(SecureProxyConnection))]
+        [ObservableProperty]
         bool _secureProxyConnection = true;
-        [JsonIgnore]
-        [XmlIgnore]
-        public bool SecureProxyConnection
-        {
-            get => _secureProxyConnection;
-            private set
-            {
-                if (_secureProxyConnection == value) return;
-                _secureProxyConnection = value;
-                OnPropertyChanged();
-            }
-        }
 
         [JsonProperty(nameof(ProxyAddress))]
         [XmlAttribute(nameof(ProxyAddress))]
+        //[ObservableProperty]
         string _proxyAddress = string.Empty;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public string ProxyAddress
         {
             get => _proxyAddress;
@@ -629,8 +397,7 @@ namespace AndreasReitberger.API.Moonraker
         [JsonProperty(nameof(ProxyPort))]
         [XmlAttribute(nameof(ProxyPort))]
         int _proxyPort = 443;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public int ProxyPort
         {
             get => _proxyPort;
@@ -650,8 +417,7 @@ namespace AndreasReitberger.API.Moonraker
         [JsonProperty(nameof(ProxyUser))]
         [XmlAttribute(nameof(ProxyUser))]
         string _proxyUser = string.Empty;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public string ProxyUser
         {
             get => _proxyUser;
@@ -666,8 +432,7 @@ namespace AndreasReitberger.API.Moonraker
         [JsonProperty(nameof(ProxyPassword))]
         [XmlAttribute(nameof(ProxyPassword))]
         SecureString _proxyPassword;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public SecureString ProxyPassword
         {
             get => _proxyPassword;
@@ -681,54 +446,21 @@ namespace AndreasReitberger.API.Moonraker
         #endregion
 
         #region DiskSpace
-        [JsonProperty(nameof(FreeDiskSpace))]
-        [XmlAttribute(nameof(FreeDiskSpace))]
-        long _freeDiskspace = 0;
-        [JsonIgnore]
-        [XmlIgnore]
-        public long FreeDiskSpace
-        {
-            get => _freeDiskspace;
-            set
-            {
-                if (_freeDiskspace == value) return;
-                _freeDiskspace = value;
-                OnPropertyChanged();
+        //[JsonProperty(nameof(FreeDiskSpace))]
+        //[XmlAttribute(nameof(FreeDiskSpace))]
+        [ObservableProperty]
+        long _freeDiskSpace = 0;
 
-            }
-        }
-
-        [JsonProperty(nameof(UsedDiskSpace))]
-        [XmlAttribute(nameof(UsedDiskSpace))]
+        //[JsonProperty(nameof(UsedDiskSpace))]
+        //[XmlAttribute(nameof(UsedDiskSpace))]
+        [ObservableProperty]
         long _usedDiskSpace = 0;
-        [JsonIgnore]
-        [XmlIgnore]
-        public long UsedDiskSpace
-        {
-            get => _usedDiskSpace;
-            set
-            {
-                if (_usedDiskSpace == value) return;
-                _usedDiskSpace = value;
-                OnPropertyChanged();
-            }
-        }
 
-        [JsonProperty(nameof(TotalDiskSpace))]
-        [XmlAttribute(nameof(TotalDiskSpace))]
+        //[JsonProperty(nameof(TotalDiskSpace))]
+        //[XmlAttribute(nameof(TotalDiskSpace))]
+        [ObservableProperty]
         long _totalDiskSpace = 0;
-        [JsonIgnore]
-        [XmlIgnore]
-        public long TotalDiskSpace
-        {
-            get => _totalDiskSpace;
-            set
-            {
-                if (_totalDiskSpace == value) return;
-                _totalDiskSpace = value;
-                OnPropertyChanged();
-            }
-        }
+
         #endregion
 
         #region RemotePrinters
@@ -747,7 +479,7 @@ namespace AndreasReitberger.API.Moonraker
                     NewPrinters = value,
                     SessonId = SessionId,
                     CallbackId = -1,
-                    Token = !string.IsNullOrEmpty(UserToken) ? UserToken : API,
+                    Token = !string.IsNullOrEmpty(UserToken) ? UserToken : ApiKey,
                 });
                 OnPropertyChanged();
             }
@@ -770,7 +502,7 @@ namespace AndreasReitberger.API.Moonraker
                     NewFiles = value,
                     SessonId = SessionId,
                     CallbackId = -1,
-                    Token = !string.IsNullOrEmpty(UserToken) ? UserToken : API,
+                    Token = !string.IsNullOrEmpty(UserToken) ? UserToken : ApiKey,
                 });
                 OnPropertyChanged();
             }
@@ -816,18 +548,16 @@ namespace AndreasReitberger.API.Moonraker
                     PreviousJobStatus = _jobStatus,
                     SessonId = SessionId,
                     CallbackId = -1,
-                    Token = !string.IsNullOrEmpty(UserToken) ? UserToken : API,
+                    Token = !string.IsNullOrEmpty(UserToken) ? UserToken : ApiKey,
                 });
                 _jobStatus = value;
                 OnPropertyChanged();
             }
         }
 
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         string _jobListState = string.Empty;
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public string JobListState
         {
             get => _jobListState;
@@ -840,18 +570,16 @@ namespace AndreasReitberger.API.Moonraker
                     PreviousJobListStatus = _jobListState,
                     SessonId = SessionId,
                     CallbackId = -1,
-                    Token = !string.IsNullOrEmpty(UserToken) ? UserToken : API,
+                    Token = !string.IsNullOrEmpty(UserToken) ? UserToken : ApiKey,
                 });
                 _jobListState = value;
                 OnPropertyChanged();
             }
         }
-        
-        [JsonIgnore]
-        [XmlIgnore]
+
+        [JsonIgnore, XmlIgnore]
         ObservableCollection<KlipperJobQueueItem> _jobList = new();
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public ObservableCollection<KlipperJobQueueItem> JobList
         {
             get => _jobList;
@@ -864,7 +592,7 @@ namespace AndreasReitberger.API.Moonraker
                     NewJobList = value,
                     SessonId = SessionId,
                     CallbackId = -1,
-                    Token = !string.IsNullOrEmpty(UserToken) ? UserToken : API,
+                    Token = !string.IsNullOrEmpty(UserToken) ? UserToken : ApiKey,
                 });
                 OnPropertyChanged();
             }
@@ -1462,8 +1190,7 @@ namespace AndreasReitberger.API.Moonraker
             }
         }
 
-        [JsonIgnore]
-        [XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         string _activeJobName;
         [JsonIgnore, XmlIgnore]
         public string ActiveJobName
@@ -1608,19 +1335,11 @@ namespace AndreasReitberger.API.Moonraker
         #endregion
 
         #region WebSocket
-        [JsonIgnore, XmlIgnore]
+
+        [ObservableProperty]
+        [property: JsonIgnore]
+        [property: XmlIgnore]
         WebSocket _webSocket;
-        [JsonIgnore, XmlIgnore]
-        public WebSocket WebSocket
-        {
-            get => _webSocket;
-            set
-            {
-                if (_webSocket == value) return;
-                _webSocket = value;
-                OnPropertyChanged();
-            }
-        }
 
         [JsonIgnore, XmlIgnore]
         long? _webSocketConnectionId;
@@ -1640,47 +1359,20 @@ namespace AndreasReitberger.API.Moonraker
             }
         }
 
-        [JsonIgnore, XmlIgnore]
+        [ObservableProperty]
+        [property: JsonIgnore]
+        [property: XmlIgnore]
         Timer _pingTimer;
-        [JsonIgnore, XmlIgnore]
-        public Timer PingTimer
-        {
-            get => _pingTimer;
-            set
-            {
-                if (_pingTimer == value) return;
-                _pingTimer = value;
-                OnPropertyChanged();
-            }
-        }
 
-        [JsonIgnore, XmlIgnore]
+        [ObservableProperty]
+        [property: JsonIgnore]
+        [property: XmlIgnore]
         int _pingCounter = 0;
-        [JsonIgnore, XmlIgnore]
-        public int PingCounter
-        {
-            get => _pingCounter;
-            set
-            {
-                if (_pingCounter == value) return;
-                _pingCounter = value;
-                OnPropertyChanged();
-            }
-        }
 
-        [JsonIgnore, XmlIgnore]
+        [ObservableProperty]
+        [property: JsonIgnore]
+        [property: XmlIgnore]
         int _refreshCounter = 0;
-        [JsonIgnore, XmlIgnore]
-        public int RefreshCounter
-        {
-            get => _refreshCounter;
-            set
-            {
-                if (_refreshCounter == value) return;
-                _refreshCounter = value;
-                OnPropertyChanged();
-            }
-        }
 
         [JsonIgnore, XmlIgnore]
         bool _isListeningToWebSocket = false;
@@ -1795,7 +1487,7 @@ namespace AndreasReitberger.API.Moonraker
             try
             {
                 ServerAddress = serverAddress;
-                API = api;
+                ApiKey = api;
                 Port = port;
                 IsSecure = isSecure;
 
@@ -2173,7 +1865,7 @@ namespace AndreasReitberger.API.Moonraker
                 string target = LoginRequired ?
                         $"{(IsSecure ? "wss" : "ws")}://{ServerAddress}:{Port}/websocket?token={OneShotToken}" :
                         //$"{(IsSecure ? "wss" : "ws")}://{ServerAddress}:{Port}/websocket{(!string.IsNullOrEmpty(API) ? $"?token={API}" : "")}";
-                        $"{(IsSecure ? "wss" : "ws")}://{ServerAddress}:{Port}/websocket{(!string.IsNullOrEmpty(OneShotToken) ? $"?token={OneShotToken}" : $"?token={API}")}";
+                        $"{(IsSecure ? "wss" : "ws")}://{ServerAddress}:{Port}/websocket{(!string.IsNullOrEmpty(OneShotToken) ? $"?token={OneShotToken}" : $"?token={ApiKey}")}";
                 WebSocket = new WebSocket(target)
                 {
                     EnableAutoSendPing = false,
@@ -2258,7 +1950,7 @@ namespace AndreasReitberger.API.Moonraker
                 }
                 //if (!IsReady || IsListeningToWebsocket) return;
 
-                DisconnectWebSocket();
+                await DisconnectWebSocketAsync();
                 // https://github.com/Arksine/moonraker/blob/master/docs/web_api.md#appendix
                 // ws://host:port/websocket?token={32 character base32 string}
                 //string target = $"ws://192.168.10.113:80/websocket?token={API}";
@@ -3018,9 +2710,9 @@ namespace AndreasReitberger.API.Moonraker
                     request.AddHeader("Authorization", $"Bearer {UserToken}");
                     validHeader = true;
                 }
-                else if (!string.IsNullOrEmpty(API))
+                else if (!string.IsNullOrEmpty(ApiKey))
                 {
-                    request.AddHeader("X-Api-Key", $"{API}");
+                    request.AddHeader("X-Api-Key", $"{ApiKey}");
                     validHeader = true;
                 }
 
@@ -3044,9 +2736,9 @@ namespace AndreasReitberger.API.Moonraker
                     {
                         request.AddParameter("access_token", RefreshToken, ParameterType.QueryString);
                     }
-                    else if (!string.IsNullOrEmpty(API))
+                    else if (!string.IsNullOrEmpty(ApiKey))
                     {
-                        request.AddParameter("token", API, ParameterType.QueryString);
+                        request.AddParameter("token", ApiKey, ParameterType.QueryString);
                     }
                 }
 
@@ -3122,9 +2814,9 @@ namespace AndreasReitberger.API.Moonraker
                     request.AddHeader("Authorization", $"Bearer {UserToken}");
                     validHeader = true;
                 }
-                else if (!string.IsNullOrEmpty(API))
+                else if (!string.IsNullOrEmpty(ApiKey))
                 {
-                    request.AddHeader("X-Api-Key", $"{API}");
+                    request.AddHeader("X-Api-Key", $"{ApiKey}");
                     validHeader = true;
                 }
 
@@ -3136,9 +2828,9 @@ namespace AndreasReitberger.API.Moonraker
                     {
                         request.AddParameter("access_token", RefreshToken, ParameterType.QueryString);
                     }
-                    else if (!string.IsNullOrEmpty(API))
+                    else if (!string.IsNullOrEmpty(ApiKey))
                     {
-                        request.AddParameter("token", API, ParameterType.QueryString);
+                        request.AddParameter("token", ApiKey, ParameterType.QueryString);
                     }
                 }
 
@@ -3195,9 +2887,9 @@ namespace AndreasReitberger.API.Moonraker
                     request.AddHeader("Authorization", $"Bearer {UserToken}");
                     validHeader = true;
                 }
-                else if (!string.IsNullOrEmpty(API))
+                else if (!string.IsNullOrEmpty(ApiKey))
                 {
-                    request.AddHeader("X-Api-Key", $"{API}");
+                    request.AddHeader("X-Api-Key", $"{ApiKey}");
                     validHeader = true;
                 }
                 // https://moonraker.readthedocs.io/en/latest/web_api/#authorization
@@ -3208,9 +2900,9 @@ namespace AndreasReitberger.API.Moonraker
                     {
                         request.AddParameter("access_token", RefreshToken, ParameterType.QueryString);
                     }
-                    else if (!string.IsNullOrEmpty(API))
+                    else if (!string.IsNullOrEmpty(ApiKey))
                     {
-                        request.AddParameter("token", API, ParameterType.QueryString);
+                        request.AddParameter("token", ApiKey, ParameterType.QueryString);
                     }
                 }
 
@@ -3349,9 +3041,9 @@ namespace AndreasReitberger.API.Moonraker
                     request.AddHeader("Authorization", $"Bearer {UserToken}");
                     validHeader = true;
                 }
-                else if (!string.IsNullOrEmpty(API))
+                else if (!string.IsNullOrEmpty(ApiKey))
                 {
-                    request.AddHeader("X-Api-Key", $"{API}");
+                    request.AddHeader("X-Api-Key", $"{ApiKey}");
                     validHeader = true;
                 }
                 // https://moonraker.readthedocs.io/en/latest/web_api/#authorization
@@ -3362,9 +3054,9 @@ namespace AndreasReitberger.API.Moonraker
                     {
                         request.AddParameter("access_token", RefreshToken, ParameterType.QueryString);
                     }
-                    else if (!string.IsNullOrEmpty(API))
+                    else if (!string.IsNullOrEmpty(ApiKey))
                     {
-                        request.AddParameter("token", API, ParameterType.QueryString);
+                        request.AddParameter("token", ApiKey, ParameterType.QueryString);
                     }
                 }
 
@@ -3497,9 +3189,9 @@ namespace AndreasReitberger.API.Moonraker
                     request.AddHeader("Authorization", $"Bearer {UserToken}");
                     validHeader = true;
                 }
-                else if (!string.IsNullOrEmpty(API))
+                else if (!string.IsNullOrEmpty(ApiKey))
                 {
-                    request.AddHeader("X-Api-Key", $"{API}");
+                    request.AddHeader("X-Api-Key", $"{ApiKey}");
                     validHeader = true;
                 }
                 // https://moonraker.readthedocs.io/en/latest/web_api/#authorization
@@ -3510,9 +3202,9 @@ namespace AndreasReitberger.API.Moonraker
                     {
                         request.AddParameter("access_token", RefreshToken, ParameterType.QueryString);
                     }
-                    else if (!string.IsNullOrEmpty(API))
+                    else if (!string.IsNullOrEmpty(ApiKey))
                     {
-                        request.AddParameter("token", API, ParameterType.QueryString);
+                        request.AddParameter("token", ApiKey, ParameterType.QueryString);
                     }
                 }
 
@@ -3839,7 +3531,7 @@ namespace AndreasReitberger.API.Moonraker
                 }
                 else if (IsListening)
                 {
-                    StopListening();
+                    await StopListeningAsync(); // StopListening();
                 }
             }, null, 0, RefreshInterval * 1000);
             IsListening = true;
@@ -4057,7 +3749,7 @@ namespace AndreasReitberger.API.Moonraker
         {
             try
             {
-                string token = !string.IsNullOrEmpty(API) ? API : UserToken;
+                string token = !string.IsNullOrEmpty(ApiKey) ? ApiKey : UserToken;
                 return $"{FullWebAddress}/webcam/?action=stream{(!string.IsNullOrEmpty(token) ? $"?t={token}" : "")}";
             }
             catch (Exception exc)
@@ -4098,7 +3790,7 @@ namespace AndreasReitberger.API.Moonraker
                     };
                 }
 
-                string token = !string.IsNullOrEmpty(API) ? API : UserToken;
+                string token = !string.IsNullOrEmpty(ApiKey) ? ApiKey : UserToken;
                 return config == null ? GetDefaultWebCamUri() : $"{FullWebAddress}{config.Url}{(!string.IsNullOrEmpty(token) ? $"?t={token}" : "")}";
             }
             catch (Exception exc)
@@ -4122,7 +3814,7 @@ namespace AndreasReitberger.API.Moonraker
                 else return
                     !(ServerAddress == tempKlipper.ServerAddress &&
                         Port == tempKlipper.Port &&
-                        API == tempKlipper.API &&
+                        ApiKey == tempKlipper.ApiKey &&
                         IsSecure == tempKlipper.IsSecure &&
                         LoginRequired == tempKlipper.LoginRequired
                         )
@@ -4202,7 +3894,7 @@ namespace AndreasReitberger.API.Moonraker
             try
             {
                 KlipperAccessTokenResult result = await GetApiKeyAsync().ConfigureAwait(false);
-                API = result?.Result;
+                ApiKey = result?.Result;
             }
             catch (Exception exc)
             {
@@ -6016,9 +5708,11 @@ namespace AndreasReitberger.API.Moonraker
             KlipperDirectoryInfoResult resultObject = null;
             try
             {
-                Dictionary<string, string> urlSegements = new();
-                urlSegements.Add("path", path);
-                urlSegements.Add("extended", extended ? "true" : "false");
+                Dictionary<string, string> urlSegements = new()
+                {
+                    { "path", path },
+                    { "extended", extended ? "true" : "false" }
+                };
 
                 result = await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Get, "files/directory", default, null, urlSegements).ConfigureAwait(false);
 
@@ -6407,7 +6101,7 @@ namespace AndreasReitberger.API.Moonraker
                     // Needed for websocket connection
                     KlipperAccessTokenResult apiToken = await GetApiKeyAsync();
                     //KlipperAccessTokenResult oneshot = await GetOneshotTokenAsync();
-                    API = apiToken?.Result;
+                    ApiKey = apiToken?.Result;
                 }
                 UserToken = queryResult?.Result?.Token;
                 RefreshToken = queryResult?.Result?.RefreshToken;
@@ -6617,10 +6311,10 @@ namespace AndreasReitberger.API.Moonraker
                 };
 
                 // This operation needs a valid token / api key
-                if (string.IsNullOrEmpty(API))
+                if (string.IsNullOrEmpty(ApiKey))
                 {
                     KlipperAccessTokenResult token = await GetOneshotTokenAsync().ConfigureAwait(false);
-                    API = token?.Result;
+                    ApiKey = token?.Result;
                 }
                 result = await SendRestApiRequestAsync(MoonrakerCommandBase.access, Method.Post, "user", cmd).ConfigureAwait(false);
                 //return result?.Result;
