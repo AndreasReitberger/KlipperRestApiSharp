@@ -5,7 +5,7 @@ VisualStudioVersion = 17.0.32014.148
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MoonrakerSharpWebApi", "MoonrakerSharpWebApi\MoonrakerSharpWebApi.csproj", "{E9C9645B-C3B7-4727-9524-2870A4A01E5C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MoonrakerSharpWebApiTest", "MoonrakerSharpWebApiTest\MoonrakerSharpWebApiTest.csproj", "{141A5CFD-0D86-47B8-908C-718F585A3DAA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoonrakerSharpWebApi.Test", "MoonrakerSharpWebApi.Test\MoonrakerSharpWebApi.Test.csproj", "{DC21169A-AD7B-4A0C-BBEB-D19871D4712D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +17,10 @@ Global
 		{E9C9645B-C3B7-4727-9524-2870A4A01E5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E9C9645B-C3B7-4727-9524-2870A4A01E5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E9C9645B-C3B7-4727-9524-2870A4A01E5C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{141A5CFD-0D86-47B8-908C-718F585A3DAA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{141A5CFD-0D86-47B8-908C-718F585A3DAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{141A5CFD-0D86-47B8-908C-718F585A3DAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{141A5CFD-0D86-47B8-908C-718F585A3DAA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DC21169A-AD7B-4A0C-BBEB-D19871D4712D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC21169A-AD7B-4A0C-BBEB-D19871D4712D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC21169A-AD7B-4A0C-BBEB-D19871D4712D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC21169A-AD7B-4A0C-BBEB-D19871D4712D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
