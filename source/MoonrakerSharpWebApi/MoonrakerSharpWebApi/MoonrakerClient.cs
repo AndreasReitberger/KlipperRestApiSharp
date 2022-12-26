@@ -49,7 +49,7 @@ namespace AndreasReitberger.API.Moonraker
         #region Id
         //[JsonProperty(nameof(Id))]
         [ObservableProperty]
-        Guid _id = Guid.Empty;
+        Guid id = Guid.Empty;
 
         #endregion
 
@@ -463,6 +463,66 @@ namespace AndreasReitberger.API.Moonraker
 
         #endregion
 
+        #region Printer
+
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        double _speedFactor = 100;
+
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        double _speedFactorTarget = 100;
+
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        double _flowFactor = 100;
+
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        double _flowFactorTarget = 100;
+
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        double _x = 0;
+
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        double _y = 0;
+
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        double _z = 0;
+
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        double _liveVelocity = 0;
+
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        double _liveExtruderVelocity = 0;
+
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        double _currentLayer = 0;
+
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        double _layers = 0;
+
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        int _numberOfExtruders = 0;
+
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        bool _hasHeaterBed = false;
+
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        bool _hasFan = false;
+
+        #endregion
+
         #region RemotePrinters
         [JsonIgnore, XmlIgnore]
         ObservableCollection<KlipperDatabaseRemotePrinter> _printers = new();
@@ -533,6 +593,28 @@ namespace AndreasReitberger.API.Moonraker
         #endregion
 
         #region Jobs
+        [JsonIgnore, XmlIgnore]
+        byte[] _currentPrintImage;
+        [JsonIgnore, XmlIgnore]
+        public byte[] CurrentPrintImage
+        {
+            get => _currentPrintImage;
+            set
+            {
+                if (_currentPrintImage == value) return;
+                OnKlipperCurrentPrintImageChanged(new KlipperCurrentPrintImageChangedEventArgs()
+                {
+                    NewImage = value,
+                    PreviousImage = _currentPrintImage,
+                    SessonId = SessionId,
+                    CallbackId = -1,
+                    Token = !string.IsNullOrEmpty(UserToken) ? UserToken : ApiKey,
+                });
+                _currentPrintImage = value;
+                OnPropertyChanged();
+            }
+        }
+        
         [JsonIgnore, XmlIgnore]
         KlipperStatusJob _jobStatus;
         [JsonIgnore, XmlIgnore]
@@ -716,6 +798,7 @@ namespace AndreasReitberger.API.Moonraker
                     CallbackId = -1,
                 });
                 OnPropertyChanged();
+                UpdateGcodeMetaDependencies();
             }
         }
 
@@ -735,6 +818,11 @@ namespace AndreasReitberger.API.Moonraker
                     SessonId = SessionId,
                     CallbackId = -1,
                 });
+                if(_gcodeMove != null)
+                {
+                    SpeedFactor = _gcodeMove.SpeedFactor * 100 ?? 100;
+                    FlowFactor = _gcodeMove.ExtrudeFactor * 100 ?? 100;
+                }
                 OnPropertyChanged();
             }
         }
@@ -913,6 +1001,7 @@ namespace AndreasReitberger.API.Moonraker
                     });
                 }
                 OnPropertyChanged();
+                NumberOfExtruders = _extruders?.Count ?? 0;
             }
         }
 
@@ -952,6 +1041,7 @@ namespace AndreasReitberger.API.Moonraker
                     });
                 }
                 OnPropertyChanged();
+                HasHeaterBed = _heaterBed != null;
             }
         }
 
@@ -1083,6 +1173,39 @@ namespace AndreasReitberger.API.Moonraker
         }
 
         [JsonIgnore, XmlIgnore]
+        double _progress = 0;
+        [JsonIgnore, XmlIgnore]
+        public double Progress
+        {
+            get => _progress;
+            set
+            {
+                if (_progress == value) return;
+                OnKlipperIsPrintingProgressChanged(new KlipperIsPrintingProgressChangedEventArgs()
+                {
+                    PreviousPrintProgress = _progress,
+                    NewPrintProgress = value,
+                    SessonId = SessionId,
+                    CallbackId = -1,
+                });
+                _progress = value;
+                OnPropertyChanged();
+            }
+        }
+
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        double _printTime = 0;
+
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        double _totalPrintTime = 0;
+
+        [ObservableProperty]
+        [property: JsonIgnore, XmlIgnore]
+        double _remainingPrintTime = 0;
+
+        [JsonIgnore, XmlIgnore]
         KlipperStatusPrintStats _printStats;
         [JsonIgnore, XmlIgnore]
         public KlipperStatusPrintStats PrintStats
@@ -1103,6 +1226,12 @@ namespace AndreasReitberger.API.Moonraker
                 {
                     IsPrinting = _printStats?.State == KlipperPrintStates.Printing;
                     ActiveJobName = _printStats?.Filename;
+
+                    // Update progress
+                    PrintTime = _printStats?.PrintDuration ?? 0;
+                    TotalPrintTime = GcodeMeta?.EstimatedTime ?? 0;
+                    RemainingPrintTime = Convert.ToDouble(TotalPrintTime - _printStats?.PrintDuration ?? 0);
+                    Progress = Math.Round(MathHelper.Clamp((Convert.ToDouble(_printStats?.PrintDuration ?? 0)) / (TotalPrintTime / 100), 0, 100), 2);
                 }
                 OnPropertyChanged();
             }
@@ -1125,6 +1254,7 @@ namespace AndreasReitberger.API.Moonraker
                     CallbackId = -1,
                 });
                 OnPropertyChanged();
+                HasFan = _fan != null;
             }
         }
 
@@ -1146,6 +1276,7 @@ namespace AndreasReitberger.API.Moonraker
                 });
                 _motionReport = value;
                 OnPropertyChanged();
+                UpdateMotionReportDependencies();
             }
         }
 
@@ -1671,6 +1802,12 @@ namespace AndreasReitberger.API.Moonraker
             KlipperIsPrintingStateChanged?.Invoke(this, e);
         }
 
+        public event EventHandler<KlipperIsPrintingProgressChangedEventArgs> KlipperIsPrintingProgressChanged;
+        protected virtual void OnKlipperIsPrintingProgressChanged(KlipperIsPrintingProgressChangedEventArgs e)
+        {
+            KlipperIsPrintingProgressChanged?.Invoke(this, e);
+        }
+
         public event EventHandler<KlipperFanStateChangedEventArgs> KlipperFanStateChanged;
         protected virtual void OnKlipperFanStateChanged(KlipperFanStateChangedEventArgs e)
         {
@@ -1753,6 +1890,12 @@ namespace AndreasReitberger.API.Moonraker
         protected virtual void OnKlipperJobStatusChanged(KlipperJobStatusChangedEventArgs e)
         {
             KlipperJobStatusChanged?.Invoke(this, e);
+        }
+
+        public event EventHandler<KlipperCurrentPrintImageChangedEventArgs> KlipperCurrentPrintImageChanged;
+        protected virtual void OnKlipperCurrentPrintImageChanged(KlipperCurrentPrintImageChangedEventArgs e)
+        {
+            KlipperCurrentPrintImageChanged?.Invoke(this, e);
         }
 
         public event EventHandler<KlipperJobListChangedEventArgs> KlipperJobListChanged;
@@ -3399,7 +3542,51 @@ namespace AndreasReitberger.API.Moonraker
                 OnError(new UnhandledExceptionEventArgs(exc, false));
             }
         }
-#endregion
+
+        void UpdateMotionReportDependencies()
+        {
+            try
+            {
+                if (MotionReport?.LivePosition != null && MotionReport.LivePosition.Count > 0)
+                {
+                    // [X, Y, Z, E] 
+                    X = MotionReport.LivePosition[0];
+                    Y = MotionReport.LivePosition[1];
+                    Z = MotionReport.LivePosition[2];
+                }
+                if (MotionReport?.LiveVelocity != null)
+                {
+                    LiveVelocity = Convert.ToDouble(MotionReport.LiveVelocity);
+                }
+                if (MotionReport?.LiveExtruderVelocity != null)
+                {
+                    LiveExtruderVelocity = Convert.ToDouble(MotionReport.LiveExtruderVelocity);
+                }
+                if (GcodeMeta != null)
+                {
+                    CurrentLayer = MathHelper.Clamp(Convert.ToInt64(Z / GcodeMeta.LayerHeight), 0, Layers);
+                }
+            }
+            catch (Exception exc)
+            {
+                OnError(new UnhandledExceptionEventArgs(exc, false));
+            }
+        }
+
+        void UpdateGcodeMetaDependencies()
+        {
+            try
+            {
+                Layers = GcodeMeta?.Layers ?? 0;
+            }
+            catch (Exception exc)
+            {
+                OnError(new UnhandledExceptionEventArgs(exc, false));
+            }
+        }
+
+
+        #endregion
 
         #endregion
 
@@ -3490,11 +3677,11 @@ namespace AndreasReitberger.API.Moonraker
             IsListening = false;
         }
 
-        public async Task StartListeningAsync(bool StopActiveListening = false)
+        public async Task StartListeningAsync(bool stopActiveListening = false)
         {
             if (IsListening)// avoid multiple sessions
             {
-                if (StopActiveListening)
+                if (stopActiveListening)
                 {
                     await StopListeningAsync();
                 }
@@ -3525,6 +3712,10 @@ namespace AndreasReitberger.API.Moonraker
                         {
                             RefreshExtruderStatusAsync(),
                             RefreshHeaterBedStatusAsync(),
+                            RefreshPrintStatusAsync(),
+                            RefreshGcodeMoveStatusAsync(),
+                            RefreshMotionReportAsync(),
+                            RefreshToolHeadStatusAsync(),
                         };
                         await Task.WhenAll(tasks).ConfigureAwait(false);
                     }
@@ -4854,8 +5045,10 @@ namespace AndreasReitberger.API.Moonraker
             try
             {
                 string key = "heater_bed";
-                Dictionary<string, string> queryObjects = new();
-                queryObjects.Add(key, string.Empty);
+                Dictionary<string, string> queryObjects = new()
+                {
+                    { key, string.Empty }
+                };
 
                 Dictionary<string, object> result = await QueryPrinterObjectStatusAsync(queryObjects)
                     .ConfigureAwait(false);
@@ -5646,6 +5839,15 @@ namespace AndreasReitberger.API.Moonraker
             {
                 KlipperGcodeMetaResult meta = await GetGcodeMetadataAsync(fileName).ConfigureAwait(false);
                 GcodeMeta = meta;
+                if(PrintStats?.State == KlipperPrintStates.Printing)
+                {
+                    // Get current print image 
+                   CurrentPrintImage = await GetGcodeLargestThumbnailImageAsync(_gcodeMeta);
+                }
+                else
+                {
+                    CurrentPrintImage = new byte[0];
+                }
             }
             catch (Exception exc)
             {
@@ -5676,6 +5878,24 @@ namespace AndreasReitberger.API.Moonraker
         {
             string path = gcodeMeta.Thumbnails.Count > index ?
                 gcodeMeta.Thumbnails[index].RelativePath : gcodeMeta.Thumbnails.FirstOrDefault().RelativePath;
+
+            string subfolder = string.Empty;
+            if (gcodeMeta.Filename.Contains("/"))
+            {
+                subfolder = gcodeMeta.Filename.Substring(0, gcodeMeta.Filename.LastIndexOf("/"));
+                subfolder += "/";
+            }
+
+            return string.IsNullOrEmpty(path) ? null : await GetGcodeThumbnailImageAsync(subfolder + path, timeout)
+                .ConfigureAwait(false)
+                ;
+        }
+        public async Task<byte[]> GetGcodeLargestThumbnailImageAsync(KlipperGcodeMetaResult gcodeMeta, int timeout = 10000)
+        {
+            string path = gcodeMeta.Thumbnails
+                .OrderByDescending(image => image.Size)
+                .FirstOrDefault().RelativePath
+                ;
 
             string subfolder = string.Empty;
             if (gcodeMeta.Filename.Contains("/"))
