@@ -1,0 +1,40 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+	  <TargetFrameworks>netstandard2.1;net6;net7</TargetFrameworks>
+	  <ImplicitUsings>enable</ImplicitUsings>
+	  <Nullable>enable</Nullable>
+	  <RootNamespace>AndreasReitberger.API.Moonraker</RootNamespace>
+	  <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	  <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+	  <Authors>Andreas Reitberger</Authors>
+	  <Company>Andreas Reitberger</Company>
+	  <Copyright>Andreas Reitberger</Copyright>
+	  <Description>An extension to the `MoonrakerSharpWebApi` to support database saving and loading.</Description>
+	  <PackageTags>Moonraker, Klipper, MainsailOS, Remote, Web, API, Rest, Sharp, Fluidd</PackageTags>
+	  <PackageProjectUrl>https://github.com/AndreasReitberger/KlipperRestApiSharp</PackageProjectUrl>
+	  <RepositoryUrl>https://github.com/AndreasReitberger/KlipperRestApiSharp</RepositoryUrl>
+	  <AssemblyVersion>1.0.0.0</AssemblyVersion>
+	  <FileVersion>1.0.0.0</FileVersion>
+	  <Version>1.0.0</Version>
+	  <LangVersion>10.0</LangVersion>
+	  <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+	  <PackageReadmeFile>README.md</PackageReadmeFile>
+	  <Title>MoonrakerSharpWebApi.SQLite</Title>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MoonrakerSharpWebApi\MoonrakerSharpWebApi.csproj" />
+  </ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.1.0-preview3" />
+		<PackageReference Include="RCoreSharp" Version="1.0.8" />
+		<PackageReference Include="sqlite-net-pcl" Version="1.8.116" />
+		<PackageReference Include="SQLiteNetExtensions" Version="2.1.0" />
+		<PackageReference Include="SQLiteNetExtensions.Async" Version="2.1.0" />
+		<PackageReference Include="SQLitePCLRaw.provider.dynamic_cdecl" Version="2.1.2" />
+		<None Include="..\..\..\README.md" Pack="true" PackagePath="\" />
+	</ItemGroup>
+
+</Project>
