@@ -5846,7 +5846,7 @@ namespace AndreasReitberger.API.Moonraker
                 }
                 else
                 {
-                    CurrentPrintImage = new byte[0];
+                    CurrentPrintImage = Array.Empty<byte>();
                 }
             }
             catch (Exception exc)
@@ -5894,6 +5894,43 @@ namespace AndreasReitberger.API.Moonraker
         {
             string path = gcodeMeta.Thumbnails
                 .OrderByDescending(image => image.Size)
+                .FirstOrDefault().RelativePath
+                ;
+
+            string subfolder = string.Empty;
+            if (gcodeMeta.Filename.Contains("/"))
+            {
+                subfolder = gcodeMeta.Filename.Substring(0, gcodeMeta.Filename.LastIndexOf("/"));
+                subfolder += "/";
+            }
+
+            return string.IsNullOrEmpty(path) ? null : await GetGcodeThumbnailImageAsync(subfolder + path, timeout)
+                .ConfigureAwait(false)
+                ;
+        }
+        public async Task<byte[]> GetGcodeSmallestThumbnailImageAsync(KlipperGcodeMetaResult gcodeMeta, int timeout = 10000)
+        {
+            string path = gcodeMeta.Thumbnails
+                .OrderBy(image => image.Size)
+                .FirstOrDefault().RelativePath
+                ;
+
+            string subfolder = string.Empty;
+            if (gcodeMeta.Filename.Contains("/"))
+            {
+                subfolder = gcodeMeta.Filename.Substring(0, gcodeMeta.Filename.LastIndexOf("/"));
+                subfolder += "/";
+            }
+
+            return string.IsNullOrEmpty(path) ? null : await GetGcodeThumbnailImageAsync(subfolder + path, timeout)
+                .ConfigureAwait(false)
+                ;
+        }
+        public async Task<byte[]> GetGcodeSecondThumbnailImageAsync(KlipperGcodeMetaResult gcodeMeta, int timeout = 10000)
+        {
+            string path = gcodeMeta.Thumbnails
+                .OrderBy(image => image.Size)
+                .Skip(1) // Skipped the smallest image
                 .FirstOrDefault().RelativePath
                 ;
 
