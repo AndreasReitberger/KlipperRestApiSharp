@@ -1,5 +1,6 @@
 ﻿using AndreasReitberger.API.Moonraker.Enum;
 using AndreasReitberger.API.Moonraker.Models;
+using AndreasReitberger.API.Moonraker.Models.Exceptions;
 using AndreasReitberger.Core.Enums;
 using AndreasReitberger.Core.Utilities;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -753,6 +754,26 @@ namespace AndreasReitberger.API.Moonraker
                 OnKlipperServerTemperatureCacheChanged(new KlipperTemperatureCacheChangedEventArgs()
                 {
                     CachedTemperatures = value,
+                    SessonId = SessionId,
+                    CallbackId = -1,
+                });
+                OnPropertyChanged();
+            }
+        }
+
+        [JsonIgnore, XmlIgnore]
+        List<KlipperGcode> _gcodeCache = new();
+        [JsonIgnore, XmlIgnore]
+        public List<KlipperGcode> GcodeCache
+        {
+            get => _gcodeCache;
+            set
+            {
+                if (_gcodeCache == value) return;
+                _gcodeCache = value;
+                OnKlipperServerGcodeCacheChanged(new KlipperGcodeCacheChangedEventArgs()
+                {
+                    CachedGcodes = value,
                     SessonId = SessionId,
                     CallbackId = -1,
                 });
@@ -1736,6 +1757,12 @@ namespace AndreasReitberger.API.Moonraker
             KlipperServerTemperatureCacheChanged?.Invoke(this, e);
         }
 
+        public event EventHandler<KlipperGcodeCacheChangedEventArgs> KlipperServerGcodeCacheChanged;
+        protected virtual void OnKlipperServerGcodeCacheChanged(KlipperGcodeCacheChangedEventArgs e)
+        {
+            KlipperServerGcodeCacheChanged?.Invoke(this, e);
+        }
+
         public event EventHandler<KlipperCpuUsageChangedEventArgs> KlipperServerCpuUsageChanged;
         protected virtual void OnKlipperServerCpuUsageChanged(KlipperCpuUsageChangedEventArgs e)
         {
@@ -2290,7 +2317,7 @@ namespace AndreasReitberger.API.Moonraker
                                                 }
                                                 else
                                                 {
-                                                    CpuUsage.Add(cpuUsageIdentifier, cpuUsageItem.Value);
+                                                    CpuUsage.TryAdd(cpuUsageIdentifier, cpuUsageItem.Value);
                                                 }
                                             }
                                         }
@@ -2308,7 +2335,7 @@ namespace AndreasReitberger.API.Moonraker
                                                 }
                                                 else
                                                 {
-                                                    SystemMemory.Add(memoryIdentifier, memoryUsage.Value);
+                                                    SystemMemory.TryAdd(memoryIdentifier, memoryUsage.Value);
                                                 }
                                             }
                                         }
@@ -3745,6 +3772,8 @@ namespace AndreasReitberger.API.Moonraker
             {
                 // Avoid multiple calls
                 if (IsRefreshing) return;
+                if (!IsOnline) throw new ServerNotReachableException($"The server '{ServerName} ({FullWebAddress})' is not reachable. Make sure to call `CheckOnlineAsync()` first! ");
+                
                 IsRefreshing = true;
                 // Detects current operating system, must be called before each other Database method
                 await RefreshDatabaseNamespacesAsync();
@@ -3760,6 +3789,7 @@ namespace AndreasReitberger.API.Moonraker
                     RefreshDirectoryInformationAsync(),
                     RefreshAvailableDirectorienAsync(),
                     RefreshServerCachedTemperatureDataAsync(),
+                    RefreshServerCachedGcodesAsync(),
 
                     RefreshToolHeadStatusAsync(),
                     RefreshVirtualSdCardStatusAsync(),
@@ -5228,7 +5258,19 @@ namespace AndreasReitberger.API.Moonraker
                 return resultObject;
             }
         }
-
+        public async Task RefreshServerCachedGcodesAsync()
+        {
+            try
+            {
+                List<KlipperGcode> result = await GetServerCachedGcodesAsync().ConfigureAwait(false);
+                GcodeCache = result;
+            }
+            catch (Exception exc)
+            {
+                OnError(new UnhandledExceptionEventArgs(exc, false));
+                GcodeCache = new();
+            }
+        }
         public async Task<List<KlipperGcode>> GetServerCachedGcodesAsync(long count = 100)
         {
             KlipperApiRequestRespone result = new();
@@ -5760,7 +5802,7 @@ namespace AndreasReitberger.API.Moonraker
                         current.GcodeMeta = await GetGcodeMetadataAsync(current.Path).ConfigureAwait(false);
                         if (current.GcodeMeta?.Thumbnails?.Count > 0)
                         {
-                            current.Image = await GetGcodeThumbnailImageAsync(current.GcodeMeta, 1)
+                            current.Image = await GetGcodeSecondThumbnailImageAsync(current.GcodeMeta)
                                 .ConfigureAwait(false)
                                 ;
                         }
@@ -6729,19 +6771,22 @@ namespace AndreasReitberger.API.Moonraker
                 {
                     throw new ArgumentOutOfRangeException(namespaceName, "The requested namespace name was not found in the database!");
                 }
-                
-                Dictionary<string, string> urlSegements = new();
-                urlSegements.Add("namespace", namespaceName);
+
+                Dictionary<string, string> urlSegements = new()
+                {
+                    { "namespace", namespaceName }
+                };
                 if (!string.IsNullOrEmpty(key)) urlSegements.Add("key", key);
 
-                result =
-                    await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Get, $"database/item", default, null, urlSegements)
-                    .ConfigureAwait(false);
-                KlipperDatabaseItemRespone queryResult = JsonConvert.DeserializeObject<KlipperDatabaseItemRespone>(result.Result);
+                result = await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Get, $"database/item", default, null, urlSegements)
+                            .ConfigureAwait(false);
+                KlipperDatabaseItemRespone queryResult = JsonConvert.DeserializeObject<KlipperDatabaseItemRespone>(result?.Result);
                 if (queryResult != null)
                 {
-                    resultObject = new();
-                    resultObject.Add($"{namespaceName}{(!string.IsNullOrEmpty(key) ? $"|{key}" : "")}", queryResult?.Result?.Value);
+                    resultObject = new()
+                    {
+                        { $"{namespaceName}{(!string.IsNullOrEmpty(key) ? $"|{key}" : "")}", queryResult?.Result?.Value }
+                    };
                 }
                 return resultObject;
             }
