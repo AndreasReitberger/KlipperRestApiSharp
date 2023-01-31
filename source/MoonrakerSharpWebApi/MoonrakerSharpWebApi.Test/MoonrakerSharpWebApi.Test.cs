@@ -1472,7 +1472,7 @@ namespace MoonrakerSharpWebApi.Test
                     //Debug.WriteLine($"PrintState: New => {args.NewPrintState.State}; Previous => {args.PreviousPrintState?.State}");
                 };
 
-                _server.WebSocketDataReceived += (o, args) =>
+                _server.WebSocketMessageReceived += (o, args) =>
                 {
                     if (!string.IsNullOrEmpty(args.Message))
                     {

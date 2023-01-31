@@ -1663,8 +1663,14 @@ namespace AndreasReitberger.API.Moonraker
             WebSocketError?.Invoke(this, e);
         }
 
-        public event EventHandler<KlipperEventArgs> WebSocketDataReceived;
-        protected virtual void OnWebSocketDataReceived(KlipperEventArgs e)
+        public event EventHandler<KlipperEventArgs> WebSocketMessageReceived;
+        protected virtual void OnWebSocketMessageReceived(KlipperEventArgs e)
+        {
+            WebSocketMessageReceived?.Invoke(this, e);
+        }
+
+        public event EventHandler<KlipperWebSocketDataEventArgs> WebSocketDataReceived;
+        protected virtual void OnWebSocketDataReceived(KlipperWebSocketDataEventArgs e)
         {
             WebSocketDataReceived?.Invoke(this, e);
         }
@@ -2159,48 +2165,81 @@ namespace AndreasReitberger.API.Moonraker
             }
         }
 
-        private void WebSocket_Error(object sender, ErrorEventArgs e)
+        void WebSocket_Error(object sender, ErrorEventArgs e)
         {
-            IsListeningToWebsocket = false;
-            WebSocketConnectionId = -1;
-            OnWebSocketError(e);
-            OnError(e);
+            try
+            {
+                IsListeningToWebsocket = false;
+                WebSocketConnectionId = -1;
+                OnWebSocketError(e);
+                OnError(e);
+            }
+            catch (Exception exc)
+            {
+                OnError(new UnhandledExceptionEventArgs(exc, false));
+            }
         }
 
-        private void WebSocket_Closed(object sender, EventArgs e)
+        void WebSocket_Closed(object sender, EventArgs e)
         {
-            IsListeningToWebsocket = false;
-            WebSocketConnectionId = -1;
-            StopPingTimer();
-            OnWebSocketDisconnected(new KlipperEventArgs()
+            try
             {
-                Message = $"WebSocket connection to {WebSocket} closed. Connection state while closing was '{(IsOnline ? "online" : "offline")}'",
-            });
+                IsListeningToWebsocket = false;
+                WebSocketConnectionId = -1;
+                StopPingTimer();
+                OnWebSocketDisconnected(new KlipperEventArgs()
+                {
+                    Message = $"WebSocket connection to {WebSocket} closed. Connection state while closing was '{(IsOnline ? "online" : "offline")}'",
+                });
+            }
+            catch (Exception exc)
+            {
+                OnError(new UnhandledExceptionEventArgs(exc, false));
+            }
         }
 
-        private void WebSocket_Opened(object sender, EventArgs e)
+        void WebSocket_Opened(object sender, EventArgs e)
         {
-            // Get ready state from klipper
-            string infoCommand = $"{{\"jsonrpc\":\"2.0\",\"method\":\"server.info\",\"params\":{{}},\"id\":1}}";
-            WebSocket.Send(infoCommand);
-
-            // Get the websocket Id of the current connection
-            string connectionId = $"{{\"jsonrpc\":\"2.0\",\"method\":\"server.websocket.id\",\"params\":{{}},\"id\":2}}";
-            WebSocket.Send(connectionId);
-
-            // No ping needed to keep connection alive
-            //PingTimer = new Timer((action) => PingServer(), null, 0, 2500);
-
-            IsListeningToWebsocket = true;
-            OnWebSocketConnected(new KlipperEventArgs()
+            try
             {
-                Message = $"WebSocket connection to {WebSocket} established. Connection state while opening was '{(IsOnline ? "online" : "offline")}'",
-            });
+                // Get ready state from klipper
+                string infoCommand = $"{{\"jsonrpc\":\"2.0\",\"method\":\"server.info\",\"params\":{{}},\"id\":1}}";
+                WebSocket?.Send(infoCommand);
+
+                // Get the websocket Id of the current connection
+                string connectionId = $"{{\"jsonrpc\":\"2.0\",\"method\":\"server.websocket.id\",\"params\":{{}},\"id\":2}}";
+                WebSocket?.Send(connectionId);
+
+                // No ping needed to keep connection alive
+                //PingTimer = new Timer((action) => PingServer(), null, 0, 2500);
+
+                IsListeningToWebsocket = true;
+                OnWebSocketConnected(new KlipperEventArgs()
+                {
+                    Message = $"WebSocket connection to {WebSocket} established. Connection state while opening was '{(IsOnline ? "online" : "offline")}'",
+                });
+            }
+            catch (Exception exc)
+            {
+                OnError(new UnhandledExceptionEventArgs(exc, false));
+            }
         }
 
         private void WebSocket_DataReceived(object sender, DataReceivedEventArgs e)
         {
-
+            try
+            {
+                OnWebSocketDataReceived(new KlipperWebSocketDataEventArgs()
+                {
+                    CallbackId = PingCounter,
+                    Data = e.Data,
+                    SessonId = SessionId,
+                });
+            }
+            catch (Exception exc)
+            {
+                OnError(new UnhandledExceptionEventArgs(exc, false));
+            }
         }
 
         private void WebSocket_MessageReceived(object sender, MessageReceivedEventArgs e)
@@ -2290,7 +2329,7 @@ namespace AndreasReitberger.API.Moonraker
                                                 }
                                                 else
                                                 {
-                                                    CpuUsage.Add(cpuUsageIdentifier, cpuUsageItem.Value);
+                                                    CpuUsage.TryAdd(cpuUsageIdentifier, cpuUsageItem.Value);
                                                 }
                                             }
                                         }
@@ -2308,7 +2347,7 @@ namespace AndreasReitberger.API.Moonraker
                                                 }
                                                 else
                                                 {
-                                                    SystemMemory.Add(memoryIdentifier, memoryUsage.Value);
+                                                    SystemMemory.TryAdd(memoryIdentifier, memoryUsage.Value);
                                                 }
                                             }
                                         }
@@ -2493,7 +2532,7 @@ namespace AndreasReitberger.API.Moonraker
                                                         }
                                                         else
                                                         {
-                                                            Fans.Add(fanName, fanObject);
+                                                            Fans.TryAdd(fanName, fanObject);
                                                         }
                                                     }
                                                     nameFound = true;
@@ -2518,7 +2557,7 @@ namespace AndreasReitberger.API.Moonraker
                                                         }
                                                         else
                                                         {
-                                                            TemperatureSensors.Add(sensorName, tempObject);
+                                                            TemperatureSensors.TryAdd(sensorName, tempObject);
                                                         }
                                                         nameFound = true;
                                                     }
@@ -2543,7 +2582,7 @@ namespace AndreasReitberger.API.Moonraker
                                                         }
                                                         else
                                                         {
-                                                            Drivers.Add(driverName, drvObject.DrvStatus);
+                                                            Drivers.TryAdd(driverName, drvObject.DrvStatus);
                                                         }
                                                         nameFound = true;
                                                     }
@@ -2574,7 +2613,7 @@ namespace AndreasReitberger.API.Moonraker
                                         if (!loggedResults.ContainsKey(name))
                                         {
                                             // Log unused json results for further releases
-                                            loggedResults.Add(name, jsonBody);
+                                            loggedResults.TryAdd(name, jsonBody);
                                             IgnoredJsonResults = loggedResults;
                                         }
                                         break;
@@ -2663,7 +2702,7 @@ namespace AndreasReitberger.API.Moonraker
                                         if (!loggedResults.ContainsKey(name))
                                         {
                                             // Log unused json results for further releases
-                                            loggedResults.Add(name, jsonBody);
+                                            loggedResults.TryAdd(name, jsonBody);
                                             IgnoredJsonResults = loggedResults;
                                         }
                                         break;
@@ -2689,7 +2728,7 @@ namespace AndreasReitberger.API.Moonraker
                 {
 
                 }
-                OnWebSocketDataReceived(new KlipperEventArgs()
+                OnWebSocketMessageReceived(new KlipperEventArgs()
                 {
                     CallbackId = PingCounter,
                     Message = e.Message,
