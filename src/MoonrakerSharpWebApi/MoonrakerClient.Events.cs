@@ -29,8 +29,14 @@ namespace AndreasReitberger.API.Moonraker
             WebSocketError?.Invoke(this, e);
         }
 
-        public event EventHandler<KlipperEventArgs> WebSocketDataReceived;
-        protected virtual void OnWebSocketDataReceived(KlipperEventArgs e)
+        public event EventHandler<KlipperEventArgs> WebSocketMessageReceived;
+        protected virtual void OnWebSocketMessageReceived(KlipperEventArgs e)
+        {
+            WebSocketMessageReceived?.Invoke(this, e);
+        }
+
+        public event EventHandler<KlipperWebSocketDataEventArgs> WebSocketDataReceived;
+        protected virtual void OnWebSocketDataReceived(KlipperWebSocketDataEventArgs e)
         {
             WebSocketDataReceived?.Invoke(this, e);
         }

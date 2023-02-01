@@ -160,7 +160,7 @@ namespace AndreasReitberger.API.Moonraker
         string hostName = string.Empty;
 
         [ObservableProperty]
-        string serverName= string.Empty;
+        string serverName = string.Empty;
 
         [ObservableProperty]
         string serverAddress = string.Empty;
@@ -544,7 +544,7 @@ namespace AndreasReitberger.API.Moonraker
             OnKlipperCpuTemperatureChanged(new KlipperCpuTemperatureChangedEventArgs()
             {
                 NewTemperature = value,
-            });           
+            });
         }
 
         [ObservableProperty]
@@ -627,7 +627,7 @@ namespace AndreasReitberger.API.Moonraker
                 CallbackId = -1,
             });
             SpeedFactor = value?.SpeedFactor * 100 ?? 100;
-            FlowFactor = value?.ExtrudeFactor * 100 ?? 100;        
+            FlowFactor = value?.ExtrudeFactor * 100 ?? 100;
         }
 
         [ObservableProperty]
@@ -941,7 +941,7 @@ namespace AndreasReitberger.API.Moonraker
                 SessonId = SessionId,
                 CallbackId = -1,
             });
-            if(value?.ValidPrintState == true)
+            if (value?.ValidPrintState == true)
             {
                 IsPrinting = value?.State == KlipperPrintStates.Printing;
                 ActiveJobName = value?.Filename;
@@ -983,7 +983,7 @@ namespace AndreasReitberger.API.Moonraker
         }
         partial void OnMotionReportChanged(KlipperStatusMotionReport value)
         {
-            UpdateMotionReportDependencies();           
+            UpdateMotionReportDependencies();
         }
 
         [ObservableProperty]
@@ -1006,11 +1006,11 @@ namespace AndreasReitberger.API.Moonraker
         partial void OnToolHeadChanged(KlipperStatusToolhead value)
         {
             OnKlipperToolHeadStateChanged(new KlipperToolHeadStateChangedEventArgs()
-                {
-                    NewToolheadState = value,
-                    SessonId = SessionId,
-                    CallbackId = -1,
-                });
+            {
+                NewToolheadState = value,
+                SessonId = SessionId,
+                CallbackId = -1,
+            });
         }
 
         [ObservableProperty]
@@ -1047,12 +1047,12 @@ namespace AndreasReitberger.API.Moonraker
         partial void OnFilamentSensorChanging(KlipperStatusFilamentSensor value)
         {
             OnKlipperFSensorChanged(new KlipperFSensorStateChangedEventArgs()
-                {
-                    NewFSensorState = value,
-                    PreviousFSensorState = FilamentSensor,
-                    SessonId = SessionId,
-                    CallbackId = -1,
-                });
+            {
+                NewFSensorState = value,
+                PreviousFSensorState = FilamentSensor,
+                SessonId = SessionId,
+                CallbackId = -1,
+            });
         }
 
         [ObservableProperty]
@@ -1089,7 +1089,7 @@ namespace AndreasReitberger.API.Moonraker
         #region ReadOnly
 
         public string FullWebAddress => $"{(IsSecure ? "https" : "http")}://{ServerAddress}:{Port}";
-        
+
         public bool IsReady
         {
             get
@@ -1267,7 +1267,7 @@ namespace AndreasReitberger.API.Moonraker
             }
         }
         #endregion
-        
+
         #region WebSocket
         [Obsolete("Use ConnectWebSocketAsync instead")]
         public void ConnectWebSocket()
@@ -1300,9 +1300,9 @@ namespace AndreasReitberger.API.Moonraker
                 WebSocket = new WebSocket(target)
                 {
                     EnableAutoSendPing = false,
-                    
+
                 };
-                if(LoginRequired)
+                if (LoginRequired)
                 {
                     //WebSocket.Security.Credential = new NetworkCredential(Username, Password);
                 }
@@ -1366,7 +1366,7 @@ namespace AndreasReitberger.API.Moonraker
                 OnError(new UnhandledExceptionEventArgs(exc, false));
             }
         }
-        
+
         public async Task ConnectWebSocketAsync()
         {
             try
@@ -1394,7 +1394,7 @@ namespace AndreasReitberger.API.Moonraker
                 WebSocket = new WebSocket(target)
                 {
                     EnableAutoSendPing = false,
-                    
+
                 };
 
                 if (IsSecure)
@@ -1428,7 +1428,7 @@ namespace AndreasReitberger.API.Moonraker
                 if (WebSocket != null)
                 {
                     if (WebSocket.State == WebSocketState.Open)
-                    await WebSocket.CloseAsync();
+                        await WebSocket.CloseAsync();
                     StopPingTimer();
 
                     WebSocket.MessageReceived -= WebSocket_MessageReceived;
@@ -1705,7 +1705,7 @@ namespace AndreasReitberger.API.Moonraker
                                         if (!jsonBody.Contains("temperature") || RefreshHeatersDirectly) break;
                                         int index = 0;
                                         string extruderIndex = name.Replace("extruder", string.Empty);
-                                        if(extruderIndex.Length > 0)
+                                        if (extruderIndex.Length > 0)
                                         {
                                             int.TryParse(extruderIndex, out index);
                                         }
@@ -1803,7 +1803,7 @@ namespace AndreasReitberger.API.Moonraker
 #if NETSTANDARD
                                                     string fanName = fan[^1];
 #else
-                                                string fanName = fan[fan.Length -1];
+                                                    string fanName = fan[fan.Length - 1];
 #endif
                                                     KlipperStatusFan fanObject = JsonConvert.DeserializeObject<KlipperStatusFan>(jsonBody);
                                                     if (fanObject != null)
@@ -1853,7 +1853,7 @@ namespace AndreasReitberger.API.Moonraker
 #if NETSTANDARD
                                                     string driverName = driver[^1];
 #else
-                                                string driverName = driver[driver.Length - 1];
+                                                    string driverName = driver[driver.Length - 1];
 #endif
                                                     KlipperStatusDriverRespone drvObject = JsonConvert.DeserializeObject<KlipperStatusDriverRespone>(jsonBody);
                                                     if (drvObject != null)
@@ -1884,7 +1884,7 @@ namespace AndreasReitberger.API.Moonraker
                                         {
                                             OnError(new UnhandledExceptionEventArgs(exc, false));
                                         }
-                                        if(nameFound)
+                                        if (nameFound)
                                         {
                                             break;
                                         }
@@ -1971,7 +1971,7 @@ namespace AndreasReitberger.API.Moonraker
                                     //case "registered_directories":
                                     case "warnings":
                                     case "websocket_count":
-                                    //case "moonraker_version":
+                                        //case "moonraker_version":
 #if DEBUG
                                         Console.WriteLine($"Ignored Json object: '{name}' => '{jsonBody}");
 #endif
@@ -2067,14 +2067,14 @@ namespace AndreasReitberger.API.Moonraker
                 return false;
             }
         }
-        
+
         KlipperApiRequestRespone ValidateRespone(RestResponse respone, Uri targetUri)
         {
             KlipperApiRequestRespone apiRsponeResult = new() { IsOnline = IsOnline };
             try
             {
                 if ((
-                    respone.StatusCode == HttpStatusCode.OK || respone.StatusCode == HttpStatusCode.NoContent) && 
+                    respone.StatusCode == HttpStatusCode.OK || respone.StatusCode == HttpStatusCode.NoContent) &&
                     respone.ResponseStatus == ResponseStatus.Completed)
                 {
                     apiRsponeResult.IsOnline = true;
@@ -2127,7 +2127,7 @@ namespace AndreasReitberger.API.Moonraker
                     });
                 }
             }
-            catch(Exception exc)
+            catch (Exception exc)
             {
                 OnError(new UnhandledExceptionEventArgs(exc, false));
             }
@@ -2141,7 +2141,7 @@ namespace AndreasReitberger.API.Moonraker
             Method method,
             string command,
             object jsonObject = null,
-            CancellationTokenSource cts = default,           
+            CancellationTokenSource cts = default,
             Dictionary<string, string> urlSegments = null,
             string requestTargetUri = ""
             )
@@ -2151,12 +2151,12 @@ namespace AndreasReitberger.API.Moonraker
 
             try
             {
-                if(cts == default)
+                if (cts == default)
                 {
                     cts = new(DefaultTimeout);
                 }
                 // https://github.com/Arksine/moonraker/blob/master/docs/web_api.md
-                if(restClient == null)
+                if (restClient == null)
                 {
                     UpdateRestClientInstance();
                 }
@@ -2210,7 +2210,7 @@ namespace AndreasReitberger.API.Moonraker
                 try
                 {
                     RestResponse respone = await restClient.ExecuteAsync(request, cts.Token).ConfigureAwait(false);
-                    apiRsponeResult = ValidateRespone(respone, fullUri);     
+                    apiRsponeResult = ValidateRespone(respone, fullUri);
                 }
                 catch (TaskCanceledException texp)
                 {
@@ -2343,7 +2343,7 @@ namespace AndreasReitberger.API.Moonraker
                 }
                 CancellationTokenSource cts = new(new TimeSpan(0, 0, 0, 0, timeout));
                 RestRequest request = new("/server/files/upload");
-                
+
                 bool validHeader = false;
                 // Prefer usertoken over api key
                 if (!string.IsNullOrEmpty(UserToken))
@@ -2497,7 +2497,7 @@ namespace AndreasReitberger.API.Moonraker
                 }
                 CancellationTokenSource cts = new(new TimeSpan(0, 0, 0, 0, timeout));
                 RestRequest request = new("/server/files/upload");
-                
+
                 bool validHeader = false;
                 // Prefer usertoken over api key
                 if (!string.IsNullOrEmpty(UserToken))
@@ -2632,7 +2632,7 @@ namespace AndreasReitberger.API.Moonraker
             }
             return apiRsponeResult;
         }
-        
+
         #endregion
 
         #region Download
@@ -2645,7 +2645,7 @@ namespace AndreasReitberger.API.Moonraker
                     UpdateRestClientInstance();
                 }
                 RestRequest request = new(path);
-                
+
                 bool validHeader = false;
                 // Prefer usertoken over api key
                 if (!string.IsNullOrEmpty(UserToken))
@@ -2743,7 +2743,7 @@ namespace AndreasReitberger.API.Moonraker
                     Proxy = GetCurrentProxy(),
                     AllowAutoRedirect = true,
                 };
-                
+
                 httpClient = new(handler: httpHandler, disposeHandler: true);
                 restClient = new(httpClient: httpClient, options: options);
             }
@@ -2753,7 +2753,7 @@ namespace AndreasReitberger.API.Moonraker
                 restClient = new(baseUrl: FullWebAddress);
             }
         }
-        
+
         #endregion
 
         #region Timers
@@ -2789,7 +2789,7 @@ namespace AndreasReitberger.API.Moonraker
                 }
             }
         }
-#endregion
+        #endregion
 
         #region State & Config
         void UpdateServerConfig(KlipperServerConfig newConfig)
@@ -2821,7 +2821,7 @@ namespace AndreasReitberger.API.Moonraker
         {
             try
             {
-                if(newIsPrintingState)
+                if (newIsPrintingState)
                 {
                     // Refresh current job and gcode meta
                     Task.Run(async () =>
@@ -2846,7 +2846,7 @@ namespace AndreasReitberger.API.Moonraker
         {
             try
             {
-                if(job == null || string.IsNullOrEmpty(job.Filename))
+                if (job == null || string.IsNullOrEmpty(job.Filename))
                 {
                     GcodeMeta = null;
                 }
@@ -2965,7 +2965,7 @@ namespace AndreasReitberger.API.Moonraker
                 else RefreshCounter++;
                 if (IsOnline)
                 {
-                    if(RefreshCounter%2 == 0)
+                    if (RefreshCounter % 2 == 0)
                     {
                         await RefreshServerCachedTemperatureDataAsync().ConfigureAwait(false);
                     }
@@ -3023,7 +3023,7 @@ namespace AndreasReitberger.API.Moonraker
                 else RefreshCounter++;
                 if (IsOnline)
                 {
-                    if(RefreshCounter%2 == 0)
+                    if (RefreshCounter % 2 == 0)
                     {
                         await RefreshServerCachedTemperatureDataAsync().ConfigureAwait(false);
                     }
@@ -3067,7 +3067,7 @@ namespace AndreasReitberger.API.Moonraker
                 // Avoid multiple calls
                 if (IsRefreshing) return;
                 if (!IsOnline) throw new ServerNotReachableException($"The server '{ServerName} ({FullWebAddress})' is not reachable. Make sure to call `CheckOnlineAsync()` first! ");
-                
+
                 IsRefreshing = true;
                 // Detects current operating system, must be called before each other Database method
                 await RefreshDatabaseNamespacesAsync();
@@ -3184,7 +3184,7 @@ namespace AndreasReitberger.API.Moonraker
                 try
                 {
                     // Send a blank api request in order to check if the server is reachable
-                    KlipperApiRequestRespone respone = 
+                    KlipperApiRequestRespone respone =
                         await SendOnlineCheckRestApiRequestAsync(MoonrakerCommandBase.api, "version", cts)
                         .ConfigureAwait(false);
                     isReachable = respone?.IsOnline == true;
@@ -3417,7 +3417,7 @@ namespace AndreasReitberger.API.Moonraker
             }
         }
 
-#endregion
+        #endregion
 
         #region Printer Administration
 
@@ -3627,7 +3627,7 @@ namespace AndreasReitberger.API.Moonraker
                     .ConfigureAwait(false);
 
                 KlipperActionListRespone state = JsonConvert.DeserializeObject<KlipperActionListRespone>(result.Result);
-                if(!string.IsNullOrEmpty(startsWith))
+                if (!string.IsNullOrEmpty(startsWith))
                 {
                     resultObject = state?.Result?.Objects.Where(obj => obj.StartsWith(startsWith)).ToList();
                     if (removeStartTag)
@@ -3681,10 +3681,10 @@ namespace AndreasReitberger.API.Moonraker
                         do
                         {
                             JToken token = avilableProperties.Pop();
-                            if(token is JProperty propTest)
+                            if (token is JProperty propTest)
                             {
                                 // Get the childs for this tags
-                                if(propTest.Name.StartsWith("configfile") || propTest.Name.StartsWith("settings"))
+                                if (propTest.Name.StartsWith("configfile") || propTest.Name.StartsWith("settings"))
                                 {
                                     // Add all child properties back to the stack
                                     List<JToken> children = token.Children().ToList();
@@ -3711,7 +3711,7 @@ namespace AndreasReitberger.API.Moonraker
                                     }
                                     continue;
                                 }
-                                
+
                             }
 
                             if (token is not JProperty parent)
@@ -4089,7 +4089,7 @@ namespace AndreasReitberger.API.Moonraker
             try
             {
                 KlipperStatusExtruder result = await GetExtruderStatusAsync(index).ConfigureAwait(false);
-                if(result != null)
+                if (result != null)
                 {
                     Dictionary<int, KlipperStatusExtruder> states = new();
                     states.Add(index, result);
@@ -4610,7 +4610,7 @@ namespace AndreasReitberger.API.Moonraker
                 return false;
             }
         }
-#endregion
+        #endregion
 
         #region WebSocket
 
@@ -4875,7 +4875,7 @@ namespace AndreasReitberger.API.Moonraker
             try
             {
                 //string gcode = $"G1 X+10 F{Speed}";
-                var axes = new[] {x, y, z};
+                var axes = new[] { x, y, z };
                 StringBuilder gcodeCommand = new();
                 var anyAxesMoves = axes.Any(a => a != double.PositiveInfinity);
                 if (anyAxesMoves) gcodeCommand.Append($"G1 F{speed}");
@@ -4884,7 +4884,7 @@ namespace AndreasReitberger.API.Moonraker
                 if (z != double.PositiveInfinity) gcodeCommand.Append($" Z{(relative ? "" : "+")}{z}");
                 if (anyAxesMoves) gcodeCommand.Append("\n"); // add new line to end command string
                 if (e != double.PositiveInfinity) gcodeCommand.Append($"M83\nG1 E{e} F{speed};");
-                
+
 
                 bool result = await RunGcodeScriptAsync(gcodeCommand.ToString()).ConfigureAwait(false);
                 return result;
@@ -5175,10 +5175,10 @@ namespace AndreasReitberger.API.Moonraker
             {
                 KlipperGcodeMetaResult meta = await GetGcodeMetadataAsync(fileName).ConfigureAwait(false);
                 GcodeMeta = meta;
-                if(PrintStats?.State == KlipperPrintStates.Printing)
+                if (PrintStats?.State == KlipperPrintStates.Printing)
                 {
                     // Get current print image 
-                   CurrentPrintImage = await GetGcodeLargestThumbnailImageAsync(GcodeMeta);
+                    CurrentPrintImage = await GetGcodeLargestThumbnailImageAsync(GcodeMeta);
                 }
                 else
                 {
@@ -5656,7 +5656,7 @@ namespace AndreasReitberger.API.Moonraker
                 string uri = $"{FullWebAddress}/server/files/{logType.ToString().ToLower()}.log";
                 byte[] file = await DownloadFileFromUriAsync(uri)
                     .ConfigureAwait(false);
-                    ;
+                ;
                 return file;
             }
             catch (Exception exc)
@@ -5687,7 +5687,7 @@ namespace AndreasReitberger.API.Moonraker
                 };
                 result = await SendRestApiRequestAsync(MoonrakerCommandBase.access, Method.Post, "login", cmd, default).ConfigureAwait(false);
                 KlipperUserActionRespone queryResult = JsonConvert.DeserializeObject<KlipperUserActionRespone>(result.Result);
-                
+
                 IsLoggedIn = queryResult != null;
                 if (IsLoggedIn)
                 {
@@ -6035,10 +6035,10 @@ namespace AndreasReitberger.API.Moonraker
             {
                 List<string> result = await ListDatabaseNamespacesAsync().ConfigureAwait(false);
                 AvailableNamespaces = result ?? new();
-                if(AvailableNamespaces?.Count > 0)
+                if (AvailableNamespaces?.Count > 0)
                 {
                     // Try to detect the current operating system
-                    OperatingSystem = AvailableNamespaces.Contains("mainsail") ? 
+                    OperatingSystem = AvailableNamespaces.Contains("mainsail") ?
                         MoonrakerOperatingSystems.MainsailOS :
                         MoonrakerOperatingSystems.FluiddPi
                         ;
@@ -6057,7 +6057,7 @@ namespace AndreasReitberger.API.Moonraker
             Dictionary<string, object> resultObject = null;
             try
             {
-                if(AvailableNamespaces?.Count == 0 || AvailableNamespaces == null)
+                if (AvailableNamespaces?.Count == 0 || AvailableNamespaces == null)
                 {
                     AvailableNamespaces = await ListDatabaseNamespacesAsync();
                 }
@@ -6113,7 +6113,7 @@ namespace AndreasReitberger.API.Moonraker
                 // It seems that the webcams setting are also stored in the namespace=webcams
                 //string currentNameSpace = OperatingSystem == MoonrakerOperatingSystems.MainsailOS ? "mainsail" : "webcams";
                 //string currentKey = OperatingSystem == MoonrakerOperatingSystems.MainsailOS ? "webcam" : "";
-                
+
                 // Seems to be the write way for both, MainsailOS and Fluidd
                 string currentNameSpace = "webcams";
                 string currentKey = "";
@@ -6121,7 +6121,7 @@ namespace AndreasReitberger.API.Moonraker
                 Dictionary<string, object> result = await GetDatabaseItemAsync(currentNameSpace, currentKey).ConfigureAwait(false);
                 KeyValuePair<string, object>? pair = result?.FirstOrDefault();
                 if (pair == null) return resultObject;
-                
+
                 //resultString = pair.Value.ToString();
                 resultString = pair.Value.Value.ToString();
 
@@ -6150,7 +6150,7 @@ namespace AndreasReitberger.API.Moonraker
                     case MoonrakerOperatingSystems.MainsailOS:
                     case MoonrakerOperatingSystems.FluiddPi:
                         Dictionary<Guid, KlipperDatabaseFluiddValueWebcamConfig> fluiddObject = JsonConvert.DeserializeObject<Dictionary<Guid, KlipperDatabaseFluiddValueWebcamConfig>>(resultString);
-                        if(fluiddObject?.Count > 0)
+                        if (fluiddObject?.Count > 0)
                         {
                             IEnumerable<KlipperDatabaseWebcamConfig> temp = fluiddObject.Select(item => new KlipperDatabaseWebcamConfig()
                             {
@@ -6299,7 +6299,7 @@ namespace AndreasReitberger.API.Moonraker
                 string currentKey = OperatingSystem == MoonrakerOperatingSystems.MainsailOS ? "remote_printers" : "uiSettings";
 
                 Dictionary<string, object> result = await GetDatabaseItemAsync(currentNamespace, currentKey).ConfigureAwait(false);
-                
+
                 KeyValuePair<string, object>? pair = result?.FirstOrDefault();
                 if (pair == null) return resultObject;
 
@@ -6394,25 +6394,25 @@ namespace AndreasReitberger.API.Moonraker
                 {
                     case MoonrakerOperatingSystems.MainsailOS:
                         // New since latest update
-                        KlipperDatabaseMainsailValuePresets mainsailObject = JsonConvert.DeserializeObject<KlipperDatabaseMainsailValuePresets> (resultString);
+                        KlipperDatabaseMainsailValuePresets mainsailObject = JsonConvert.DeserializeObject<KlipperDatabaseMainsailValuePresets>(resultString);
                         //List<KlipperDatabaseMainsailValuePreset> mainsailObject = JsonConvert.DeserializeObject<List<KlipperDatabaseMainsailValuePreset>>(resultString);
                         if (mainsailObject != null)
                         {
                             IEnumerable<KlipperDatabaseTemperaturePreset> temp = mainsailObject.Presets.Select((item, index) => new KlipperDatabaseTemperaturePreset()
-                            {        
+                            {
                                 //Id = Guid.NewGuid(),
                                 Id = item.Key,
                                 Name = item.Value.Name,
                                 Gcode = item.Value.Gcode,
                                 Values = new(item.Value.Values.Select(valuePair => new KeyValuePair<string, KlipperDatabaseTemperaturePresetHeater>(
                                     valuePair.Key, new KlipperDatabaseTemperaturePresetHeater()
-                                {
-                                    Name = valuePair.Key,
-                                    Active = valuePair.Value.Bool,
-                                    Type = valuePair.Value.Type,
-                                    Value = valuePair.Value.Value,
-                                }))),
-                            });                          
+                                    {
+                                        Name = valuePair.Key,
+                                        Active = valuePair.Value.Bool,
+                                        Type = valuePair.Value.Type,
+                                        Value = valuePair.Value.Value,
+                                    }))),
+                            });
                             resultObject = new(temp);
                         }
                         break;
@@ -6591,7 +6591,7 @@ namespace AndreasReitberger.API.Moonraker
                 return resultObject;
             }
         }
-#endregion
+        #endregion
 
         #region Job Queue APIs
 
@@ -6845,9 +6845,9 @@ namespace AndreasReitberger.API.Moonraker
                     await SendRestApiRequestAsync(MoonrakerCommandBase.machine, Method.Get, $"update/status", jsonObject: null, cts: default, urlSegments: urlSegments)
                     .ConfigureAwait(false);
                 KlipperUpdateStatusRespone queryResult = JsonConvert.DeserializeObject<KlipperUpdateStatusRespone>(result.Result);
-                if(queryResult?.Result?.VersionInfo != null)
+                if (queryResult?.Result?.VersionInfo != null)
                 {
-                    foreach(KeyValuePair<string, KlipperUpdateVersionInfo> keypair in queryResult?.Result?.VersionInfo)
+                    foreach (KeyValuePair<string, KlipperUpdateVersionInfo> keypair in queryResult?.Result?.VersionInfo)
                     {
                         try
                         {
@@ -6856,7 +6856,7 @@ namespace AndreasReitberger.API.Moonraker
                                 keypair.Value.Name = keypair.Key;
                             }
                         }
-                        catch(Exception) { continue; }
+                        catch (Exception) { continue; }
                     }
                 }
                 return queryResult?.Result;

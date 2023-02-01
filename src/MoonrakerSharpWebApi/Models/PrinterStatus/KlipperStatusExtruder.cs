@@ -1,11 +1,28 @@
-﻿using Newtonsoft.Json;
+﻿using AndreasReitberger.API.Moonraker.Enum;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperStatusToolhead
+    public partial class KlipperStatusExtruder
     {
         #region Properties
+        [JsonProperty("temperature")]
+        public double? Temperature { get; set; }
+
+        [JsonProperty("target")]
+        public double? Target { get; set; }
+
+        [JsonProperty("power")]
+        public double? Power { get; set; }
+
+        [JsonProperty("pressure_advance")]
+        public double? PressureAdvance { get; set; }
+
+        [JsonProperty("smooth_time")]
+        public double? SmoothTime { get; set; }
+
         [JsonProperty("square_corner_velocity")]
         public double? SquareCornerVelocity { get; set; }
 
@@ -41,33 +58,30 @@ namespace AndreasReitberger.API.Moonraker.Models
 
         [JsonProperty("extruder")]
         public string Extruder { get; set; }
+
+        [JsonIgnore]
+        public bool CanUpdateTarget { get; set; } = false;
+
+        [JsonIgnore]
+        public KlipperToolState State { get => GetCurrentState(); }
         #endregion
 
         #region Methods
-        public Dictionary<string, bool> GetHomedAxisStates()
+        KlipperToolState GetCurrentState()
         {
-            Dictionary<string, bool> state = new()
+            try
             {
-                { "x", false },
-                { "y", false },
-                { "z", false },
-            };
-            if (!string.IsNullOrEmpty(HomedAxes))
-            {
-                for(int i = 0; i < HomedAxes.Length; i++)
-                {
-                    string current = HomedAxes[i].ToString();
-                    if (state.ContainsKey(current))
-                    {
-                        state[current] = true;
-                    }
-                    else
-                    {
-                        state.Add(current, true);
-                    }
-                }
+                if (Target == null || Temperature == null)
+                    return KlipperToolState.Idle;
+                return Target <= 0
+                    ? KlipperToolState.Idle
+                    : Target > Temperature && Math.Abs(Convert.ToDouble(Target - Temperature)) > 2 ? KlipperToolState.Heating : KlipperToolState.Ready;
             }
-            return state;
+            catch (Exception)
+            {
+                return KlipperToolState.Error;
+            }
+
         }
         #endregion
 
