@@ -54,7 +54,7 @@ namespace AndreasReitberger.API.Moonraker.Models
             };
             if (!string.IsNullOrEmpty(HomedAxes))
             {
-                for(int i = 0; i < HomedAxes.Length; i++)
+                for (int i = 0; i < HomedAxes.Length; i++)
                 {
                     string current = HomedAxes[i].ToString();
                     if (state.ContainsKey(current))
