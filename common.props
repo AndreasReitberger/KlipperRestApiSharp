@@ -1,0 +1,32 @@
+<Project>
+    <PropertyGroup>
+        <Version>1.3.0</Version>
+        <!--<PackageIcon>logo_128.png</PackageIcon>-->
+        <NeutralLanguage>en</NeutralLanguage>
+        <PackageProjectUrl>https://github.com/AndreasReitberger/KlipperRestApiSharp</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/AndreasReitberger/KlipperRestApiSharp</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageReleaseNotes>Check GitHub releases for changelog.</PackageReleaseNotes>
+        <Authors>Andreas Reitberger</Authors>
+        <Copyright>Andreas Reitberger</Copyright>
+        <LangVersion>10.0</LangVersion>
+        <PublishReadyToRun>false</PublishReadyToRun>
+
+        <!--Source-Linking-->
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <EmbedUntrackedSources>true</EmbedUntrackedSources>
+        <IncludeSymbols>true</IncludeSymbols>
+    </PropertyGroup>
+
+<!--
+    <ItemGroup>
+      <None Include="..\..\art\logo_128.png">
+        <Pack>True</Pack>
+        <PackagePath></PackagePath>
+      </None>
+   </ItemGroup>
+-->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All"/>
+  </ItemGroup>
+</Project>
