@@ -1,5 +1,6 @@
 ﻿using AndreasReitberger.API.Moonraker.Enum;
 using AndreasReitberger.API.Moonraker.Models;
+using AndreasReitberger.API.Moonraker.Models.Exceptions;
 using AndreasReitberger.Core.Enums;
 using AndreasReitberger.Core.Utilities;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -79,245 +80,153 @@ namespace AndreasReitberger.API.Moonraker
         }
 
         [ObservableProperty]
-        bool _isActive = false;
+        bool isActive = false;
 
-        bool _updateInstance = false;
-        public bool UpdateInstance
+        [ObservableProperty]
+        bool updateInstance = false;
+        partial void OnUpdateInstanceChanged(bool value)
         {
-            get => _updateInstance;
-            set
+            if (value)
             {
-                if (_updateInstance == value)
-                    return;
-                _updateInstance = value;
-                // Update the instance to the latest settings
-                if (_updateInstance)
-                    InitInstance(ServerAddress, Port, ApiKey, IsSecure);
-
-                OnPropertyChanged();
+                InitInstance(ServerAddress, Port, ApiKey, IsSecure);
             }
         }
 
         [ObservableProperty]
-        bool _isInitialized = false;
+        bool isInitialized = false;
 
         #endregion
 
         #region RefreshTimer
 
         [ObservableProperty]
-        [property: JsonIgnore]
-        [property: XmlIgnore]
-        Timer _timer;
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        Timer timer;
 
-        [JsonProperty(nameof(RefreshInterval))]
-        int _refreshInterval = 3;
-        [JsonIgnore, XmlIgnore]
-        public int RefreshInterval
+        [ObservableProperty]
+        int refreshInterval = 3;
+        partial void OnRefreshIntervalChanged(int value)
         {
-            get => _refreshInterval;
-            set
+            if (IsListening)
             {
-                if (_refreshInterval == value) return;
-                _refreshInterval = value;
-                if (IsListening)
-                {
-                    StopListeningAsync();
-                    StartListeningAsync();
-                }
-                OnPropertyChanged();
+                StartListeningAsync(stopActiveListening: true);
             }
         }
 
-        [JsonIgnore, XmlIgnore]
-        bool _isListening = false;
-        [JsonIgnore, XmlIgnore]
-        public bool IsListening
+        [ObservableProperty]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        bool isListening = false;
+        partial void OnIsListeningChanged(bool value)
         {
-            get => _isListening;
-            set
+            OnListeningChanged(new KlipperEventListeningChangedEventArgs()
             {
-                if (_isListening == value) return;
-                _isListening = value;
-                OnListeningChanged(new KlipperEventListeningChangedEventArgs()
-                {
-                    SessonId = SessionId,
-                    IsListening = value,
-                    IsListeningToWebSocket = IsListeningToWebsocket,
-                });
-                OnPropertyChanged();
-            }
+                SessonId = SessionId,
+                IsListening = value,
+                IsListeningToWebSocket = IsListeningToWebsocket,
+            });
         }
 
-        [JsonIgnore, XmlIgnore]
-        bool _initialDataFetched = false;
-        [JsonIgnore, XmlIgnore]
-        public bool InitialDataFetched
-        {
-            get => _initialDataFetched;
-            set
-            {
-                if (_initialDataFetched == value) return;
-                _initialDataFetched = value;
-                OnPropertyChanged();
-            }
-        }
+        [ObservableProperty]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        bool initialDataFetched = false;
 
         #endregion
 
         #region Properties
 
         #region Debug
-        [JsonIgnore, XmlIgnore]
-        Dictionary<string, string> _ignoredJsonResults = new();
-        [JsonIgnore, XmlIgnore]
-        public Dictionary<string, string> IgnoredJsonResults
+        [ObservableProperty]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        Dictionary<string, string> ignoredJsonResults = new();
+        partial void OnIgnoredJsonResultsChanged(Dictionary<string, string> value)
         {
-            get => _ignoredJsonResults;
-            set
+            OnKlipperIgnoredJsonResultsChanged(new KlipperIgnoredJsonResultsChangedEventArgs()
             {
-                if (_ignoredJsonResults == value) return;
-                _ignoredJsonResults = value;
-                OnKlipperIgnoredJsonResultsChanged(new KlipperIgnoredJsonResultsChangedEventArgs()
-                {
-                    NewIgnoredJsonResults = value,
-                });
-                OnPropertyChanged();
-            }
+                NewIgnoredJsonResults = value,
+            });
         }
         #endregion
 
         #region Connection
 
         [ObservableProperty]
-        [property: JsonIgnore]
-        [property: XmlIgnore]
-        string _sessionId = string.Empty;
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        string sessionId = string.Empty;
 
-        //[JsonProperty(nameof(OperatingSystem))]
         [ObservableProperty]
-        MoonrakerOperatingSystems _operatingSystem = MoonrakerOperatingSystems.MainsailOS;
+        MoonrakerOperatingSystems operatingSystem = MoonrakerOperatingSystems.MainsailOS;
 
-        //[JsonProperty(nameof(HostName))]
         [ObservableProperty]
-        string _hostName = string.Empty;
+        string hostName = string.Empty;
 
-        //[JsonProperty(nameof(ServerName))]
         [ObservableProperty]
-        string _serverName= string.Empty;
+        string serverName= string.Empty;
 
-        [JsonProperty(nameof(ServerAddress))]
-        //[ObservableProperty]
-        string _address = string.Empty;
-        [JsonIgnore]
-        public string ServerAddress
+        [ObservableProperty]
+        string serverAddress = string.Empty;
+        partial void OnServerAddressChanged(string value)
         {
-            get => _address;
-            set
-            {
-                if (_address == value) return;
-                _address = value;
-                UpdateRestClientInstance();
-                OnPropertyChanged();
-            }
+            UpdateRestClientInstance();
         }
 
-        [JsonProperty(nameof(IsSecure))]
-        //[ObservableProperty]
-        bool _isSecure = false;
-        [JsonIgnore]
-        public bool IsSecure
+        [ObservableProperty]
+        bool isSecure = false;
+        partial void OnIsSecureChanged(bool value)
         {
-            get => _isSecure;
-            set
-            {
-                if (_isSecure == value) return;
-                _isSecure = value;
-                OnPropertyChanged();
-                UpdateRestClientInstance();
-            }
+            UpdateRestClientInstance();
         }
 
-        //[JsonProperty(nameof(ApiKey))]
         [ObservableProperty]
-        string _apiKey = string.Empty;
+        string apiKey = string.Empty;
 
-        [JsonProperty(nameof(Port))]
-        //[ObservableProperty]
-        int _port = 80;
-        [JsonIgnore]
-        public int Port
+        [ObservableProperty]
+        int port = 80;
+        partial void OnPortChanged(int value)
         {
-            get => _port;
-            set
+            UpdateRestClientInstance();
+        }
+
+        [ObservableProperty]
+        int defaultTimeout = 10000;
+
+        [ObservableProperty]
+        bool overrideValidationRules = false;
+
+        [ObservableProperty]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        bool isOnline = false;
+        partial void OnIsOnlineChanged(bool value)
+        {
+            if (value)
             {
-                if (_port != value)
+                OnServerWentOnline(new KlipperEventArgs()
                 {
-                    _port = value;
-                    OnPropertyChanged();
-                    UpdateRestClientInstance();
-                }
+                    SessonId = SessionId,
+                });
             }
-        }
-
-        //[JsonProperty(nameof(DefaultTimeout))]
-        [ObservableProperty]
-        int _defaultTimeout = 10000;
-
-
-        //[JsonProperty(nameof(OverrideValidationRules))]
-        //[XmlAttribute(nameof(OverrideValidationRules))]
-        [ObservableProperty]
-        bool _overrideValidationRules = false;
-
-        [JsonIgnore, XmlIgnore]
-        bool _isOnline = false;
-        [JsonIgnore, XmlIgnore]
-        public bool IsOnline
-        {
-            get => _isOnline;
-            set
+            else
             {
-                if (_isOnline == value) return;
-                _isOnline = value;
-                // Notify subscribres 
-                if (IsOnline)
+                OnServerWentOffline(new KlipperEventArgs()
                 {
-                    OnServerWentOnline(new KlipperEventArgs()
-                    {
-                        SessonId = SessionId,
-                    });
-                }
-                else
-                {
-                    OnServerWentOffline(new KlipperEventArgs()
-                    {
-                        SessonId = SessionId,
-                    });
-                }
-                OnPropertyChanged();
+                    SessonId = SessionId,
+                });
             }
         }
 
         [ObservableProperty]
-        [property: JsonIgnore]
-        [property: XmlIgnore]
-        bool _isConnecting = false;
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        bool isConnecting = false;
 
         [ObservableProperty]
-        [property: JsonIgnore]
-        [property: XmlIgnore]
-        bool _authenticationFailed = false;
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        bool authenticationFailed = false;
 
         [ObservableProperty]
-        [property: JsonIgnore]
-        [property: XmlIgnore]
-        bool _isRefreshing = false;
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        bool isRefreshing = false;
 
-        //[JsonProperty(nameof(RetriesWhenOffline))]
-        //[XmlAttribute(nameof(RetriesWhenOffline))]
         [ObservableProperty]
-        int _retriesWhenOffline = 2;
+        int retriesWhenOffline = 2;
 
         #endregion
 
@@ -336,53 +245,44 @@ namespace AndreasReitberger.API.Moonraker
                     // Notify on update available
                     OnServerUpdateAvailable(new KlipperEventArgs()
                     {
-                        SessonId = this.SessionId,
+                        SessonId = SessionId,
                     });
                 OnPropertyChanged();
             }
         }
 
-        //[JsonProperty(nameof(RefreshHeatersDirectly)), XmlAttribute(nameof(RefreshHeatersDirectly))]
         [ObservableProperty]
-        bool _refreshHeatersDirectly = true;
+        bool refreshHeatersDirectly = true;
 
         #endregion
 
         #region Api & Version
 
         [ObservableProperty]
-        [property: JsonIgnore]
-        [property: XmlIgnore]
-        string _moonrakerVersion = string.Empty;
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        string moonrakerVersion = string.Empty;
 
         [ObservableProperty]
-        [property: JsonIgnore]
-        [property: XmlIgnore]
-        List<string> _registeredDirectories = new();
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        List<string> registeredDirectories = new();
 
         #endregion
 
         #region Proxy
-        //[JsonProperty(nameof(EnableProxy))]
-        //[XmlAttribute(nameof(EnableProxy))]
         [ObservableProperty]
-        bool _enableProxy = false;
+        bool enableProxy = false;
 
-        //[JsonProperty(nameof(ProxyUseDefaultCredentials))]
-        //[XmlAttribute(nameof(ProxyUseDefaultCredentials))]
         [ObservableProperty]
-        bool _proxyUseDefaultCredentials = true;
+        bool proxyUseDefaultCredentials = true;
 
-        //[JsonProperty(nameof(SecureProxyConnection))]
-        //[XmlAttribute(nameof(SecureProxyConnection))]
         [ObservableProperty]
-        bool _secureProxyConnection = true;
+        bool secureProxyConnection = true;
 
         [JsonProperty(nameof(ProxyAddress))]
         [XmlAttribute(nameof(ProxyAddress))]
         //[ObservableProperty]
         string _proxyAddress = string.Empty;
-        [JsonIgnore, XmlIgnore]
+        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
         public string ProxyAddress
         {
             get => _proxyAddress;
@@ -397,7 +297,7 @@ namespace AndreasReitberger.API.Moonraker
         [JsonProperty(nameof(ProxyPort))]
         [XmlAttribute(nameof(ProxyPort))]
         int _proxyPort = 443;
-        [JsonIgnore, XmlIgnore]
+        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
         public int ProxyPort
         {
             get => _proxyPort;
@@ -409,15 +309,10 @@ namespace AndreasReitberger.API.Moonraker
             }
         }
 
-        public Task DeleteHistoryListItemAsync(KlipperJobItem item)
-        {
-            throw new NotImplementedException();
-        }
-
         [JsonProperty(nameof(ProxyUser))]
         [XmlAttribute(nameof(ProxyUser))]
         string _proxyUser = string.Empty;
-        [JsonIgnore, XmlIgnore]
+        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
         public string ProxyUser
         {
             get => _proxyUser;
@@ -432,7 +327,7 @@ namespace AndreasReitberger.API.Moonraker
         [JsonProperty(nameof(ProxyPassword))]
         [XmlAttribute(nameof(ProxyPassword))]
         SecureString _proxyPassword;
-        [JsonIgnore, XmlIgnore]
+        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
         public SecureString ProxyPassword
         {
             get => _proxyPassword;
@@ -446,435 +341,320 @@ namespace AndreasReitberger.API.Moonraker
         #endregion
 
         #region DiskSpace
-        //[JsonProperty(nameof(FreeDiskSpace))]
-        //[XmlAttribute(nameof(FreeDiskSpace))]
         [ObservableProperty]
-        long _freeDiskSpace = 0;
+        long freeDiskSpace = 0;
 
-        //[JsonProperty(nameof(UsedDiskSpace))]
-        //[XmlAttribute(nameof(UsedDiskSpace))]
         [ObservableProperty]
-        long _usedDiskSpace = 0;
+        long usedDiskSpace = 0;
 
-        //[JsonProperty(nameof(TotalDiskSpace))]
-        //[XmlAttribute(nameof(TotalDiskSpace))]
         [ObservableProperty]
-        long _totalDiskSpace = 0;
+        long totalDiskSpace = 0;
 
         #endregion
 
         #region Printer
 
         [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        double _speedFactor = 100;
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        double speedFactor = 100;
 
         [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        double _speedFactorTarget = 100;
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        double speedFactorTarget = 100;
 
         [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        double _flowFactor = 100;
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        double flowFactor = 100;
 
         [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        double _flowFactorTarget = 100;
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        double flowFactorTarget = 100;
 
         [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        double _x = 0;
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        double x = 0;
 
         [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        double _y = 0;
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        double y = 0;
 
         [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        double _z = 0;
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        double z = 0;
 
         [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        double _liveVelocity = 0;
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        double liveVelocity = 0;
 
         [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        double _liveExtruderVelocity = 0;
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        double liveExtruderVelocity = 0;
 
         [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        double _currentLayer = 0;
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        double currentLayer = 0;
 
         [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        double _layers = 0;
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        double layers = 0;
 
         [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        int _numberOfExtruders = 0;
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        int numberOfExtruders = 0;
 
         [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        bool _hasHeaterBed = false;
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        bool hasHeaterBed = false;
 
         [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        bool _hasFan = false;
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        bool hasFan = false;
 
         #endregion
 
         #region RemotePrinters
-        [JsonIgnore, XmlIgnore]
-        ObservableCollection<KlipperDatabaseRemotePrinter> _printers = new();
-        [JsonIgnore, XmlIgnore]
-        public ObservableCollection<KlipperDatabaseRemotePrinter> Printers
+        [ObservableProperty]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        ObservableCollection<KlipperDatabaseRemotePrinter> printers = new();
+        partial void OnPrintersChanged(ObservableCollection<KlipperDatabaseRemotePrinter> value)
         {
-            get => _printers;
-            set
+            OnKlipperRemotePrinterChanged(new KlipperRemotePrintersChangedEventArgs()
             {
-                if (_printers == value) return;
-                _printers = value;
-                OnKlipperRemotePrinterChanged(new KlipperRemotePrintersChangedEventArgs()
-                {
-                    NewPrinters = value,
-                    SessonId = SessionId,
-                    CallbackId = -1,
-                    Token = !string.IsNullOrEmpty(UserToken) ? UserToken : ApiKey,
-                });
-                OnPropertyChanged();
-            }
+                NewPrinters = value,
+                SessonId = SessionId,
+                CallbackId = -1,
+                Token = !string.IsNullOrEmpty(UserToken) ? UserToken : ApiKey,
+            });
         }
+
         #endregion
 
         #region Files
-        [JsonIgnore, XmlIgnore]
-        ObservableCollection<KlipperFile> _files = new();
-        [JsonIgnore, XmlIgnore]
-        public ObservableCollection<KlipperFile> Files
+        [ObservableProperty]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        ObservableCollection<KlipperFile> files = new();
+        partial void OnFilesChanged(ObservableCollection<KlipperFile> value)
         {
-            get => _files;
-            set
+            OnKlipperFilesChanged(new KlipperFilesChangedEventArgs()
             {
-                if (_files == value) return;
-                _files = value;
-                OnKlipperFilesChanged(new KlipperFilesChangedEventArgs()
-                {
-                    NewFiles = value,
-                    SessonId = SessionId,
-                    CallbackId = -1,
-                    Token = !string.IsNullOrEmpty(UserToken) ? UserToken : ApiKey,
-                });
-                OnPropertyChanged();
-            }
+                NewFiles = value,
+                SessonId = SessionId,
+                CallbackId = -1,
+                Token = !string.IsNullOrEmpty(UserToken) ? UserToken : ApiKey,
+            });
         }
 
-        [JsonIgnore, XmlIgnore]
-        ObservableCollection<KlipperDirectory> _availableDirectories = new();
-        [JsonIgnore, XmlIgnore]
-        public ObservableCollection<KlipperDirectory> AvailableDirectories
+        [ObservableProperty]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        ObservableCollection<KlipperDirectory> availableDirectories = new();
+        partial void OnAvailableDirectoriesChanged(ObservableCollection<KlipperDirectory> value)
         {
-            get => _availableDirectories;
-            set
+            /*
+            OnKlipperFilesChanged(new KlipperFilesChangedEventArgs()
             {
-                if (_availableDirectories == value) return;
-                _availableDirectories = value;
-                /*
-                OnKlipperFilesChanged(new KlipperFilesChangedEventArgs()
-                {
-                    NewFiles = value,
-                    SessonId = SessionId,
-                    CallbackId = -1,
-                    Token = !string.IsNullOrEmpty(UserToken) ? UserToken : API,
-                });
-                */
-                OnPropertyChanged();
-            }
+                NewFiles = value,
+                SessonId = SessionId,
+                CallbackId = -1,
+                Token = !string.IsNullOrEmpty(UserToken) ? UserToken : API,
+            });
+            */
         }
+
         #endregion
 
         #region Jobs
-        [JsonIgnore, XmlIgnore]
-        byte[] _currentPrintImage;
-        [JsonIgnore, XmlIgnore]
-        public byte[] CurrentPrintImage
+        [ObservableProperty]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        byte[] currentPrintImage = Array.Empty<byte>();
+        partial void OnCurrentPrintImageChanging(byte[] value)
         {
-            get => _currentPrintImage;
-            set
+            OnKlipperCurrentPrintImageChanged(new KlipperCurrentPrintImageChangedEventArgs()
             {
-                if (_currentPrintImage == value) return;
-                OnKlipperCurrentPrintImageChanged(new KlipperCurrentPrintImageChangedEventArgs()
-                {
-                    NewImage = value,
-                    PreviousImage = _currentPrintImage,
-                    SessonId = SessionId,
-                    CallbackId = -1,
-                    Token = !string.IsNullOrEmpty(UserToken) ? UserToken : ApiKey,
-                });
-                _currentPrintImage = value;
-                OnPropertyChanged();
-            }
-        }
-        
-        [JsonIgnore, XmlIgnore]
-        KlipperStatusJob _jobStatus;
-        [JsonIgnore, XmlIgnore]
-        public KlipperStatusJob JobStatus
-        {
-            get => _jobStatus;
-            set
-            {
-                if (_jobStatus == value) return;
-                OnKlipperJobStatusChanged(new KlipperJobStatusChangedEventArgs()
-                {
-                    NewJobStatus = value,
-                    PreviousJobStatus = _jobStatus,
-                    SessonId = SessionId,
-                    CallbackId = -1,
-                    Token = !string.IsNullOrEmpty(UserToken) ? UserToken : ApiKey,
-                });
-                _jobStatus = value;
-                OnPropertyChanged();
-            }
+                NewImage = value,
+                PreviousImage = CurrentPrintImage,
+                SessonId = SessionId,
+                CallbackId = -1,
+                Token = !string.IsNullOrEmpty(UserToken) ? UserToken : ApiKey,
+            });
         }
 
-        [JsonIgnore, XmlIgnore]
-        string _jobListState = string.Empty;
-        [JsonIgnore, XmlIgnore]
-        public string JobListState
+        [ObservableProperty]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        KlipperStatusJob jobStatus;
+        partial void OnJobStatusChanging(KlipperStatusJob value)
         {
-            get => _jobListState;
-            set
+            OnKlipperJobStatusChanged(new KlipperJobStatusChangedEventArgs()
             {
-                if (_jobListState == value) return;
-                OnKlipperJobListStateChanged(new KlipperJobListStateChangedEventArgs()
-                {
-                    NewJobListStatus = value,
-                    PreviousJobListStatus = _jobListState,
-                    SessonId = SessionId,
-                    CallbackId = -1,
-                    Token = !string.IsNullOrEmpty(UserToken) ? UserToken : ApiKey,
-                });
-                _jobListState = value;
-                OnPropertyChanged();
-            }
+                NewJobStatus = value,
+                PreviousJobStatus = JobStatus,
+                SessonId = SessionId,
+                CallbackId = -1,
+                Token = !string.IsNullOrEmpty(UserToken) ? UserToken : ApiKey,
+            });
         }
 
-        [JsonIgnore, XmlIgnore]
-        ObservableCollection<KlipperJobQueueItem> _jobList = new();
-        [JsonIgnore, XmlIgnore]
-        public ObservableCollection<KlipperJobQueueItem> JobList
+        [ObservableProperty]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        string jobListState = string.Empty;
+        partial void OnJobListStateChanging(string value)
         {
-            get => _jobList;
-            set
+            OnKlipperJobListStateChanged(new KlipperJobListStateChangedEventArgs()
             {
-                if (_jobList == value) return;
-                _jobList = value;
-                OnKlipperJobListChanged(new KlipperJobListChangedEventArgs()
-                {
-                    NewJobList = value,
-                    SessonId = SessionId,
-                    CallbackId = -1,
-                    Token = !string.IsNullOrEmpty(UserToken) ? UserToken : ApiKey,
-                });
-                OnPropertyChanged();
-            }
+                NewJobListStatus = value,
+                PreviousJobListStatus = JobListState,
+                SessonId = SessionId,
+                CallbackId = -1,
+                Token = !string.IsNullOrEmpty(UserToken) ? UserToken : ApiKey,
+            });
+        }
+
+        [ObservableProperty]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        ObservableCollection<KlipperJobQueueItem> jobList = new();
+        partial void OnJobListChanged(ObservableCollection<KlipperJobQueueItem> value)
+        {
+            OnKlipperJobListChanged(new KlipperJobListChangedEventArgs()
+            {
+                NewJobList = value,
+                SessonId = SessionId,
+                CallbackId = -1,
+                Token = !string.IsNullOrEmpty(UserToken) ? UserToken : ApiKey,
+            });
         }
         #endregion
 
         #region State & Config
-        [JsonIgnore, XmlIgnore]
-        string _klipperState;
-        [JsonIgnore, XmlIgnore]
-        public string KlipperState
+        [ObservableProperty]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        string klipperState;
+        partial void OnKlipperStateChanging(string value)
         {
-            get => _klipperState;
-            set
+            OnKlipperStateChangedEvent(new KlipperStateChangedEventArgs()
             {
-                if (_klipperState == value) return;
-                OnKlipperStateChanged(new KlipperStateChangedEventArgs()
-                {
-                    NewState = value,
-                    PreviousState = _klipperState,
-                });
-                _klipperState = value;
-                OnPropertyChanged();
-            }
+                NewState = value,
+                PreviousState = KlipperState,
+            });
         }
 
-        [JsonIgnore, XmlIgnore]
-        double _cpuTemp = 0;
-        [JsonIgnore, XmlIgnore]
-        public double CpuTemp
+        [ObservableProperty]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        double cpuTemp = 0;
+        partial void OnCpuTempChanged(double value)
         {
-            get => _cpuTemp;
-            set
+            OnKlipperCpuTemperatureChanged(new KlipperCpuTemperatureChangedEventArgs()
             {
-                if (_cpuTemp == value) return;
-                _cpuTemp = value;
-                OnKlipperCpuTemperatureChanged(new KlipperCpuTemperatureChangedEventArgs()
-                {
-                    NewTemperature = value,
-                });
-                OnPropertyChanged();
-            }
+                NewTemperature = value,
+            });           
         }
 
-        [JsonIgnore, XmlIgnore]
-        KlipperServerConfig _config;
-        [JsonIgnore, XmlIgnore]
-        public KlipperServerConfig Config
+        [ObservableProperty]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        KlipperServerConfig config;
+        partial void OnConfigChanged(KlipperServerConfig value)
         {
-            get => _config;
-            set
+            OnKlipperServerConfigChanged(new KlipperServerConfigChangedEventArgs()
             {
-                if (_config == value) return;
-                _config = value;
-                OnKlipperServerConfigChanged(new KlipperServerConfigChangedEventArgs()
-                {
-                    NewConfiguration = value,
-                    SessonId = SessionId,
-                    CallbackId = -1,
-                });
-                UpdateServerConfig(value);
-                OnPropertyChanged();
-            }
+                NewConfiguration = value,
+                SessonId = SessionId,
+                CallbackId = -1,
+            });
+            UpdateServerConfig(value);
         }
 
-        [JsonIgnore, XmlIgnore]
-        Dictionary<string, KlipperTemperatureSensorHistory> _temperatureCache = new();
-        [JsonIgnore, XmlIgnore]
-        public Dictionary<string, KlipperTemperatureSensorHistory> TemperatureCache
+        [ObservableProperty]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        Dictionary<string, KlipperTemperatureSensorHistory> temperatureCache = new();
+        partial void OnTemperatureCacheChanged(Dictionary<string, KlipperTemperatureSensorHistory> value)
         {
-            get => _temperatureCache;
-            set
+            OnKlipperServerTemperatureCacheChanged(new KlipperTemperatureCacheChangedEventArgs()
             {
-                if (_temperatureCache == value) return;
-                _temperatureCache = value;
-                OnKlipperServerTemperatureCacheChanged(new KlipperTemperatureCacheChangedEventArgs()
-                {
-                    CachedTemperatures = value,
-                    SessonId = SessionId,
-                    CallbackId = -1,
-                });
-                OnPropertyChanged();
-            }
+                CachedTemperatures = value,
+                SessonId = SessionId,
+                CallbackId = -1,
+            });
         }
 
-        [JsonIgnore, XmlIgnore]
-        KlipperPrinterStateMessageResult _printerInfo;
-        [JsonIgnore, XmlIgnore]
-        public KlipperPrinterStateMessageResult PrinterInfo
+        [ObservableProperty]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        List<KlipperGcode> gcodeCache = new();
+        partial void OnGcodeCacheChanged(List<KlipperGcode> value)
         {
-            get => _printerInfo;
-            set
+            OnKlipperServerGcodeCacheChanged(new KlipperGcodeCacheChangedEventArgs()
             {
-                if (_printerInfo == value) return;
-                _printerInfo = value;
-                OnKlipperPrinterInfoChanged(new KlipperPrinterInfoChangedEventArgs()
-                {
-                    NewPrinterInfo = value,
-                    SessonId = SessionId,
-                    CallbackId = -1,
-                });
-                UpdatePrinterInfo(value);
-                OnPropertyChanged();
-            }
+                CachedGcodes = value,
+                SessonId = SessionId,
+                CallbackId = -1,
+            });
         }
 
-        [JsonIgnore, XmlIgnore]
-        KlipperGcodeMetaResult _gcodeMeta;
-        [JsonIgnore, XmlIgnore]
-        public KlipperGcodeMetaResult GcodeMeta
+        [ObservableProperty]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        KlipperPrinterStateMessageResult printerInfo;
+        partial void OnPrinterInfoChanged(KlipperPrinterStateMessageResult value)
         {
-            get => _gcodeMeta;
-            set
+            OnKlipperPrinterInfoChanged(new KlipperPrinterInfoChangedEventArgs()
             {
-                if (_gcodeMeta == value) return;
-                _gcodeMeta = value;
-                OnKlipperGcodeMetaResultChanged(new KlipperGcodeMetaResultChangedEventArgs()
-                {
-                    NewResult = value,
-                    SessonId = SessionId,
-                    CallbackId = -1,
-                });
-                OnPropertyChanged();
-                UpdateGcodeMetaDependencies();
-            }
+                NewPrinterInfo = value,
+                SessonId = SessionId,
+                CallbackId = -1,
+            });
+            UpdatePrinterInfo(value);
         }
 
-        [JsonIgnore, XmlIgnore]
-        KlipperStatusGcodeMove _gcodeMove;
-        [JsonIgnore, XmlIgnore]
-        public KlipperStatusGcodeMove GcodeMove
+        [ObservableProperty]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        KlipperGcodeMetaResult gcodeMeta;
+        partial void OnGcodeMetaChanged(KlipperGcodeMetaResult value)
         {
-            get => _gcodeMove;
-            set
+            OnKlipperGcodeMetaResultChanged(new KlipperGcodeMetaResultChangedEventArgs()
             {
-                if (_gcodeMove == value) return;
-                _gcodeMove = value;
-                OnKlipperGcodeMoveStateChanged(new KlipperGcodeMoveStateChangedEventArgs()
-                {
-                    NewState = value,
-                    SessonId = SessionId,
-                    CallbackId = -1,
-                });
-                if(_gcodeMove != null)
-                {
-                    SpeedFactor = _gcodeMove.SpeedFactor * 100 ?? 100;
-                    FlowFactor = _gcodeMove.ExtrudeFactor * 100 ?? 100;
-                }
-                OnPropertyChanged();
-            }
+                NewResult = value,
+                SessonId = SessionId,
+                CallbackId = -1,
+            });
+            UpdateGcodeMetaDependencies();
         }
 
-        [JsonIgnore, XmlIgnore]
-        KlipperStatusVirtualSdcard _virtualSdCard;
-        [JsonIgnore, XmlIgnore]
-        public KlipperStatusVirtualSdcard VirtualSdCard
+        [ObservableProperty]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        KlipperStatusGcodeMove gcodeMove;
+        partial void OnGcodeMoveChanged(KlipperStatusGcodeMove value)
         {
-            get => _virtualSdCard;
-            set
+            OnKlipperGcodeMoveStateChanged(new KlipperGcodeMoveStateChangedEventArgs()
             {
-                if (_virtualSdCard == value) return;
-                _virtualSdCard = value;
-                OnKlipperVirtualSdCardStateChanged(new KlipperVirtualSdCardStateChangedEventArgs()
-                {
-                    NewState = value,
-                    SessonId = SessionId,
-                    CallbackId = -1,
-                });
-                OnPropertyChanged();
-            }
+                NewState = value,
+                SessonId = SessionId,
+                CallbackId = -1,
+            });
+            SpeedFactor = value?.SpeedFactor * 100 ?? 100;
+            FlowFactor = value?.ExtrudeFactor * 100 ?? 100;        
         }
 
-        [XmlIgnore, JsonIgnore]
-        Dictionary<string, KlipperStatusTemperatureSensor> _temperatureSensors = new();
-        [XmlIgnore, JsonIgnore]
-        public Dictionary<string, KlipperStatusTemperatureSensor> TemperatureSensors
+        [ObservableProperty]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        KlipperStatusVirtualSdcard virtualSdCard;
+        partial void OnVirtualSdCardChanged(KlipperStatusVirtualSdcard value)
         {
-            get => _temperatureSensors;
-            set
+            OnKlipperVirtualSdCardStateChanged(new KlipperVirtualSdCardStateChangedEventArgs()
             {
-                if (_temperatureSensors == value) return;
-                _temperatureSensors = value;
-                // WebSocket is updating this property in a high frequency, so a cooldown can be enabled
-                if (_enableCooldown)
-                {
-                    if (_cooldownTemperatureSensor > 0)
-                        _cooldownTemperatureSensor--;
-                    else
-                    {
-                        _cooldownTemperatureSensor = _cooldownFallback;
-                        OnKlipperTemperatureSensorStatesChanged(new KlipperTemperatureSensorStatesChangedEventArgs()
-                        {
-                            TemperatureStates = value,
-                            SessonId = SessionId,
-                            CallbackId = -1,
-                        });
-                    }
-                }
+                NewState = value,
+                SessonId = SessionId,
+                CallbackId = -1,
+            });
+        }
+
+        [ObservableProperty]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        Dictionary<string, KlipperStatusTemperatureSensor> temperatureSensors = new();
+        partial void OnTemperatureSensorsChanged(Dictionary<string, KlipperStatusTemperatureSensor> value)
+        {
+            if (_enableCooldown)
+            {
+                if (_cooldownTemperatureSensor > 0)
+                    _cooldownTemperatureSensor--;
                 else
                 {
+                    _cooldownTemperatureSensor = _cooldownFallback;
                     OnKlipperTemperatureSensorStatesChanged(new KlipperTemperatureSensorStatesChangedEventArgs()
                     {
                         TemperatureStates = value,
@@ -882,39 +662,31 @@ namespace AndreasReitberger.API.Moonraker
                         CallbackId = -1,
                     });
                 }
-                OnPropertyChanged();
+            }
+            else
+            {
+                OnKlipperTemperatureSensorStatesChanged(new KlipperTemperatureSensorStatesChangedEventArgs()
+                {
+                    TemperatureStates = value,
+                    SessonId = SessionId,
+                    CallbackId = -1,
+                });
             }
         }
 
-
-        [JsonIgnore, XmlIgnore]
-        Dictionary<string, double?> _cpuUsage = new();
-        [JsonIgnore, XmlIgnore]
-        public Dictionary<string, double?> CpuUsage
+        [ObservableProperty]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        Dictionary<string, double?> cpuUsage = new();
+        partial void OnCpuUsageChanged(Dictionary<string, double?> value)
         {
-            get => _cpuUsage;
-            set
+            // WebSocket is updating this property in a high frequency, so a cooldown can be enabled
+            if (_enableCooldown)
             {
-                if (_cpuUsage == value) return;
-                _cpuUsage = value;
-                // WebSocket is updating this property in a high frequency, so a cooldown can be enabled
-                if (_enableCooldown)
-                {
-                    if (_cooldownCpuUsage > 0)
-                        _cooldownCpuUsage--;
-                    else
-                    {
-                        _cooldownCpuUsage = _cooldownFallback;
-                        OnKlipperServerCpuUsageChanged(new KlipperCpuUsageChangedEventArgs()
-                        {
-                            CpuUsage = value,
-                            SessonId = SessionId,
-                            CallbackId = -1,
-                        });
-                    }
-                }
+                if (_cooldownCpuUsage > 0)
+                    _cooldownCpuUsage--;
                 else
                 {
+                    _cooldownCpuUsage = _cooldownFallback;
                     OnKlipperServerCpuUsageChanged(new KlipperCpuUsageChangedEventArgs()
                     {
                         CpuUsage = value,
@@ -922,38 +694,31 @@ namespace AndreasReitberger.API.Moonraker
                         CallbackId = -1,
                     });
                 }
-                OnPropertyChanged();
+            }
+            else
+            {
+                OnKlipperServerCpuUsageChanged(new KlipperCpuUsageChangedEventArgs()
+                {
+                    CpuUsage = value,
+                    SessonId = SessionId,
+                    CallbackId = -1,
+                });
             }
         }
 
-        [JsonIgnore, XmlIgnore]
-        Dictionary<string, long?> _systemMemory = new();
-        [JsonIgnore, XmlIgnore]
-        public Dictionary<string, long?> SystemMemory
+        [ObservableProperty]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        Dictionary<string, long?> systemMemory = new();
+        partial void OnSystemMemoryChanged(Dictionary<string, long?> value)
         {
-            get => _systemMemory;
-            set
+            // WebSocket is updating this property in a high frequency, so a cooldown can be enabled
+            if (_enableCooldown)
             {
-                if (_systemMemory == value) return;
-                _systemMemory = value;
-                // WebSocket is updating this property in a high frequency, so a cooldown can be enabled
-                if (_enableCooldown)
-                {
-                    if (_cooldownSystemMemory > 0)
-                        _cooldownSystemMemory--;
-                    else
-                    {
-                        _cooldownSystemMemory = _cooldownFallback;
-                        OnKlipperServerSystemMemoryChanged(new KlipperSystemMemoryChangedEventArgs()
-                        {
-                            SystemMemory = value,
-                            SessonId = SessionId,
-                            CallbackId = -1,
-                        });
-                    }
-                }
+                if (_cooldownSystemMemory > 0)
+                    _cooldownSystemMemory--;
                 else
                 {
+                    _cooldownSystemMemory = _cooldownFallback;
                     OnKlipperServerSystemMemoryChanged(new KlipperSystemMemoryChangedEventArgs()
                     {
                         SystemMemory = value,
@@ -961,38 +726,31 @@ namespace AndreasReitberger.API.Moonraker
                         CallbackId = -1,
                     });
                 }
-                OnPropertyChanged();
+            }
+            else
+            {
+                OnKlipperServerSystemMemoryChanged(new KlipperSystemMemoryChangedEventArgs()
+                {
+                    SystemMemory = value,
+                    SessonId = SessionId,
+                    CallbackId = -1,
+                });
             }
         }
 
-        [XmlIgnore, JsonIgnore]
-        Dictionary<int, KlipperStatusExtruder> _extruders = new();
-        [XmlIgnore, JsonIgnore]
-        public Dictionary<int, KlipperStatusExtruder> Extruders
+        [ObservableProperty]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        Dictionary<int, KlipperStatusExtruder> extruders = new();
+        partial void OnExtrudersChanged(Dictionary<int, KlipperStatusExtruder> value)
         {
-            get => _extruders;
-            set
+            // WebSocket is updating this property in a high frequency, so a cooldown can be enabled
+            if (_enableCooldown && !RefreshHeatersDirectly)
             {
-                if (_extruders == value) return;
-                _extruders = value;
-                // WebSocket is updating this property in a high frequency, so a cooldown can be enabled
-                if (_enableCooldown && !RefreshHeatersDirectly)
-                {
-                    if (_cooldownExtruder > 0)
-                        _cooldownExtruder--;
-                    else
-                    {
-                        _cooldownExtruder = _cooldownFallback;
-                        OnKlipperExtruderStatesChanged(new KlipperExtruderStatesChangedEventArgs()
-                        {
-                            ExtruderStates = value,
-                            SessonId = SessionId,
-                            CallbackId = -1,
-                        });
-                    }
-                }
+                if (_cooldownExtruder > 0)
+                    _cooldownExtruder--;
                 else
                 {
+                    _cooldownExtruder = _cooldownFallback;
                     OnKlipperExtruderStatesChanged(new KlipperExtruderStatesChangedEventArgs()
                     {
                         ExtruderStates = value,
@@ -1000,39 +758,32 @@ namespace AndreasReitberger.API.Moonraker
                         CallbackId = -1,
                     });
                 }
-                OnPropertyChanged();
-                NumberOfExtruders = _extruders?.Count ?? 0;
             }
+            else
+            {
+                OnKlipperExtruderStatesChanged(new KlipperExtruderStatesChangedEventArgs()
+                {
+                    ExtruderStates = value,
+                    SessonId = SessionId,
+                    CallbackId = -1,
+                });
+            }
+            NumberOfExtruders = value?.Count ?? 0;
         }
 
-        [JsonIgnore, XmlIgnore]
-        KlipperStatusHeaterBed _heaterBed;
-        [JsonIgnore, XmlIgnore]
-        public KlipperStatusHeaterBed HeaterBed
+        [ObservableProperty]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        KlipperStatusHeaterBed heaterBed;
+        partial void OnHeaterBedChanged(KlipperStatusHeaterBed value)
         {
-            get => _heaterBed;
-            set
+            // WebSocket is updating this property in a high frequency, so a cooldown can be enabled
+            if (_enableCooldown && !RefreshHeatersDirectly)
             {
-                if (_heaterBed == value) return;
-                _heaterBed = value;
-                // WebSocket is updating this property in a high frequency, so a cooldown can be enabled
-                if (_enableCooldown && !RefreshHeatersDirectly)
-                {
-                    if (_cooldownHeaterBed > 0)
-                        _cooldownHeaterBed--;
-                    else
-                    {
-                        _cooldownHeaterBed = _cooldownFallback;
-                        OnKlipperHeaterBedStateChanged(new KlipperHeaterBedStateChangedEventArgs()
-                        {
-                            NewHeaterBedState = value,
-                            SessonId = SessionId,
-                            CallbackId = -1,
-                        });
-                    }
-                }
+                if (_cooldownHeaterBed > 0)
+                    _cooldownHeaterBed--;
                 else
                 {
+                    _cooldownHeaterBed = _cooldownFallback;
                     OnKlipperHeaterBedStateChanged(new KlipperHeaterBedStateChangedEventArgs()
                     {
                         NewHeaterBedState = value,
@@ -1040,41 +791,34 @@ namespace AndreasReitberger.API.Moonraker
                         CallbackId = -1,
                     });
                 }
-                OnPropertyChanged();
-                HasHeaterBed = _heaterBed != null;
             }
+            else
+            {
+                OnKlipperHeaterBedStateChanged(new KlipperHeaterBedStateChangedEventArgs()
+                {
+                    NewHeaterBedState = value,
+                    SessonId = SessionId,
+                    CallbackId = -1,
+                });
+            }
+            HasHeaterBed = value != null;
         }
 
-        [XmlIgnore, JsonIgnore]
-        Dictionary<string, KlipperStatusFan> _fans = new();
-        [XmlIgnore, JsonIgnore]
-        public Dictionary<string, KlipperStatusFan> Fans
+        [ObservableProperty]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        Dictionary<string, KlipperStatusFan> fans = new();
+        partial void OnFansChanged(Dictionary<string, KlipperStatusFan> value)
         {
-            get => _fans;
-            set
+            // WebSocket is updating this property in a high frequency, so a cooldown can be enabled
+            /*
+            if (_enableCooldown && !RefreshHeatersDirectly)
             {
-                if (_fans == value) return;
-                _fans = value;
-                // WebSocket is updating this property in a high frequency, so a cooldown can be enabled
-                /*
-                if (_enableCooldown && !RefreshHeatersDirectly)
-                {
-                    if (_cooldownExtruder > 0)
-                        _cooldownExtruder--;
-                    else
-                    {
-                        _cooldownExtruder = _cooldownFallback;
-
-                        OnKlipperExtruderStatesChanged(new KlipperExtruderStatesChangedEventArgs()
-                        {
-                            ExtruderStates = value,
-                            SessonId = SessionId,
-                            CallbackId = -1,
-                        });
-                    }
-                }
+                if (_cooldownExtruder > 0)
+                    _cooldownExtruder--;
                 else
                 {
+                    _cooldownExtruder = _cooldownFallback;
+
                     OnKlipperExtruderStatesChanged(new KlipperExtruderStatesChangedEventArgs()
                     {
                         ExtruderStates = value,
@@ -1082,41 +826,34 @@ namespace AndreasReitberger.API.Moonraker
                         CallbackId = -1,
                     });
                 }
-                */
-                OnPropertyChanged();
             }
+            else
+            {
+                OnKlipperExtruderStatesChanged(new KlipperExtruderStatesChangedEventArgs()
+                {
+                    ExtruderStates = value,
+                    SessonId = SessionId,
+                    CallbackId = -1,
+                });
+            }
+            */
         }
 
-        [XmlIgnore, JsonIgnore]
-        Dictionary<string, KlipperStatusDriver> _drivers = new();
-        [XmlIgnore, JsonIgnore]
-        public Dictionary<string, KlipperStatusDriver> Drivers
+        [ObservableProperty]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        Dictionary<string, KlipperStatusDriver> drivers = new();
+        partial void OnDriversChanged(Dictionary<string, KlipperStatusDriver> value)
         {
-            get => _drivers;
-            set
+            // WebSocket is updating this property in a high frequency, so a cooldown can be enabled
+            /*
+            if (_enableCooldown && !RefreshHeatersDirectly)
             {
-                if (_drivers == value) return;
-                _drivers = value;
-                // WebSocket is updating this property in a high frequency, so a cooldown can be enabled
-                /*
-                if (_enableCooldown && !RefreshHeatersDirectly)
-                {
-                    if (_cooldownExtruder > 0)
-                        _cooldownExtruder--;
-                    else
-                    {
-                        _cooldownExtruder = _cooldownFallback;
-
-                        OnKlipperExtruderStatesChanged(new KlipperExtruderStatesChangedEventArgs()
-                        {
-                            ExtruderStates = value,
-                            SessonId = SessionId,
-                            CallbackId = -1,
-                        });
-                    }
-                }
+                if (_cooldownExtruder > 0)
+                    _cooldownExtruder--;
                 else
                 {
+                    _cooldownExtruder = _cooldownFallback;
+
                     OnKlipperExtruderStatesChanged(new KlipperExtruderStatesChangedEventArgs()
                     {
                         ExtruderStates = value,
@@ -1124,327 +861,235 @@ namespace AndreasReitberger.API.Moonraker
                         CallbackId = -1,
                     });
                 }
-                */
-                OnPropertyChanged();
             }
-        }
-
-        [JsonIgnore, XmlIgnore]
-        bool _isPrinting = false;
-        [JsonIgnore, XmlIgnore]
-        public bool IsPrinting
-        {
-            get => _isPrinting;
-            set
+            else
             {
-                if (_isPrinting == value) return;
-                _isPrinting = value;
-                UpdateCurrentPrintDependencies(value);
-                OnKlipperIsPrintingStateChanged(new KlipperIsPrintingStateChangedEventArgs()
+                OnKlipperExtruderStatesChanged(new KlipperExtruderStatesChangedEventArgs()
                 {
-                    IsPrinting = value,
-                    IsPaused = IsPaused,
+                    ExtruderStates = value,
                     SessonId = SessionId,
                     CallbackId = -1,
                 });
-                OnPropertyChanged();
             }
+            */
         }
 
-        [JsonIgnore, XmlIgnore]
-        bool _isPaused = false;
-        [JsonIgnore, XmlIgnore]
-        public bool IsPaused
+        [ObservableProperty]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        bool isPrinting = false;
+        partial void OnIsPrintingChanged(bool value)
         {
-            get => _isPaused;
-            set
+            UpdateCurrentPrintDependencies(value);
+            OnKlipperIsPrintingStateChanged(new KlipperIsPrintingStateChangedEventArgs()
             {
-                if (_isPaused == value) return;
-                _isPaused = value;
-                OnKlipperIsPrintingStateChanged(new KlipperIsPrintingStateChangedEventArgs()
-                {
-                    IsPrinting = IsPrinting,
-                    IsPaused = value,
-                    SessonId = SessionId,
-                    CallbackId = -1,
-                });
-                OnPropertyChanged();
-            }
+                IsPrinting = value,
+                IsPaused = IsPaused,
+                SessonId = SessionId,
+                CallbackId = -1,
+            });
         }
 
-        [JsonIgnore, XmlIgnore]
-        double _progress = 0;
-        [JsonIgnore, XmlIgnore]
-        public double Progress
+        [ObservableProperty]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        bool isPaused = false;
+        partial void OnIsPausedChanged(bool value)
         {
-            get => _progress;
-            set
+            OnKlipperIsPrintingStateChanged(new KlipperIsPrintingStateChangedEventArgs()
             {
-                if (_progress == value) return;
-                OnKlipperIsPrintingProgressChanged(new KlipperIsPrintingProgressChangedEventArgs()
-                {
-                    PreviousPrintProgress = _progress,
-                    NewPrintProgress = value,
-                    SessonId = SessionId,
-                    CallbackId = -1,
-                });
-                _progress = value;
-                OnPropertyChanged();
+                IsPrinting = IsPrinting,
+                IsPaused = value,
+                SessonId = SessionId,
+                CallbackId = -1,
+            });
+        }
+
+        [ObservableProperty]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        double progress = 0;
+        partial void OnProgressChanging(double value)
+        {
+            OnKlipperIsPrintingProgressChanged(new KlipperIsPrintingProgressChangedEventArgs()
+            {
+                PreviousPrintProgress = Progress,
+                NewPrintProgress = value,
+                SessonId = SessionId,
+                CallbackId = -1,
+            });
+        }
+
+        [ObservableProperty]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        double printTime = 0;
+
+        [ObservableProperty]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        double totalPrintTime = 0;
+
+        [ObservableProperty]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        double remainingPrintTime = 0;
+
+        [ObservableProperty]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        KlipperStatusPrintStats printStats;
+        partial void OnPrintStatsChanging(KlipperStatusPrintStats value)
+        {
+            OnKlipperPrintStateChanged(new KlipperPrintStateChangedEventArgs()
+            {
+                NewPrintState = value,
+                PreviousPrintState = PrintStats,
+                SessonId = SessionId,
+                CallbackId = -1,
+            });
+            if(value?.ValidPrintState == true)
+            {
+                IsPrinting = value?.State == KlipperPrintStates.Printing;
+                ActiveJobName = value?.Filename;
+
+                // Update progress
+                PrintTime = value?.PrintDuration ?? 0;
+                TotalPrintTime = GcodeMeta?.EstimatedTime ?? 0;
+                RemainingPrintTime = Convert.ToDouble(TotalPrintTime - value?.PrintDuration ?? 0);
+                Progress = Math.Round(MathHelper.Clamp((Convert.ToDouble(value?.PrintDuration ?? 0)) / (TotalPrintTime / 100), 0, 100), 2);
             }
         }
 
         [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        double _printTime = 0;
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        KlipperStatusFan fan;
+        partial void OnFanChanged(KlipperStatusFan value)
+        {
+            OnKlipperFanStateChanged(new KlipperFanStateChangedEventArgs()
+            {
+                NewFanState = value,
+                SessonId = SessionId,
+                CallbackId = -1,
+            });
+            HasFan = value != null;
+        }
 
         [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        double _totalPrintTime = 0;
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        KlipperStatusMotionReport motionReport;
+        partial void OnMotionReportChanging(KlipperStatusMotionReport value)
+        {
+            OnKlipperMotionReportChanged(new KlipperMotionReportChangedEventArgs()
+            {
+                NewState = value,
+                PreviousState = MotionReport,
+                SessonId = SessionId,
+                CallbackId = -1,
+            });
+        }
+        partial void OnMotionReportChanged(KlipperStatusMotionReport value)
+        {
+            UpdateMotionReportDependencies();           
+        }
 
         [ObservableProperty]
-        [property: JsonIgnore, XmlIgnore]
-        double _remainingPrintTime = 0;
-
-        [JsonIgnore, XmlIgnore]
-        KlipperStatusPrintStats _printStats;
-        [JsonIgnore, XmlIgnore]
-        public KlipperStatusPrintStats PrintStats
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        KlipperStatusIdleTimeout idleState;
+        partial void OnIdleStateChanging(KlipperStatusIdleTimeout value)
         {
-            get => _printStats;
-            set
+            OnKlipperIdleStateChanged(new KlipperIdleStateChangedEventArgs()
             {
-                if (_printStats == value) return;
-                OnKlipperPrintStateChanged(new KlipperPrintStateChangedEventArgs()
-                {
-                    NewPrintState = value,
-                    PreviousPrintState = _printStats,
-                    SessonId = SessionId,
-                    CallbackId = -1,
-                });
-                _printStats = value;
-                if(_printStats?.ValidPrintState == true)
-                {
-                    IsPrinting = _printStats?.State == KlipperPrintStates.Printing;
-                    ActiveJobName = _printStats?.Filename;
-
-                    // Update progress
-                    PrintTime = _printStats?.PrintDuration ?? 0;
-                    TotalPrintTime = GcodeMeta?.EstimatedTime ?? 0;
-                    RemainingPrintTime = Convert.ToDouble(TotalPrintTime - _printStats?.PrintDuration ?? 0);
-                    Progress = Math.Round(MathHelper.Clamp((Convert.ToDouble(_printStats?.PrintDuration ?? 0)) / (TotalPrintTime / 100), 0, 100), 2);
-                }
-                OnPropertyChanged();
-            }
+                NewState = value,
+                PreviousState = IdleState,
+                SessonId = SessionId,
+                CallbackId = -1,
+            });
         }
 
-        [JsonIgnore, XmlIgnore]
-        KlipperStatusFan _fan;
-        [JsonIgnore, XmlIgnore]
-        public KlipperStatusFan Fan
+        [ObservableProperty]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        KlipperStatusToolhead toolHead;
+        partial void OnToolHeadChanged(KlipperStatusToolhead value)
         {
-            get => _fan;
-            set
-            {
-                if (_fan == value) return;
-                _fan = value;
-                OnKlipperFanStateChanged(new KlipperFanStateChangedEventArgs()
-                {
-                    NewFanState = value,
-                    SessonId = SessionId,
-                    CallbackId = -1,
-                });
-                OnPropertyChanged();
-                HasFan = _fan != null;
-            }
-        }
-
-        [JsonIgnore, XmlIgnore]
-        KlipperStatusMotionReport _motionReport;
-        [JsonIgnore, XmlIgnore]
-        public KlipperStatusMotionReport MotionReport
-        {
-            get => _motionReport;
-            set
-            {
-                if (_motionReport == value) return;
-                OnKlipperMotionReportChanged(new KlipperMotionReportChangedEventArgs()
-                {
-                    NewState = value,
-                    PreviousState = _motionReport,
-                    SessonId = SessionId,
-                    CallbackId = -1,
-                });
-                _motionReport = value;
-                OnPropertyChanged();
-                UpdateMotionReportDependencies();
-            }
-        }
-
-        [JsonIgnore, XmlIgnore]
-        KlipperStatusIdleTimeout _idleState;
-        [JsonIgnore, XmlIgnore]
-        public KlipperStatusIdleTimeout IdleState
-        {
-            get => _idleState;
-            set
-            {
-                if (_idleState == value) return;
-                OnKlipperIdleStateChanged(new KlipperIdleStateChangedEventArgs()
-                {
-                    NewState = value,
-                    PreviousState = _idleState,
-                    SessonId = SessionId,
-                    CallbackId = -1,
-                });
-                _idleState = value;
-                OnPropertyChanged();
-            }
-        }
-
-        [JsonIgnore, XmlIgnore]
-        KlipperStatusToolhead _toolHead;
-        [JsonIgnore, XmlIgnore]
-        public KlipperStatusToolhead ToolHead
-        {
-            get => _toolHead;
-            set
-            {
-                if (_toolHead == value) return;
-                _toolHead = value;
-                OnKlipperToolHeadStateChanged(new KlipperToolHeadStateChangedEventArgs()
+            OnKlipperToolHeadStateChanged(new KlipperToolHeadStateChangedEventArgs()
                 {
                     NewToolheadState = value,
                     SessonId = SessionId,
                     CallbackId = -1,
                 });
-                OnPropertyChanged();
-            }
         }
 
-        [JsonIgnore, XmlIgnore]
-        string _activeJobName;
-        [JsonIgnore, XmlIgnore]
-        public string ActiveJobName
+        [ObservableProperty]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        string activeJobName;
+        partial void OnActiveJobNameChanging(string value)
         {
-            get => _activeJobName;
-            set
+            OnKlipperActiveJobStateChanged(new KlipperActiveJobStateChangedEventArgs()
             {
-                if (_activeJobName == value) return;
-                OnKlipperActiveJobStateChanged(new KlipperActiveJobStateChangedEventArgs()
-                {
-                    NewJobState = value,
-                    PreviousJobState = _activeJobName,
-                    SessonId = SessionId,
-                    CallbackId = -1,
-                });
-                _activeJobName = value;
-                OnPropertyChanged();
-            }
+                NewJobState = value,
+                PreviousJobState = ActiveJobName,
+                SessonId = SessionId,
+                CallbackId = -1,
+            });
         }
 
-        [JsonIgnore, XmlIgnore]
-        KlipperStatusDisplay _displayStatus;
-        [JsonIgnore, XmlIgnore]
-        public KlipperStatusDisplay DisplayStatus
+        [ObservableProperty]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        KlipperStatusDisplay displayStatus;
+        partial void OnDisplayStatusChanging(KlipperStatusDisplay value)
         {
-            get => _displayStatus;
-            set
+            OnKlipperDisplayStatusChanged(new KlipperDisplayStatusChangedEventArgs()
             {
-                if (_displayStatus == value) return;
-                OnKlipperDisplayStatusChanged(new KlipperDisplayStatusChangedEventArgs()
-                {
-                    NewDisplayStatus = value,
-                    PreviousDisplayStatus = _displayStatus,
-                    SessonId = SessionId,
-                    CallbackId = -1,
-                });
-                _displayStatus = value;
-                OnPropertyChanged();
-            }
+                NewDisplayStatus = value,
+                PreviousDisplayStatus = DisplayStatus,
+                SessonId = SessionId,
+                CallbackId = -1,
+            });
         }
 
-        [JsonIgnore, XmlIgnore]
-        KlipperStatusFilamentSensor _filamentSensor = new() { FilamentDetected = false };
-        [JsonIgnore, XmlIgnore]
-        public KlipperStatusFilamentSensor FilamentSensor
+        [ObservableProperty]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        KlipperStatusFilamentSensor filamentSensor = new() { FilamentDetected = false };
+        partial void OnFilamentSensorChanging(KlipperStatusFilamentSensor value)
         {
-            get => _filamentSensor;
-            set
-            {
-                if (_filamentSensor == value) return;
-                OnKlipperFSensorChanged(new KlipperFSensorStateChangedEventArgs()
+            OnKlipperFSensorChanged(new KlipperFSensorStateChangedEventArgs()
                 {
                     NewFSensorState = value,
-                    PreviousFSensorState = _filamentSensor,
+                    PreviousFSensorState = FilamentSensor,
                     SessonId = SessionId,
                     CallbackId = -1,
                 });
-                _filamentSensor = value;
-                OnPropertyChanged();
-            }
         }
 
-        [JsonIgnore, XmlIgnore]
-        List<KlipperDatabaseWebcamConfig> _webCamConfigs = new();
-        [JsonIgnore, XmlIgnore]
-        public List<KlipperDatabaseWebcamConfig> WebCamConfigs
+        [ObservableProperty]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        List<KlipperDatabaseWebcamConfig> webCamConfigs = new();
+        partial void OnWebCamConfigsChanged(List<KlipperDatabaseWebcamConfig> value)
         {
-            get => _webCamConfigs;
-            set
+            OnKlipperWebCamConfigChanged(new KlipperWebCamConfigChangedEventArgs()
             {
-                if (_webCamConfigs == value) return;
-                OnKlipperWebCamConfigChanged(new KlipperWebCamConfigChangedEventArgs()
-                {
-                    NewConfig = value,
-                });
-                _webCamConfigs = value;
-                OnPropertyChanged();
-            }
+                NewConfig = value,
+            });
         }
 
-        [JsonIgnore, XmlIgnore]
-        List<KlipperDatabaseTemperaturePreset> _presets = new();
-        [JsonIgnore, XmlIgnore]
-        public List<KlipperDatabaseTemperaturePreset> Presets
+        [ObservableProperty]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        List<KlipperDatabaseTemperaturePreset> presets = new();
+        partial void OnPresetsChanged(List<KlipperDatabaseTemperaturePreset> value)
         {
-            get => _presets;
-            set
+            OnKlipperPresetsChanged(new KlipperPresetsChangedEventArgs()
             {
-                if (_presets == value) return;
-                OnKlipperPresetsChanged(new KlipperPresetsChangedEventArgs()
-                {
-                    NewPresets = value,
-                });
-                _presets = value;
-                OnPropertyChanged();
-            }
+                NewPresets = value,
+            });
         }
         #endregion
 
         #region Database
 
-        [JsonIgnore, XmlIgnore]
-        List<string> _availableNamespaces = new();
-        [JsonIgnore, XmlIgnore]
-        public List<string> AvailableNamespaces
-        {
-            get => _availableNamespaces;
-            set
-            {
-                if (_availableNamespaces == value) return;
-                _availableNamespaces = value;
-                OnPropertyChanged();
-            }
-        }
+        [ObservableProperty]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        List<string> availableNamespaces = new();
+
         #endregion
 
         #region ReadOnly
 
-        public string FullWebAddress
-        {
-            get => $"{(IsSecure ? "https" : "http")}://{ServerAddress}:{Port}";
-        }
-
+        public string FullWebAddress => $"{(IsSecure ? "https" : "http")}://{ServerAddress}:{Port}";
+        
         public bool IsReady
         {
             get
@@ -1468,61 +1113,43 @@ namespace AndreasReitberger.API.Moonraker
         #region WebSocket
 
         [ObservableProperty]
-        [property: JsonIgnore]
-        [property: XmlIgnore]
-        WebSocket _webSocket;
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        WebSocket webSocket;
 
-        [JsonIgnore, XmlIgnore]
-        long? _webSocketConnectionId;
-        [JsonIgnore, XmlIgnore]
-        public long? WebSocketConnectionId
+        [ObservableProperty]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        long? webSocketConnectionId;
+        partial void OnWebSocketConnectionIdChanged(long? value)
         {
-            get => _webSocketConnectionId;
-            set
+            OnWebSocketConnectionIdChanged(new KlipperWebSocketConnectionChangedEventArgs()
             {
-                if (_webSocketConnectionId == value) return;
-                _webSocketConnectionId = value;
-                OnWebSocketConnectionIdChanged(new KlipperWebSocketConnectionChangedEventArgs()
-                {
-                    ConnectionId = value,
-                });
-                OnPropertyChanged();
-            }
+                ConnectionId = value,
+            });
         }
 
         [ObservableProperty]
-        [property: JsonIgnore]
-        [property: XmlIgnore]
-        Timer _pingTimer;
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        Timer pingTimer;
 
         [ObservableProperty]
-        [property: JsonIgnore]
-        [property: XmlIgnore]
-        int _pingCounter = 0;
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        int pingCounter = 0;
 
         [ObservableProperty]
-        [property: JsonIgnore]
-        [property: XmlIgnore]
-        int _refreshCounter = 0;
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        int refreshCounter = 0;
 
-        [JsonIgnore, XmlIgnore]
-        bool _isListeningToWebSocket = false;
-        [JsonIgnore, XmlIgnore]
-        public bool IsListeningToWebsocket
+        [ObservableProperty]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        bool isListeningToWebsocket = false;
+        partial void OnIsListeningToWebsocketChanged(bool value)
         {
-            get => _isListeningToWebSocket;
-            set
+            OnListeningChanged(new KlipperEventListeningChangedEventArgs()
             {
-                if (_isListeningToWebSocket == value) return;
-                _isListeningToWebSocket = value;
-                OnListeningChanged(new KlipperEventListeningChangedEventArgs()
-                {
-                    SessonId = SessionId,
-                    IsListening = IsListening,
-                    IsListeningToWebSocket = value,
-                });
-                OnPropertyChanged();
-            }
+                SessonId = SessionId,
+                IsListening = IsListening,
+                IsListeningToWebSocket = value,
+            });
         }
         #endregion
 
@@ -1639,345 +1266,6 @@ namespace AndreasReitberger.API.Moonraker
                 IsInitialized = false;
             }
         }
-        #endregion
-
-        #region EventHandlerss
-
-        #region WebSocket
-
-        public event EventHandler<KlipperEventArgs> WebSocketConnected;
-        protected virtual void OnWebSocketConnected(KlipperEventArgs e)
-        {
-            WebSocketConnected?.Invoke(this, e);
-        }
-
-        public event EventHandler<KlipperEventArgs> WebSocketDisconnected;
-        protected virtual void OnWebSocketDisconnected(KlipperEventArgs e)
-        {
-            WebSocketDisconnected?.Invoke(this, e);
-        }
-
-        public event EventHandler<ErrorEventArgs> WebSocketError;
-        protected virtual void OnWebSocketError(ErrorEventArgs e)
-        {
-            WebSocketError?.Invoke(this, e);
-        }
-
-        public event EventHandler<KlipperEventArgs> WebSocketDataReceived;
-        protected virtual void OnWebSocketDataReceived(KlipperEventArgs e)
-        {
-            WebSocketDataReceived?.Invoke(this, e);
-        }
-        public event EventHandler<KlipperWebSocketConnectionChangedEventArgs> WebSocketConnectionIdChanged;
-        protected virtual void OnWebSocketConnectionIdChanged(KlipperWebSocketConnectionChangedEventArgs e)
-        {
-            WebSocketConnectionIdChanged?.Invoke(this, e);
-        }
-        /*
-        public event EventHandler<KlipperLoginRequiredEventArgs> LoginResultReceived;
-        protected virtual void OnLoginResultReceived(KlipperLoginRequiredEventArgs e)
-        {
-            LoginResultReceived?.Invoke(this, e);
-        }
-        */
-        #endregion
-
-        #region ServerConnectionState
-
-        public event EventHandler<KlipperEventArgs> ServerWentOffline;
-        protected virtual void OnServerWentOffline(KlipperEventArgs e)
-        {
-            ServerWentOffline?.Invoke(this, e);
-        }
-
-        public event EventHandler<KlipperEventArgs> ServerWentOnline;
-        protected virtual void OnServerWentOnline(KlipperEventArgs e)
-        {
-            ServerWentOnline?.Invoke(this, e);
-        }
-
-        public event EventHandler<KlipperEventArgs> ServerUpdateAvailable;
-        protected virtual void OnServerUpdateAvailable(KlipperEventArgs e)
-        {
-            ServerUpdateAvailable?.Invoke(this, e);
-        }
-        #endregion
-
-        #region Debug
-        public event EventHandler<KlipperIgnoredJsonResultsChangedEventArgs> KlipperIgnoredJsonResultsChanged;
-        protected virtual void OnKlipperIgnoredJsonResultsChanged(KlipperIgnoredJsonResultsChangedEventArgs e)
-        {
-            KlipperIgnoredJsonResultsChanged?.Invoke(this, e);
-        }
-        #endregion
-
-        #region State & Config
-        public event EventHandler<KlipperStateChangedEventArgs> KlipperStateChanged;
-        protected virtual void OnKlipperStateChanged(KlipperStateChangedEventArgs e)
-        {
-            KlipperStateChanged?.Invoke(this, e);
-        }
-
-        public event EventHandler<KlipperCpuTemperatureChangedEventArgs> KlipperCpuTemperatureChanged;
-        protected virtual void OnKlipperCpuTemperatureChanged(KlipperCpuTemperatureChangedEventArgs e)
-        {
-            KlipperCpuTemperatureChanged?.Invoke(this, e);
-        }
-
-        public event EventHandler<KlipperServerConfigChangedEventArgs> KlipperServerConfigChanged;
-        protected virtual void OnKlipperServerConfigChanged(KlipperServerConfigChangedEventArgs e)
-        {
-            KlipperServerConfigChanged?.Invoke(this, e);
-        }
-
-        public event EventHandler<KlipperTemperatureCacheChangedEventArgs> KlipperServerTemperatureCacheChanged;
-        protected virtual void OnKlipperServerTemperatureCacheChanged(KlipperTemperatureCacheChangedEventArgs e)
-        {
-            KlipperServerTemperatureCacheChanged?.Invoke(this, e);
-        }
-
-        public event EventHandler<KlipperCpuUsageChangedEventArgs> KlipperServerCpuUsageChanged;
-        protected virtual void OnKlipperServerCpuUsageChanged(KlipperCpuUsageChangedEventArgs e)
-        {
-            KlipperServerCpuUsageChanged?.Invoke(this, e);
-        }
-
-        public event EventHandler<KlipperSystemMemoryChangedEventArgs> KlipperServerSystemMemoryChanged;
-        protected virtual void OnKlipperServerSystemMemoryChanged(KlipperSystemMemoryChangedEventArgs e)
-        {
-            KlipperServerSystemMemoryChanged?.Invoke(this, e);
-        }
-
-        public event EventHandler<KlipperPrinterInfoChangedEventArgs> KlipperPrinterInfoChanged;
-        protected virtual void OnKlipperPrinterInfoChanged(KlipperPrinterInfoChangedEventArgs e)
-        {
-            KlipperPrinterInfoChanged?.Invoke(this, e);
-        }
-
-        public event EventHandler<KlipperGcodeMetaResultChangedEventArgs> KlipperGcodeMetaResultChanged;
-        protected virtual void OnKlipperGcodeMetaResultChanged(KlipperGcodeMetaResultChangedEventArgs e)
-        {
-            KlipperGcodeMetaResultChanged?.Invoke(this, e);
-        }
-
-        public event EventHandler<KlipperGcodeMoveStateChangedEventArgs> KlipperGcodeMoveStateChanged;
-        protected virtual void OnKlipperGcodeMoveStateChanged(KlipperGcodeMoveStateChangedEventArgs e)
-        {
-            KlipperGcodeMoveStateChanged?.Invoke(this, e);
-        }
-
-        public event EventHandler<KlipperVirtualSdCardStateChangedEventArgs> KlipperVirtualSdCardStateChanged;
-        protected virtual void OnKlipperVirtualSdCardStateChanged(KlipperVirtualSdCardStateChangedEventArgs e)
-        {
-            KlipperVirtualSdCardStateChanged?.Invoke(this, e);
-        }
-
-        public event EventHandler<KlipperExtruderStatesChangedEventArgs> KlipperExtruderStatesChanged;
-        protected virtual void OnKlipperExtruderStatesChanged(KlipperExtruderStatesChangedEventArgs e)
-        {
-            KlipperExtruderStatesChanged?.Invoke(this, e);
-        }
-
-        public event EventHandler<KlipperTemperatureSensorStatesChangedEventArgs> KlipperTemperatureSensorStatesChanged;
-        protected virtual void OnKlipperTemperatureSensorStatesChanged(KlipperTemperatureSensorStatesChangedEventArgs e)
-        {
-            KlipperTemperatureSensorStatesChanged?.Invoke(this, e);
-        }
-
-        public event EventHandler<KlipperHeaterBedStateChangedEventArgs> KlipperHeaterBedStateChanged;
-        protected virtual void OnKlipperHeaterBedStateChanged(KlipperHeaterBedStateChangedEventArgs e)
-        {
-            KlipperHeaterBedStateChanged?.Invoke(this, e);
-        }
-
-        public event EventHandler<KlipperPrintStateChangedEventArgs> KlipperPrintStateChanged;
-        protected virtual void OnKlipperPrintStateChanged(KlipperPrintStateChangedEventArgs e)
-        {
-            KlipperPrintStateChanged?.Invoke(this, e);
-        }
-
-        public event EventHandler<KlipperIsPrintingStateChangedEventArgs> KlipperIsPrintingStateChanged;
-        protected virtual void OnKlipperIsPrintingStateChanged(KlipperIsPrintingStateChangedEventArgs e)
-        {
-            KlipperIsPrintingStateChanged?.Invoke(this, e);
-        }
-
-        public event EventHandler<KlipperIsPrintingProgressChangedEventArgs> KlipperIsPrintingProgressChanged;
-        protected virtual void OnKlipperIsPrintingProgressChanged(KlipperIsPrintingProgressChangedEventArgs e)
-        {
-            KlipperIsPrintingProgressChanged?.Invoke(this, e);
-        }
-
-        public event EventHandler<KlipperFanStateChangedEventArgs> KlipperFanStateChanged;
-        protected virtual void OnKlipperFanStateChanged(KlipperFanStateChangedEventArgs e)
-        {
-            KlipperFanStateChanged?.Invoke(this, e);
-        }
-
-        public event EventHandler<KlipperMotionReportChangedEventArgs> KlipperMotionReportChanged;
-        protected virtual void OnKlipperMotionReportChanged(KlipperMotionReportChangedEventArgs e)
-        {
-            KlipperMotionReportChanged?.Invoke(this, e);
-        }
-
-        public event EventHandler<KlipperIdleStateChangedEventArgs> KlipperIdleStateChanged;
-        protected virtual void OnKlipperIdleStateChanged(KlipperIdleStateChangedEventArgs e)
-        {
-            KlipperIdleStateChanged?.Invoke(this, e);
-        }
-
-        public event EventHandler<KlipperToolHeadStateChangedEventArgs> KlipperToolHeadStateChanged;
-        protected virtual void OnKlipperToolHeadStateChanged(KlipperToolHeadStateChangedEventArgs e)
-        {
-            KlipperToolHeadStateChanged?.Invoke(this, e);
-        }
-
-        public event EventHandler<KlipperActiveJobStateChangedEventArgs> KlipperActiveJobStateChanged;
-        protected virtual void OnKlipperActiveJobStateChanged(KlipperActiveJobStateChangedEventArgs e)
-        {
-            KlipperActiveJobStateChanged?.Invoke(this, e);
-        }
-
-        public event EventHandler<KlipperDisplayStatusChangedEventArgs> KlipperDisplayStatusChanged;
-        protected virtual void OnKlipperDisplayStatusChanged(KlipperDisplayStatusChangedEventArgs e)
-        {
-            KlipperDisplayStatusChanged?.Invoke(this, e);
-        }
-
-        public event EventHandler<KlipperFSensorStateChangedEventArgs> KlipperFSensorChanged;
-        protected virtual void OnKlipperFSensorChanged(KlipperFSensorStateChangedEventArgs e)
-        {
-            KlipperFSensorChanged?.Invoke(this, e);
-        }
-
-        public event EventHandler<KlipperWebCamConfigChangedEventArgs> KlipperWebCamConfigChanged;
-        protected virtual void OnKlipperWebCamConfigChanged(KlipperWebCamConfigChangedEventArgs e)
-        {
-            KlipperWebCamConfigChanged?.Invoke(this, e);
-        }
-
-        public event EventHandler<KlipperPresetsChangedEventArgs> KlipperPresetsChanged;
-        protected virtual void OnKlipperPresetsChanged(KlipperPresetsChangedEventArgs e)
-        {
-            KlipperPresetsChanged?.Invoke(this, e);
-        }
-        #endregion
-
-        #region Remote Printers
-        public event EventHandler<KlipperRemotePrintersChangedEventArgs> KlipperRemotePrinterChanged;
-        protected virtual void OnKlipperRemotePrinterChanged(KlipperRemotePrintersChangedEventArgs e)
-        {
-            KlipperRemotePrinterChanged?.Invoke(this, e);
-        }
-        #endregion
-
-        #region Files
-        public event EventHandler<KlipperFilesChangedEventArgs> KlipperFilesChanged;
-        protected virtual void OnKlipperFilesChanged(KlipperFilesChangedEventArgs e)
-        {
-            KlipperFilesChanged?.Invoke(this, e);
-        }
-        #endregion
-
-        #region Jobs & Queue
-        public event EventHandler<KlipperJobListStateChangedEventArgs> KlipperJobListStateChanged;
-        protected virtual void OnKlipperJobListStateChanged(KlipperJobListStateChangedEventArgs e)
-        {
-            KlipperJobListStateChanged?.Invoke(this, e);
-        }
-
-        public event EventHandler<KlipperJobStatusChangedEventArgs> KlipperJobStatusChanged;
-        protected virtual void OnKlipperJobStatusChanged(KlipperJobStatusChangedEventArgs e)
-        {
-            KlipperJobStatusChanged?.Invoke(this, e);
-        }
-
-        public event EventHandler<KlipperCurrentPrintImageChangedEventArgs> KlipperCurrentPrintImageChanged;
-        protected virtual void OnKlipperCurrentPrintImageChanged(KlipperCurrentPrintImageChangedEventArgs e)
-        {
-            KlipperCurrentPrintImageChanged?.Invoke(this, e);
-        }
-
-        public event EventHandler<KlipperJobListChangedEventArgs> KlipperJobListChanged;
-        protected virtual void OnKlipperJobListChanged(KlipperJobListChangedEventArgs e)
-        {
-            KlipperJobListChanged?.Invoke(this, e);
-        }
-
-        public event EventHandler<KlipperJobFinishedEventArgs> JobFinished;
-        protected virtual void OnJobFinished(KlipperJobFinishedEventArgs e)
-        {
-            JobFinished?.Invoke(this, e);
-        }
-        #endregion
-
-        #region Errors
-
-        public event EventHandler Error;
-        protected virtual void OnError()
-        {
-            Error?.Invoke(this, EventArgs.Empty);
-        }
-        protected virtual void OnError(ErrorEventArgs e)
-        {
-            Error?.Invoke(this, e);
-        }
-        protected virtual void OnError(UnhandledExceptionEventArgs e)
-        {
-            Error?.Invoke(this, e);
-        }
-        protected virtual void OnError(KlipprtJsonConvertEventArgs e)
-        {
-            Error?.Invoke(this, e);
-        }
-        public event EventHandler<KlipperRestEventArgs> RestApiError;
-        protected virtual void OnRestApiError(KlipperRestEventArgs e)
-        {
-            RestApiError?.Invoke(this, e);
-        }
-
-        public event EventHandler<KlipperRestEventArgs> RestApiAuthenticationError;
-        protected virtual void OnRestApiAuthenticationError(KlipperRestEventArgs e)
-        {
-            RestApiAuthenticationError?.Invoke(this, e);
-        }
-        public event EventHandler<KlipperRestEventArgs> RestApiAuthenticationSucceeded;
-        protected virtual void OnRestApiAuthenticationSucceeded(KlipperRestEventArgs e)
-        {
-            RestApiAuthenticationSucceeded?.Invoke(this, e);
-        }
-
-        public event EventHandler<KlipprtJsonConvertEventArgs> RestJsonConvertError;
-        protected virtual void OnRestJsonConvertError(KlipprtJsonConvertEventArgs e)
-        {
-            RestJsonConvertError?.Invoke(this, e);
-        }
-
-        #endregion
-
-        #region ServerStateChanges
-
-        public event EventHandler<KlipperEventListeningChangedEventArgs> ListeningChanged;
-        protected virtual void OnListeningChanged(KlipperEventListeningChangedEventArgs e)
-        {
-            ListeningChanged?.Invoke(this, e);
-        }
-
-        public event EventHandler<KlipperSessionChangedEventArgs> SessionChanged;
-        protected virtual void OnSessionChanged(KlipperSessionChangedEventArgs e)
-        {
-            SessionChanged?.Invoke(this, e);
-        }
-        #endregion
-
-        #region Login
-        public event EventHandler<KlipperLoginEventArgs> LoginChanged;
-        protected virtual void OnLoginChanged(KlipperLoginEventArgs e)
-        {
-            LoginChanged?.Invoke(this, e);
-        }
-        #endregion
-
         #endregion
 
         #region WebSocket
@@ -2290,7 +1578,7 @@ namespace AndreasReitberger.API.Moonraker
                                                 }
                                                 else
                                                 {
-                                                    CpuUsage.Add(cpuUsageIdentifier, cpuUsageItem.Value);
+                                                    CpuUsage.TryAdd(cpuUsageIdentifier, cpuUsageItem.Value);
                                                 }
                                             }
                                         }
@@ -2308,7 +1596,7 @@ namespace AndreasReitberger.API.Moonraker
                                                 }
                                                 else
                                                 {
-                                                    SystemMemory.Add(memoryIdentifier, memoryUsage.Value);
+                                                    SystemMemory.TryAdd(memoryIdentifier, memoryUsage.Value);
                                                 }
                                             }
                                         }
@@ -3745,6 +3033,8 @@ namespace AndreasReitberger.API.Moonraker
             {
                 // Avoid multiple calls
                 if (IsRefreshing) return;
+                if (!IsOnline) throw new ServerNotReachableException($"The server '{ServerName} ({FullWebAddress})' is not reachable. Make sure to call `CheckOnlineAsync()` first! ");
+                
                 IsRefreshing = true;
                 // Detects current operating system, must be called before each other Database method
                 await RefreshDatabaseNamespacesAsync();
@@ -3760,6 +3050,7 @@ namespace AndreasReitberger.API.Moonraker
                     RefreshDirectoryInformationAsync(),
                     RefreshAvailableDirectorienAsync(),
                     RefreshServerCachedTemperatureDataAsync(),
+                    RefreshServerCachedGcodesAsync(),
 
                     RefreshToolHeadStatusAsync(),
                     RefreshVirtualSdCardStatusAsync(),
@@ -5228,7 +4519,19 @@ namespace AndreasReitberger.API.Moonraker
                 return resultObject;
             }
         }
-
+        public async Task RefreshServerCachedGcodesAsync()
+        {
+            try
+            {
+                List<KlipperGcode> result = await GetServerCachedGcodesAsync().ConfigureAwait(false);
+                GcodeCache = result;
+            }
+            catch (Exception exc)
+            {
+                OnError(new UnhandledExceptionEventArgs(exc, false));
+                GcodeCache = new();
+            }
+        }
         public async Task<List<KlipperGcode>> GetServerCachedGcodesAsync(long count = 100)
         {
             KlipperApiRequestRespone result = new();
@@ -5760,7 +5063,7 @@ namespace AndreasReitberger.API.Moonraker
                         current.GcodeMeta = await GetGcodeMetadataAsync(current.Path).ConfigureAwait(false);
                         if (current.GcodeMeta?.Thumbnails?.Count > 0)
                         {
-                            current.Image = await GetGcodeThumbnailImageAsync(current.GcodeMeta, 1)
+                            current.Image = await GetGcodeSecondThumbnailImageAsync(current.GcodeMeta)
                                 .ConfigureAwait(false)
                                 ;
                         }
@@ -5842,7 +5145,7 @@ namespace AndreasReitberger.API.Moonraker
                 if(PrintStats?.State == KlipperPrintStates.Printing)
                 {
                     // Get current print image 
-                   CurrentPrintImage = await GetGcodeLargestThumbnailImageAsync(_gcodeMeta);
+                   CurrentPrintImage = await GetGcodeLargestThumbnailImageAsync(GcodeMeta);
                 }
                 else
                 {
@@ -6729,19 +6032,22 @@ namespace AndreasReitberger.API.Moonraker
                 {
                     throw new ArgumentOutOfRangeException(namespaceName, "The requested namespace name was not found in the database!");
                 }
-                
-                Dictionary<string, string> urlSegements = new();
-                urlSegements.Add("namespace", namespaceName);
+
+                Dictionary<string, string> urlSegements = new()
+                {
+                    { "namespace", namespaceName }
+                };
                 if (!string.IsNullOrEmpty(key)) urlSegements.Add("key", key);
 
-                result =
-                    await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Get, $"database/item", default, null, urlSegements)
-                    .ConfigureAwait(false);
-                KlipperDatabaseItemRespone queryResult = JsonConvert.DeserializeObject<KlipperDatabaseItemRespone>(result.Result);
+                result = await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Get, $"database/item", default, null, urlSegements)
+                            .ConfigureAwait(false);
+                KlipperDatabaseItemRespone queryResult = JsonConvert.DeserializeObject<KlipperDatabaseItemRespone>(result?.Result);
                 if (queryResult != null)
                 {
-                    resultObject = new();
-                    resultObject.Add($"{namespaceName}{(!string.IsNullOrEmpty(key) ? $"|{key}" : "")}", queryResult?.Result?.Value);
+                    resultObject = new()
+                    {
+                        { $"{namespaceName}{(!string.IsNullOrEmpty(key) ? $"|{key}" : "")}", queryResult?.Result?.Value }
+                    };
                 }
                 return resultObject;
             }
