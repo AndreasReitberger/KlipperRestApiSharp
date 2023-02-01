@@ -71,7 +71,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         {
             try
             {
-                if (Target == null || Temperature == null) 
+                if (Target == null || Temperature == null)
                     return KlipperToolState.Idle;
                 return Target <= 0
                     ? KlipperToolState.Idle
