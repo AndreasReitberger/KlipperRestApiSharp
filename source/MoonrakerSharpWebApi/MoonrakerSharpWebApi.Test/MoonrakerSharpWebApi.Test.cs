@@ -74,7 +74,7 @@ namespace MoonrakerSharpWebApi.Test
                 };
                 MoonrakerClient.Instance.SetProxy(true, "https://testproxy.de", 447, "User", SecureStringHelper.ConvertToSecureString("my_awesome_pwd"), true);
 
-                var serializedString = JsonConvert.SerializeObject(MoonrakerClient.Instance);
+                var serializedString = JsonConvert.SerializeObject(MoonrakerClient.Instance, Formatting.Indented);
                 var serializedObject = JsonConvert.DeserializeObject<MoonrakerClient>(serializedString);
                 Assert.IsTrue(serializedObject is MoonrakerClient server && server != null);
 
