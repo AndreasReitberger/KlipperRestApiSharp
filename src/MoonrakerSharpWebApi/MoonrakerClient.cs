@@ -3167,9 +3167,9 @@ namespace AndreasReitberger.API.Moonraker
 
         #region CheckOnline
 
-        public async Task CheckOnlineAsync(int Timeout = 10000)
+        public async Task CheckOnlineAsync(int timeout = 10000)
         {
-            CancellationTokenSource cts = new(new TimeSpan(0, 0, 0, 0, Timeout));
+            CancellationTokenSource cts = new(new TimeSpan(0, 0, 0, 0, timeout));
             await CheckOnlineAsync(cts).ConfigureAwait(false);
             cts?.Dispose();
         }
@@ -3221,13 +3221,13 @@ namespace AndreasReitberger.API.Moonraker
                 await CheckOnlineAsync(3500).ConfigureAwait(false);
             }
         }
-        public async Task<bool> CheckIfApiIsValidAsync(int Timeout = 10000)
+        public async Task<bool> CheckIfApiIsValidAsync(int timeout = 10000)
         {
             try
             {
                 if (IsOnline)
                 {
-                    CancellationTokenSource cts = new(new TimeSpan(0, 0, 0, 0, Timeout));
+                    CancellationTokenSource cts = new(new TimeSpan(0, 0, 0, 0, timeout));
                     KlipperApiRequestRespone respone = await SendOnlineCheckRestApiRequestAsync(MoonrakerCommandBase.api, "version", cts).ConfigureAwait(false);
                     if (respone.HasAuthenticationError)
                     {
@@ -3252,10 +3252,9 @@ namespace AndreasReitberger.API.Moonraker
                 return false;
             }
         }
-
-        public async Task CheckServerIfApiIsValidAsync(int Timeout = 10000)
+        public async Task CheckServerIfApiIsValidAsync(int timeout = 10000)
         {
-            _ = await CheckIfApiIsValidAsync(Timeout).ConfigureAwait(false);
+            _ = await CheckIfApiIsValidAsync(timeout).ConfigureAwait(false);
         }
         #endregion
 
