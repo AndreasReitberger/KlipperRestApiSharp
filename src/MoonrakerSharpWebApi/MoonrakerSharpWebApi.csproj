@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 	<Import Project="..\..\common.props" />
   <PropertyGroup>
     <TargetFrameworks>netstandard2.1;net6;net7</TargetFrameworks>
@@ -15,7 +15,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-	<PackageReference Include="CommunityToolkit.Mvvm" Version="8.1.0" />
+	<PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="RCoreSharp" Version="1.0.8" />
     <PackageReference Include="RestSharp" Version="108.0.3" />
