@@ -15,8 +15,8 @@ namespace AndreasReitberger.API.Moonraker.Models
         [JsonProperty("memory")]
         public long? Memory { get; set; }
 
-        [JsonProperty("mem_units")]
-        public MoonrakerMemUnits MemUnits { get; set; }
+        [JsonProperty("mem_units", NullValueHandling = NullValueHandling.Ignore)]
+        public MoonrakerMemUnits? MemUnits { get; set; }
         #endregion
 
         #region Overrides

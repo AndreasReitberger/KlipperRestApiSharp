@@ -28,8 +28,7 @@ namespace AndreasReitberger.API.Moonraker
 {
     // Needs: https://github.com/Arksine/moonraker/blob/master/docs/web_api.md
     // Docs: https://moonraker.readthedocs.io/en/latest/configuration/
-    [ObservableObject]
-    public partial class MoonrakerClient : IDisposable// IRestApiClient
+    public partial class MoonrakerClient : ObservableObject, IDisposable// IRestApiClient
     {
         #region Variables
         RestClient restClient;
