@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 	<Import Project="..\..\common.props" />
   <PropertyGroup>
     <TargetFrameworks>netstandard2.1;net6;net7</TargetFrameworks>
@@ -21,8 +21,11 @@
     <PackageReference Include="RestSharp" Version="110.2.0" />
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
     <PackageReference Include="System.Text.Json" Version="7.0.2" />
-    <PackageReference Include="WebSocket4Net" Version="0.15.2" />
     <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\WebSocket4Net\src\WebSocket4Net\WebSocket4Net\WebSocket4Net.csproj" />
   </ItemGroup>
 
 </Project>
