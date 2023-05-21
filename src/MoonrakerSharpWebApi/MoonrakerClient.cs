@@ -2688,7 +2688,7 @@ namespace AndreasReitberger.API.Moonraker
         {
             try
             {
-                if (WebCamConfigs?.Count <= 0)
+                if (WebCamConfigs?.Count <= 0 || refreshWebCamConfig)
                 {
                     await RefreshWebCamConfigAsync().ConfigureAwait(false);
                 }
@@ -2715,9 +2715,8 @@ namespace AndreasReitberger.API.Moonraker
                         Url = "/webcam?action=stream"
                     };
                 }
-
                 string token = !string.IsNullOrEmpty(ApiKey) ? ApiKey : UserToken;
-                return config == null ? GetDefaultWebCamUri() : $"{FullWebAddress}{config.Url}{(!string.IsNullOrEmpty(token) ? $"?t={token}" : "")}";
+                return config == null ? GetDefaultWebCamUri() : $"{FullWebAddress}{config.Url}{(!string.IsNullOrEmpty(token) ? $"&t={token}" : "")}";
             }
             catch (Exception exc)
             {

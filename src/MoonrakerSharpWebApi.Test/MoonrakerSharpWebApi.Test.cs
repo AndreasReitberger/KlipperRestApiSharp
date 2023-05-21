@@ -13,7 +13,7 @@ namespace MoonrakerSharpWebApi.Test
 {
     public class Tests
     {
-        private readonly string _host = "192.168.10.44";
+        private readonly string _host = "192.168.10.113";
         private readonly int _port = 80;
         private readonly string _api = "1c8fc5833641429a95d00991e1f3aa0f";
         private readonly bool _ssl = false;
