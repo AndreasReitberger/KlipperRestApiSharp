@@ -153,8 +153,8 @@ namespace AndreasReitberger.API.Moonraker
             });
         }
 #endif
-        
-#endregion
+
+        #endregion
 
         #region Connection
 
@@ -1296,7 +1296,7 @@ namespace AndreasReitberger.API.Moonraker
                 NewPresets = value,
             });
         }
-#endregion
+        #endregion
 
         #region Database
 
@@ -1328,7 +1328,7 @@ namespace AndreasReitberger.API.Moonraker
         }
         #endregion
 
-#endregion
+        #endregion
 
         #region Constructor
         public MoonrakerClient()
@@ -3891,7 +3891,7 @@ namespace AndreasReitberger.API.Moonraker
                 return resultObject;
             }
         }
-#endregion
+        #endregion
 
         #region Server Config
         public async Task RefreshServerConfigAsync()
@@ -4039,7 +4039,7 @@ namespace AndreasReitberger.API.Moonraker
                 return false;
             }
         }
-#endregion
+        #endregion
 
         #region WebSocket   
 
@@ -7055,9 +7055,9 @@ namespace AndreasReitberger.API.Moonraker
         }
         #endregion
 
-#endregion
+        #endregion
 
-#endregion
+        #endregion
 
         #region Overrides
         public override string ToString()

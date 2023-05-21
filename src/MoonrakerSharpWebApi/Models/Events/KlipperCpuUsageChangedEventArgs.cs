@@ -15,7 +15,7 @@ namespace AndreasReitberger.API.Moonraker.Models
 #else
         public Dictionary<string, double?> CpuUsage { get; set; } = new();
 #endif
-#endregion
+        #endregion
 
         #region Overrides
         public override string ToString()
