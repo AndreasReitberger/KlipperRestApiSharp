@@ -5464,7 +5464,7 @@ namespace AndreasReitberger.API.Moonraker
             }
         }
 
-        public async Task<Dictionary<string, object>> GetDatabaseItemAsync(string namespaceName, string key = "")
+        public async Task<Dictionary<string, object>> GetDatabaseItemAsync(string namespaceName, string key = "", bool throwOnMissingNamespace = false)
         {
             KlipperApiRequestRespone result = new();
             Dictionary<string, object> resultObject = null;
@@ -5476,7 +5476,12 @@ namespace AndreasReitberger.API.Moonraker
                 }
                 if (!AvailableNamespaces.Contains(namespaceName))
                 {
-                    throw new ArgumentOutOfRangeException(namespaceName, "The requested namespace name was not found in the database!");
+                    if (throwOnMissingNamespace)
+                    {
+                        throw new ArgumentOutOfRangeException(namespaceName, "The requested namespace name was not found in the database!");
+                    }
+                    // If namespace is missing, just return an empty resultObject now
+                    else return resultObject;
                 }
 
                 Dictionary<string, string> urlSegements = new()
