@@ -17,7 +17,7 @@ namespace AndreasReitberger.API.Moonraker
 
         public static void AddToConcurrentDictionary<T1, T2>(Dictionary<T1, T2> source, ConcurrentDictionary<T1, T2> target)
         {
-            foreach(var keypair  in source)
+            foreach(KeyValuePair<T1, T2> keypair  in source)
             {
                 target.AddOrUpdate(keypair.Key, keypair.Value, (k, v) => keypair.Value);
             }
@@ -25,7 +25,8 @@ namespace AndreasReitberger.API.Moonraker
         public static ConcurrentDictionary<T1, T2> ToConcurrent<T1, T2>(Dictionary<T1, T2> source)
         {
             ConcurrentDictionary<T1, T2> target = new();
-            foreach (var keypair  in source)
+            if (source == null) return target;
+            foreach (KeyValuePair<T1, T2> keypair  in source)
             {
                 target.AddOrUpdate(keypair.Key, keypair.Value, (k, v) => keypair.Value);
             }
@@ -34,7 +35,8 @@ namespace AndreasReitberger.API.Moonraker
         public static Dictionary<T1, T2> ToDictionary<T1, T2>(ConcurrentDictionary<T1, T2> source)
         {
             Dictionary<T1, T2> target = new();
-            foreach (var keypair  in source)
+            if (source == null) return target;
+            foreach (KeyValuePair<T1, T2> keypair  in source)
             {
                 target.TryAdd(keypair.Key, keypair.Value);
             }
