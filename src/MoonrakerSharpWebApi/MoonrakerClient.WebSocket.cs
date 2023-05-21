@@ -16,6 +16,7 @@ using AndreasReitberger.Core.Enums;
 using System.Threading.Tasks;
 using WebSocket4Net;
 using ErrorEventArgs = SuperSocket.ClientEngine.ErrorEventArgs;
+using System.Collections.Concurrent;
 
 namespace AndreasReitberger.API.Moonraker
 {
@@ -343,7 +344,11 @@ namespace AndreasReitberger.API.Moonraker
                     string jsonBody = string.Empty;
                     try
                     {
+#if ConcurrentDictionary
+                        ConcurrentDictionary<int, KlipperStatusExtruder> extruderStats = new();
+#else
                         Dictionary<int, KlipperStatusExtruder> extruderStats = new();
+#endif
                         KlipperWebSocketMessage method = JsonConvert.DeserializeObject<KlipperWebSocketMessage>(e.Message);
                         for (int i = 0; i < method?.Params?.Count; i++)
                         {
@@ -404,10 +409,10 @@ namespace AndreasReitberger.API.Moonraker
                                             JsonConvert.DeserializeObject<double>(jsonBody.Replace(",", "."));
                                         break;
                                     case "system_cpu_usage":
-                                        var tempUsageObject = JsonConvert.DeserializeObject<Dictionary<string, double?>>(jsonBody);
+                                        Dictionary<string, double?> tempUsageObject = JsonConvert.DeserializeObject<Dictionary<string, double?>>(jsonBody);
                                         if (tempUsageObject != null)
                                         {
-                                            foreach (var cpuUsageItem in tempUsageObject)
+                                            foreach (KeyValuePair<string, double?> cpuUsageItem in tempUsageObject)
                                             {
                                                 string cpuUsageIdentifier = cpuUsageItem.Key;
                                                 if (CpuUsage.ContainsKey(cpuUsageIdentifier))
@@ -422,10 +427,10 @@ namespace AndreasReitberger.API.Moonraker
                                         }
                                         break;
                                     case "system_memory":
-                                        var tempMemoryObject = JsonConvert.DeserializeObject<Dictionary<string, long?>>(jsonBody);
+                                        Dictionary<string, long?> tempMemoryObject = JsonConvert.DeserializeObject<Dictionary<string, long?>>(jsonBody);
                                         if (tempMemoryObject != null)
                                         {
-                                            foreach (var memoryUsage in tempMemoryObject)
+                                            foreach (KeyValuePair<string, long?> memoryUsage in tempMemoryObject)
                                             {
                                                 string memoryIdentifier = memoryUsage.Key;
                                                 if (SystemMemory.ContainsKey(memoryIdentifier))
@@ -443,16 +448,14 @@ namespace AndreasReitberger.API.Moonraker
                                         MoonrakerVersion = jsonBody;
                                         break;
                                     case "websocket_connections":
-                                        int wsConnections =
-                                            JsonConvert.DeserializeObject<int>(jsonBody);
+                                        int wsConnections = JsonConvert.DeserializeObject<int>(jsonBody);
                                         break;
                                     case "network":
                                         Dictionary<string, KlipperNetworkInterface> network =
                                             JsonConvert.DeserializeObject<Dictionary<string, KlipperNetworkInterface>>(jsonBody);
                                         break;
                                     case "gcode_move":
-                                        KlipperStatusGcodeMove gcodeMoveState =
-                                            JsonConvert.DeserializeObject<KlipperStatusGcodeMove>(jsonBody);
+                                        KlipperStatusGcodeMove gcodeMoveState = JsonConvert.DeserializeObject<KlipperStatusGcodeMove>(jsonBody);
                                         GcodeMove = gcodeMoveState;
                                         break;
                                     case "print_stats":
@@ -465,10 +468,6 @@ namespace AndreasReitberger.API.Moonraker
                                             if (!jsonBody.Contains("filename"))
                                             {
                                                 printStats.Filename = PrintStats.Filename;
-                                            }
-                                            else
-                                            {
-
                                             }
                                         }
                                         PrintStats = printStats;
@@ -525,8 +524,7 @@ namespace AndreasReitberger.API.Moonraker
                                                 extruder.Target = previousExtruderState.Target;
                                             }
                                         }
-                                        extruderStats.Add(index, extruder);
-                                        //OnPropertyChanged(nameof(Extruders));
+                                        extruderStats.TryAdd(index, extruder);
                                         break;
                                     case "motion_report":
                                         KlipperStatusMotionReport motionReport =
@@ -696,7 +694,11 @@ namespace AndreasReitberger.API.Moonraker
 #if DEBUG
                                         Console.WriteLine($"No Json object found for '{name}' => '{jsonBody}");
 #endif
+#if ConcurrentDictionary
+                                        ConcurrentDictionary<string, string> loggedResults = new(IgnoredJsonResults);
+#else
                                         Dictionary<string, string> loggedResults = new(IgnoredJsonResults);
+#endif
                                         if (!loggedResults.ContainsKey(name))
                                         {
                                             // Log unused json results for further releases
@@ -785,7 +787,11 @@ namespace AndreasReitberger.API.Moonraker
 #if DEBUG
                                         Console.WriteLine($"No Json object found for '{name}' => '{jsonBody}");
 #endif
+#if ConcurrentDictionary
+                                        ConcurrentDictionary<string, string> loggedResults = new(IgnoredJsonResults);
+#else
                                         Dictionary<string, string> loggedResults = new(IgnoredJsonResults);
+#endif
                                         if (!loggedResults.ContainsKey(name))
                                         {
                                             // Log unused json results for further releases

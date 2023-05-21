@@ -13,7 +13,7 @@ namespace MoonrakerSharpWebApi.Test
 {
     public class Tests
     {
-        private readonly string _host = "192.168.10.113";
+        private readonly string _host = "192.168.10.44";
         private readonly int _port = 80;
         private readonly string _api = "1c8fc5833641429a95d00991e1f3aa0f";
         private readonly bool _ssl = false;
@@ -1488,6 +1488,122 @@ namespace MoonrakerSharpWebApi.Test
 
                 // Wait a few minutes
                 CancellationTokenSource cts = new(new TimeSpan(0, 10, 0));
+                _server.WebSocketDisconnected += (o, args) =>
+                {
+                    if (!cts.IsCancellationRequested)
+                        Assert.Fail($"Websocket unexpectly closed: {args}");
+                };
+
+                do
+                {
+                    await Task.Delay(10000);
+                    await _server.CheckOnlineAsync();
+                    Debug.WriteLine($"Online: {_server.IsOnline}");
+                } while (_server.IsOnline && !cts.IsCancellationRequested);
+                await _server.StopListeningAsync();
+
+                StringBuilder sb = new();
+                foreach (var pair in websocketMessages)
+                {
+                    sb.AppendLine($"{pair.Key}: {pair.Value}");
+                }
+                await File.WriteAllTextAsync("ws_messages.txt", sb.ToString());
+
+                Assert.IsTrue(cts.IsCancellationRequested);
+            }
+            catch (Exception exc)
+            {
+                Assert.Fail(exc.Message);
+            }
+        }
+        [Test]
+        public async Task VeryLongWebsocketTest()
+        {
+            try
+            {
+                Dictionary<DateTime, string> websocketMessages = new();
+                MoonrakerClient _server = new(_host, _api, _port, _ssl)
+                {
+                    LoginRequired = false,
+                };
+
+                await _server.CheckOnlineAsync();
+                Assert.IsTrue(_server.IsOnline);
+
+                await _server.RefreshAllAsync();
+
+                //var test = await _server.GetActiveJobStatusAsync();
+
+                if (_server.LoginRequired)
+                {
+                    await _server.LoginUserAsync("TestUser", "TestPassword");
+                }
+                //KlipperAccessTokenResult oneshot = await _server.GetOneshotTokenAsync();
+                //_server.OneShotToken = oneshot.Result;
+                await _server.StartListeningAsync();
+
+                _server.WebSocketConnectionIdChanged += (o, args) =>
+                {
+                    Assert.IsNotNull(args.ConnectionId);
+                    Assert.IsTrue(args.ConnectionId > 0);
+                    Task.Run(async () =>
+                    {
+                        string subResult = await _server.SubscribeAllPrinterObjectStatusAsync(args.ConnectionId);
+                    });
+                };
+
+                _server.Error += (o, args) =>
+                {
+                    Assert.Fail(args.ToString());
+                };
+                _server.ServerWentOffline += (o, args) =>
+                {
+                    Assert.Fail(args.ToString());
+                };
+
+                // Subscirbe to state changes
+                _server.KlipperExtruderStatesChanged += (o, args) =>
+                {
+                    foreach (var pair in args.ExtruderStates)
+                    {
+                        Debug.WriteLine($"Extruder{pair.Key}: {pair.Value?.Temperature} �C (Target: {pair.Value?.Target} �C)");
+                    }
+                };
+                _server.KlipperHeaterBedStateChanged += (o, args) =>
+                {
+                    Debug.WriteLine($"HeatedBed: {args.NewHeaterBedState?.Temperature} �C (Target: {args.NewHeaterBedState?.Target} �C)");
+                };
+                _server.KlipperDisplayStatusChanged += (o, args) =>
+                {
+                    if (args.NewDisplayStatus != null)
+                        Debug.WriteLine($"Progress: {args.NewDisplayStatus?.Progress * 100} % (Msg: {args.NewDisplayStatus?.Message})");
+                };
+
+                _server.KlipperToolHeadStateChanged += (o, args) =>
+                {
+                    //Debug.WriteLine($"Toolhead: {args.ToolheadStates.EstimatedPrintTime}");
+                };
+                _server.KlipperPrintStateChanged += (o, args) =>
+                {
+                    //Debug.WriteLine($"PrintState: New => {args.NewPrintState.State}; Previous => {args.PreviousPrintState?.State}");
+                };
+
+                _server.WebSocketMessageReceived += (o, args) =>
+                {
+                    if (!string.IsNullOrEmpty(args.Message))
+                    {
+                        websocketMessages.Add(DateTime.Now, args.Message);
+                        //Debug.WriteLine($"WebSocket Data: {args.Message} (Total: {websocketMessages.Count})");
+                    }
+                };
+
+                _server.WebSocketError += (o, args) =>
+                {
+                    Assert.Fail($"Websocket closed due to an error: {args}");
+                };
+
+                // Wait a 90 minutes
+                CancellationTokenSource cts = new(new TimeSpan(1, 30, 0));
                 _server.WebSocketDisconnected += (o, args) =>
                 {
                     if (!cts.IsCancellationRequested)

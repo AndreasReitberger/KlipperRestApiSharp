@@ -13,6 +13,9 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <Title>MoonrakerSharpWebApi</Title>
   </PropertyGroup>
+  <PropertyGroup>
+    <DefineConstants>$(DefineConstants);ConcurrentDictionary</DefineConstants>
+  </PropertyGroup>
 
   <ItemGroup>
 	<PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.0" />

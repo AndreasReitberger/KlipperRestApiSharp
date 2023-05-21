@@ -1,28 +1,26 @@
 ﻿using AndreasReitberger.API.Moonraker.Enum;
+using AndreasReitberger.API.Moonraker.Extensions;
 using AndreasReitberger.API.Moonraker.Models;
 using AndreasReitberger.API.Moonraker.Models.Exceptions;
-using AndreasReitberger.Core.Enums;
 using AndreasReitberger.Core.Utilities;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RestSharp;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Security;
-using System.Security.Authentication;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
-using WebSocket4Net;
-using ErrorEventArgs = SuperSocket.ClientEngine.ErrorEventArgs;
 
 namespace AndreasReitberger.API.Moonraker
 {
@@ -136,6 +134,16 @@ namespace AndreasReitberger.API.Moonraker
         #region Debug
         [ObservableProperty]
         [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+#if ConcurrentDictionary
+        ConcurrentDictionary<string, string> ignoredJsonResults = new();
+        partial void OnIgnoredJsonResultsChanged(ConcurrentDictionary<string, string> value)
+        {
+            OnKlipperIgnoredJsonResultsChanged(new KlipperIgnoredJsonResultsChangedEventArgs()
+            {
+                NewIgnoredJsonResults = value,
+            });
+        }
+#else
         Dictionary<string, string> ignoredJsonResults = new();
         partial void OnIgnoredJsonResultsChanged(Dictionary<string, string> value)
         {
@@ -144,7 +152,9 @@ namespace AndreasReitberger.API.Moonraker
                 NewIgnoredJsonResults = value,
             });
         }
-        #endregion
+#endif
+        
+#endregion
 
         #region Connection
 
@@ -562,6 +572,18 @@ namespace AndreasReitberger.API.Moonraker
 
         [ObservableProperty]
         [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+#if ConcurrentDictionary
+        ConcurrentDictionary<string, KlipperTemperatureSensorHistory> temperatureCache = new();
+        partial void OnTemperatureCacheChanged(ConcurrentDictionary<string, KlipperTemperatureSensorHistory> value)
+        {
+            OnKlipperServerTemperatureCacheChanged(new KlipperTemperatureCacheChangedEventArgs()
+            {
+                CachedTemperatures = value,
+                SessonId = SessionId,
+                CallbackId = -1,
+            });
+        }
+#else
         Dictionary<string, KlipperTemperatureSensorHistory> temperatureCache = new();
         partial void OnTemperatureCacheChanged(Dictionary<string, KlipperTemperatureSensorHistory> value)
         {
@@ -572,6 +594,7 @@ namespace AndreasReitberger.API.Moonraker
                 CallbackId = -1,
             });
         }
+#endif
 
         [ObservableProperty]
         [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
@@ -644,6 +667,36 @@ namespace AndreasReitberger.API.Moonraker
 
         [ObservableProperty]
         [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+#if ConcurrentDictionary
+        ConcurrentDictionary<string, KlipperStatusTemperatureSensor> temperatureSensors = new();
+        partial void OnTemperatureSensorsChanged(ConcurrentDictionary<string, KlipperStatusTemperatureSensor> value)
+        {
+            if (_enableCooldown)
+            {
+                if (_cooldownTemperatureSensor > 0)
+                    _cooldownTemperatureSensor--;
+                else
+                {
+                    _cooldownTemperatureSensor = _cooldownFallback;
+                    OnKlipperTemperatureSensorStatesChanged(new KlipperTemperatureSensorStatesChangedEventArgs()
+                    {
+                        TemperatureStates = value,
+                        SessonId = SessionId,
+                        CallbackId = -1,
+                    });
+                }
+            }
+            else
+            {
+                OnKlipperTemperatureSensorStatesChanged(new KlipperTemperatureSensorStatesChangedEventArgs()
+                {
+                    TemperatureStates = value,
+                    SessonId = SessionId,
+                    CallbackId = -1,
+                });
+            }
+        }
+#else
         Dictionary<string, KlipperStatusTemperatureSensor> temperatureSensors = new();
         partial void OnTemperatureSensorsChanged(Dictionary<string, KlipperStatusTemperatureSensor> value)
         {
@@ -672,9 +725,41 @@ namespace AndreasReitberger.API.Moonraker
                 });
             }
         }
+#endif
 
         [ObservableProperty]
         [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+#if ConcurrentDictionary
+        ConcurrentDictionary<string, double?> cpuUsage = new();
+        partial void OnCpuUsageChanged(ConcurrentDictionary<string, double?> value)
+        {
+            // WebSocket is updating this property in a high frequency, so a cooldown can be enabled
+            if (_enableCooldown)
+            {
+                if (_cooldownCpuUsage > 0)
+                    _cooldownCpuUsage--;
+                else
+                {
+                    _cooldownCpuUsage = _cooldownFallback;
+                    OnKlipperServerCpuUsageChanged(new KlipperCpuUsageChangedEventArgs()
+                    {
+                        CpuUsage = value,
+                        SessonId = SessionId,
+                        CallbackId = -1,
+                    });
+                }
+            }
+            else
+            {
+                OnKlipperServerCpuUsageChanged(new KlipperCpuUsageChangedEventArgs()
+                {
+                    CpuUsage = value,
+                    SessonId = SessionId,
+                    CallbackId = -1,
+                });
+            }
+        }
+#else
         Dictionary<string, double?> cpuUsage = new();
         partial void OnCpuUsageChanged(Dictionary<string, double?> value)
         {
@@ -704,9 +789,41 @@ namespace AndreasReitberger.API.Moonraker
                 });
             }
         }
+#endif
 
         [ObservableProperty]
         [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+#if ConcurrentDictionary
+        ConcurrentDictionary<string, long?> systemMemory = new();
+        partial void OnSystemMemoryChanged(ConcurrentDictionary<string, long?> value)
+        {
+            // WebSocket is updating this property in a high frequency, so a cooldown can be enabled
+            if (_enableCooldown)
+            {
+                if (_cooldownSystemMemory > 0)
+                    _cooldownSystemMemory--;
+                else
+                {
+                    _cooldownSystemMemory = _cooldownFallback;
+                    OnKlipperServerSystemMemoryChanged(new KlipperSystemMemoryChangedEventArgs()
+                    {
+                        SystemMemory = value,
+                        SessonId = SessionId,
+                        CallbackId = -1,
+                    });
+                }
+            }
+            else
+            {
+                OnKlipperServerSystemMemoryChanged(new KlipperSystemMemoryChangedEventArgs()
+                {
+                    SystemMemory = value,
+                    SessonId = SessionId,
+                    CallbackId = -1,
+                });
+            }
+        }
+#else
         Dictionary<string, long?> systemMemory = new();
         partial void OnSystemMemoryChanged(Dictionary<string, long?> value)
         {
@@ -736,9 +853,42 @@ namespace AndreasReitberger.API.Moonraker
                 });
             }
         }
+#endif
 
         [ObservableProperty]
         [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+#if ConcurrentDictionary
+        ConcurrentDictionary<int, KlipperStatusExtruder> extruders = new();
+        partial void OnExtrudersChanged(ConcurrentDictionary<int, KlipperStatusExtruder> value)
+        {
+            // WebSocket is updating this property in a high frequency, so a cooldown can be enabled
+            if (_enableCooldown && !RefreshHeatersDirectly)
+            {
+                if (_cooldownExtruder > 0)
+                    _cooldownExtruder--;
+                else
+                {
+                    _cooldownExtruder = _cooldownFallback;
+                    OnKlipperExtruderStatesChanged(new KlipperExtruderStatesChangedEventArgs()
+                    {
+                        ExtruderStates = value,
+                        SessonId = SessionId,
+                        CallbackId = -1,
+                    });
+                }
+            }
+            else
+            {
+                OnKlipperExtruderStatesChanged(new KlipperExtruderStatesChangedEventArgs()
+                {
+                    ExtruderStates = value,
+                    SessonId = SessionId,
+                    CallbackId = -1,
+                });
+            }
+            NumberOfExtruders = value?.Count ?? 0;
+        }
+#else
         Dictionary<int, KlipperStatusExtruder> extruders = new();
         partial void OnExtrudersChanged(Dictionary<int, KlipperStatusExtruder> value)
         {
@@ -769,6 +919,7 @@ namespace AndreasReitberger.API.Moonraker
             }
             NumberOfExtruders = value?.Count ?? 0;
         }
+#endif
 
         [ObservableProperty]
         [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
@@ -805,6 +956,40 @@ namespace AndreasReitberger.API.Moonraker
 
         [ObservableProperty]
         [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+#if ConcurrentDictionary
+        ConcurrentDictionary<string, KlipperStatusFan> fans = new();
+        partial void OnFansChanged(ConcurrentDictionary<string, KlipperStatusFan> value)
+        {
+            // WebSocket is updating this property in a high frequency, so a cooldown can be enabled
+            /*
+            if (_enableCooldown && !RefreshHeatersDirectly)
+            {
+                if (_cooldownExtruder > 0)
+                    _cooldownExtruder--;
+                else
+                {
+                    _cooldownExtruder = _cooldownFallback;
+
+                    OnKlipperExtruderStatesChanged(new KlipperExtruderStatesChangedEventArgs()
+                    {
+                        ExtruderStates = value,
+                        SessonId = SessionId,
+                        CallbackId = -1,
+                    });
+                }
+            }
+            else
+            {
+                OnKlipperExtruderStatesChanged(new KlipperExtruderStatesChangedEventArgs()
+                {
+                    ExtruderStates = value,
+                    SessonId = SessionId,
+                    CallbackId = -1,
+                });
+            }
+            */
+        }
+#else
         Dictionary<string, KlipperStatusFan> fans = new();
         partial void OnFansChanged(Dictionary<string, KlipperStatusFan> value)
         {
@@ -837,9 +1022,44 @@ namespace AndreasReitberger.API.Moonraker
             }
             */
         }
+#endif
 
         [ObservableProperty]
         [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+#if ConcurrentDictionary
+        ConcurrentDictionary<string, KlipperStatusDriver> drivers = new();
+        partial void OnDriversChanged(ConcurrentDictionary<string, KlipperStatusDriver> value)
+        {
+            // WebSocket is updating this property in a high frequency, so a cooldown can be enabled
+            /*
+            if (_enableCooldown && !RefreshHeatersDirectly)
+            {
+                if (_cooldownExtruder > 0)
+                    _cooldownExtruder--;
+                else
+                {
+                    _cooldownExtruder = _cooldownFallback;
+
+                    OnKlipperExtruderStatesChanged(new KlipperExtruderStatesChangedEventArgs()
+                    {
+                        ExtruderStates = value,
+                        SessonId = SessionId,
+                        CallbackId = -1,
+                    });
+                }
+            }
+            else
+            {
+                OnKlipperExtruderStatesChanged(new KlipperExtruderStatesChangedEventArgs()
+                {
+                    ExtruderStates = value,
+                    SessonId = SessionId,
+                    CallbackId = -1,
+                });
+            }
+            */
+        }
+#else
         Dictionary<string, KlipperStatusDriver> drivers = new();
         partial void OnDriversChanged(Dictionary<string, KlipperStatusDriver> value)
         {
@@ -872,6 +1092,7 @@ namespace AndreasReitberger.API.Moonraker
             }
             */
         }
+#endif
 
         [ObservableProperty]
         [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
@@ -1075,7 +1296,7 @@ namespace AndreasReitberger.API.Moonraker
                 NewPresets = value,
             });
         }
-        #endregion
+#endregion
 
         #region Database
 
@@ -1107,7 +1328,7 @@ namespace AndreasReitberger.API.Moonraker
         }
         #endregion
 
-        #endregion
+#endregion
 
         #region Constructor
         public MoonrakerClient()
@@ -3085,11 +3306,19 @@ namespace AndreasReitberger.API.Moonraker
                                         // If no parser found, pass the json object instead
                                         resultObject.Add(name, parent.Value);
                                     }
+#if ConcurrentDictionary
+                                    ConcurrentDictionary<string, string> loggedResults = new(IgnoredJsonResults);
+#else
                                     Dictionary<string, string> loggedResults = new(IgnoredJsonResults);
+#endif
                                     if (!loggedResults.ContainsKey(name))
                                     {
                                         // Log unused json results for further releases
+#if ConcurrentDictionary
+                                        loggedResults.TryAdd(name, jsonBody);
+#else
                                         loggedResults.Add(name, jsonBody);
+#endif
                                         IgnoredJsonResults = loggedResults;
                                     }
                                     break;
@@ -3281,8 +3510,15 @@ namespace AndreasReitberger.API.Moonraker
                 KlipperStatusExtruder result = await GetExtruderStatusAsync(index).ConfigureAwait(false);
                 if (result != null)
                 {
-                    Dictionary<int, KlipperStatusExtruder> states = new();
-                    states.Add(index, result);
+#if ConcurrentDictionary
+                    ConcurrentDictionary<int, KlipperStatusExtruder> states = new();
+                    states.TryAdd(index, result);
+#else
+                    Dictionary<int, KlipperStatusExtruder> states = new()
+                    {
+                        { index, result }
+                    };
+#endif
                     Extruders = states;
                 }
             }
@@ -3656,7 +3892,7 @@ namespace AndreasReitberger.API.Moonraker
                 return resultObject;
             }
         }
-        #endregion
+#endregion
 
         #region Server Config
         public async Task RefreshServerConfigAsync()
@@ -3706,7 +3942,11 @@ namespace AndreasReitberger.API.Moonraker
             try
             {
                 Dictionary<string, KlipperTemperatureSensorHistory> result = await GetServerCachedTemperatureDataAsync().ConfigureAwait(false);
+#if ConcurrentDictionary
+                TemperatureCache = result.ToConcurrent();
+#else
                 TemperatureCache = result;
+#endif
             }
             catch (Exception exc)
             {
@@ -3800,7 +4040,7 @@ namespace AndreasReitberger.API.Moonraker
                 return false;
             }
         }
-        #endregion
+#endregion
 
         #region WebSocket   
 
@@ -6816,9 +7056,9 @@ namespace AndreasReitberger.API.Moonraker
         }
         #endregion
 
-        #endregion
+#endregion
 
-        #endregion
+#endregion
 
         #region Overrides
         public override string ToString()
