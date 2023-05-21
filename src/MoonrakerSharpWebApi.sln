@@ -14,6 +14,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		..\common.props = ..\common.props
 	EndProjectSection
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebSocket4Net", "..\..\WebSocket4Net\src\WebSocket4Net\WebSocket4Net.csproj", "{E866BC30-4F4C-405E-9CAD-6C0C24F53B44}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,6 +34,10 @@ Global
 		{645D7E22-8A8C-4C12-B06C-F69F94D4DB0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{645D7E22-8A8C-4C12-B06C-F69F94D4DB0B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{645D7E22-8A8C-4C12-B06C-F69F94D4DB0B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E866BC30-4F4C-405E-9CAD-6C0C24F53B44}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E866BC30-4F4C-405E-9CAD-6C0C24F53B44}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E866BC30-4F4C-405E-9CAD-6C0C24F53B44}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E866BC30-4F4C-405E-9CAD-6C0C24F53B44}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
