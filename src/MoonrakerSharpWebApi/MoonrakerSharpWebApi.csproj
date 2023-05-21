@@ -25,7 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\WebSocket4Net\src\WebSocket4Net\WebSocket4Net\WebSocket4Net.csproj" />
+    <ProjectReference Include="..\..\..\WebSocket4Net\src\WebSocket4Net\WebSocket4Net.csproj" />
   </ItemGroup>
 
 </Project>
