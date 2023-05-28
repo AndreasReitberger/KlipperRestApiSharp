@@ -3349,7 +3349,7 @@ namespace AndreasReitberger.API.Moonraker
         public async Task<Dictionary<string, KlipperGcodeMacro>> GetGcodeMacrosAsync()
         {
             KlipperApiRequestRespone result = new();
-            Dictionary<string, KlipperGcodeMacro> resultObject = null;
+            Dictionary<string, KlipperGcodeMacro> resultObject = new();
             try
             {
                 Dictionary<string, string> objects = new();
@@ -3395,7 +3395,7 @@ namespace AndreasReitberger.API.Moonraker
         public async Task<Dictionary<string, KlipperStatusFilamentSensor>> GetFilamentSensorsAsync(Dictionary<string, string> macros = null)
         {
             KlipperApiRequestRespone result = new();
-            Dictionary<string, KlipperStatusFilamentSensor> resultObject = null;
+            Dictionary<string, KlipperStatusFilamentSensor> resultObject = new();
             try
             {
                 Dictionary<string, string> urlSegments = new();
@@ -4477,7 +4477,6 @@ namespace AndreasReitberger.API.Moonraker
         {
             try
             {
-                ObservableCollection<KlipperFile> files = new();
                 Files = await GetAvailableFilesAsync(rootPath, includeGcodeMeta).ConfigureAwait(false);
             }
             catch (Exception exc)
@@ -4515,7 +4514,7 @@ namespace AndreasReitberger.API.Moonraker
                         }
                     }
                 }
-                return new(files?.Result);
+                return new(files?.Result ?? new());
             }
             catch (JsonException jecx)
             {
@@ -4557,8 +4556,10 @@ namespace AndreasReitberger.API.Moonraker
             {
                 if (string.IsNullOrEmpty(fileName)) return resultObject;
 
-                Dictionary<string, string> urlSegements = new();
-                urlSegements.Add("filename", fileName);
+                Dictionary<string, string> urlSegements = new()
+                {
+                    { "filename", fileName }
+                };
 
                 result = await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Get, "files/metadata", default, null, urlSegements).ConfigureAwait(false);
                 KlipperGcodeMetaRespone queryResult = JsonConvert.DeserializeObject<KlipperGcodeMetaRespone>(result.Result);
@@ -5385,7 +5386,7 @@ namespace AndreasReitberger.API.Moonraker
         public async Task<List<KlipperUser>> ListAvailableUsersAsync()
         {
             KlipperApiRequestRespone result = new();
-            List<KlipperUser> resultObject = null;
+            List<KlipperUser> resultObject = new();
             try
             {
                 result = await SendRestApiRequestAsync(MoonrakerCommandBase.access, Method.Get, "users/list").ConfigureAwait(false);
@@ -5423,7 +5424,7 @@ namespace AndreasReitberger.API.Moonraker
                     await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Get, $"database/list")
                     .ConfigureAwait(false);
                 KlipperDatabaseNamespaceListRespone queryResult = JsonConvert.DeserializeObject<KlipperDatabaseNamespaceListRespone>(result.Result);
-                return queryResult?.Result?.Namespaces;
+                return queryResult?.Result?.Namespaces ?? new();
             }
             catch (JsonException jecx)
             {
@@ -5467,12 +5468,12 @@ namespace AndreasReitberger.API.Moonraker
         public async Task<Dictionary<string, object>> GetDatabaseItemAsync(string namespaceName, string key = "", bool throwOnMissingNamespace = false)
         {
             KlipperApiRequestRespone result = new();
-            Dictionary<string, object> resultObject = null;
+            Dictionary<string, object> resultObject = new();
             try
             {
                 if (AvailableNamespaces?.Count == 0 || AvailableNamespaces == null)
                 {
-                    AvailableNamespaces = await ListDatabaseNamespacesAsync();
+                    AvailableNamespaces = await ListDatabaseNamespacesAsync().ConfigureAwait(false);
                 }
                 if (!AvailableNamespaces.Contains(namespaceName))
                 {
@@ -5538,7 +5539,7 @@ namespace AndreasReitberger.API.Moonraker
 
                 Dictionary<string, object> result = await GetDatabaseItemAsync(currentNameSpace, currentKey).ConfigureAwait(false);
                 KeyValuePair<string, object>? pair = result?.FirstOrDefault();
-                if (pair == null) return resultObject;
+                if (string.IsNullOrEmpty(pair?.Key)) return resultObject;
 
                 //resultString = pair.Value.ToString();
                 resultString = pair.Value.Value.ToString();
@@ -5636,7 +5637,7 @@ namespace AndreasReitberger.API.Moonraker
                 Dictionary<string, object> result = await GetDatabaseItemAsync(currentNamespace, currentKey).ConfigureAwait(false);
 
                 KeyValuePair<string, object>? pair = result?.FirstOrDefault();
-                if (pair == null) return resultObject;
+                if (string.IsNullOrEmpty(pair?.Key)) return resultObject;
 
                 //resultString = pair.Value.ToString();
                 resultString = pair.Value.Value.ToString();
@@ -5719,7 +5720,7 @@ namespace AndreasReitberger.API.Moonraker
                 Dictionary<string, object> result = await GetDatabaseItemAsync(currentNamespace, currentKey).ConfigureAwait(false);
 
                 KeyValuePair<string, object>? pair = result?.FirstOrDefault();
-                if (pair == null) return resultObject;
+                if (string.IsNullOrEmpty(pair?.Key)) return resultObject;
 
                 //resultString = pair.Value.ToString();
                 resultString = pair.Value.Value.ToString();
@@ -5804,7 +5805,7 @@ namespace AndreasReitberger.API.Moonraker
 
                 Dictionary<string, object> result = await GetDatabaseItemAsync(currentNamespace, currentKey).ConfigureAwait(false);
                 KeyValuePair<string, object>? pair = result?.FirstOrDefault();
-                if (pair == null) return resultObject;
+                if (string.IsNullOrEmpty(pair?.Key)) return resultObject;
 
                 resultString = pair.Value.Value.ToString();
 
@@ -5906,7 +5907,7 @@ namespace AndreasReitberger.API.Moonraker
 
                 Dictionary<string, object> result = await GetDatabaseItemAsync("mainsail", "heightmap").ConfigureAwait(false);
                 KeyValuePair<string, object>? pair = result?.FirstOrDefault();
-                if (pair == null) return resultObject;
+                if (string.IsNullOrEmpty(pair?.Key)) return resultObject;
 
                 //resultString = pair.Value.ToString();
                 resultString = pair.Value.Value.ToString();
@@ -5935,7 +5936,7 @@ namespace AndreasReitberger.API.Moonraker
         public async Task<Dictionary<string, object>> AddDatabaseItemAsync(string namespaceName, string key, object value)
         {
             KlipperApiRequestRespone result = new();
-            Dictionary<string, object> resultObject = null;
+            Dictionary<string, object> resultObject = new();
             try
             {
                 object cmd = new
@@ -5948,8 +5949,10 @@ namespace AndreasReitberger.API.Moonraker
                 KlipperDatabaseItemRespone queryResult = JsonConvert.DeserializeObject<KlipperDatabaseItemRespone>(result.Result);
                 if (queryResult != null)
                 {
-                    resultObject = new();
-                    resultObject.Add($"{namespaceName}{(!string.IsNullOrEmpty(key) ? $"|{key}" : "")}", queryResult?.Result?.Value);
+                    resultObject = new()
+                    {
+                        { $"{namespaceName}{(!string.IsNullOrEmpty(key) ? $"|{key}" : "")}", queryResult?.Result?.Value }
+                    };
                 }
                 return resultObject;
             }
@@ -5974,11 +5977,13 @@ namespace AndreasReitberger.API.Moonraker
         public async Task<Dictionary<string, object>> DeleteDatabaseItemAsync(string namespaceName, string key)
         {
             KlipperApiRequestRespone result = new();
-            Dictionary<string, object> resultObject = null;
+            Dictionary<string, object> resultObject = new();
             try
             {
-                Dictionary<string, string> urlSegements = new();
-                urlSegements.Add("namespace", namespaceName);
+                Dictionary<string, string> urlSegements = new()
+                {
+                    { "namespace", namespaceName }
+                };
                 if (!string.IsNullOrEmpty(key)) urlSegements.Add("key", key);
 
                 result =
@@ -5987,8 +5992,10 @@ namespace AndreasReitberger.API.Moonraker
                 KlipperDatabaseItemRespone queryResult = JsonConvert.DeserializeObject<KlipperDatabaseItemRespone>(result.Result);
                 if (queryResult != null)
                 {
-                    resultObject = new();
-                    resultObject.Add($"{namespaceName}{(!string.IsNullOrEmpty(key) ? $"|{key}" : "")}", queryResult?.Result?.Value);
+                    resultObject = new()
+                    {
+                        { $"{namespaceName}{(!string.IsNullOrEmpty(key) ? $"|{key}" : "")}", queryResult?.Result?.Value }
+                    };
                 }
                 return resultObject;
             }
@@ -6405,7 +6412,7 @@ namespace AndreasReitberger.API.Moonraker
         public async Task<List<KlipperDevice>> GetDeviceListAsync()
         {
             KlipperApiRequestRespone result = new();
-            List<KlipperDevice> resultObject = null;
+            List<KlipperDevice> resultObject = new();
             try
             {
                 result =
@@ -6413,7 +6420,7 @@ namespace AndreasReitberger.API.Moonraker
                     .ConfigureAwait(false);
                 KlipperDeviceListRespone queryResult = JsonConvert.DeserializeObject<KlipperDeviceListRespone>(result.Result);
 
-                return queryResult?.Result?.Devices;
+                return queryResult?.Result?.Devices ?? resultObject;
             }
             catch (JsonException jecx)
             {
@@ -6436,18 +6443,20 @@ namespace AndreasReitberger.API.Moonraker
         public async Task<Dictionary<string, string>> GetDeviceStatusAsync(string device)
         {
             KlipperApiRequestRespone result = new();
-            Dictionary<string, string> resultObject = null;
+            Dictionary<string, string> resultObject = new();
             try
             {
-                Dictionary<string, string> urlSegments = new();
-                urlSegments.Add("device", device);
+                Dictionary<string, string> urlSegments = new()
+                {
+                    { "device", device }
+                };
 
                 result =
                     await SendRestApiRequestAsync(MoonrakerCommandBase.machine, Method.Get, $"device_power/device", jsonObject: null, cts: default, urlSegments: urlSegments)
                     .ConfigureAwait(false);
                 KlipperDeviceStatusRespone queryResult = JsonConvert.DeserializeObject<KlipperDeviceStatusRespone>(result.Result);
 
-                return queryResult?.DeviceStates;
+                return queryResult?.DeviceStates ?? resultObject;
             }
             catch (JsonException jecx)
             {
@@ -6470,19 +6479,21 @@ namespace AndreasReitberger.API.Moonraker
         public async Task<Dictionary<string, string>> SetDeviceStateAsync(string device, KlipperDeviceActions action)
         {
             KlipperApiRequestRespone result = new();
-            Dictionary<string, string> resultObject = null;
+            Dictionary<string, string> resultObject = new();
             try
             {
-                Dictionary<string, string> urlSegments = new();
-                urlSegments.Add("device", device);
-                urlSegments.Add("action", action.ToString().ToLower());
+                Dictionary<string, string> urlSegments = new()
+                {
+                    { "device", device },
+                    { "action", action.ToString().ToLower() }
+                };
 
                 result =
                     await SendRestApiRequestAsync(MoonrakerCommandBase.machine, Method.Post, $"device_power/device", jsonObject: null, cts: default, urlSegments: urlSegments)
                     .ConfigureAwait(false);
                 KlipperDeviceStatusRespone queryResult = JsonConvert.DeserializeObject<KlipperDeviceStatusRespone>(result.Result);
 
-                return queryResult?.DeviceStates;
+                return queryResult?.DeviceStates ?? resultObject;
             }
             catch (JsonException jecx)
             {
@@ -6505,7 +6516,7 @@ namespace AndreasReitberger.API.Moonraker
         public async Task<Dictionary<string, string>> GetBatchDeviceStatusAsync(string[] devices)
         {
             KlipperApiRequestRespone result = new();
-            Dictionary<string, string> resultObject = null;
+            Dictionary<string, string> resultObject = new();
             try
             {
                 StringBuilder deviceList = new();
@@ -6523,7 +6534,7 @@ namespace AndreasReitberger.API.Moonraker
                     .ConfigureAwait(false);
                 KlipperDeviceStatusRespone queryResult = JsonConvert.DeserializeObject<KlipperDeviceStatusRespone>(result.Result);
 
-                return queryResult?.DeviceStates;
+                return queryResult?.DeviceStates ?? resultObject;
             }
             catch (JsonException jecx)
             {
@@ -6546,7 +6557,7 @@ namespace AndreasReitberger.API.Moonraker
         public async Task<Dictionary<string, string>> SetBatchDeviceOnAsync(string[] devices)
         {
             KlipperApiRequestRespone result = new();
-            Dictionary<string, string> resultObject = null;
+            Dictionary<string, string> resultObject = new();
             try
             {
                 StringBuilder deviceList = new();
@@ -6562,7 +6573,7 @@ namespace AndreasReitberger.API.Moonraker
                     .ConfigureAwait(false);
                 KlipperDeviceStatusRespone queryResult = JsonConvert.DeserializeObject<KlipperDeviceStatusRespone>(result.Result);
 
-                return queryResult?.DeviceStates;
+                return queryResult?.DeviceStates ?? resultObject;
             }
             catch (JsonException jecx)
             {
@@ -6585,7 +6596,7 @@ namespace AndreasReitberger.API.Moonraker
         public async Task<Dictionary<string, string>> SetBatchDeviceOffAsync(string[] devices)
         {
             KlipperApiRequestRespone result = new();
-            Dictionary<string, string> resultObject = null;
+            Dictionary<string, string> resultObject = new();
             try
             {
                 StringBuilder deviceList = new();
@@ -6601,7 +6612,7 @@ namespace AndreasReitberger.API.Moonraker
                     .ConfigureAwait(false);
                 KlipperDeviceStatusRespone queryResult = JsonConvert.DeserializeObject<KlipperDeviceStatusRespone>(result.Result);
 
-                return queryResult?.DeviceStates;
+                return queryResult?.DeviceStates ?? resultObject;
             }
             catch (JsonException jecx)
             {
@@ -6837,7 +6848,7 @@ namespace AndreasReitberger.API.Moonraker
         public async Task<Dictionary<string, OctoprintApiPrinter>> GetOctoPrintApiPrinterProfilesAsync()
         {
             KlipperApiRequestRespone result = new();
-            Dictionary<string, OctoprintApiPrinter> resultObject = null;
+            Dictionary<string, OctoprintApiPrinter> resultObject = new();
             try
             {
                 result =
@@ -6845,7 +6856,7 @@ namespace AndreasReitberger.API.Moonraker
                     .ConfigureAwait(false);
                 OctoprintApiPrinterProfilesResult queryResult = JsonConvert.DeserializeObject<OctoprintApiPrinterProfilesResult>(result.Result);
 
-                return queryResult?.Profiles;
+                return queryResult?.Profiles ?? resultObject;
             }
             catch (JsonException jecx)
             {
@@ -7025,7 +7036,7 @@ namespace AndreasReitberger.API.Moonraker
         public async Task<List<string>> DeleteHistoryJobAsync(string uid)
         {
             KlipperApiRequestRespone result = new();
-            List<string> resultObject = null;
+            List<string> resultObject = new();
             try
             {
                 if (string.IsNullOrEmpty(uid)) return resultObject;
@@ -7038,7 +7049,7 @@ namespace AndreasReitberger.API.Moonraker
                     .ConfigureAwait(false);
                 KlipperHistoryJobDeletedRespone queryResult = JsonConvert.DeserializeObject<KlipperHistoryJobDeletedRespone>(result.Result);
 
-                return queryResult?.Result?.DeletedJobs;
+                return queryResult?.Result?.DeletedJobs ?? resultObject;
                 //return GetQueryResult(result.Result);
             }
             catch (JsonException jecx)
