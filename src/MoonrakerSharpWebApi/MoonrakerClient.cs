@@ -4621,7 +4621,7 @@ namespace AndreasReitberger.API.Moonraker
             catch (Exception exc)
             {
                 OnError(new UnhandledExceptionEventArgs(exc, false));
-                return new byte[0];
+                return Array.Empty<byte>();
             }
         }
         public async Task<byte[]> GetGcodeThumbnailImageAsync(KlipperGcodeMetaResult gcodeMeta, int index = 0, int timeout = 10000)
@@ -4642,6 +4642,7 @@ namespace AndreasReitberger.API.Moonraker
         }
         public async Task<byte[]> GetGcodeLargestThumbnailImageAsync(KlipperGcodeMetaResult gcodeMeta, int timeout = 10000)
         {
+            if (gcodeMeta == null) return Array.Empty<byte>();
             string path = gcodeMeta.Thumbnails
                 .OrderByDescending(image => image.Size)
                 .FirstOrDefault().RelativePath
@@ -5103,6 +5104,9 @@ namespace AndreasReitberger.API.Moonraker
                 KlipperUserActionRespone queryResult = JsonConvert.DeserializeObject<KlipperUserActionRespone>(result.Result);
 
                 IsLoggedIn = queryResult != null;
+                UserToken = queryResult?.Result?.Token;
+                RefreshToken = queryResult?.Result?.RefreshToken;
+                // Must come after setting the `UserToken`, otherwise the request fails
                 if (IsLoggedIn)
                 {
                     // Needed for websocket connection
@@ -5110,8 +5114,6 @@ namespace AndreasReitberger.API.Moonraker
                     //KlipperAccessTokenResult oneshot = await GetOneshotTokenAsync();
                     ApiKey = apiToken?.Result;
                 }
-                UserToken = queryResult?.Result?.Token;
-                RefreshToken = queryResult?.Result?.RefreshToken;
 
                 OnLoginChanged(new()
                 {
