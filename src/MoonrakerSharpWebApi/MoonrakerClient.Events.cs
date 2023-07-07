@@ -304,7 +304,7 @@ namespace AndreasReitberger.API.Moonraker
         {
             Error?.Invoke(this, e);
         }
-        protected virtual void OnError(KlipprtJsonConvertEventArgs e)
+        protected virtual void OnError(KlipperJsonConvertEventArgs e)
         {
             Error?.Invoke(this, e);
         }
@@ -325,8 +325,8 @@ namespace AndreasReitberger.API.Moonraker
             RestApiAuthenticationSucceeded?.Invoke(this, e);
         }
 
-        public event EventHandler<KlipprtJsonConvertEventArgs> RestJsonConvertError;
-        protected virtual void OnRestJsonConvertError(KlipprtJsonConvertEventArgs e)
+        public event EventHandler<KlipperJsonConvertEventArgs> RestJsonConvertError;
+        protected virtual void OnRestJsonConvertError(KlipperJsonConvertEventArgs e)
         {
             RestJsonConvertError?.Invoke(this, e);
         }

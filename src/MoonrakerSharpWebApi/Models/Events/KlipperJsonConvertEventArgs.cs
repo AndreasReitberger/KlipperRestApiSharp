@@ -3,7 +3,7 @@ using System;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public class KlipprtJsonConvertEventArgs : EventArgs
+    public class KlipperJsonConvertEventArgs : EventArgs
     {
         #region Properties
         public string Message { get; set; }

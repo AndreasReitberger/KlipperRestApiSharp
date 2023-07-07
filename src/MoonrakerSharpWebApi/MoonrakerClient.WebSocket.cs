@@ -676,7 +676,7 @@ namespace AndreasReitberger.API.Moonraker
                                         }
                                         catch (JsonException jecx)
                                         {
-                                            OnError(new KlipprtJsonConvertEventArgs()
+                                            OnError(new KlipperJsonConvertEventArgs()
                                             {
                                                 Exception = jecx,
                                                 OriginalString = jsonBody,
@@ -718,7 +718,7 @@ namespace AndreasReitberger.API.Moonraker
                     }
                     catch (JsonException jecx)
                     {
-                        OnError(new KlipprtJsonConvertEventArgs()
+                        OnError(new KlipperJsonConvertEventArgs()
                         {
                             Exception = jecx,
                             OriginalString = jsonBody,
@@ -805,7 +805,7 @@ namespace AndreasReitberger.API.Moonraker
                     }
                     catch (JsonException jecx)
                     {
-                        OnError(new KlipprtJsonConvertEventArgs()
+                        OnError(new KlipperJsonConvertEventArgs()
                         {
                             Exception = jecx,
                             OriginalString = e.Message,
@@ -830,7 +830,7 @@ namespace AndreasReitberger.API.Moonraker
             }
             catch (JsonException jecx)
             {
-                OnError(new KlipprtJsonConvertEventArgs()
+                OnError(new KlipperJsonConvertEventArgs()
                 {
                     Exception = jecx,
                     OriginalString = e.Message,
