@@ -215,7 +215,6 @@ namespace AndreasReitberger.API.Moonraker
                 }
 
                 WebSocket.MessageReceived += WebSocket_MessageReceived;
-                //WebSocket.DataReceived += WebSocket_DataReceived;
                 WebSocket.Opened += WebSocket_Opened;
                 WebSocket.Closed += WebSocket_Closed;
                 WebSocket.Error += WebSocket_Error;
@@ -237,13 +236,14 @@ namespace AndreasReitberger.API.Moonraker
                         await WebSocket.CloseAsync();
                     StopPingTimer();
 
-                    WebSocket.MessageReceived -= WebSocket_MessageReceived;
-                    //WebSocket.DataReceived -= WebSocket_DataReceived;
-                    WebSocket.Opened -= WebSocket_Opened;
-                    WebSocket.Closed -= WebSocket_Closed;
-                    WebSocket.Error -= WebSocket_Error;
-
-                    WebSocket = null;
+                    if (WebSocket != null)
+                    {
+                        WebSocket.MessageReceived -= WebSocket_MessageReceived;
+                        WebSocket.Opened -= WebSocket_Opened;
+                        WebSocket.Closed -= WebSocket_Closed;
+                        WebSocket.Error -= WebSocket_Error;
+                        WebSocket = null;
+                    }
                 }
                 //WebSocket = null;
             }
