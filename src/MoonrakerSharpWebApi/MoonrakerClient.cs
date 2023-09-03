@@ -4626,6 +4626,7 @@ namespace AndreasReitberger.API.Moonraker
         }
         public async Task<byte[]> GetGcodeThumbnailImageAsync(KlipperGcodeMetaResult gcodeMeta, int index = 0, int timeout = 10000)
         {
+            if (gcodeMeta is null || gcodeMeta?.Thumbnails is null) return Array.Empty<byte>();
             string path = gcodeMeta.Thumbnails.Count > index ?
                 gcodeMeta.Thumbnails[index].RelativePath : gcodeMeta.Thumbnails.FirstOrDefault().RelativePath;
 
@@ -4642,14 +4643,14 @@ namespace AndreasReitberger.API.Moonraker
         }
         public async Task<byte[]> GetGcodeLargestThumbnailImageAsync(KlipperGcodeMetaResult gcodeMeta, int timeout = 10000)
         {
-            if (gcodeMeta == null) return Array.Empty<byte>();
+            if (gcodeMeta is null || gcodeMeta?.Thumbnails is null) return Array.Empty<byte>();
             string path = gcodeMeta.Thumbnails
                 .OrderByDescending(image => image.Size)
                 .FirstOrDefault().RelativePath
                 ;
 
             string subfolder = string.Empty;
-            if (gcodeMeta.Filename.Contains("/"))
+            if (gcodeMeta?.Filename?.Contains("/") ?? false)
             {
                 subfolder = gcodeMeta.Filename.Substring(0, gcodeMeta.Filename.LastIndexOf("/"));
                 subfolder += "/";
@@ -4661,13 +4662,14 @@ namespace AndreasReitberger.API.Moonraker
         }
         public async Task<byte[]> GetGcodeSmallestThumbnailImageAsync(KlipperGcodeMetaResult gcodeMeta, int timeout = 10000)
         {
+            if (gcodeMeta is null || gcodeMeta?.Thumbnails is null) return Array.Empty<byte>();
             string path = gcodeMeta.Thumbnails
                 .OrderBy(image => image.Size)
                 .FirstOrDefault().RelativePath
                 ;
 
             string subfolder = string.Empty;
-            if (gcodeMeta.Filename.Contains("/"))
+            if (gcodeMeta?.Filename?.Contains("/") ?? false)
             {
                 subfolder = gcodeMeta.Filename.Substring(0, gcodeMeta.Filename.LastIndexOf("/"));
                 subfolder += "/";
@@ -4679,6 +4681,7 @@ namespace AndreasReitberger.API.Moonraker
         }
         public async Task<byte[]> GetGcodeSecondThumbnailImageAsync(KlipperGcodeMetaResult gcodeMeta, int timeout = 10000)
         {
+            if (gcodeMeta is null || gcodeMeta?.Thumbnails is null) return Array.Empty<byte>();
             string path = gcodeMeta.Thumbnails
                 .OrderBy(image => image.Size)
                 .Skip(1) // Skipped the smallest image
@@ -4686,7 +4689,7 @@ namespace AndreasReitberger.API.Moonraker
                 ;
 
             string subfolder = string.Empty;
-            if (gcodeMeta.Filename.Contains("/"))
+            if (gcodeMeta?.Filename?.Contains("/") ?? false)
             {
                 subfolder = gcodeMeta.Filename.Substring(0, gcodeMeta.Filename.LastIndexOf("/"));
                 subfolder += "/";
@@ -5744,7 +5747,7 @@ namespace AndreasReitberger.API.Moonraker
                         break;
                     case MoonrakerOperatingSystems.FluiddPi:
 #if DEBUG
-                        throw new NotSupportedException($"The method '{nameof(GetRemotePrintersAsync)}() is only support on '{MoonrakerOperatingSystems.MainsailOS}!");
+                        //throw new NotSupportedException($"The method '{nameof(GetRemotePrintersAsync)}() is only support on '{MoonrakerOperatingSystems.MainsailOS}!");
 #endif
                     /*
                     KlipperDatabaseFluiddValueUiSettings fluiddObject = JsonConvert.DeserializeObject<KlipperDatabaseFluiddValueUiSettings>(resultString);
