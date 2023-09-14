@@ -405,7 +405,7 @@ namespace MoonrakerSharpWebApi.Test
 
                     foreach (KlipperFile gcodeFile in models)
                     {
-                        byte[] thumbnail = await _server.GetGcodeThumbnailImageAsync(gcodeFile.GcodeMeta);
+                        byte[] thumbnail = await _server.GetGcodeThumbnailImageAsync(gcodeFile?.GcodeMeta);
                         Assert.IsNotNull(thumbnail);
                     }
                 }
