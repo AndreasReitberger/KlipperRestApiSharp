@@ -4508,7 +4508,7 @@ namespace AndreasReitberger.API.Moonraker
                         current.GcodeMeta = await GetGcodeMetadataAsync(current.Path).ConfigureAwait(false);
                         if (current.GcodeMeta?.Thumbnails?.Count > 0)
                         {
-                            current.Image = await GetGcodeSecondThumbnailImageAsync(current.GcodeMeta)
+                            current.Image = await GetGcodeSecondThumbnailImageAsync(current?.GcodeMeta)
                                 .ConfigureAwait(false)
                                 ;
                         }
@@ -4628,12 +4628,12 @@ namespace AndreasReitberger.API.Moonraker
         {
             if (gcodeMeta is null || gcodeMeta?.Thumbnails is null) return Array.Empty<byte>();
             string path = gcodeMeta.Thumbnails.Count > index ?
-                gcodeMeta.Thumbnails[index].RelativePath : gcodeMeta.Thumbnails.FirstOrDefault().RelativePath;
+                gcodeMeta.Thumbnails[index]?.RelativePath : gcodeMeta.Thumbnails.FirstOrDefault()?.RelativePath;
 
             string subfolder = string.Empty;
-            if (gcodeMeta.Filename.Contains("/"))
+            if (gcodeMeta?.Filename?.Contains("/") ?? false)
             {
-                subfolder = gcodeMeta.Filename.Substring(0, gcodeMeta.Filename.LastIndexOf("/"));
+                subfolder = gcodeMeta.Filename[..gcodeMeta.Filename.LastIndexOf("/")];
                 subfolder += "/";
             }
 
@@ -4646,13 +4646,13 @@ namespace AndreasReitberger.API.Moonraker
             if (gcodeMeta is null || gcodeMeta?.Thumbnails is null) return Array.Empty<byte>();
             string path = gcodeMeta.Thumbnails
                 .OrderByDescending(image => image.Size)
-                .FirstOrDefault().RelativePath
+                .FirstOrDefault()?.RelativePath
                 ;
 
             string subfolder = string.Empty;
             if (gcodeMeta?.Filename?.Contains("/") ?? false)
             {
-                subfolder = gcodeMeta.Filename.Substring(0, gcodeMeta.Filename.LastIndexOf("/"));
+                subfolder = gcodeMeta.Filename[..gcodeMeta.Filename.LastIndexOf("/")];
                 subfolder += "/";
             }
 
@@ -4665,13 +4665,14 @@ namespace AndreasReitberger.API.Moonraker
             if (gcodeMeta is null || gcodeMeta?.Thumbnails is null) return Array.Empty<byte>();
             string path = gcodeMeta.Thumbnails
                 .OrderBy(image => image.Size)
-                .FirstOrDefault().RelativePath
+                .FirstOrDefault()?.RelativePath
                 ;
 
             string subfolder = string.Empty;
             if (gcodeMeta?.Filename?.Contains("/") ?? false)
             {
-                subfolder = gcodeMeta.Filename.Substring(0, gcodeMeta.Filename.LastIndexOf("/"));
+                //subfolder = gcodeMeta.Filename.Substring(0, gcodeMeta.Filename.LastIndexOf("/"));
+                subfolder = gcodeMeta.Filename[..gcodeMeta.Filename.LastIndexOf("/")];
                 subfolder += "/";
             }
 
@@ -4683,15 +4684,15 @@ namespace AndreasReitberger.API.Moonraker
         {
             if (gcodeMeta is null || gcodeMeta?.Thumbnails is null) return Array.Empty<byte>();
             string path = gcodeMeta.Thumbnails
-                .OrderBy(image => image.Size)
-                .Skip(1) // Skipped the smallest image
-                .FirstOrDefault().RelativePath
+                .OrderBy(image => image.Size)?
+                .Skip(1)? // Skipped the smallest image
+                .FirstOrDefault()?.RelativePath
                 ;
 
             string subfolder = string.Empty;
             if (gcodeMeta?.Filename?.Contains("/") ?? false)
             {
-                subfolder = gcodeMeta.Filename.Substring(0, gcodeMeta.Filename.LastIndexOf("/"));
+                subfolder = gcodeMeta.Filename[..gcodeMeta.Filename.LastIndexOf("/")];
                 subfolder += "/";
             }
 
