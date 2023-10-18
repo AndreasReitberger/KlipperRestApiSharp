@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Security;
 using System.Xml.Serialization;
 using JsonIgnoreAttribute = Newtonsoft.Json.JsonIgnoreAttribute;
 
@@ -9,34 +8,6 @@ namespace AndreasReitberger.API.Moonraker
     public partial class MoonrakerClient
     {
         #region Auth
-
-        [JsonProperty(nameof(LoginRequired))]
-        bool _loginRequired = false;
-        [JsonIgnore]
-        public bool LoginRequired
-        {
-            get => _loginRequired;
-            set
-            {
-                if (_loginRequired == value) return;
-                _loginRequired = value;
-                OnPropertyChanged();
-            }
-        }
-
-        [JsonIgnore, XmlIgnore]
-        bool _isLoggedIn = false;
-        [JsonIgnore]
-        public bool IsLoggedIn
-        {
-            get => _isLoggedIn;
-            set
-            {
-                if (_isLoggedIn == value) return;
-                _isLoggedIn = value;
-                OnPropertyChanged();
-            }
-        }
 
         [JsonProperty(nameof(UserToken))]
         string _userToken = string.Empty;
@@ -81,33 +52,6 @@ namespace AndreasReitberger.API.Moonraker
             }
         }
 
-        [JsonIgnore, XmlIgnore]
-        string _username;
-        [JsonIgnore, XmlIgnore]
-        public string Username
-        {
-            get => _username;
-            set
-            {
-                if (_username == value) return;
-                _username = value;
-                OnPropertyChanged();
-            }
-        }
-
-        [JsonIgnore, XmlIgnore]
-        SecureString _password;
-        [JsonIgnore, XmlIgnore]
-        public SecureString Password
-        {
-            get => _password;
-            set
-            {
-                if (_password == value) return;
-                _password = value;
-                OnPropertyChanged();
-            }
-        }
         #endregion
     }
 }

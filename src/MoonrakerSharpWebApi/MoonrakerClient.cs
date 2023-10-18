@@ -1893,25 +1893,6 @@ namespace AndreasReitberger.API.Moonraker
         }
         #endregion
 
-        #region Cancel
-        public void CancelCurrentRequests()
-        {
-            try
-            {
-                /* */
-                if (httpClient != null)
-                {
-                    httpClient.CancelPendingRequests();
-                    UpdateRestClientInstance();
-                }
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-            }
-        }
-        #endregion
-
         #region CheckOnline
 
         public async Task CheckOnlineAsync(int timeout = 10000)
@@ -1921,99 +1902,9 @@ namespace AndreasReitberger.API.Moonraker
             cts?.Dispose();
         }
         public Task CheckOnlineAsync(CancellationTokenSource cts) => CheckOnlineAsync($"{MoonrakerCommands.Base}", AuthHeaders, "version", cts);
-        /*
-        {
-            if (IsConnecting) return; // Avoid multiple calls
-            IsConnecting = true;
-            bool isReachable = false;
-            try
-            {
-                string uriString = FullWebAddress;
-                try
-                {
-                    string targetUri = $"{MoonrakerCommands.Base}";
-                    // Send a blank api request in order to check if the server is reachable
-                    IRestApiRequestRespone result = await SendRestApiRequestAsync(
-                           requestTargetUri: targetUri,
-                           method: Method.Post,
-                           command: "version",
-                           jsonObject: null,
-                           authHeaders: AuthHeaders,
-                           cts: cts
-                           )
-                        .ConfigureAwait(false);
-                    KlipperApiRequestRespone respone =
-                        await SendOnlineCheckRestApiRequestAsync(MoonrakerCommandBase.api, "version", cts)
-                        .ConfigureAwait(false);
-                    isReachable = respone?.IsOnline == true;
-                }
-                catch (InvalidOperationException iexc)
-                {
-                    OnError(new UnhandledExceptionEventArgs(iexc, false));
-                }
-                catch (HttpRequestException rexc)
-                {
-                    OnError(new UnhandledExceptionEventArgs(rexc, false));
-                }
-                catch (TaskCanceledException)
-                {
-                    // Throws an exception on timeout, not actually an error
-                }
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-            }
-            IsConnecting = false;
-            // Avoid offline message for short connection loss
-            if (!IsOnline || isReachable || _retries > RetriesWhenOffline)
-            {
-                // Do not check if the previous state was already offline
-                _retries = 0;
-                IsOnline = isReachable;
-            }
-            else
-            {
-                // Retry with shorter timeout to see if the connection loss is real
-                _retries++;
-                await CheckOnlineAsync(3500).ConfigureAwait(false);
-            }
-        }
-        */
-        public Task<bool> CheckIfApiIsValidAsync(int timeout = 10000) => CheckIfApiIsValidAsync($"{MoonrakerCommands.Base}", AuthHeaders, "version", timeout);
-        /*
-        {
-            try
-            {
-                if (IsOnline)
-                {
-                    CancellationTokenSource cts = new(new TimeSpan(0, 0, 0, 0, timeout));
-                    KlipperApiRequestRespone respone = await SendOnlineCheckRestApiRequestAsync(MoonrakerCommandBase.api, "version", cts).ConfigureAwait(false);
-                    if (respone.HasAuthenticationError)
-                    {
-                        AuthenticationFailed = true;
-                        OnRestApiAuthenticationError(respone.EventArgs as RestEventArgs);
-                    }
-                    else
-                    {
-                        AuthenticationFailed = false;
-                        OnRestApiAuthenticationSucceeded(respone.EventArgs as RestEventArgs);
-                    }
-                    return AuthenticationFailed;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-                return false;
-            }
-        }
-        */
 
+        public Task<bool> CheckIfApiIsValidAsync(int timeout = 10000) => CheckIfApiIsValidAsync($"{MoonrakerCommands.Base}", AuthHeaders, "version", timeout);
+        
         public Task CheckServerIfApiIsValidAsync(int timeout = 10000) => CheckIfApiIsValidAsync(timeout);
         #endregion
 

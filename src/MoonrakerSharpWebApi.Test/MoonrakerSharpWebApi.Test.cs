@@ -286,7 +286,7 @@ namespace MoonrakerSharpWebApi.Test
                     {
                         Assert.Fail(args.Message);
                     };
-                    _server.StartListening();
+                    await _server.StartListeningAsync();
 
                     var fSensors = await _server.GetFilamentSensorsAsync();
                     Assert.IsNotNull(fSensors);
