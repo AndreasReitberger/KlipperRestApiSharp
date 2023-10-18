@@ -1744,66 +1744,19 @@ namespace AndreasReitberger.API.Moonraker
         #region Public
 
         #region Refresh
-        [Obsolete("Use StartListeningAsync instead")]
-        public void StartListening(bool StopActiveListening = false)
-        {
-            if (IsListening)// avoid multiple sessions
-            {
-                if (StopActiveListening)
-                {
-                    StopListening();
-                }
-                else
-                {
-                    return; // StopListening();
-                }
-            }
-            ConnectWebSocket();
-            Timer = new Timer(async (action) =>
-            {
-                // Do not check the online state ever tick
-                if (RefreshCounter > 5)
-                {
-                    RefreshCounter = 0;
-                    await CheckOnlineAsync(3500).ConfigureAwait(false);
-                }
-                else RefreshCounter++;
-                if (IsOnline)
-                {
-                    if (RefreshCounter % 2 == 0)
-                    {
-                        await RefreshServerCachedTemperatureDataAsync().ConfigureAwait(false);
-                    }
-                    if (RefreshHeatersDirectly)
-                    {
-                        List<Task> tasks = new()
-                        {
-                            RefreshExtruderStatusAsync(),
-                            RefreshHeaterBedStatusAsync(),
-                        };
-                        await Task.WhenAll(tasks).ConfigureAwait(false);
-                    }
-                }
-                else if (IsListening)
-                {
-                    StopListening();
-                }
-            }, null, 0, RefreshInterval * 1000);
-            IsListening = true;
-        }
-        [Obsolete("Use StopListeningAsync instead")]
-        public void StopListening()
-        {
-            CancelCurrentRequests();
-            StopPingTimer();
-            StopTimer();
 
-            if (IsListeningToWebsocket)
-                DisconnectWebSocket();
-            IsListening = false;
-        }
+        public Task StartListeningAsync(bool stopActiveListening = false) => StartListeningAsync(WebSocketTargetUri, stopActiveListening, new()
+        {
+            RefreshExtruderStatusAsync(),
+            RefreshHeaterBedStatusAsync(),
+            RefreshPrintStatusAsync(),
+            RefreshGcodeMoveStatusAsync(),
+            RefreshMotionReportAsync(),
+            RefreshToolHeadStatusAsync(),
+        });
 
-        public async Task StartListeningAsync(bool stopActiveListening = false)
+        [Obsolete("Remove later")]
+        public async Task StartListeningAsyncOld(bool stopActiveListening = false)
         {
             if (IsListening)// avoid multiple sessions
             {
@@ -1853,18 +1806,7 @@ namespace AndreasReitberger.API.Moonraker
             }, null, 0, RefreshInterval * 1000);
             IsListening = true;
         }
-        public async Task StopListeningAsync()
-        {
-            CancelCurrentRequests();
-            StopPingTimer();
-            StopTimer();
-
-            if (IsListeningToWebsocket)
-            {
-                await DisconnectWebSocketAsync().ConfigureAwait(false);
-            }
-            IsListening = false;
-        }
+        
         public async Task RefreshAllAsync()
         {
             try
@@ -7538,24 +7480,5 @@ namespace AndreasReitberger.API.Moonraker
         }
         #endregion
 
-        #region Dispose
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-        protected void Dispose(bool disposing)
-        {
-            // Ordinarily, we release unmanaged resources here;
-            // but all are wrapped by safe handles.
-
-            // Release disposable objects.
-            if (disposing)
-            {
-                StopListeningAsync();
-                DisconnectWebSocketAsync();
-            }
-        }
-        #endregion
     }
 }

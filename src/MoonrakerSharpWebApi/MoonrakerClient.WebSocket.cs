@@ -14,10 +14,9 @@ using System.Security.Authentication;
 using AndreasReitberger.Core.Utilities;
 using AndreasReitberger.Core.Enums;
 using System.Threading.Tasks;
-using WebSocket4Net;
-using ErrorEventArgs = SuperSocket.ClientEngine.ErrorEventArgs;
 using System.Collections.Concurrent;
 using AndreasReitberger.API.Print3dServer.Core.Events;
+using Websocket.Client;
 
 namespace AndreasReitberger.API.Moonraker
 {
@@ -26,15 +25,6 @@ namespace AndreasReitberger.API.Moonraker
         #region WebSocket
 
         #region Properties
-
-        [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-#if WebSocket4Net
-        WebSocket webSocket;
-#else
-        WebSocket webSocket;
-#endif
-
         [ObservableProperty]
         [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
         long? webSocketConnectionId;
@@ -46,138 +36,22 @@ namespace AndreasReitberger.API.Moonraker
             });
         }
 
-        [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        Timer pingTimer;
-
-        [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        int pingCounter = 0;
-
-        [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        int refreshCounter = 0;
-
-        [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        bool isListeningToWebsocket = false;
-        partial void OnIsListeningToWebsocketChanged(bool value)
-        {
-            OnListeningChanged(new KlipperEventListeningChangedEventArgs()
-            {
-                SessonId = SessionId,
-                IsListening = IsListening,
-                IsListeningToWebSocket = value,
-            });
-        }
         #endregion
 
         #region Methods
 
 #if WebSocket4Net
 #endif
-        [Obsolete("Use ConnectWebSocketAsync instead")]
-        public void ConnectWebSocket()
-        {
-            try
-            {
-                //if (!IsReady) return;
-                if (!string.IsNullOrEmpty(FullWebAddress) && (
-                    Regex.IsMatch(FullWebAddress, RegexHelper.IPv4AddressRegex) ||
-                    Regex.IsMatch(FullWebAddress, RegexHelper.IPv6AddressRegex) ||
-                    Regex.IsMatch(FullWebAddress, RegexHelper.Fqdn)))
-                {
-                    return;
-                }
-                //if (!IsReady || IsListeningToWebsocket) return;
-
-                DisconnectWebSocket();
-                // https://github.com/Arksine/moonraker/blob/master/docs/web_api.md#appendix
-                // ws://host:port/websocket?token={32 character base32 string}
-                //string target = $"ws://192.168.10.113:80/websocket?token={API}";
-                //string target = $"{(IsSecure ? "wss" : "ws")}://{ServerAddress}:{Port}/websocket{(!string.IsNullOrEmpty(API) ? $"?token={(LoginRequired ? UserToken : API)}" : "")}";
-                //var token = GetOneshotTokenAsync();
-
-                // If logged in, even if passing an api key, the websocket returns 401?!
-                // The OneShotToken seems to work in both cases
-                string target = LoginRequired ?
-                        $"{(IsSecure ? "wss" : "ws")}://{ServerAddress}:{Port}/websocket?token={OneShotToken}" :
-                        //$"{(IsSecure ? "wss" : "ws")}://{ServerAddress}:{Port}/websocket{(!string.IsNullOrEmpty(API) ? $"?token={API}" : "")}";
-                        $"{(IsSecure ? "wss" : "ws")}://{ServerAddress}:{Port}/websocket{(!string.IsNullOrEmpty(OneShotToken) ? $"?token={OneShotToken}" : $"?token={ApiKey}")}";
-                WebSocket = new WebSocket(target)
-                {
-                    EnableAutoSendPing = false,
-
-                };
-                if (LoginRequired)
-                {
-                    //WebSocket.Security.Credential = new NetworkCredential(Username, Password);
-                }
-
-                if (IsSecure)
-                {
-                    // https://github.com/sta/websocket-sharp/issues/219#issuecomment-453535816
-                    SslProtocols sslProtocolHack = (SslProtocols)(SslProtocolsHack.Tls12 | SslProtocolsHack.Tls11 | SslProtocolsHack.Tls);
-                    //Avoid TlsHandshakeFailure
-                    if (WebSocket.Security.EnabledSslProtocols != sslProtocolHack)
-                    {
-                        WebSocket.Security.EnabledSslProtocols = sslProtocolHack;
-                    }
-                }
-
-                WebSocket.MessageReceived += WebSocket_MessageReceived;
-                //WebSocket.DataReceived += WebSocket_DataReceived;
-                WebSocket.Opened += WebSocket_Opened;
-                WebSocket.Closed += WebSocket_Closed;
-                WebSocket.Error += WebSocket_Error;
-
-#if NETSTANDARD || NET6_0_OR_GREATER
-                WebSocket.OpenAsync();
-#else
-                WebSocket.Open();
-#endif
-
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-            }
-        }
-        [Obsolete("Use DisconnectWebSocketAsync instead")]
-        public void DisconnectWebSocket()
-        {
-            try
-            {
-                if (WebSocket != null)
-                {
-                    if (WebSocket.State == WebSocketState.Open)
-#if NETSTANDARD || NET6_0_OR_GREATER
-                        WebSocket.CloseAsync();
-#else
-                        WebSocket.Close();
-#endif
-                    StopPingTimer();
-
-                    WebSocket.MessageReceived -= WebSocket_MessageReceived;
-                    //WebSocket.DataReceived -= WebSocket_DataReceived;
-                    WebSocket.Opened -= WebSocket_Opened;
-                    WebSocket.Closed -= WebSocket_Closed;
-                    WebSocket.Error -= WebSocket_Error;
-
-                    WebSocket = null;
-                }
-                //WebSocket = null;
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-            }
-        }
 
         public async Task ConnectWebSocketAsync()
         {
             try
             {
+
+                KlipperAccessTokenResult oneshotToken = await GetOneshotTokenAsync();
+                SessionId = OneShotToken = oneshotToken?.Result;
+                await ConnectWebSocketAsync(GetWebSocketTargetUri());
+                /*
                 //if (!IsReady) return;
                 if (!string.IsNullOrEmpty(FullWebAddress) && (
                     Regex.IsMatch(FullWebAddress, RegexHelper.IPv4AddressRegex) ||
@@ -195,7 +69,8 @@ namespace AndreasReitberger.API.Moonraker
                 //string target = $"{(IsSecure ? "wss" : "ws")}://{ServerAddress}:{Port}/websocket{(!string.IsNullOrEmpty(API) ? $"?token={(LoginRequired ? UserToken : API)}" : "")}";
 
                 KlipperAccessTokenResult oneshotToken = await GetOneshotTokenAsync();
-                OneShotToken = oneshotToken?.Result;
+                SessionId = OneShotToken = oneshotToken?.Result;
+                
 
                 string target = $"{(IsSecure ? "wss" : "ws")}://{ServerAddress}:{Port}/websocket?token={OneShotToken}";
                 WebSocket = new WebSocket(target)
@@ -221,125 +96,27 @@ namespace AndreasReitberger.API.Moonraker
                 WebSocket.Error += WebSocket_Error;
 
                 await WebSocket.OpenAsync();
+                */
             }
             catch (Exception exc)
             {
                 OnError(new UnhandledExceptionEventArgs(exc, false));
             }
         }
-        public async Task DisconnectWebSocketAsync()
+        
+#if NET_WS
+        new void WebSocket_MessageReceived(object sender, MessageReceivedEventArgs msg)
+#else
+        new void WebSocket_MessageReceived(ResponseMessage? msg)
+#endif
         {
             try
             {
-                if (WebSocket != null)
-                {
-                    if (WebSocket.State == WebSocketState.Open)
-                        await WebSocket.CloseAsync();
-                    StopPingTimer();
-
-                    if (WebSocket != null)
-                    {
-                        WebSocket.MessageReceived -= WebSocket_MessageReceived;
-                        WebSocket.Opened -= WebSocket_Opened;
-                        WebSocket.Closed -= WebSocket_Closed;
-                        WebSocket.Error -= WebSocket_Error;
-                        WebSocket = null;
-                    }
-                }
-                //WebSocket = null;
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-            }
-        }
-
-        void WebSocket_Error(object sender, ErrorEventArgs e)
-        {
-            try
-            {
-                IsListeningToWebsocket = false;
-                WebSocketConnectionId = -1;
-                OnWebSocketError(e);
-                OnError(e);
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-            }
-        }
-
-        void WebSocket_Closed(object sender, EventArgs e)
-        {
-            try
-            {
-                IsListeningToWebsocket = false;
-                WebSocketConnectionId = -1;
-                StopPingTimer();
-                OnWebSocketDisconnected(new KlipperEventArgs()
-                {
-                    Message = $"WebSocket connection to {WebSocket} closed. Connection state while closing was '{(IsOnline ? "online" : "offline")}'",
-                });
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-            }
-        }
-
-        void WebSocket_Opened(object sender, EventArgs e)
-        {
-            try
-            {
-                // Get ready state from klipper
-                string infoCommand = $"{{\"jsonrpc\":\"2.0\",\"method\":\"server.info\",\"params\":{{}},\"id\":1}}";
-                WebSocket?.Send(infoCommand);
-
-                // Get the websocket Id of the current connection
-                string connectionId = $"{{\"jsonrpc\":\"2.0\",\"method\":\"server.websocket.id\",\"params\":{{}},\"id\":2}}";
-                WebSocket?.Send(connectionId);
-
-                // No ping needed to keep connection alive
-                //PingTimer = new Timer((action) => PingServer(), null, 0, 2500);
-
-                IsListeningToWebsocket = true;
-                OnWebSocketConnected(new KlipperEventArgs()
-                {
-                    Message = $"WebSocket connection to {WebSocket} established. Connection state while opening was '{(IsOnline ? "online" : "offline")}'",
-                });
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-            }
-        }
-
-        void WebSocket_DataReceived(object sender, DataReceivedEventArgs e)
-        {
-            try
-            {
-                OnWebSocketDataReceived(new KlipperWebSocketDataEventArgs()
-                {
-                    CallbackId = PingCounter,
-                    Data = e.Data,
-                    SessonId = SessionId,
-                });
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-            }
-        }
-
-        void WebSocket_MessageReceived(object sender, MessageReceivedEventArgs e)
-        {
-            try
-            {
-                if (e.Message == null || string.IsNullOrEmpty(e.Message))
-                {
+                if (msg.Text == null || string.IsNullOrEmpty(msg.Text))
                     return;
-                }
-                if (e.Message.ToLower().Contains("method"))
+                base.WebSocket_MessageReceived(msg);
+                string text = msg.Text;
+                if (text.ToLower().Contains("method"))
                 {
                     string name = string.Empty;
                     string jsonBody = string.Empty;
@@ -350,7 +127,7 @@ namespace AndreasReitberger.API.Moonraker
 #else
                         Dictionary<int, KlipperStatusExtruder> extruderStats = new();
 #endif
-                        KlipperWebSocketMessage method = JsonConvert.DeserializeObject<KlipperWebSocketMessage>(e.Message);
+                        KlipperWebSocketMessage method = JsonConvert.DeserializeObject<KlipperWebSocketMessage>(text);
                         for (int i = 0; i < method?.Params?.Count; i++)
                         {
                             if (method.Params[i] is not JObject jsonObject)
@@ -732,15 +509,15 @@ namespace AndreasReitberger.API.Moonraker
                         OnError(new UnhandledExceptionEventArgs(exc, false));
                     }
                 }
-                else if (e.Message.ToLower().Contains("error"))
+                else if (text.ToLower().Contains("error"))
                 {
-                    //Session = JsonConvert.DeserializeObject<EventSession>(e.Message);
+                    //Session = JsonConvert.DeserializeObject<EventSession>(text);
                 }
-                else if (e.Message.ToLower().Contains("result"))
+                else if (text.ToLower().Contains("result"))
                 {
                     try
                     {
-                        KlipperWebSocketResult result = JsonConvert.DeserializeObject<KlipperWebSocketResult>(e.Message);
+                        KlipperWebSocketResult result = JsonConvert.DeserializeObject<KlipperWebSocketResult>(text);
                         //var type = result?.Result?.GetType();
                         if (result?.Result is JObject jsonObject)
                         {
@@ -809,7 +586,7 @@ namespace AndreasReitberger.API.Moonraker
                         OnError(new JsonConvertEventArgs()
                         {
                             Exception = jecx,
-                            OriginalString = e.Message,
+                            OriginalString = msg.Text,
                             Message = jecx.Message,
                         });
                     }
@@ -822,10 +599,10 @@ namespace AndreasReitberger.API.Moonraker
                 {
 
                 }
-                OnWebSocketMessageReceived(new KlipperEventArgs()
+                OnWebSocketMessageReceived(new WebsocketEventArgs()
                 {
                     CallbackId = PingCounter,
-                    Message = e.Message,
+                    Message = msg.Text,
                     SessonId = SessionId,
                 });
             }
@@ -834,28 +611,13 @@ namespace AndreasReitberger.API.Moonraker
                 OnError(new JsonConvertEventArgs()
                 {
                     Exception = jecx,
-                    OriginalString = e.Message,
+                    OriginalString = msg.Text,
                     Message = jecx.Message,
                 });
             }
             catch (Exception exc)
             {
                 OnError(new UnhandledExceptionEventArgs(exc, false));
-            }
-        }
-        public void SendWebSocketCommand(string command)
-        {
-            try
-            {
-                //string infoCommand = $"{{\"jsonrpc\":\"2.0\",\"method\":\"server.info\",\"params\":{{}},\"id\":1}}";
-                if (WebSocket?.State == WebSocketState.Open)
-                {
-                    WebSocket.Send(command);
-                }
-            }
-            catch (Exception exc)
-            {
-                OnWebSocketError(new ErrorEventArgs(exc));
             }
         }
 

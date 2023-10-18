@@ -1,6 +1,5 @@
 ﻿using AndreasReitberger.API.Moonraker.Models;
 using System;
-using ErrorEventArgs = SuperSocket.ClientEngine.ErrorEventArgs;
 
 namespace AndreasReitberger.API.Moonraker
 {
@@ -10,36 +9,7 @@ namespace AndreasReitberger.API.Moonraker
         #region EventHandlerss
 
         #region WebSocket
-
-        public event EventHandler<KlipperEventArgs> WebSocketConnected;
-        protected virtual void OnWebSocketConnected(KlipperEventArgs e)
-        {
-            WebSocketConnected?.Invoke(this, e);
-        }
-
-        public event EventHandler<KlipperEventArgs> WebSocketDisconnected;
-        protected virtual void OnWebSocketDisconnected(KlipperEventArgs e)
-        {
-            WebSocketDisconnected?.Invoke(this, e);
-        }
-
-        public event EventHandler<ErrorEventArgs> WebSocketError;
-        protected virtual void OnWebSocketError(ErrorEventArgs e)
-        {
-            WebSocketError?.Invoke(this, e);
-        }
-
-        public event EventHandler<KlipperEventArgs> WebSocketMessageReceived;
-        protected virtual void OnWebSocketMessageReceived(KlipperEventArgs e)
-        {
-            WebSocketMessageReceived?.Invoke(this, e);
-        }
-
-        public event EventHandler<KlipperWebSocketDataEventArgs> WebSocketDataReceived;
-        protected virtual void OnWebSocketDataReceived(KlipperWebSocketDataEventArgs e)
-        {
-            WebSocketDataReceived?.Invoke(this, e);
-        }
+        
         public event EventHandler<KlipperWebSocketConnectionChangedEventArgs> WebSocketConnectionIdChanged;
         protected virtual void OnWebSocketConnectionIdChanged(KlipperWebSocketConnectionChangedEventArgs e)
         {
