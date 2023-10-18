@@ -1,23 +1,31 @@
-﻿using Newtonsoft.Json;
+﻿using AndreasReitberger.API.Print3dServer.Core.Interfaces;
+using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public class KlipperApiRequestRespone
+    public partial class KlipperApiRequestRespone : ObservableObject, IRestApiRequestRespone
     {
         #region Properties
-        public string Result { get; set; } = string.Empty;
-        public bool IsOnline { get; set; } = false;
-        public bool Succeeded { get; set; } = false;
-        public bool HasAuthenticationError { get; set; } = false;
+        [ObservableProperty]
+        string? result;
 
-        public KlipperRestEventArgs EventArgs { get; set; }
+        [ObservableProperty]
+        bool isOnline = false;
+
+        [ObservableProperty]
+        bool succeeded = false;
+
+        [ObservableProperty]
+        bool hasAuthenticationError = false;
+
+        [ObservableProperty]
+        IRestEventArgs? eventArgs;
         #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
+
         #endregion
     }
 }

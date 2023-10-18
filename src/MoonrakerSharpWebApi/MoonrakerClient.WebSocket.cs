@@ -17,6 +17,7 @@ using System.Threading.Tasks;
 using WebSocket4Net;
 using ErrorEventArgs = SuperSocket.ClientEngine.ErrorEventArgs;
 using System.Collections.Concurrent;
+using AndreasReitberger.API.Print3dServer.Core.Events;
 
 namespace AndreasReitberger.API.Moonraker
 {
@@ -676,7 +677,7 @@ namespace AndreasReitberger.API.Moonraker
                                         }
                                         catch (JsonException jecx)
                                         {
-                                            OnError(new KlipperJsonConvertEventArgs()
+                                            OnError(new JsonConvertEventArgs()
                                             {
                                                 Exception = jecx,
                                                 OriginalString = jsonBody,
@@ -718,7 +719,7 @@ namespace AndreasReitberger.API.Moonraker
                     }
                     catch (JsonException jecx)
                     {
-                        OnError(new KlipperJsonConvertEventArgs()
+                        OnError(new JsonConvertEventArgs()
                         {
                             Exception = jecx,
                             OriginalString = jsonBody,
@@ -805,7 +806,7 @@ namespace AndreasReitberger.API.Moonraker
                     }
                     catch (JsonException jecx)
                     {
-                        OnError(new KlipperJsonConvertEventArgs()
+                        OnError(new JsonConvertEventArgs()
                         {
                             Exception = jecx,
                             OriginalString = e.Message,
@@ -830,7 +831,7 @@ namespace AndreasReitberger.API.Moonraker
             }
             catch (JsonException jecx)
             {
-                OnError(new KlipperJsonConvertEventArgs()
+                OnError(new JsonConvertEventArgs()
                 {
                     Exception = jecx,
                     OriginalString = e.Message,

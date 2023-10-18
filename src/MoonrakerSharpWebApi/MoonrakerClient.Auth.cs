@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.Security;
 using System.Xml.Serialization;
 using JsonIgnoreAttribute = Newtonsoft.Json.JsonIgnoreAttribute;
@@ -40,6 +41,7 @@ namespace AndreasReitberger.API.Moonraker
         [JsonProperty(nameof(UserToken))]
         string _userToken = string.Empty;
         [JsonIgnore, XmlIgnore]
+        [Obsolete("Use SessionId for this")]
         public string UserToken
         {
             get => _userToken;
