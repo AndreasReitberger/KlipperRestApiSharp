@@ -24,35 +24,6 @@ namespace AndreasReitberger.API.Moonraker
         */
         #endregion
 
-        #region ServerConnectionState
-
-        public event EventHandler<KlipperEventArgs> ServerWentOffline;
-        protected virtual void OnServerWentOffline(KlipperEventArgs e)
-        {
-            ServerWentOffline?.Invoke(this, e);
-        }
-
-        public event EventHandler<KlipperEventArgs> ServerWentOnline;
-        protected virtual void OnServerWentOnline(KlipperEventArgs e)
-        {
-            ServerWentOnline?.Invoke(this, e);
-        }
-
-        public event EventHandler<KlipperEventArgs> ServerUpdateAvailable;
-        protected virtual void OnServerUpdateAvailable(KlipperEventArgs e)
-        {
-            ServerUpdateAvailable?.Invoke(this, e);
-        }
-        #endregion
-
-        #region Debug
-        public event EventHandler<KlipperIgnoredJsonResultsChangedEventArgs> KlipperIgnoredJsonResultsChanged;
-        protected virtual void OnKlipperIgnoredJsonResultsChanged(KlipperIgnoredJsonResultsChangedEventArgs e)
-        {
-            KlipperIgnoredJsonResultsChanged?.Invoke(this, e);
-        }
-        #endregion
-
         #region State & Config
         public event EventHandler<KlipperStateChangedEventArgs> KlipperStateChanged;
         protected virtual void OnKlipperStateChangedEvent(KlipperStateChangedEventArgs e)
@@ -211,24 +182,6 @@ namespace AndreasReitberger.API.Moonraker
         }
         #endregion
 
-        #region Remote Printers
-        public event EventHandler<KlipperRemotePrintersChangedEventArgs> KlipperRemotePrinterChanged;
-        [Obsolete("Use OnRemotePrintersChanged instead")]
-        protected virtual void OnKlipperRemotePrinterChanged(KlipperRemotePrintersChangedEventArgs e)
-        {
-            KlipperRemotePrinterChanged?.Invoke(this, e);
-        }
-        #endregion
-
-        #region Files
-        public event EventHandler<KlipperFilesChangedEventArgs> KlipperFilesChanged;
-        [Obsolete("Use OnGcodesChangedEvent instead")]
-        protected virtual void OnKlipperFilesChanged(KlipperFilesChangedEventArgs e)
-        {
-            KlipperFilesChanged?.Invoke(this, e);
-        }
-        #endregion
-
         #region Jobs & Queue
         public event EventHandler<KlipperJobListStateChangedEventArgs> KlipperJobListStateChanged;
         protected virtual void OnKlipperJobListStateChanged(KlipperJobListStateChangedEventArgs e)
@@ -256,11 +209,6 @@ namespace AndreasReitberger.API.Moonraker
             KlipperJobListChanged?.Invoke(this, e);
         }
 
-        public event EventHandler<KlipperJobFinishedEventArgs> JobFinished;
-        protected virtual void OnJobFinished(KlipperJobFinishedEventArgs e)
-        {
-            JobFinished?.Invoke(this, e);
-        }
         #endregion
 
         #region ServerStateChanges

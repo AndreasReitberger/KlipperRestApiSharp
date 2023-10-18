@@ -342,9 +342,13 @@ namespace AndreasReitberger.API.Moonraker
                                         //if (JobStatus?.Status == KlipperJobStates.Completed)
                                         if (JobStatus?.State == Print3dJobState.Completed)
                                         {
+                                            OnJobStatusFinished(new()
+                                            {
+                                                JobStatus = job,
+                                            });
                                             OnJobFinished(new()
                                             {
-                                                Job = job,
+                                                Job = null,
                                             });
                                         }
                                         break;

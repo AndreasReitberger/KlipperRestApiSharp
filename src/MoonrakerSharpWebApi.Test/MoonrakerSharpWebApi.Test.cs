@@ -482,6 +482,8 @@ namespace MoonrakerSharpWebApi.Test
         {
             try
             {
+                if (_skipOnlineTests) return;
+
                 MoonrakerClient _server = new(_host, _api, _port, _ssl);
                 await _server.CheckOnlineAsync();
                 if (_server.IsOnline)
@@ -542,6 +544,7 @@ namespace MoonrakerSharpWebApi.Test
         {
             try
             {
+                if (_skipOnlineTests) return;
                 MoonrakerClient _server = new(_host, _api, _port, _ssl);
                 await _server.CheckOnlineAsync();
                 if (_server.IsOnline)
@@ -652,8 +655,11 @@ namespace MoonrakerSharpWebApi.Test
                     Assert.IsNotNull(cachedGcodes);
                     //Assert.IsTrue(cachedGcodes?.Count > 0);
 
-                    bool restart = await _server.RestartServerAsync();
-                    Assert.IsTrue(restart);
+                    if (!_skipOnlineTests)
+                    {
+                        bool restart = await _server.RestartServerAsync();
+                        Assert.IsTrue(restart);
+                    }
                 }
                 else
                     Assert.Fail($"Server {_server.FullWebAddress} is offline.");
@@ -678,9 +684,11 @@ namespace MoonrakerSharpWebApi.Test
 
                     Dictionary<string, string> help = await _server.GetGcodeHelpAsync();
                     Assert.IsNotNull(help);
-
-                    bool succeed = await _server.RunGcodeScriptAsync("G28");
-                    Assert.IsTrue(succeed);
+                    if (!_skipOnlineTests)
+                    {
+                        bool succeed = await _server.RunGcodeScriptAsync("G28");
+                        Assert.IsTrue(succeed);
+                    }
                 }
                 else
                     Assert.Fail($"Server {_server.FullWebAddress} is offline.");
@@ -696,6 +704,7 @@ namespace MoonrakerSharpWebApi.Test
         {
             try
             {
+                if (_skipOnlineTests) return;
                 MoonrakerClient _server = new(_host, _api, _port, _ssl);
                 await _server.CheckOnlineAsync();
                 if (_server.IsOnline)
@@ -787,7 +796,7 @@ namespace MoonrakerSharpWebApi.Test
                     files = await _server.GetAvailableFilesAsync("docs ");
                     Assert.IsNotNull(files);
 
-                    string dirName = "gcodes/test2";
+                    string dirName = "gcodes/Kundenaufträge";
                     KlipperDirectoryActionResult created = await _server.CreateDirectoryAsync(dirName);
                     Assert.IsNotNull(created);
 
@@ -1371,8 +1380,7 @@ namespace MoonrakerSharpWebApi.Test
         {
             try
             {
-                string host = "mainsailos.local";
-                MoonrakerClient _server = new(host, _api, _port, _ssl);
+                MoonrakerClient _server = new(_host, _api, _port, _ssl);
                 _server.Error += (o, args) =>
                 {
                     Assert.Fail(args.ToString());
