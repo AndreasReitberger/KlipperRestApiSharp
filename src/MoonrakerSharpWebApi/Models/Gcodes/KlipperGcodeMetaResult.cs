@@ -87,7 +87,7 @@ namespace AndreasReitberger.API.Moonraker.Models
 
         [ObservableProperty]
         [JsonProperty("thumbnails")]
-        ObservableCollection<IGcodeImage> gcodeImages;
+        ObservableCollection<IGcodeImage> gcodeImages = new();
 
         [JsonIgnore]
         public long Layers => GetLayersCount();

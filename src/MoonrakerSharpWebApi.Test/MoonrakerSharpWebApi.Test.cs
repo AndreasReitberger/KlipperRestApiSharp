@@ -14,9 +14,9 @@ namespace MoonrakerSharpWebApi.Test
 {
     public class Tests
     {
-        private readonly string _host = "192.168.10.113";
+        private readonly string _host = SecretAppSettingReader.ReadSection<SecretAppSetting>("TestSetup").Ip ?? "";
         private readonly int _port = 80;
-        private readonly string _api = "1c8fc5833641429a95d00991e1f3aa0f";
+        private readonly string _api = SecretAppSettingReader.ReadSection<SecretAppSetting>("TestSetup").ApiKey ?? "";
         private readonly bool _ssl = false;
 
         private readonly bool _skipOnlineTests = true;
@@ -403,8 +403,8 @@ namespace MoonrakerSharpWebApi.Test
 
                     ObservableCollection<IGcode> models = await _server.GetAvailableFilesAsync("gcodes", true);
                     //var childItems = models?.Where(model => model.Path.Contains("/")).ToList();
-
-                    foreach (KlipperFile gcodeFile in models.Cast<KlipperFile>())
+                    Assert.IsTrue(models?.Any());
+                    foreach (KlipperFile gcodeFile in models.Cast<KlipperFile>()?.Where(g => g?.Meta?.GcodeImages?.Count > 0))
                     {
                         byte[] thumbnail = await _server.GetGcodeThumbnailImageAsync(gcodeFile?.Meta);
                         Assert.IsNotNull(thumbnail);
