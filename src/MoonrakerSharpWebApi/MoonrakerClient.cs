@@ -25,6 +25,7 @@ using System.Threading.Tasks;
 using System.Xml.Serialization;
 using AndreasReitberger.API.Print3dServer.Core.Events;
 using AndreasReitberger.API.Moonraker.Structs;
+using System.Drawing;
 
 namespace AndreasReitberger.API.Moonraker
 {
@@ -2206,7 +2207,18 @@ namespace AndreasReitberger.API.Moonraker
             try
             {
                 //object cmd = new { name = ScriptName };
-                result = await SendRestApiRequestAsync(MoonrakerCommandBase.access, Method.Get, "api_key").ConfigureAwait(false);
+                string targetUri = $"{MoonrakerCommands.Access}";
+                result = await SendRestApiRequestAsync(
+                       requestTargetUri: targetUri,
+                       method: Method.Get,
+                       command: "api_key",
+                       jsonObject: null,
+                       authHeaders: AuthHeaders,
+                       //urlSegments: urlSegements,
+                       cts: default
+                       )
+                    .ConfigureAwait(false);
+                //result = await SendRestApiRequestAsync(MoonrakerCommandBase.access, Method.Get, "api_key").ConfigureAwait(false);
                 KlipperAccessTokenResult accessToken = JsonConvert.DeserializeObject<KlipperAccessTokenResult>(result.Result);
                 //API = accessToken?.Result;
                 return accessToken;
@@ -2267,9 +2279,22 @@ namespace AndreasReitberger.API.Moonraker
             try
             {
                 //object cmd = new { name = ScriptName };
+
+                string targetUri = $"{MoonrakerCommands.Printer}";
+                result = await SendRestApiRequestAsync(
+                       requestTargetUri: targetUri,
+                       method: Method.Get,
+                       command: "info",
+                       jsonObject: null,
+                       authHeaders: AuthHeaders,
+                       //urlSegments: urlSegements,
+                       cts: default
+                       )
+                    .ConfigureAwait(false);
+                /*
                 result = await SendRestApiRequestAsync(MoonrakerCommandBase.printer, Method.Get, "info")
                     .ConfigureAwait(false);
-
+                */
                 KlipperPrinterStateMessageRespone state = JsonConvert.DeserializeObject<KlipperPrinterStateMessageRespone>(result.Result);
                 return state?.Result;
             }
@@ -2296,9 +2321,23 @@ namespace AndreasReitberger.API.Moonraker
             try
             {
                 //object cmd = new { name = ScriptName };
+
+                string targetUri = $"{MoonrakerCommands.Printer}";
+                IRestApiRequestRespone result = await SendRestApiRequestAsync(
+                       requestTargetUri: targetUri,
+                       method: Method.Post,
+                       command: "emergency_stop",
+                       jsonObject: null,
+                       authHeaders: AuthHeaders,
+                       //urlSegments: urlSegements,
+                       cts: default
+                       )
+                    .ConfigureAwait(false);
+                /*
                 KlipperApiRequestRespone result =
                     await SendRestApiRequestAsync(MoonrakerCommandBase.printer, Method.Post, "emergency_stop")
                     .ConfigureAwait(false);
+                */
                 return GetQueryResult(result.Result);
             }
             catch (Exception exc)
@@ -2313,9 +2352,22 @@ namespace AndreasReitberger.API.Moonraker
             try
             {
                 //object cmd = new { name = ScriptName };
+                string targetUri = $"{MoonrakerCommands.Printer}";
+                IRestApiRequestRespone result = await SendRestApiRequestAsync(
+                       requestTargetUri: targetUri,
+                       method: Method.Post,
+                       command: "restart",
+                       jsonObject: null,
+                       authHeaders: AuthHeaders,
+                       //urlSegments: urlSegements,
+                       cts: default
+                       )
+                    .ConfigureAwait(false);
+                /*
                 KlipperApiRequestRespone result =
                     await SendRestApiRequestAsync(MoonrakerCommandBase.printer, Method.Post, "restart")
                     .ConfigureAwait(false);
+                */
                 return GetQueryResult(result.Result);
             }
             catch (Exception exc)
@@ -2330,9 +2382,22 @@ namespace AndreasReitberger.API.Moonraker
             try
             {
                 //object cmd = new { name = ScriptName };
+                string targetUri = $"{MoonrakerCommands.Printer}";
+                IRestApiRequestRespone result = await SendRestApiRequestAsync(
+                       requestTargetUri: targetUri,
+                       method: Method.Post,
+                       command: "firmware_restart",
+                       jsonObject: null,
+                       authHeaders: AuthHeaders,
+                       //urlSegments: urlSegements,
+                       cts: default
+                       )
+                    .ConfigureAwait(false);
+                /*
                 KlipperApiRequestRespone result =
                     await SendRestApiRequestAsync(MoonrakerCommandBase.printer, Method.Post, "firmware_restart")
                     .ConfigureAwait(false);
+                */
                 return GetQueryResult(result.Result);
             }
             catch (Exception exc)
@@ -2447,10 +2512,22 @@ namespace AndreasReitberger.API.Moonraker
             try
             {
                 //object cmd = new { name = ScriptName };
+                string targetUri = $"{MoonrakerCommands.Printer}";
+                result = await SendRestApiRequestAsync(
+                       requestTargetUri: targetUri,
+                       method: Method.Get,
+                       command: "objects/list",
+                       jsonObject: null,
+                       authHeaders: AuthHeaders,
+                       //urlSegments: urlSegements,
+                       cts: default
+                       )
+                    .ConfigureAwait(false);
+                /*
                 result =
                     await SendRestApiRequestAsync(MoonrakerCommandBase.printer, Method.Get, "objects/list")
                     .ConfigureAwait(false);
-
+                */
                 KlipperActionListRespone state = JsonConvert.DeserializeObject<KlipperActionListRespone>(result.Result);
                 if (!string.IsNullOrEmpty(startsWith))
                 {
@@ -2494,9 +2571,21 @@ namespace AndreasReitberger.API.Moonraker
                     if (obj.Key.StartsWith("gcode_macro")) continue;
                     urlSegments.Add(obj.Key, obj.Value);
                 }
+                string targetUri = $"{MoonrakerCommands.Printer}";
+                result = await SendRestApiRequestAsync(
+                       requestTargetUri: targetUri,
+                       method: Method.Get,
+                       command: "objects/query",
+                       jsonObject: null,
+                       authHeaders: AuthHeaders,
+                       urlSegments: urlSegments,
+                       cts: default
+                       )
+                    .ConfigureAwait(false);
+                /*
                 result = await SendRestApiRequestAsync(MoonrakerCommandBase.printer, Method.Get, "objects/query", jsonObject: null, cts: default, urlSegments: urlSegments)
                     .ConfigureAwait(false);
-
+                */
                 KlipperPrinterStatusRespone queryResult = JsonConvert.DeserializeObject<KlipperPrinterStatusRespone>(result.Result);
                 if (queryResult?.Result?.Status is JObject jsonObject)
                 {
@@ -2825,12 +2914,23 @@ namespace AndreasReitberger.API.Moonraker
                 {
                     urlSegments.Add("filament_switch_sensor", string.Empty);
                 }
+                string targetUri = $"{MoonrakerCommands.Printer}";
+                result = await SendRestApiRequestAsync(
+                       requestTargetUri: targetUri,
+                       method: Method.Get,
+                       command: "objects/query",
+                       jsonObject: null,
+                       authHeaders: AuthHeaders,
+                       urlSegments: urlSegments,
+                       cts: default
+                       )
+                    .ConfigureAwait(false);
+                /*
                 result = await SendRestApiRequestAsync(MoonrakerCommandBase.printer, Method.Get, "objects/query", jsonObject: null, cts: default, urlSegments: urlSegments)
                     .ConfigureAwait(false);
-
+                */
                 KlipperFilamentSensorsRespone queryResult = JsonConvert.DeserializeObject<KlipperFilamentSensorsRespone>(result.Result);
                 return queryResult?.Result?.Status;
-
             }
             catch (JsonException jecx)
             {
@@ -2857,8 +2957,10 @@ namespace AndreasReitberger.API.Moonraker
             {
                 // Doc: https://moonraker.readthedocs.io/en/latest/printer_objects/#print_stats
                 string key = "print_stats";
-                Dictionary<string, string> queryObjects = new();
-                queryObjects.Add(key, "");
+                Dictionary<string, string> queryObjects = new()
+                {
+                    { key, "" }
+                };
 
                 Dictionary<string, object> result = await QueryPrinterObjectStatusAsync(queryObjects)
                     .ConfigureAwait(false);
@@ -3370,7 +3472,18 @@ namespace AndreasReitberger.API.Moonraker
             KlipperServerConfig resultObject = null;
             try
             {
-                result = await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Get, "config").ConfigureAwait(false);
+                string targetUri = $"{MoonrakerCommands.Server}";
+                result = await SendRestApiRequestAsync(
+                       requestTargetUri: targetUri,
+                       method: Method.Get,
+                       command: "config",
+                       jsonObject: null,
+                       authHeaders: AuthHeaders,
+                       //urlSegments: urlSegements,
+                       cts: default
+                       )
+                    .ConfigureAwait(false);
+                //result = await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Get, "config").ConfigureAwait(false);
                 KlipperServerConfigRespone config = JsonConvert.DeserializeObject<KlipperServerConfigRespone>(result.Result);
                 return config?.Result?.Config;
             }
@@ -3416,7 +3529,18 @@ namespace AndreasReitberger.API.Moonraker
             try
             {
                 //object cmd = new { name = ScriptName };
-                result = await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Get, "temperature_store").ConfigureAwait(false);
+                string targetUri = $"{MoonrakerCommands.Server}";
+                result = await SendRestApiRequestAsync(
+                       requestTargetUri: targetUri,
+                       method: Method.Get,
+                       command: "temperature_store",
+                       jsonObject: null,
+                       authHeaders: AuthHeaders,
+                       //urlSegments: urlSegements,
+                       cts: default
+                       )
+                    .ConfigureAwait(false);
+                //result = await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Get, "temperature_store").ConfigureAwait(false);
                 KlipperServerTempDataRespone tempData = JsonConvert.DeserializeObject<KlipperServerTempDataRespone>(result.Result);
                 return tempData?.Result;
             }
@@ -3457,7 +3581,18 @@ namespace AndreasReitberger.API.Moonraker
             try
             {
                 //object cmd = new { name = ScriptName };
-                result = await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Get, $"gcode_store?count={count}").ConfigureAwait(false);
+                string targetUri = $"{MoonrakerCommands.Server}";
+                result = await SendRestApiRequestAsync(
+                       requestTargetUri: targetUri,
+                       method: Method.Get,
+                       command: $"gcode_store?count={count}",
+                       jsonObject: null,
+                       authHeaders: AuthHeaders,
+                       //urlSegments: urlSegments,
+                       cts: default
+                       )
+                    .ConfigureAwait(false);
+                //result = await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Get, $"gcode_store?count={count}").ConfigureAwait(false);
                 KlipperGcodesRespone tempData = JsonConvert.DeserializeObject<KlipperGcodesRespone>(result.Result);
                 return tempData?.Result?.Gcodes;
             }
@@ -3484,9 +3619,22 @@ namespace AndreasReitberger.API.Moonraker
             try
             {
                 //object cmd = new { name = ScriptName };
+                string targetUri = $"{MoonrakerCommands.Server}";
+                IRestApiRequestRespone result = await SendRestApiRequestAsync(
+                       requestTargetUri: targetUri,
+                        method: Method.Post,
+                       command: $"restart",
+                       jsonObject: null,
+                       authHeaders: AuthHeaders,
+                       //urlSegments: urlSegments,
+                       cts: default
+                       )
+                    .ConfigureAwait(false);
+                /*
                 KlipperApiRequestRespone result =
                     await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Post, "restart")
                     .ConfigureAwait(false);
+                */
                 return GetQueryResult(result.Result);
             }
             catch (Exception exc)

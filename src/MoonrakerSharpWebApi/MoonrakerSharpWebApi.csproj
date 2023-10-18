@@ -29,7 +29,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\Print3dServer.Core\src\Print3dServer.Core\Print3dServer.Core.csproj" />
-    <ProjectReference Include="..\..\..\WebSocket4Net\src\WebSocket4Net\WebSocket4Net.csproj" />
+    <!--<ProjectReference Include="..\..\..\WebSocket4Net\src\WebSocket4Net\WebSocket4Net.csproj" />-->
   </ItemGroup>
 
 </Project>
