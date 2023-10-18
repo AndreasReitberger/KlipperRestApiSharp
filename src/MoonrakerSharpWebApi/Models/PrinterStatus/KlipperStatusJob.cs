@@ -1,14 +1,13 @@
-﻿using AndreasReitberger.API.Moonraker.Enum;
+﻿using AndreasReitberger.API.Print3dServer.Core.Enums;
 using AndreasReitberger.API.Print3dServer.Core.Interfaces;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
-using System.Threading.Tasks;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperStatusJob : ObservableObject, IPrint3dJob
+    public partial class KlipperStatusJob : ObservableObject, IPrint3dJobStatus
     {
         #region Properties
         [ObservableProperty, JsonIgnore]
@@ -21,7 +20,7 @@ namespace AndreasReitberger.API.Moonraker.Models
 
         [ObservableProperty]
         [JsonProperty("filament_used")]
-        long? filamentUsed;
+        double? filamentUsed;
 
         [ObservableProperty]
         [JsonProperty("filename")]
@@ -29,16 +28,28 @@ namespace AndreasReitberger.API.Moonraker.Models
 
         [ObservableProperty]
         [JsonProperty("metadata")]
-        KlipperGcodeMetaResult metadata;
+        //[JsonConverter(typeof(StringGcodeMetaConverter), true)]
+        IGcodeMeta meta;
 
         [ObservableProperty]
         [JsonProperty("print_duration")]
         double? printDuration;
 
+        /*
         [ObservableProperty]
         [JsonProperty("status")]
         [JsonConverter(typeof(StringEnumConverter), true)]
         KlipperJobStates status;
+        partial void OnStatusChanged(KlipperJobStates value)
+        {
+            State = (int)value;
+        }
+        */
+
+        [ObservableProperty]
+        [JsonProperty("status")]
+        [JsonConverter(typeof(StringEnumConverter), true)]
+        Print3dJobState state;
 
         [ObservableProperty]
         [JsonProperty("start_time")]
@@ -46,7 +57,7 @@ namespace AndreasReitberger.API.Moonraker.Models
 
         [ObservableProperty]
         [JsonProperty("total_duration")]
-        double? totalDuration;
+        double? totalPrintDuration;
 
         [ObservableProperty]
         [JsonProperty("job_id")]
@@ -54,28 +65,7 @@ namespace AndreasReitberger.API.Moonraker.Models
 
         [ObservableProperty]
         [JsonProperty("exists")]
-        bool exists;
-        #endregion
-
-        #region Interface, unused
-
-        [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore]
-        double? timeAdded = 0;
-
-        [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore]
-        double? timeInQueue = 0;
-        #endregion
-
-        #region Methods
-        public Task<bool> StartJobAsync(IPrint3dServerClient client, string command, object? data) => client?.StartJobAsync(this, command, data);
-
-        public Task<bool> PauseJobAsync(IPrint3dServerClient client, string command, object? data) => client?.PauseJobAsync(command, data);
-
-        public Task<bool> StopJobAsync(IPrint3dServerClient client, string command, object? data) => client?.StopJobAsync(command, data);
-
-        public Task<bool> RemoveFromQueueAsync(IPrint3dServerClient client, string command, object? data) => client.RemoveJobAsync(this, command, data);
+        bool fileExists;
 
         #endregion
 

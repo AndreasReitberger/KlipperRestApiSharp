@@ -1,16 +1,23 @@
-﻿using Newtonsoft.Json;
+﻿using AndreasReitberger.API.Print3dServer.Core.Interfaces;
+using AndreasReitberger.API.Print3dServer.Core.JSON;
+using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperJobQueueResult
+    public partial class KlipperJobQueueResult : ObservableObject
     {
         #region Properties
+        [ObservableProperty]
         [JsonProperty("queued_jobs")]
-        public List<KlipperJobQueueItem> QueuedJobs { get; set; }
+        [property: JsonConverter(typeof(ConcreteTypeConverter<List<KlipperJobQueueItem>>))]
+        List<IPrint3dJob> queuedJobs = new();
+        //public List<KlipperJobQueueItem> QueuedJobs { get; set; }
 
+        [ObservableProperty]
         [JsonProperty("queue_state")]
-        public string QueueState { get; set; }
+        string queueState;
         #endregion
 
         #region Overrides

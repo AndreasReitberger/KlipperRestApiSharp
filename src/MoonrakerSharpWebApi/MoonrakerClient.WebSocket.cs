@@ -17,6 +17,7 @@ using System.Threading.Tasks;
 using System.Collections.Concurrent;
 using AndreasReitberger.API.Print3dServer.Core.Events;
 using Websocket.Client;
+using AndreasReitberger.API.Print3dServer.Core.Enums;
 
 namespace AndreasReitberger.API.Moonraker
 {
@@ -338,7 +339,8 @@ namespace AndreasReitberger.API.Moonraker
                                             JsonConvert.DeserializeObject<KlipperStatusJob>(jsonBody);
                                         //ActiveJobName = job?.Filename;
                                         JobStatus = job;
-                                        if (JobStatus?.Status == KlipperJobStates.Completed)
+                                        //if (JobStatus?.Status == KlipperJobStates.Completed)
+                                        if (JobStatus?.State == Print3dJobState.Completed)
                                         {
                                             OnJobFinished(new()
                                             {
@@ -349,12 +351,12 @@ namespace AndreasReitberger.API.Moonraker
                                     case "updated_queue":
                                         if (string.IsNullOrEmpty(jsonBody))
                                         {
-                                            JobList = new();
+                                            Jobs = new();
                                             break;
                                         }
                                         List<KlipperJobQueueItem> queueUpdate =
                                             JsonConvert.DeserializeObject<List<KlipperJobQueueItem>>(jsonBody);
-                                        JobList = new(queueUpdate);
+                                        Jobs = new(queueUpdate);
                                         break;
                                     case "queue_state":
                                         string state = jsonBody;

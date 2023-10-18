@@ -169,21 +169,7 @@ namespace AndreasReitberger.API.Moonraker
         #endregion
 
         #region Jobs
-        [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        byte[] currentPrintImage = Array.Empty<byte>();
-        partial void OnCurrentPrintImageChanging(byte[] value)
-        {
-            OnKlipperCurrentPrintImageChanged(new KlipperCurrentPrintImageChangedEventArgs()
-            {
-                NewImage = value,
-                PreviousImage = CurrentPrintImage,
-                SessonId = SessionId,
-                CallbackId = -1,
-                Token = !string.IsNullOrEmpty(UserToken) ? UserToken : ApiKey,
-            });
-        }
-
+        /*
         [ObservableProperty]
         [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
         KlipperStatusJob jobStatus;
@@ -198,6 +184,7 @@ namespace AndreasReitberger.API.Moonraker
                 Token = !string.IsNullOrEmpty(UserToken) ? UserToken : ApiKey,
             });
         }
+        */
 
         [ObservableProperty]
         [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
@@ -214,6 +201,7 @@ namespace AndreasReitberger.API.Moonraker
             });
         }
 
+        /*
         [ObservableProperty]
         [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
         ObservableCollection<KlipperJobQueueItem> jobList = new();
@@ -227,6 +215,7 @@ namespace AndreasReitberger.API.Moonraker
                 Token = !string.IsNullOrEmpty(UserToken) ? UserToken : ApiKey,
             });
         }
+        */
         #endregion
 
         #region State & Config
@@ -5922,9 +5911,9 @@ namespace AndreasReitberger.API.Moonraker
                 return resultObject;
             }
         }
-        public async Task<List<KlipperJobQueueItem>> GetJobQueueListAsync()
+        public async Task<List<IPrint3dJob>> GetJobQueueListAsync()
         {
-            List<KlipperJobQueueItem> resultObject = new();
+            List<IPrint3dJob> resultObject = new();
             try
             {
                 KlipperJobQueueResult result = await GetJobQueueStatusAsync().ConfigureAwait(false);
@@ -5943,22 +5932,19 @@ namespace AndreasReitberger.API.Moonraker
         {
             try
             {
-                ObservableCollection<KlipperJobQueueItem> jobList = new();
-                List<KlipperJobQueueItem> result = await GetJobQueueListAsync().ConfigureAwait(false);
-                JobList = result != null ? new(result) : jobList;
+                ObservableCollection<IPrint3dJob> jobList = new();
+                List<IPrint3dJob> result = await GetJobQueueListAsync().ConfigureAwait(false);
+                Jobs = result != null ? new(result) : jobList;
             }
             catch (Exception exc)
             {
                 OnError(new UnhandledExceptionEventArgs(exc, false));
                 //JobListState = "";
-                JobList = new();
+                Jobs = new();
             }
         }
 
-        public async Task<KlipperJobQueueResult> EnqueueJobAsync(string job)
-        {
-            return await EnqueueJobsAsync(new string[] { job }).ConfigureAwait(false);
-        }
+        public Task<KlipperJobQueueResult> EnqueueJobAsync(string job) => EnqueueJobsAsync(new string[] { job });        
 
         public async Task<KlipperJobQueueResult> EnqueueJobsAsync(string[] jobs)
         {
