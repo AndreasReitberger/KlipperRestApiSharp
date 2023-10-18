@@ -2,6 +2,8 @@
 using AndreasReitberger.API.Moonraker.Extensions;
 using AndreasReitberger.API.Moonraker.Models;
 using AndreasReitberger.API.Moonraker.Models.Exceptions;
+using AndreasReitberger.API.Print3dServer.Core.Interfaces;
+using AndreasReitberger.API.Print3dServer.Core;
 using AndreasReitberger.Core.Utilities;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json;
@@ -26,13 +28,9 @@ namespace AndreasReitberger.API.Moonraker
 {
     // Needs: https://github.com/Arksine/moonraker/blob/master/docs/web_api.md
     // Docs: https://moonraker.readthedocs.io/en/latest/configuration/
-    public partial class MoonrakerClient : ObservableObject, IDisposable// IRestApiClient
+    public partial class MoonrakerClient : Print3dServerClient, IPrint3dServerClient
     {
         #region Variables
-        RestClient restClient;
-        HttpClient httpClient;
-        int _retries = 0;
-
         readonly bool _enableCooldown = true;
         readonly int _cooldownFallback = 4;
 
@@ -44,17 +42,10 @@ namespace AndreasReitberger.API.Moonraker
 
         #endregion
 
-        #region Id
-        //[JsonProperty(nameof(Id))]
-        [ObservableProperty]
-        Guid id = Guid.Empty;
-
-        #endregion
-
         #region Instance
         static MoonrakerClient _instance = null;
         static readonly object Lock = new();
-        public static MoonrakerClient Instance
+        public new static MoonrakerClient Instance
         {
             get
             {
@@ -76,189 +67,21 @@ namespace AndreasReitberger.API.Moonraker
 
         }
 
-        [ObservableProperty]
-        bool isActive = false;
-
-        [ObservableProperty]
-        bool updateInstance = false;
-        partial void OnUpdateInstanceChanged(bool value)
-        {
-            if (value)
-            {
-                InitInstance(ServerAddress, Port, ApiKey, IsSecure);
-            }
-        }
-
-        [ObservableProperty]
-        bool isInitialized = false;
-
-        #endregion
-
-        #region RefreshTimer
-
-        [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        Timer timer;
-
-        [ObservableProperty]
-        int refreshInterval = 3;
-        partial void OnRefreshIntervalChanged(int value)
-        {
-            if (IsListening)
-            {
-                StartListeningAsync(stopActiveListening: true);
-            }
-        }
-
-        [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        bool isListening = false;
-        partial void OnIsListeningChanged(bool value)
-        {
-            OnListeningChanged(new KlipperEventListeningChangedEventArgs()
-            {
-                SessonId = SessionId,
-                IsListening = value,
-                IsListeningToWebSocket = IsListeningToWebsocket,
-            });
-        }
-
-        [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        bool initialDataFetched = false;
-
         #endregion
 
         #region Properties
 
-        #region Debug
-        [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-#if ConcurrentDictionary
-        ConcurrentDictionary<string, string> ignoredJsonResults = new();
-        partial void OnIgnoredJsonResultsChanged(ConcurrentDictionary<string, string> value)
-        {
-            OnKlipperIgnoredJsonResultsChanged(new KlipperIgnoredJsonResultsChangedEventArgs()
-            {
-                NewIgnoredJsonResults = value,
-            });
-        }
-#else
-        Dictionary<string, string> ignoredJsonResults = new();
-        partial void OnIgnoredJsonResultsChanged(Dictionary<string, string> value)
-        {
-            OnKlipperIgnoredJsonResultsChanged(new KlipperIgnoredJsonResultsChangedEventArgs()
-            {
-                NewIgnoredJsonResults = value,
-            });
-        }
-#endif
-
-        #endregion
-
         #region Connection
-
-        [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        string sessionId = string.Empty;
 
         [ObservableProperty]
         MoonrakerOperatingSystems operatingSystem = MoonrakerOperatingSystems.MainsailOS;
 
         [ObservableProperty]
         string hostName = string.Empty;
-
-        [ObservableProperty]
-        string serverName = string.Empty;
-
-        [ObservableProperty]
-        string serverAddress = string.Empty;
-        partial void OnServerAddressChanged(string value)
-        {
-            UpdateRestClientInstance();
-        }
-
-        [ObservableProperty]
-        bool isSecure = false;
-        partial void OnIsSecureChanged(bool value)
-        {
-            UpdateRestClientInstance();
-        }
-
-        [ObservableProperty]
-        string apiKey = string.Empty;
-
-        [ObservableProperty]
-        int port = 80;
-        partial void OnPortChanged(int value)
-        {
-            UpdateRestClientInstance();
-        }
-
-        [ObservableProperty]
-        int defaultTimeout = 10000;
-
-        [ObservableProperty]
-        bool overrideValidationRules = false;
-
-        [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        bool isOnline = false;
-        partial void OnIsOnlineChanged(bool value)
-        {
-            if (value)
-            {
-                OnServerWentOnline(new KlipperEventArgs()
-                {
-                    SessonId = SessionId,
-                });
-            }
-            else
-            {
-                OnServerWentOffline(new KlipperEventArgs()
-                {
-                    SessonId = SessionId,
-                });
-            }
-        }
-
-        [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        bool isConnecting = false;
-
-        [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        bool authenticationFailed = false;
-
-        [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        bool isRefreshing = false;
-
-        [ObservableProperty]
-        int retriesWhenOffline = 2;
-
+     
         #endregion
 
         #region General
-        [JsonIgnore, XmlIgnore]
-        bool _updateAvailable = false;
-        [JsonIgnore, XmlIgnore]
-        public bool UpdateAvailable
-        {
-            get => _updateAvailable;
-            private set
-            {
-                if (_updateAvailable == value) return;
-                _updateAvailable = value;
-                if (_updateAvailable)
-                    // Notify on update available
-                    OnServerUpdateAvailable(new KlipperEventArgs()
-                    {
-                        SessonId = SessionId,
-                    });
-                OnPropertyChanged();
-            }
-        }
 
         [ObservableProperty]
         bool refreshHeatersDirectly = true;
@@ -277,119 +100,7 @@ namespace AndreasReitberger.API.Moonraker
 
         #endregion
 
-        #region Proxy
-        [ObservableProperty]
-        bool enableProxy = false;
-
-        [ObservableProperty]
-        bool proxyUseDefaultCredentials = true;
-
-        [ObservableProperty]
-        bool secureProxyConnection = true;
-
-        [JsonProperty(nameof(ProxyAddress))]
-        [XmlAttribute(nameof(ProxyAddress))]
-        //[ObservableProperty]
-        string _proxyAddress = string.Empty;
-        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        public string ProxyAddress
-        {
-            get => _proxyAddress;
-            private set
-            {
-                if (_proxyAddress == value) return;
-                _proxyAddress = value;
-                OnPropertyChanged();
-            }
-        }
-
-        [JsonProperty(nameof(ProxyPort))]
-        [XmlAttribute(nameof(ProxyPort))]
-        int _proxyPort = 443;
-        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        public int ProxyPort
-        {
-            get => _proxyPort;
-            private set
-            {
-                if (_proxyPort == value) return;
-                _proxyPort = value;
-                OnPropertyChanged();
-            }
-        }
-
-        [JsonProperty(nameof(ProxyUser))]
-        [XmlAttribute(nameof(ProxyUser))]
-        string _proxyUser = string.Empty;
-        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        public string ProxyUser
-        {
-            get => _proxyUser;
-            private set
-            {
-                if (_proxyUser == value) return;
-                _proxyUser = value;
-                OnPropertyChanged();
-            }
-        }
-
-        [JsonProperty(nameof(ProxyPassword))]
-        [XmlAttribute(nameof(ProxyPassword))]
-        SecureString _proxyPassword;
-        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        public SecureString ProxyPassword
-        {
-            get => _proxyPassword;
-            private set
-            {
-                if (_proxyPassword == value) return;
-                _proxyPassword = value;
-                OnPropertyChanged();
-            }
-        }
-        #endregion
-
-        #region DiskSpace
-        [ObservableProperty]
-        long freeDiskSpace = 0;
-
-        [ObservableProperty]
-        long usedDiskSpace = 0;
-
-        [ObservableProperty]
-        long totalDiskSpace = 0;
-
-        #endregion
-
-        #region Printer
-
-        [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        double speedFactor = 100;
-
-        [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        double speedFactorTarget = 100;
-
-        [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        double flowFactor = 100;
-
-        [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        double flowFactorTarget = 100;
-
-        [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        double x = 0;
-
-        [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        double y = 0;
-
-        [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        double z = 0;
+        #region Printer       
 
         [ObservableProperty]
         [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
@@ -399,29 +110,10 @@ namespace AndreasReitberger.API.Moonraker
         [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
         double liveExtruderVelocity = 0;
 
-        [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        double currentLayer = 0;
-
-        [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        double layers = 0;
-
-        [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        int numberOfExtruders = 0;
-
-        [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        bool hasHeaterBed = false;
-
-        [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        bool hasFan = false;
-
         #endregion
 
         #region RemotePrinters
+        /*
         [ObservableProperty]
         [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
         ObservableCollection<KlipperDatabaseRemotePrinter> printers = new();
@@ -435,10 +127,11 @@ namespace AndreasReitberger.API.Moonraker
                 Token = !string.IsNullOrEmpty(UserToken) ? UserToken : ApiKey,
             });
         }
-
+        */
         #endregion
 
         #region Files
+        /*
         [ObservableProperty]
         [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
         ObservableCollection<KlipperFile> files = new();
@@ -452,6 +145,7 @@ namespace AndreasReitberger.API.Moonraker
                 Token = !string.IsNullOrEmpty(UserToken) ? UserToken : ApiKey,
             });
         }
+        */
 
         [ObservableProperty]
         [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
@@ -886,7 +580,7 @@ namespace AndreasReitberger.API.Moonraker
                     CallbackId = -1,
                 });
             }
-            NumberOfExtruders = value?.Count ?? 0;
+            NumberOfToolHeads = value?.Count ?? 0;
         }
 #else
         Dictionary<int, KlipperStatusExtruder> extruders = new();
@@ -917,7 +611,7 @@ namespace AndreasReitberger.API.Moonraker
                     CallbackId = -1,
                 });
             }
-            NumberOfExtruders = value?.Count ?? 0;
+            NumberOfToolHeads = value?.Count ?? 0;
         }
 #endif
 
@@ -951,7 +645,7 @@ namespace AndreasReitberger.API.Moonraker
                     CallbackId = -1,
                 });
             }
-            HasHeaterBed = value != null;
+            HasHeatedBed = value != null;
         }
 
         [ObservableProperty]
@@ -2122,15 +1816,15 @@ namespace AndreasReitberger.API.Moonraker
             {
                 Address = GetProxyUri(),
                 BypassProxyOnLocal = false,
-                UseDefaultCredentials = ProxyUseDefaultCredentials,
+                UseDefaultCredentials = ProxyUserUsesDefaultCredentials,
             };
-            if (ProxyUseDefaultCredentials && !string.IsNullOrEmpty(ProxyUser))
+            if (ProxyUserUsesDefaultCredentials && !string.IsNullOrEmpty(ProxyUser))
             {
                 proxy.Credentials = new NetworkCredential(ProxyUser, ProxyPassword);
             }
             else
             {
-                proxy.UseDefaultCredentials = ProxyUseDefaultCredentials;
+                proxy.UseDefaultCredentials = ProxyUserUsesDefaultCredentials;
             }
 
             return proxy;
@@ -2297,7 +1991,7 @@ namespace AndreasReitberger.API.Moonraker
                 }
                 if (GcodeMeta != null)
                 {
-                    CurrentLayer = MathHelper.Clamp(Convert.ToInt64(Z / GcodeMeta.LayerHeight), 0, Layers);
+                    Layer = MathHelper.Clamp(Convert.ToInt64(Z / GcodeMeta.LayerHeight), 0, Layers);
                 }
             }
             catch (Exception exc)
@@ -2324,31 +2018,6 @@ namespace AndreasReitberger.API.Moonraker
         #endregion
 
         #region Public
-
-        #region Proxy
-        public void SetProxy(bool Secure, string Address, int Port, bool Enable = true)
-        {
-            EnableProxy = Enable;
-            ProxyUseDefaultCredentials = true;
-            ProxyAddress = Address;
-            ProxyPort = Port;
-            ProxyUser = string.Empty;
-            ProxyPassword = null;
-            SecureProxyConnection = Secure;
-            //UpdateWebClientInstance();
-        }
-        public void SetProxy(bool Secure, string Address, int Port, string User = "", SecureString Password = null, bool Enable = true)
-        {
-            EnableProxy = Enable;
-            ProxyUseDefaultCredentials = false;
-            ProxyAddress = Address;
-            ProxyPort = Port;
-            ProxyUser = User;
-            ProxyPassword = Password;
-            SecureProxyConnection = Secure;
-            //UpdateWebClientInstance();
-        }
-        #endregion
 
         #region Refresh
         [Obsolete("Use StartListeningAsync instead")]
@@ -4482,14 +4151,14 @@ namespace AndreasReitberger.API.Moonraker
             catch (Exception exc)
             {
                 OnError(new UnhandledExceptionEventArgs(exc, false));
-                Files = new ObservableCollection<KlipperFile>();
+                Files = new ObservableCollection<IGcode>();
             }
         }
 
-        public async Task<ObservableCollection<KlipperFile>> GetAvailableFilesAsync(string rootPath = "", bool includeGcodeMeta = true)
+        public async Task<ObservableCollection<IGcode>> GetAvailableFilesAsync(string rootPath = "", bool includeGcodeMeta = true)
         {
             KlipperApiRequestRespone result = new();
-            ObservableCollection<KlipperFile> resultObject = new();
+            ObservableCollection<IGcode> resultObject = new();
             try
             {
                 Dictionary<string, string> urlSegements = new();
@@ -4505,10 +4174,10 @@ namespace AndreasReitberger.API.Moonraker
                     for (int i = 0; i < files?.Result?.Count; i++)
                     {
                         KlipperFile current = files?.Result[i];
-                        current.GcodeMeta = await GetGcodeMetadataAsync(current.Path).ConfigureAwait(false);
-                        if (current.GcodeMeta?.Thumbnails?.Count > 0)
+                        current.Meta = await GetGcodeMetadataAsync(current.FilePath).ConfigureAwait(false);
+                        if (current.Meta?.GcodeImages?.Count > 0)
                         {
-                            current.Image = await GetGcodeSecondThumbnailImageAsync(current?.GcodeMeta)
+                            current.Image = await GetGcodeSecondThumbnailImageAsync(current?.Meta)
                                 .ConfigureAwait(false)
                                 ;
                         }
@@ -4533,12 +4202,12 @@ namespace AndreasReitberger.API.Moonraker
                 return resultObject;
             }
         }
-        public async Task<List<KlipperFile>> GetAvailableFilesAsListAsync(string rootPath = "")
+        public async Task<List<IGcode>> GetAvailableFilesAsListAsync(string rootPath = "")
         {
-            List<KlipperFile> resultObject = new();
+            List<IGcode> resultObject = new();
             try
             {
-                ObservableCollection<KlipperFile> result = await GetAvailableFilesAsync(rootPath).ConfigureAwait(false);
+                ObservableCollection<IGcode> result = await GetAvailableFilesAsync(rootPath).ConfigureAwait(false);
                 return result?.ToList();
             }
             catch (Exception exc)
@@ -4624,16 +4293,16 @@ namespace AndreasReitberger.API.Moonraker
                 return Array.Empty<byte>();
             }
         }
-        public async Task<byte[]> GetGcodeThumbnailImageAsync(KlipperGcodeMetaResult gcodeMeta, int index = 0, int timeout = 10000)
+        public async Task<byte[]> GetGcodeThumbnailImageAsync(IGcodeMeta gcodeMeta, int index = 0, int timeout = 10000)
         {
-            if (gcodeMeta is null || gcodeMeta?.Thumbnails is null) return Array.Empty<byte>();
-            string path = gcodeMeta.Thumbnails.Count > index ?
-                gcodeMeta.Thumbnails[index]?.RelativePath : gcodeMeta.Thumbnails.FirstOrDefault()?.RelativePath;
+            if (gcodeMeta is null || gcodeMeta?.GcodeImages is null) return Array.Empty<byte>();
+            string path = gcodeMeta.GcodeImages.Count > index ?
+                gcodeMeta.GcodeImages[index]?.Path : gcodeMeta.GcodeImages.FirstOrDefault()?.Path;
 
             string subfolder = string.Empty;
-            if (gcodeMeta?.Filename?.Contains("/") ?? false)
+            if (gcodeMeta?.FileName?.Contains("/") ?? false)
             {
-                subfolder = gcodeMeta.Filename[..gcodeMeta.Filename.LastIndexOf("/")];
+                subfolder = gcodeMeta.FileName[..gcodeMeta.FileName.LastIndexOf("/")];
                 subfolder += "/";
             }
 
@@ -4643,16 +4312,16 @@ namespace AndreasReitberger.API.Moonraker
         }
         public async Task<byte[]> GetGcodeLargestThumbnailImageAsync(KlipperGcodeMetaResult gcodeMeta, int timeout = 10000)
         {
-            if (gcodeMeta is null || gcodeMeta?.Thumbnails is null) return Array.Empty<byte>();
-            string path = gcodeMeta.Thumbnails
+            if (gcodeMeta is null || gcodeMeta?.GcodeImages is null) return Array.Empty<byte>();
+            string path = gcodeMeta.GcodeImages
                 .OrderByDescending(image => image.Size)
-                .FirstOrDefault()?.RelativePath
+                .FirstOrDefault()?.Path
                 ;
 
             string subfolder = string.Empty;
-            if (gcodeMeta?.Filename?.Contains("/") ?? false)
+            if (gcodeMeta?.FileName?.Contains("/") ?? false)
             {
-                subfolder = gcodeMeta.Filename[..gcodeMeta.Filename.LastIndexOf("/")];
+                subfolder = gcodeMeta.FileName[..gcodeMeta.FileName.LastIndexOf("/")];
                 subfolder += "/";
             }
 
@@ -4662,17 +4331,17 @@ namespace AndreasReitberger.API.Moonraker
         }
         public async Task<byte[]> GetGcodeSmallestThumbnailImageAsync(KlipperGcodeMetaResult gcodeMeta, int timeout = 10000)
         {
-            if (gcodeMeta is null || gcodeMeta?.Thumbnails is null) return Array.Empty<byte>();
-            string path = gcodeMeta.Thumbnails
+            if (gcodeMeta is null || gcodeMeta?.GcodeImages is null) return Array.Empty<byte>();
+            string path = gcodeMeta.GcodeImages
                 .OrderBy(image => image.Size)
-                .FirstOrDefault()?.RelativePath
+                .FirstOrDefault()?.Path
                 ;
 
             string subfolder = string.Empty;
-            if (gcodeMeta?.Filename?.Contains("/") ?? false)
+            if (gcodeMeta?.FileName?.Contains("/") ?? false)
             {
                 //subfolder = gcodeMeta.Filename.Substring(0, gcodeMeta.Filename.LastIndexOf("/"));
-                subfolder = gcodeMeta.Filename[..gcodeMeta.Filename.LastIndexOf("/")];
+                subfolder = gcodeMeta.FileName[..gcodeMeta.FileName.LastIndexOf("/")];
                 subfolder += "/";
             }
 
@@ -4680,19 +4349,19 @@ namespace AndreasReitberger.API.Moonraker
                 .ConfigureAwait(false)
                 ;
         }
-        public async Task<byte[]> GetGcodeSecondThumbnailImageAsync(KlipperGcodeMetaResult gcodeMeta, int timeout = 10000)
+        public async Task<byte[]> GetGcodeSecondThumbnailImageAsync(IGcodeMeta gcodeMeta, int timeout = 10000)
         {
-            if (gcodeMeta is null || gcodeMeta?.Thumbnails is null) return Array.Empty<byte>();
-            string path = gcodeMeta.Thumbnails
+            if (gcodeMeta is null || gcodeMeta?.GcodeImages is null) return Array.Empty<byte>();
+            string path = gcodeMeta.GcodeImages
                 .OrderBy(image => image.Size)?
                 .Skip(1)? // Skipped the smallest image
-                .FirstOrDefault()?.RelativePath
+                .FirstOrDefault()?.Path
                 ;
 
             string subfolder = string.Empty;
-            if (gcodeMeta?.Filename?.Contains("/") ?? false)
+            if (gcodeMeta?.FileName?.Contains("/") ?? false)
             {
-                subfolder = gcodeMeta.Filename[..gcodeMeta.Filename.LastIndexOf("/")];
+                subfolder = gcodeMeta.FileName[..gcodeMeta.FileName.LastIndexOf("/")];
                 subfolder += "/";
             }
 

@@ -1,6 +1,7 @@
 ﻿using AndreasReitberger.API.Moonraker;
 using AndreasReitberger.API.Moonraker.Enum;
 using AndreasReitberger.API.Moonraker.Models;
+using AndreasReitberger.API.Print3dServer.Core.Interfaces;
 using AndreasReitberger.Core.Utilities;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -400,12 +401,12 @@ namespace MoonrakerSharpWebApi.Test
                         Assert.Fail(args.Message);
                     };
 
-                    ObservableCollection<KlipperFile> models = await _server.GetAvailableFilesAsync("gcodes", true);
+                    ObservableCollection<IGcode> models = await _server.GetAvailableFilesAsync("gcodes", true);
                     //var childItems = models?.Where(model => model.Path.Contains("/")).ToList();
 
-                    foreach (KlipperFile gcodeFile in models)
+                    foreach (KlipperFile gcodeFile in models.Cast<KlipperFile>())
                     {
-                        byte[] thumbnail = await _server.GetGcodeThumbnailImageAsync(gcodeFile?.GcodeMeta);
+                        byte[] thumbnail = await _server.GetGcodeThumbnailImageAsync(gcodeFile?.Meta);
                         Assert.IsNotNull(thumbnail);
                     }
                 }
@@ -769,10 +770,10 @@ namespace MoonrakerSharpWebApi.Test
                     await _server.RefreshAllAsync();
                     Assert.IsTrue(_server.InitialDataFetched);
 
-                    ObservableCollection<KlipperFile> files = await _server.GetAvailableFilesAsync();
+                    ObservableCollection<IGcode> files = await _server.GetAvailableFilesAsync();
                     Assert.IsNotNull(files);
 
-                    string fileName = files[0]?.Path;
+                    string fileName = files[0]?.FilePath;
                     KlipperGcodeMetaResult meta = await _server.GetGcodeMetadataAsync(fileName);
                     Assert.IsNotNull(meta);
 
@@ -841,7 +842,7 @@ namespace MoonrakerSharpWebApi.Test
                     var meta = await _server.GetGcodeMetadataAsync(msg.Item.Path);
                     Assert.IsNotNull(meta);
 
-                    string thumbnail = meta.Thumbnails.FirstOrDefault()?.RelativePath;
+                    string thumbnail = meta.GcodeImages.FirstOrDefault()?.Path;
                     // Get small image (30x30)
                     byte[] image = await _server.GetGcodeThumbnailImageAsync(thumbnail);
                     // Get big image (400x300)
@@ -1137,10 +1138,10 @@ namespace MoonrakerSharpWebApi.Test
                     KlipperJobQueueResult jobstatus = await _server.GetJobQueueStatusAsync();
                     Assert.IsNotNull(jobstatus);
 
-                    ObservableCollection<KlipperFile> files = await _server.GetAvailableFilesAsync();
+                    ObservableCollection<IGcode> files = await _server.GetAvailableFilesAsync();
                     Assert.IsNotNull(files);
 
-                    string fileName = files[0]?.Path;
+                    string fileName = files[0]?.FilePath;
                     KlipperJobQueueResult queued = await _server.EnqueueJobsAsync(new string[] { fileName });
 
                     jobstatus = await _server.GetJobQueueStatusAsync();

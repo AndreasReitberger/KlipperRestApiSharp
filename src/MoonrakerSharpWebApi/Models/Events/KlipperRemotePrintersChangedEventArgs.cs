@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using AndreasReitberger.API.Print3dServer.Core.Interfaces;
+using Newtonsoft.Json;
 using System.Collections.ObjectModel;
 
 namespace AndreasReitberger.API.Moonraker.Models
@@ -6,14 +7,12 @@ namespace AndreasReitberger.API.Moonraker.Models
     public class KlipperRemotePrintersChangedEventArgs : KlipperEventArgs
     {
         #region Properties
-        public ObservableCollection<KlipperDatabaseRemotePrinter> NewPrinters { get; set; }
+        public ObservableCollection<IPrinter3d> NewPrinters { get; set; }
         #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
+        
         #endregion
     }
 }

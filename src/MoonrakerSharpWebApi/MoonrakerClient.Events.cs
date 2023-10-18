@@ -243,6 +243,7 @@ namespace AndreasReitberger.API.Moonraker
 
         #region Remote Printers
         public event EventHandler<KlipperRemotePrintersChangedEventArgs> KlipperRemotePrinterChanged;
+        [Obsolete("Use OnRemotePrintersChanged instead")]
         protected virtual void OnKlipperRemotePrinterChanged(KlipperRemotePrintersChangedEventArgs e)
         {
             KlipperRemotePrinterChanged?.Invoke(this, e);
@@ -251,6 +252,7 @@ namespace AndreasReitberger.API.Moonraker
 
         #region Files
         public event EventHandler<KlipperFilesChangedEventArgs> KlipperFilesChanged;
+        [Obsolete("Use OnGcodesChangedEvent instead")]
         protected virtual void OnKlipperFilesChanged(KlipperFilesChangedEventArgs e)
         {
             KlipperFilesChanged?.Invoke(this, e);

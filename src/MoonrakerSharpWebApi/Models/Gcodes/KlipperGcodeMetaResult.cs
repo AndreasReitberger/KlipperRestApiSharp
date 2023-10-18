@@ -1,65 +1,93 @@
-﻿using Newtonsoft.Json;
+﻿using AndreasReitberger.API.Print3dServer.Core.Interfaces;
+using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperGcodeMetaResult
+    public partial class KlipperGcodeMetaResult : ObservableObject, IGcodeMeta
     {
         #region Properties
+        [ObservableProperty, JsonIgnore]
+        [property: JsonIgnore]
+        Guid id;
+
+        [ObservableProperty]
         [JsonProperty("print_start_time")]
-        public double? PrintStartTime { get; set; }
+        double? printStartTime;
 
+        [ObservableProperty]
+        [property: JsonIgnore]
+        double estimatedPrintTime;
+
+        [ObservableProperty]
         [JsonProperty("size")]
-        public long FileSize { get; set; }
+        long fileSize;
 
+        [ObservableProperty]
         [JsonProperty("modified")]
-        public double Modified { get; set; }
+        double modified;
 
+        [ObservableProperty]
         [JsonProperty("slicer")]
-        public string Slicer { get; set; }
+        string slicer;
 
+        [ObservableProperty]
         [JsonProperty("slicer_version")]
-        public string SlicerVersion { get; set; }
+        string slicerVersion;
 
+        [ObservableProperty]
         [JsonProperty("layer_height")]
-        public double LayerHeight { get; set; } = 0;
+        double layerHeight = 0;
 
+        [ObservableProperty]
         [JsonProperty("first_layer_height")]
-        public double FirstLayerHeight { get; set; } = 0;
+        double firstLayerHeight = 0;
 
+        [ObservableProperty]
         [JsonProperty("object_height")]
-        public double ObjectHeight { get; set; } = 0;
+        double objectHeight = 0;
 
+        [ObservableProperty]
         [JsonProperty("filament_total")]
-        public double FilamentTotal { get; set; } = 0;
+        double filamentTotal = 0;
 
+        [ObservableProperty]
         [JsonProperty("filament_weight_total")]
-        public double FilamentWeightTotal { get; set; } = 0;
+        double filamentWeightTotal = 0;
 
+        [ObservableProperty]
         [JsonProperty("estimated_time")]
-        public double EstimatedTime { get; set; } = 0;
+        double estimatedTime = 0;
 
+        [ObservableProperty]
         [JsonProperty("first_layer_extr_temp")]
-        public double FirstLayerExtrTemp { get; set; } = 0;
+        double firstLayerExtrTemp = 0;
 
+        [ObservableProperty]
         [JsonProperty("first_layer_bed_temp")]
-        public double FirstLayerBedTemp { get; set; } = 0;
+        double firstLayerBedTemp = 0;
 
+        [ObservableProperty]
         [JsonProperty("gcode_start_byte")]
-        public long GcodeStartByte { get; set; }
+        long gcodeStartByte;
 
+        [ObservableProperty]
         [JsonProperty("gcode_end_byte")]
-        public long GcodeEndByte { get; set; }
+        long gcodeEndByte;
 
+        [ObservableProperty]
         [JsonProperty("job_id")]
-        public string JobId { get; set; }
+        string jobId;
 
+        [ObservableProperty]
         [JsonProperty("filename")]
-        public string Filename { get; set; }
+        string fileName;
 
+        [ObservableProperty]
         [JsonProperty("thumbnails")]
-        public List<KlipperGcodeThumbnail> Thumbnails { get; set; }
+        ObservableCollection<IGcodeImage> gcodeImages;
 
         [JsonIgnore]
         public long Layers => GetLayersCount();
@@ -80,10 +108,32 @@ namespace AndreasReitberger.API.Moonraker.Models
         #endregion
 
         #region Overrides
-        public override string ToString()
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
+        #endregion
+
+        #region Dispose
+        public void Dispose()
         {
-            return JsonConvert.SerializeObject(this);
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
+        protected void Dispose(bool disposing)
+        {
+            // Ordinarily, we release unmanaged resources here;
+            // but all are wrapped by safe handles.
+
+            // Release disposable objects.
+            if (disposing)
+            {
+                // Nothing to do here
+            }
+        }
+        #endregion
+
+        #region Clone
+
+        public object Clone() => MemberwiseClone();
+
         #endregion
     }
 }
