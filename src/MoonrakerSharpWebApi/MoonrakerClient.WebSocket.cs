@@ -591,12 +591,14 @@ namespace AndreasReitberger.API.Moonraker
                 {
 
                 }
+				/*
                 OnWebSocketMessageReceived(new WebsocketEventArgs()
                 {
                     CallbackId = PingCounter,
                     Message = e.Message,
                     SessionId = SessionId,
                 });
+				*/
             }
             catch (JsonException jecx)
             {
