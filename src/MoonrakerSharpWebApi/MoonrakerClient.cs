@@ -26,6 +26,7 @@ using System.Xml.Serialization;
 using AndreasReitberger.API.Print3dServer.Core.Events;
 using AndreasReitberger.API.Moonraker.Structs;
 using System.Drawing;
+using AndreasReitberger.API.Print3dServer.Core.Enums;
 
 namespace AndreasReitberger.API.Moonraker
 {
@@ -1020,6 +1021,9 @@ namespace AndreasReitberger.API.Moonraker
         public MoonrakerClient()
         {
             Id = Guid.NewGuid();
+            Target = Print3dServerTarget.Moonraker;
+            ApiKeyRegexPattern = "";
+            WebSocketMessageReceived += Client_WebSocketMessageReceived;
             UpdateRestClientInstance();
         }
 
@@ -1034,6 +1038,9 @@ namespace AndreasReitberger.API.Moonraker
         public MoonrakerClient(string serverAddress, string api, int port = 80, bool isSecure = false)
         {
             Id = Guid.NewGuid();
+            Target = Print3dServerTarget.Moonraker;
+            ApiKeyRegexPattern = "";
+            WebSocketMessageReceived += Client_WebSocketMessageReceived;
             InitInstance(serverAddress, port, api, isSecure);
             UpdateRestClientInstance();
         }
@@ -1049,6 +1056,9 @@ namespace AndreasReitberger.API.Moonraker
         public MoonrakerClient(string serverAddress, string username, SecureString password, int port = 80, bool isSecure = false)
         {
             Id = Guid.NewGuid();
+            Target = Print3dServerTarget.Moonraker;
+            ApiKeyRegexPattern = "";
+            WebSocketMessageReceived += Client_WebSocketMessageReceived;
             InitInstance(serverAddress, port, "", isSecure);
             LoginRequired = true;
             Username = username;
@@ -1068,6 +1078,7 @@ namespace AndreasReitberger.API.Moonraker
                 WebSocket = null;
                 */
             }
+            WebSocketMessageReceived -= Client_WebSocketMessageReceived;
         }
         #endregion
 

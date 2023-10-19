@@ -1,7 +1,7 @@
 ﻿using AndreasReitberger.API.Moonraker.Models;
 using AndreasReitberger.API.Print3dServer.Core;
 using AndreasReitberger.API.Print3dServer.Core.Interfaces;
-using AndreasReitberger.API.Print3dServer.Core.JSON;
+using AndreasReitberger.API.Print3dServer.Core.JSON.Newtonsoft;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json;
 
