@@ -1,9 +1,9 @@
 ﻿using AndreasReitberger.API.Moonraker.Models;
 using AndreasReitberger.API.Print3dServer.Core;
 using AndreasReitberger.API.Print3dServer.Core.Interfaces;
-using AndreasReitberger.API.Print3dServer.Core.JSON.Newtonsoft;
-using CommunityToolkit.Mvvm.ComponentModel;
-using Newtonsoft.Json;
+using AndreasReitberger.API.Print3dServer.Core.JSON.System;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace AndreasReitberger.API.Moonraker
 {
@@ -14,37 +14,37 @@ namespace AndreasReitberger.API.Moonraker
         #region Debug
 
         [ObservableProperty]
-        JsonSerializerSettings jsonSerializerSettings = DefaultJsonSerializerSettings;
+        JsonSerializerOptions jsonSerializerSettings = DefaultJsonSerializerSettings;
 
-        public new static JsonSerializerSettings DefaultJsonSerializerSettings = new()
+        public new static JsonSerializerOptions DefaultJsonSerializerSettings = new()
         {
             // Detect if the json respone has more or less properties than the target class
             //MissingMemberHandling = MissingMemberHandling.Error,
-            MissingMemberHandling = MissingMemberHandling.Ignore,
-            NullValueHandling = NullValueHandling.Include,
-            TypeNameHandling = TypeNameHandling.Auto,
+            ReferenceHandler = ReferenceHandler.Preserve,
+            WriteIndented = true,
             Converters =
-            {
+            {                     
                 // Map the converters
-                new AbstractConverter<KlipperGcodeMetaResult, IGcodeMeta>(),
-                new AbstractConverter<KlipperGcodeThumbnail, IGcodeImage>(),
-                new AbstractConverter<KlipperJobQueueItem, IPrint3dJob>(),
-                new AbstractConverter<AuthenticationHeader, IAuthenticationHeader>(),
+                new TypeMappingConverter<IAuthenticationHeader, AuthenticationHeader>(),
+                new TypeMappingConverter<IGcodeMeta, KlipperGcodeMetaResult>(),
+                new TypeMappingConverter<IGcodeImage, KlipperGcodeThumbnail>(),
+                new TypeMappingConverter<IPrint3dJob, KlipperJobQueueItem>(),
             }
         };
         #endregion
 #else
         #region Release
-        public new static JsonSerializerSettings DefaultJsonSerializerSettings = new()
+        public static JsonSerializerOptions DefaultJsonSerializerSettings = new()
         {
-            // Ignore if the json respone has more or less properties than the target class
-            MissingMemberHandling = MissingMemberHandling.Ignore,          
-            NullValueHandling = NullValueHandling.Ignore,
-            TypeNameHandling = TypeNameHandling.Auto,
+            ReferenceHandler = ReferenceHandler.IgnoreCycles,
+            WriteIndented = true,
             Converters =
-            {
+            {                     
                 // Map the converters
-                new AbstractConverter<KlipperGcodeMetaResult, IGcodeMeta>(),
+                new TypeMappingConverter<IAuthenticationHeader, AuthenticationHeader>(),
+                new TypeMappingConverter<IGcodeMeta, KlipperGcodeMetaResult>(),
+                new TypeMappingConverter<IGcodeImage, KlipperGcodeThumbnail>(),
+                new TypeMappingConverter<IPrint3dJob, KlipperJobQueueItem>(),
             }
         };
         #endregion
