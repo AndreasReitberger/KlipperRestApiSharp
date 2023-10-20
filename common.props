@@ -1,6 +1,6 @@
 <Project>
     <PropertyGroup>
-        <Version>1.3.1</Version>
+        <Version>1.3.1-preview</Version>
         <!--<PackageIcon>logo_128.png</PackageIcon>-->
         <NeutralLanguage>en</NeutralLanguage>
         <PackageProjectUrl>https://github.com/AndreasReitberger/KlipperRestApiSharp</PackageProjectUrl>

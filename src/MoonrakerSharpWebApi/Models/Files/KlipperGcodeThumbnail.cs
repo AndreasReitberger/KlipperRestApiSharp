@@ -1,28 +1,70 @@
-﻿using Newtonsoft.Json;
+﻿using AndreasReitberger.API.Print3dServer.Core.Interfaces;
+using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
+using System;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperGcodeThumbnail
+    public partial class KlipperGcodeThumbnail : ObservableObject, IGcodeImage
     {
         #region Properties
+        [ObservableProperty, JsonIgnore]
+        [property: JsonIgnore]
+        Guid id;
+
+        [ObservableProperty]
         [JsonProperty("width")]
-        public long Width { get; set; }
+        long width;
 
+        [ObservableProperty]
         [JsonProperty("height")]
-        public long Height { get; set; }
+        long height;
 
+        [ObservableProperty]
         [JsonProperty("size")]
-        public long Size { get; set; }
+        long size;
 
+        [ObservableProperty]
         [JsonProperty("relative_path")]
-        public string RelativePath { get; set; }
+        string path;
+        partial void OnPathChanged(string value)
+        {
+            IsPathRelative = value is not null;
+        }
+
+        [ObservableProperty]
+        [property: JsonIgnore]
+        bool isPathRelative = true;
         #endregion
 
         #region Overrides
-        public override string ToString()
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
+
+        #endregion
+
+        #region Dispose
+        public void Dispose()
         {
-            return JsonConvert.SerializeObject(this);
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
+        protected void Dispose(bool disposing)
+        {
+            // Ordinarily, we release unmanaged resources here;
+            // but all are wrapped by safe handles.
+
+            // Release disposable objects.
+            if (disposing)
+            {
+                // Nothing to do here
+            }
+        }
+        #endregion
+
+        #region Clone
+
+        public object Clone() => MemberwiseClone();
+
         #endregion
     }
 }

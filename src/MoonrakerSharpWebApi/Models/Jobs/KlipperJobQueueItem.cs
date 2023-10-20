@@ -1,28 +1,77 @@
-﻿using Newtonsoft.Json;
+﻿using AndreasReitberger.API.Print3dServer.Core.Interfaces;
+using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
+using System;
+using System.Threading.Tasks;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperJobQueueItem
+    public partial class KlipperJobQueueItem : ObservableObject, IPrint3dJob
     {
         #region Properties
+        [ObservableProperty, JsonIgnore]
+        [property: JsonIgnore]
+        Guid id;
+
+        [ObservableProperty]
         [JsonProperty("filename")]
-        public string Filename { get; set; }
+        string fileName;
 
+        [ObservableProperty]
         [JsonProperty("job_id")]
-        public string JobId { get; set; }
+        string jobId;
 
+        [ObservableProperty]
         [JsonProperty("time_added")]
-        public double TimeAdded { get; set; }
+        double? timeAdded;
 
+        [ObservableProperty]
         [JsonProperty("time_in_queue")]
-        public double TimeInQueue { get; set; }
+        double? timeInQueue;
+        #endregion
+
+        #region Methods
+        public Task<bool> StartJobAsync(IPrint3dServerClient client, string command, object? data) => client?.StartJobAsync(this, command, data);
+
+        public Task<bool> PauseJobAsync(IPrint3dServerClient client, string command, object? data) => client?.PauseJobAsync(command, data);
+
+        public Task<bool> StopJobAsync(IPrint3dServerClient client, string command, object? data) => client?.StopJobAsync(command, data);
+
+        public Task<bool> RemoveFromQueueAsync(IPrint3dServerClient client, string command, object? data) => client.RemoveJobAsync(this, command, data);
+
         #endregion
 
         #region Overrides
-        public override string ToString()
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
+
+        #endregion
+
+        #region Dispose
+        public void Dispose()
         {
-            return JsonConvert.SerializeObject(this);
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
+        protected void Dispose(bool disposing)
+        {
+            // Ordinarily, we release unmanaged resources here;
+            // but all are wrapped by safe handles.
+
+            // Release disposable objects.
+            if (disposing)
+            {
+                // Nothing to do here
+            }
+        }
+        #endregion
+
+        #region Clone
+
+        public object Clone()
+        {
+            return MemberwiseClone();
+        }
+
         #endregion
     }
 }

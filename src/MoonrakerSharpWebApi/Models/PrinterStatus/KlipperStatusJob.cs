@@ -1,49 +1,105 @@
-﻿using AndreasReitberger.API.Moonraker.Enum;
+﻿using AndreasReitberger.API.Print3dServer.Core.Enums;
+using AndreasReitberger.API.Print3dServer.Core.Interfaces;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using System;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperStatusJob
+    public partial class KlipperStatusJob : ObservableObject, IPrint3dJobStatus
     {
         #region Properties
+        [ObservableProperty, JsonIgnore]
+        [property: JsonIgnore]
+        Guid id;
+
+        [ObservableProperty]
         [JsonProperty("end_time")]
-        public double? EndTime { get; set; }
+        double? endTime;
 
+        [ObservableProperty]
         [JsonProperty("filament_used")]
-        public long? FilamentUsed { get; set; }
+        double? filamentUsed;
 
+        [ObservableProperty]
         [JsonProperty("filename")]
-        public string Filename { get; set; }
+        string fileName;
 
+        [ObservableProperty]
         [JsonProperty("metadata")]
-        public KlipperGcodeMetaResult Metadata { get; set; }
+        //[JsonConverter(typeof(StringGcodeMetaConverter), true)]
+        IGcodeMeta meta;
 
+        [ObservableProperty]
         [JsonProperty("print_duration")]
-        public double? PrintDuration { get; set; }
+        double? printDuration;
 
+        /*
+        [ObservableProperty]
         [JsonProperty("status")]
         [JsonConverter(typeof(StringEnumConverter), true)]
-        public KlipperJobStates Status { get; set; }
+        KlipperJobStates status;
+        partial void OnStatusChanged(KlipperJobStates value)
+        {
+            State = (int)value;
+        }
+        */
 
+        [ObservableProperty]
+        [JsonProperty("status")]
+        [JsonConverter(typeof(StringEnumConverter), true)]
+        Print3dJobState state;
+
+        [ObservableProperty]
         [JsonProperty("start_time")]
-        public double? StartTime { get; set; }
+        double? startTime;
 
+        [ObservableProperty]
         [JsonProperty("total_duration")]
-        public double? TotalDuration { get; set; }
+        double? totalPrintDuration;
 
+        [ObservableProperty]
         [JsonProperty("job_id")]
-        public string JobId { get; set; }
+        string jobId;
 
+        [ObservableProperty]
         [JsonProperty("exists")]
-        public bool Exists { get; set; }
+        bool fileExists;
+
         #endregion
 
         #region Overrides
-        public override string ToString()
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
+
+        #endregion
+
+        #region Dispose
+        public void Dispose()
         {
-            return JsonConvert.SerializeObject(this);
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
+        protected void Dispose(bool disposing)
+        {
+            // Ordinarily, we release unmanaged resources here;
+            // but all are wrapped by safe handles.
+
+            // Release disposable objects.
+            if (disposing)
+            {
+                // Nothing to do here
+            }
+        }
+        #endregion
+
+        #region Clone
+
+        public object Clone()
+        {
+            return MemberwiseClone();
+        }
+
         #endregion
     }
 }

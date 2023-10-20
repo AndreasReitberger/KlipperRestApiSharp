@@ -1,6 +1,5 @@
 ﻿using AndreasReitberger.API.Moonraker.Models;
 using System;
-using ErrorEventArgs = SuperSocket.ClientEngine.ErrorEventArgs;
 
 namespace AndreasReitberger.API.Moonraker
 {
@@ -10,36 +9,7 @@ namespace AndreasReitberger.API.Moonraker
         #region EventHandlerss
 
         #region WebSocket
-
-        public event EventHandler<KlipperEventArgs> WebSocketConnected;
-        protected virtual void OnWebSocketConnected(KlipperEventArgs e)
-        {
-            WebSocketConnected?.Invoke(this, e);
-        }
-
-        public event EventHandler<KlipperEventArgs> WebSocketDisconnected;
-        protected virtual void OnWebSocketDisconnected(KlipperEventArgs e)
-        {
-            WebSocketDisconnected?.Invoke(this, e);
-        }
-
-        public event EventHandler<ErrorEventArgs> WebSocketError;
-        protected virtual void OnWebSocketError(ErrorEventArgs e)
-        {
-            WebSocketError?.Invoke(this, e);
-        }
-
-        public event EventHandler<KlipperEventArgs> WebSocketMessageReceived;
-        protected virtual void OnWebSocketMessageReceived(KlipperEventArgs e)
-        {
-            WebSocketMessageReceived?.Invoke(this, e);
-        }
-
-        public event EventHandler<KlipperWebSocketDataEventArgs> WebSocketDataReceived;
-        protected virtual void OnWebSocketDataReceived(KlipperWebSocketDataEventArgs e)
-        {
-            WebSocketDataReceived?.Invoke(this, e);
-        }
+        
         public event EventHandler<KlipperWebSocketConnectionChangedEventArgs> WebSocketConnectionIdChanged;
         protected virtual void OnWebSocketConnectionIdChanged(KlipperWebSocketConnectionChangedEventArgs e)
         {
@@ -52,35 +22,6 @@ namespace AndreasReitberger.API.Moonraker
             LoginResultReceived?.Invoke(this, e);
         }
         */
-        #endregion
-
-        #region ServerConnectionState
-
-        public event EventHandler<KlipperEventArgs> ServerWentOffline;
-        protected virtual void OnServerWentOffline(KlipperEventArgs e)
-        {
-            ServerWentOffline?.Invoke(this, e);
-        }
-
-        public event EventHandler<KlipperEventArgs> ServerWentOnline;
-        protected virtual void OnServerWentOnline(KlipperEventArgs e)
-        {
-            ServerWentOnline?.Invoke(this, e);
-        }
-
-        public event EventHandler<KlipperEventArgs> ServerUpdateAvailable;
-        protected virtual void OnServerUpdateAvailable(KlipperEventArgs e)
-        {
-            ServerUpdateAvailable?.Invoke(this, e);
-        }
-        #endregion
-
-        #region Debug
-        public event EventHandler<KlipperIgnoredJsonResultsChangedEventArgs> KlipperIgnoredJsonResultsChanged;
-        protected virtual void OnKlipperIgnoredJsonResultsChanged(KlipperIgnoredJsonResultsChangedEventArgs e)
-        {
-            KlipperIgnoredJsonResultsChanged?.Invoke(this, e);
-        }
         #endregion
 
         #region State & Config
@@ -241,22 +182,6 @@ namespace AndreasReitberger.API.Moonraker
         }
         #endregion
 
-        #region Remote Printers
-        public event EventHandler<KlipperRemotePrintersChangedEventArgs> KlipperRemotePrinterChanged;
-        protected virtual void OnKlipperRemotePrinterChanged(KlipperRemotePrintersChangedEventArgs e)
-        {
-            KlipperRemotePrinterChanged?.Invoke(this, e);
-        }
-        #endregion
-
-        #region Files
-        public event EventHandler<KlipperFilesChangedEventArgs> KlipperFilesChanged;
-        protected virtual void OnKlipperFilesChanged(KlipperFilesChangedEventArgs e)
-        {
-            KlipperFilesChanged?.Invoke(this, e);
-        }
-        #endregion
-
         #region Jobs & Queue
         public event EventHandler<KlipperJobListStateChangedEventArgs> KlipperJobListStateChanged;
         protected virtual void OnKlipperJobListStateChanged(KlipperJobListStateChangedEventArgs e)
@@ -271,64 +196,17 @@ namespace AndreasReitberger.API.Moonraker
         }
 
         public event EventHandler<KlipperCurrentPrintImageChangedEventArgs> KlipperCurrentPrintImageChanged;
+        [Obsolete("Use OnActivePrintImageChanged instead")]
         protected virtual void OnKlipperCurrentPrintImageChanged(KlipperCurrentPrintImageChangedEventArgs e)
         {
             KlipperCurrentPrintImageChanged?.Invoke(this, e);
         }
 
         public event EventHandler<KlipperJobListChangedEventArgs> KlipperJobListChanged;
+        [Obsolete("Use OnJobListChangedEvent instead")]
         protected virtual void OnKlipperJobListChanged(KlipperJobListChangedEventArgs e)
         {
             KlipperJobListChanged?.Invoke(this, e);
-        }
-
-        public event EventHandler<KlipperJobFinishedEventArgs> JobFinished;
-        protected virtual void OnJobFinished(KlipperJobFinishedEventArgs e)
-        {
-            JobFinished?.Invoke(this, e);
-        }
-        #endregion
-
-        #region Errors
-
-        public event EventHandler Error;
-        protected virtual void OnError()
-        {
-            Error?.Invoke(this, EventArgs.Empty);
-        }
-        protected virtual void OnError(ErrorEventArgs e)
-        {
-            Error?.Invoke(this, e);
-        }
-        protected virtual void OnError(UnhandledExceptionEventArgs e)
-        {
-            Error?.Invoke(this, e);
-        }
-        protected virtual void OnError(KlipperJsonConvertEventArgs e)
-        {
-            Error?.Invoke(this, e);
-        }
-        public event EventHandler<KlipperRestEventArgs> RestApiError;
-        protected virtual void OnRestApiError(KlipperRestEventArgs e)
-        {
-            RestApiError?.Invoke(this, e);
-        }
-
-        public event EventHandler<KlipperRestEventArgs> RestApiAuthenticationError;
-        protected virtual void OnRestApiAuthenticationError(KlipperRestEventArgs e)
-        {
-            RestApiAuthenticationError?.Invoke(this, e);
-        }
-        public event EventHandler<KlipperRestEventArgs> RestApiAuthenticationSucceeded;
-        protected virtual void OnRestApiAuthenticationSucceeded(KlipperRestEventArgs e)
-        {
-            RestApiAuthenticationSucceeded?.Invoke(this, e);
-        }
-
-        public event EventHandler<KlipperJsonConvertEventArgs> RestJsonConvertError;
-        protected virtual void OnRestJsonConvertError(KlipperJsonConvertEventArgs e)
-        {
-            RestJsonConvertError?.Invoke(this, e);
         }
 
         #endregion

@@ -1,27 +1,50 @@
-﻿using Newtonsoft.Json;
+﻿using AndreasReitberger.API.Print3dServer.Core.Interfaces;
+using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
+using System;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperDirectory
+    public partial class KlipperDirectory : ObservableObject, IGcodeGroup
     {
         #region Properties
+        [ObservableProperty]
         [JsonProperty("dirname")]
-        public string DirectoryName { get; set; }
+        string directoryName;
+        partial void OnDirectoryNameChanged(string value)
+        {
+            if (string.IsNullOrEmpty(Name))
+                Name = value;
+        }
 
+        [ObservableProperty]
         [JsonProperty("path")]
-        public string Path { get; set; }
+        string path;
 
+        [ObservableProperty]
         [JsonProperty("root")]
-        public string Root { get; set; }
+        string root;
 
+        [ObservableProperty]
         [JsonProperty("modified")]
-        public double Modified { get; set; }
+        double modified;
 
+        [ObservableProperty]
         [JsonProperty("size")]
-        public long Size { get; set; }
+        long size;
 
+        [ObservableProperty]
         [JsonProperty("permissions")]
-        public string Permissions { get; set; }
+        string permissions;
+
+        #region JsonIgnore
+        [ObservableProperty]
+        Guid id;
+
+        [ObservableProperty]
+        string name;
+        #endregion
+
         #endregion
 
         #region Overrides

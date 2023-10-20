@@ -1,4 +1,5 @@
 ﻿using AndreasReitberger.API.Moonraker.Enum;
+using AndreasReitberger.API.Print3dServer.Core.Interfaces;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
@@ -17,7 +18,8 @@ namespace AndreasReitberger.API.Moonraker.Models
         public string Filename { get; set; }
 
         [JsonProperty("metadata")]
-        public KlipperGcodeMetaResult Metadata { get; set; }
+        public IGcodeMeta Metadata { get; set; }
+        //public KlipperGcodeMetaResult Metadata { get; set; }
 
         [JsonProperty("print_duration")]
         public double PrintDuration { get; set; }

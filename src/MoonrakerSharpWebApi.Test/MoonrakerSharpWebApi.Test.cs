@@ -1,6 +1,7 @@
 ﻿using AndreasReitberger.API.Moonraker;
 using AndreasReitberger.API.Moonraker.Enum;
 using AndreasReitberger.API.Moonraker.Models;
+using AndreasReitberger.API.Print3dServer.Core.Interfaces;
 using AndreasReitberger.Core.Utilities;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -13,9 +14,9 @@ namespace MoonrakerSharpWebApi.Test
 {
     public class Tests
     {
-        private readonly string _host = "192.168.10.113";
+        private readonly string _host = SecretAppSettingReader.ReadSection<SecretAppSetting>("TestSetup").Ip ?? "";
         private readonly int _port = 80;
-        private readonly string _api = "1c8fc5833641429a95d00991e1f3aa0f";
+        private readonly string _api = SecretAppSettingReader.ReadSection<SecretAppSetting>("TestSetup").ApiKey ?? "";
         private readonly bool _ssl = false;
 
         private readonly bool _skipOnlineTests = true;
@@ -285,7 +286,7 @@ namespace MoonrakerSharpWebApi.Test
                     {
                         Assert.Fail(args.Message);
                     };
-                    _server.StartListening();
+                    await _server.StartListeningAsync();
 
                     var fSensors = await _server.GetFilamentSensorsAsync();
                     Assert.IsNotNull(fSensors);
@@ -400,12 +401,12 @@ namespace MoonrakerSharpWebApi.Test
                         Assert.Fail(args.Message);
                     };
 
-                    ObservableCollection<KlipperFile> models = await _server.GetAvailableFilesAsync("gcodes", true);
+                    ObservableCollection<IGcode> models = await _server.GetAvailableFilesAsync("gcodes", true);
                     //var childItems = models?.Where(model => model.Path.Contains("/")).ToList();
-
-                    foreach (KlipperFile gcodeFile in models)
+                    Assert.IsTrue(models?.Any());
+                    foreach (KlipperFile gcodeFile in models.Cast<KlipperFile>()?.Where(g => g?.Meta?.GcodeImages?.Count > 0))
                     {
-                        byte[] thumbnail = await _server.GetGcodeThumbnailImageAsync(gcodeFile?.GcodeMeta);
+                        byte[] thumbnail = await _server.GetGcodeThumbnailImageAsync(gcodeFile?.Meta);
                         Assert.IsNotNull(thumbnail);
                     }
                 }
@@ -481,6 +482,8 @@ namespace MoonrakerSharpWebApi.Test
         {
             try
             {
+                if (_skipOnlineTests) return;
+
                 MoonrakerClient _server = new(_host, _api, _port, _ssl);
                 await _server.CheckOnlineAsync();
                 if (_server.IsOnline)
@@ -541,6 +544,7 @@ namespace MoonrakerSharpWebApi.Test
         {
             try
             {
+                if (_skipOnlineTests) return;
                 MoonrakerClient _server = new(_host, _api, _port, _ssl);
                 await _server.CheckOnlineAsync();
                 if (_server.IsOnline)
@@ -651,8 +655,11 @@ namespace MoonrakerSharpWebApi.Test
                     Assert.IsNotNull(cachedGcodes);
                     //Assert.IsTrue(cachedGcodes?.Count > 0);
 
-                    bool restart = await _server.RestartServerAsync();
-                    Assert.IsTrue(restart);
+                    if (!_skipOnlineTests)
+                    {
+                        bool restart = await _server.RestartServerAsync();
+                        Assert.IsTrue(restart);
+                    }
                 }
                 else
                     Assert.Fail($"Server {_server.FullWebAddress} is offline.");
@@ -677,9 +684,11 @@ namespace MoonrakerSharpWebApi.Test
 
                     Dictionary<string, string> help = await _server.GetGcodeHelpAsync();
                     Assert.IsNotNull(help);
-
-                    bool succeed = await _server.RunGcodeScriptAsync("G28");
-                    Assert.IsTrue(succeed);
+                    if (!_skipOnlineTests)
+                    {
+                        bool succeed = await _server.RunGcodeScriptAsync("G28");
+                        Assert.IsTrue(succeed);
+                    }
                 }
                 else
                     Assert.Fail($"Server {_server.FullWebAddress} is offline.");
@@ -695,6 +704,7 @@ namespace MoonrakerSharpWebApi.Test
         {
             try
             {
+                if (_skipOnlineTests) return;
                 MoonrakerClient _server = new(_host, _api, _port, _ssl);
                 await _server.CheckOnlineAsync();
                 if (_server.IsOnline)
@@ -769,10 +779,10 @@ namespace MoonrakerSharpWebApi.Test
                     await _server.RefreshAllAsync();
                     Assert.IsTrue(_server.InitialDataFetched);
 
-                    ObservableCollection<KlipperFile> files = await _server.GetAvailableFilesAsync();
+                    ObservableCollection<IGcode> files = await _server.GetAvailableFilesAsync();
                     Assert.IsNotNull(files);
 
-                    string fileName = files[0]?.Path;
+                    string fileName = files[0]?.FilePath;
                     KlipperGcodeMetaResult meta = await _server.GetGcodeMetadataAsync(fileName);
                     Assert.IsNotNull(meta);
 
@@ -786,7 +796,7 @@ namespace MoonrakerSharpWebApi.Test
                     files = await _server.GetAvailableFilesAsync("docs ");
                     Assert.IsNotNull(files);
 
-                    string dirName = "gcodes/test2";
+                    string dirName = "gcodes/Kundenaufträge";
                     KlipperDirectoryActionResult created = await _server.CreateDirectoryAsync(dirName);
                     Assert.IsNotNull(created);
 
@@ -841,7 +851,7 @@ namespace MoonrakerSharpWebApi.Test
                     var meta = await _server.GetGcodeMetadataAsync(msg.Item.Path);
                     Assert.IsNotNull(meta);
 
-                    string thumbnail = meta.Thumbnails.FirstOrDefault()?.RelativePath;
+                    string thumbnail = meta.GcodeImages.FirstOrDefault()?.Path;
                     // Get small image (30x30)
                     byte[] image = await _server.GetGcodeThumbnailImageAsync(thumbnail);
                     // Get big image (400x300)
@@ -1137,10 +1147,10 @@ namespace MoonrakerSharpWebApi.Test
                     KlipperJobQueueResult jobstatus = await _server.GetJobQueueStatusAsync();
                     Assert.IsNotNull(jobstatus);
 
-                    ObservableCollection<KlipperFile> files = await _server.GetAvailableFilesAsync();
+                    ObservableCollection<IGcode> files = await _server.GetAvailableFilesAsync();
                     Assert.IsNotNull(files);
 
-                    string fileName = files[0]?.Path;
+                    string fileName = files[0]?.FilePath;
                     KlipperJobQueueResult queued = await _server.EnqueueJobsAsync(new string[] { fileName });
 
                     jobstatus = await _server.GetJobQueueStatusAsync();
@@ -1370,8 +1380,7 @@ namespace MoonrakerSharpWebApi.Test
         {
             try
             {
-                string host = "mainsailos.local";
-                MoonrakerClient _server = new(host, _api, _port, _ssl);
+                MoonrakerClient _server = new(_host, _api, _port, _ssl);
                 _server.Error += (o, args) =>
                 {
                     Assert.Fail(args.ToString());

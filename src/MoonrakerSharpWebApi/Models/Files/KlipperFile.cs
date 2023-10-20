@@ -1,40 +1,125 @@
-﻿using Newtonsoft.Json;
+﻿using AndreasReitberger.API.Print3dServer.Core.Interfaces;
+using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
+using System.Threading.Tasks;
+using System;
+using AndreasReitberger.API.Print3dServer.Core.Enums;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperFile
+    public partial class KlipperFile : ObservableObject, IGcode
     {
         #region Properties
+
+        [ObservableProperty, JsonIgnore]
+        [property: JsonIgnore]
+        Guid id;
+
+        [ObservableProperty]
         [JsonProperty("filename")]
-        public string FileName { get; set; }
+        string fileName;
 
+        [ObservableProperty]
         [JsonProperty("path")]
-        public string Path { get; set; }
+        string filePath;
 
+        [ObservableProperty]
         [JsonProperty("modified")]
-        public double Modified { get; set; }
+        double modified;
 
+        [ObservableProperty]
         [JsonProperty("size")]
-        public long Size { get; set; }
+        long size;
 
+        [ObservableProperty]
         [JsonProperty("permissions")]
-        public string Permissions { get; set; }
+        string permissions;
 
+        #region JsonIgnore
+        [ObservableProperty]
         [JsonIgnore]
-        public KlipperGcodeMetaResult GcodeMeta { get; set; }
+        IGcodeMeta meta;
 
+        [ObservableProperty]
         [JsonIgnore]
-        public byte[] Thumbnail { get; set; }
+        byte[] thumbnail = Array.Empty<byte>();
 
+        [ObservableProperty]
         [JsonIgnore]
-        public byte[] Image { get; set; }
+        byte[] image = Array.Empty<byte>();
+
+        [ObservableProperty]
+        [JsonIgnore]
+        double filament;
+
+        [ObservableProperty]
+        [JsonIgnore]
+        GcodeImageType imageType = GcodeImageType.Thumbnail;
+
+        [ObservableProperty]
+        [JsonIgnore]
+        string printerName = string.Empty;
+
+        [ObservableProperty]
+        [JsonIgnore]
+        string group;
+
+        [ObservableProperty]
+        [JsonIgnore]
+        long identifier;
+
+        [ObservableProperty]
+        [JsonIgnore]
+        double volume;
+        #endregion
+
+        #endregion
+
+        #region Methods
+        public Task MoveToAsync(IPrint3dServerClient client, string targetPath, bool copy = false)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task MoveToQueueAsync(IPrint3dServerClient client, bool printIfReady = false)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task PrintAsync(IPrint3dServerClient client)
+        {
+            throw new NotImplementedException();
+        }
         #endregion
 
         #region Overrides
-        public override string ToString()
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
+
+        #endregion
+
+        #region Dispose
+        public void Dispose()
         {
-            return JsonConvert.SerializeObject(this);
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
+        protected void Dispose(bool disposing)
+        {
+            // Ordinarily, we release unmanaged resources here;
+            // but all are wrapped by safe handles.
+
+            // Release disposable objects.
+            if (disposing)
+            {
+                // Nothing to do here
+            }
+        }
+        #endregion
+
+        #region Clone
+
+        public object Clone() => MemberwiseClone();
+
         #endregion
     }
 }
