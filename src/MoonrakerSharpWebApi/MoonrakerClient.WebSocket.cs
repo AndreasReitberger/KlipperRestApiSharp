@@ -35,15 +35,16 @@ namespace AndreasReitberger.API.Moonraker
         #region Methods
 
 #if WebSocket4Net
-#endif
-        public async Task ConnectWebSocketAsync()
+#endif                
+        /*
+        public new async Task ConnectWebSocketAsync(string target)
         {
             try
             {
-                KlipperAccessTokenResult oneshotToken = await GetOneshotTokenAsync();
+                KlipperAccessTokenResult oneshotToken = await GetOneshotTokenAsync().ConfigureAwait(false);
                 SessionId = OneShotToken = oneshotToken?.Result;
                 await ConnectWebSocketAsync(GetWebSocketTargetUri());
-                /*
+
                 //if (!IsReady) return;
                 if (!string.IsNullOrEmpty(FullWebAddress) && (
                     Regex.IsMatch(FullWebAddress, RegexHelper.IPv4AddressRegex) ||
@@ -88,13 +89,13 @@ namespace AndreasReitberger.API.Moonraker
                 WebSocket.Error += WebSocket_Error;
 
                 await WebSocket.OpenAsync();
-                */
             }
             catch (Exception exc)
             {
                 OnError(new UnhandledExceptionEventArgs(exc, false));
             }
         }
+        */
 
         protected void Client_WebSocketMessageReceived(object sender, WebsocketEventArgs e)
         {

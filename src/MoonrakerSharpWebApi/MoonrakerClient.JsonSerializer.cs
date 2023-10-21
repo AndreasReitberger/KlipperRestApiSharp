@@ -14,6 +14,7 @@ namespace AndreasReitberger.API.Moonraker
         #region Debug
 
         [ObservableProperty]
+        [property: Newtonsoft.Json.JsonIgnore, JsonIgnore, XmlIgnore]
         JsonSerializerOptions jsonSerializerSettings = DefaultJsonSerializerSettings;
 
         public new static JsonSerializerOptions DefaultJsonSerializerSettings = new()

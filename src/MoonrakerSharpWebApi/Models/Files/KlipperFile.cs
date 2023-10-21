@@ -71,6 +71,9 @@ namespace AndreasReitberger.API.Moonraker.Models
         [ObservableProperty]
         [JsonIgnore]
         double volume;
+
+        [ObservableProperty]
+        double printTime;
         #endregion
 
         #endregion

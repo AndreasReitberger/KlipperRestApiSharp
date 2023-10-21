@@ -1,20 +1,19 @@
 ﻿using AndreasReitberger.API.Moonraker.Enum;
 using AndreasReitberger.API.Moonraker.Extensions;
 using AndreasReitberger.API.Moonraker.Models;
-using AndreasReitberger.API.Moonraker.Models.Exceptions;
-using AndreasReitberger.API.Print3dServer.Core.Interfaces;
+using AndreasReitberger.API.Moonraker.Structs;
 using AndreasReitberger.API.Print3dServer.Core;
+using AndreasReitberger.API.Print3dServer.Core.Enums;
+using AndreasReitberger.API.Print3dServer.Core.Events;
+using AndreasReitberger.API.Print3dServer.Core.Interfaces;
 using AndreasReitberger.Core.Utilities;
-using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using RestSharp;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.Security;
 using System.Security.Cryptography;
@@ -22,11 +21,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Xml.Serialization;
-using AndreasReitberger.API.Print3dServer.Core.Events;
-using AndreasReitberger.API.Moonraker.Structs;
-using System.Drawing;
-using AndreasReitberger.API.Print3dServer.Core.Enums;
 
 namespace AndreasReitberger.API.Moonraker
 {
@@ -995,9 +989,8 @@ namespace AndreasReitberger.API.Moonraker
 
         #region ReadOnly
 
-        public string FullWebAddress => $"{(IsSecure ? "https" : "http")}://{ServerAddress}:{Port}";
-
-        public bool IsReady
+        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        public new bool IsReady
         {
             get
             {
@@ -1023,6 +1016,7 @@ namespace AndreasReitberger.API.Moonraker
             Id = Guid.NewGuid();
             Target = Print3dServerTarget.Moonraker;
             ApiKeyRegexPattern = "";
+            WebSocketTarget = "/websocket";
             WebSocketMessageReceived += Client_WebSocketMessageReceived;
             UpdateRestClientInstance();
         }
@@ -1040,6 +1034,7 @@ namespace AndreasReitberger.API.Moonraker
             Id = Guid.NewGuid();
             Target = Print3dServerTarget.Moonraker;
             ApiKeyRegexPattern = "";
+            WebSocketTarget = "/websocket";
             WebSocketMessageReceived += Client_WebSocketMessageReceived;
             InitInstance(serverAddress, port, api, isSecure);
             UpdateRestClientInstance();
@@ -1058,6 +1053,7 @@ namespace AndreasReitberger.API.Moonraker
             Id = Guid.NewGuid();
             Target = Print3dServerTarget.Moonraker;
             ApiKeyRegexPattern = "";
+            WebSocketTarget = "/websocket";
             WebSocketMessageReceived += Client_WebSocketMessageReceived;
             InitInstance(serverAddress, port, "", isSecure);
             LoginRequired = true;
@@ -1745,7 +1741,7 @@ namespace AndreasReitberger.API.Moonraker
 
         #region Refresh
 
-        public Task StartListeningAsync(bool stopActiveListening = false) => StartListeningAsync(WebSocketTargetUri, stopActiveListening, new()
+        public new Task StartListeningAsync(bool stopActiveListening = false) => StartListeningAsync(WebSocketTargetUri, stopActiveListening, new()
         {
             RefreshExtruderStatusAsync(),
             RefreshHeaterBedStatusAsync(),
@@ -1754,70 +1750,21 @@ namespace AndreasReitberger.API.Moonraker
             RefreshMotionReportAsync(),
             RefreshToolHeadStatusAsync(),
         });
-
-        [Obsolete("Remove later")]
-        public async Task StartListeningAsyncOld(bool stopActiveListening = false)
-        {
-            if (IsListening)// avoid multiple sessions
-            {
-                if (stopActiveListening)
-                {
-                    await StopListeningAsync();
-                }
-                else
-                {
-                    return; // StopListening();
-                }
-            }
-            await ConnectWebSocketAsync().ConfigureAwait(false);
-            Timer = new Timer(async (action) =>
-            {
-                // Do not check the online state ever tick
-                if (RefreshCounter > 5)
-                {
-                    RefreshCounter = 0;
-                    await CheckOnlineAsync(3500).ConfigureAwait(false);
-                }
-                else RefreshCounter++;
-                if (IsOnline)
-                {
-                    if (RefreshCounter % 2 == 0)
-                    {
-                        await RefreshServerCachedTemperatureDataAsync().ConfigureAwait(false);
-                    }
-                    if (RefreshHeatersDirectly)
-                    {
-                        List<Task> tasks = new()
-                        {
-                            RefreshExtruderStatusAsync(),
-                            RefreshHeaterBedStatusAsync(),
-                            RefreshPrintStatusAsync(),
-                            RefreshGcodeMoveStatusAsync(),
-                            RefreshMotionReportAsync(),
-                            RefreshToolHeadStatusAsync(),
-                        };
-                        await Task.WhenAll(tasks).ConfigureAwait(false);
-                    }
-                }
-                else if (IsListening)
-                {
-                    await StopListeningAsync(); // StopListening();
-                }
-            }, null, 0, RefreshInterval * 1000);
-            IsListening = true;
-        }
         
-        public async Task RefreshAllAsync()
+        public new async Task RefreshAllAsync()
         {
             try
             {
+                await base.RefreshAllAsync().ConfigureAwait(false);
                 // Avoid multiple calls
                 if (IsRefreshing) return;
-                if (!IsOnline) throw new ServerNotReachableException($"The server '{ServerName} ({FullWebAddress})' is not reachable. Make sure to call `CheckOnlineAsync()` first! ");
 
                 IsRefreshing = true;
                 // Detects current operating system, must be called before each other Database method
-                await RefreshDatabaseNamespacesAsync();
+                await RefreshDatabaseNamespacesAsync().ConfigureAwait(false);
+                // Get a token for the WebSocket connection
+                KlipperAccessTokenResult oneshotToken = await GetOneshotTokenAsync().ConfigureAwait(false);
+                SessionId = OneShotToken = oneshotToken?.Result;
                 //await RefreshPrinterListAsync();
                 List<Task> task = new()
                 {
@@ -1895,7 +1842,7 @@ namespace AndreasReitberger.API.Moonraker
 
         #region CheckOnline
 
-        public async Task CheckOnlineAsync(int timeout = 10000)
+        public new async Task CheckOnlineAsync(int timeout = 10000)
         {
             CancellationTokenSource cts = new(new TimeSpan(0, 0, 0, 0, timeout));
             await CheckOnlineAsync(cts).ConfigureAwait(false);
@@ -2689,8 +2636,10 @@ namespace AndreasReitberger.API.Moonraker
             Dictionary<string, KlipperGcodeMacro> resultObject = new();
             try
             {
-                Dictionary<string, string> objects = new();
-                objects.Add("configfile", "settings");
+                Dictionary<string, string> objects = new()
+                {
+                    { "configfile", "settings" }
+                };
 
                 Dictionary<string, object> settings = await QueryPrinterObjectStatusAsync(objects).ConfigureAwait(false);
 #if NETSTANDARD || NET6_0_OR_GREATER
@@ -4155,7 +4104,8 @@ namespace AndreasReitberger.API.Moonraker
                 return resultObject;
             }
         }
-
+        public new Task<ObservableCollection<IGcode>> GetFilesAsync() => GetAvailableFilesAsync();
+        
         public async Task<KlipperGcodeMetaResult> GetGcodeMetadataAsync(string fileName)
         {
             IRestApiRequestRespone result = null;
@@ -4201,7 +4151,6 @@ namespace AndreasReitberger.API.Moonraker
                 return resultObject;
             }
         }
-
         public async Task RefreshGcodeMetadataAsync(string fileName)
         {
             try
