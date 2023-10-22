@@ -1,16 +1,12 @@
 ﻿using AndreasReitberger.API.Moonraker.Models;
-using CommunityToolkit.Mvvm.ComponentModel;
+using AndreasReitberger.API.Print3dServer.Core.Enums;
+using AndreasReitberger.API.Print3dServer.Core.Events;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
-using System.Collections.Generic;
-using System.Xml.Serialization;
-using JsonIgnoreAttribute = Newtonsoft.Json.JsonIgnoreAttribute;
-using System.Threading.Tasks;
 using System.Collections.Concurrent;
-using AndreasReitberger.API.Print3dServer.Core.Events;
+using System.Collections.Generic;
 using Websocket.Client;
-using AndreasReitberger.API.Print3dServer.Core.Enums;
 
 namespace AndreasReitberger.API.Moonraker
 {

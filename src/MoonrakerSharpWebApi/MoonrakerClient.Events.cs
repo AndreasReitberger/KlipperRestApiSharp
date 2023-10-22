@@ -211,21 +211,6 @@ namespace AndreasReitberger.API.Moonraker
 
         #endregion
 
-        #region ServerStateChanges
-
-        public event EventHandler<KlipperEventListeningChangedEventArgs> ListeningChanged;
-        protected virtual void OnListeningChanged(KlipperEventListeningChangedEventArgs e)
-        {
-            ListeningChanged?.Invoke(this, e);
-        }
-
-        public event EventHandler<KlipperSessionChangedEventArgs> SessionChanged;
-        protected virtual void OnSessionChanged(KlipperSessionChangedEventArgs e)
-        {
-            SessionChanged?.Invoke(this, e);
-        }
-        #endregion
-
         #region Login
         public event EventHandler<KlipperLoginEventArgs> LoginChanged;
         protected virtual void OnLoginChanged(KlipperLoginEventArgs e)
