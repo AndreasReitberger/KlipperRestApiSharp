@@ -956,7 +956,7 @@ namespace AndreasReitberger.API.Moonraker
             });
         }
 
-        [ObservableProperty]
+        [ObservableProperty, Obsolete("Replaced by the base collection WebCams")]
         [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
         List<KlipperDatabaseWebcamConfig> webCamConfigs = new();
         partial void OnWebCamConfigsChanged(List<KlipperDatabaseWebcamConfig> value)
@@ -1016,7 +1016,8 @@ namespace AndreasReitberger.API.Moonraker
             Id = Guid.NewGuid();
             Target = Print3dServerTarget.Moonraker;
             ApiKeyRegexPattern = "";
-            WebSocketTarget = "/websocket";
+            WebSocketTarget = "/websocket"; 
+            WebCamTarget = "/webcam/?action=stream";
             WebSocketMessageReceived += Client_WebSocketMessageReceived;
             UpdateRestClientInstance();
         }
@@ -1035,6 +1036,7 @@ namespace AndreasReitberger.API.Moonraker
             Target = Print3dServerTarget.Moonraker;
             ApiKeyRegexPattern = "";
             WebSocketTarget = "/websocket";
+            WebCamTarget = "/webcam/?action=stream";
             WebSocketMessageReceived += Client_WebSocketMessageReceived;
             InitInstance(serverAddress, port, api, isSecure);
             UpdateRestClientInstance();
@@ -1054,6 +1056,7 @@ namespace AndreasReitberger.API.Moonraker
             Target = Print3dServerTarget.Moonraker;
             ApiKeyRegexPattern = "";
             WebSocketTarget = "/websocket";
+            WebCamTarget = "/webcam/?action=stream";
             WebSocketMessageReceived += Client_WebSocketMessageReceived;
             InitInstance(serverAddress, port, "", isSecure);
             LoginRequired = true;
@@ -1856,7 +1859,8 @@ namespace AndreasReitberger.API.Moonraker
         #endregion
 
         #region WebCam
-        public string GetDefaultWebCamUri()
+        [Obsolete("Replaced by base method")]
+        public string GetDefaultWebCamUriOld()
         {
             try
             {
@@ -1869,7 +1873,8 @@ namespace AndreasReitberger.API.Moonraker
                 return "";
             }
         }
-        public async Task<string> GetWebCamUriAsync(int index = 0, bool refreshWebCamConfig = false)
+        [Obsolete("Replaced by base method")]
+        public async Task<string> GetWebCamUriAsyncOld(int index = 0, bool refreshWebCamConfig = false)
         {
             try
             {
@@ -1892,7 +1897,7 @@ namespace AndreasReitberger.API.Moonraker
                     config = new KlipperDatabaseWebcamConfig()
                     {
                         Id = Guid.NewGuid(),
-                        Name = "Default",
+                        Alias = "Default",
                         Enabled = true,
                         FlipX = false,
                         FlipY = false,
@@ -5310,10 +5315,12 @@ namespace AndreasReitberger.API.Moonraker
             }
         }
 
-        public async Task<List<KlipperDatabaseWebcamConfig>> GetWebCamSettingsAsync()
+        public new Task<ObservableCollection<IWebCamConfig>> GetWebCamConfigsAsync() => GetWebCamSettingsAsync();
+
+        public async Task<ObservableCollection<IWebCamConfig>> GetWebCamSettingsAsync()
         {
             string resultString = string.Empty;
-            List<KlipperDatabaseWebcamConfig> resultObject = new();
+            ObservableCollection<IWebCamConfig> resultObject = new();
             try
             {
                 // Both operating systems handles their datababase namespaces and keys differently....
@@ -5364,14 +5371,14 @@ namespace AndreasReitberger.API.Moonraker
                             {
                                 Id = item.Key,
                                 Enabled = item.Value.Enabled,
-                                Name = item.Value.Name,
+                                Alias = item.Value.Name,
                                 FlipX = item.Value.FlipX,
                                 FlipY = item.Value.FlipY,
                                 Service = item.Value.Service,
                                 TargetFps = item.Value.Fpstarget,
                                 Url = item.Value.UrlStream,
                                 UrlSnapshot = item.Value.UrlSnapshot,
-                                Rotation = item.Value.Rotation,
+                                Orientation = (long)item.Value.Rotation,
                             });
                             resultObject = new(temp);
                         }
@@ -5404,13 +5411,13 @@ namespace AndreasReitberger.API.Moonraker
         {
             try
             {
-                List<KlipperDatabaseWebcamConfig> result = await GetWebCamSettingsAsync().ConfigureAwait(false);
-                WebCamConfigs = result ?? new();
+                ObservableCollection<IWebCamConfig> result = await GetWebCamSettingsAsync().ConfigureAwait(false);
+                WebCams = result ?? new();
             }
             catch (Exception exc)
             {
                 OnError(new UnhandledExceptionEventArgs(exc, false));
-                WebCamConfigs = new();
+                WebCams = new();
             }
         }
 

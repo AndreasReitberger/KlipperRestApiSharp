@@ -1029,10 +1029,10 @@ namespace MoonrakerSharpWebApi.Test
                     List<KlipperDatabaseMainsailValueRemotePrinter> remotePrinters2 = await _server.GetRemotePrintersAsync();
                     Assert.IsNotNull(remotePrinters2);
                     */
-                    List<KlipperDatabaseWebcamConfig> webcamConfig = await _server.GetWebCamSettingsAsync();
+                    ObservableCollection<IWebCamConfig> webcamConfig = await _server.GetWebCamSettingsAsync();
                     Assert.IsNotNull(webcamConfig);
                     if (webcamConfig.Count > 0)
-                        Assert.IsTrue(!string.IsNullOrEmpty(webcamConfig.FirstOrDefault()?.Url));
+                        Assert.IsTrue(!string.IsNullOrEmpty(webcamConfig.FirstOrDefault()?.WebCamUrlDynamic?.ToString()));
 
                     List<KlipperDatabaseTemperaturePreset> presets = await _server.GetDashboardPresetsAsync();
                     Assert.IsNotNull(presets);
