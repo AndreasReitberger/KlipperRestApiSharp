@@ -1,19 +1,19 @@
 ﻿using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public class KlipperDatabaseSettingsGeneral
+    public partial class KlipperWebcamConfigResult : ObservableObject
     {
         #region Properties
-        public string Printername { get; set; } = string.Empty;
-
-        public bool DisplayCancelPrint { get; set; }
-
-        public string Locale { get; set; } = string.Empty;
+        [ObservableProperty]
+        [JsonProperty("webcams")]
+        List<KlipperDatabaseWebcamConfig> webcams = new();
         #endregion
 
         #region Overrides
         public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
+        
         #endregion
     }
 }

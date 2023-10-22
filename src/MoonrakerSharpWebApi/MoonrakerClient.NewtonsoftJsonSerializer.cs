@@ -26,10 +26,11 @@ namespace AndreasReitberger.API.Moonraker
             Converters =
             {
                 // Map the converters
+                new AbstractConverter<AuthenticationHeader, IAuthenticationHeader>(),
                 new AbstractConverter<KlipperGcodeMetaResult, IGcodeMeta>(),
                 new AbstractConverter<KlipperGcodeThumbnail, IGcodeImage>(),
                 new AbstractConverter<KlipperJobQueueItem, IPrint3dJob>(),
-                new AbstractConverter<AuthenticationHeader, IAuthenticationHeader>(),
+                new AbstractConverter<KlipperDatabaseWebcamConfig, IWebCamConfig>(),
             }
         };
         #endregion
@@ -44,10 +45,11 @@ namespace AndreasReitberger.API.Moonraker
             Converters =
             {
                 // Map the converters
+                new AbstractConverter<AuthenticationHeader, IAuthenticationHeader>(),
                 new AbstractConverter<KlipperGcodeMetaResult, IGcodeMeta>(),
                 new AbstractConverter<KlipperGcodeThumbnail, IGcodeImage>(),
                 new AbstractConverter<KlipperJobQueueItem, IPrint3dJob>(),
-                new AbstractConverter<AuthenticationHeader, IAuthenticationHeader>(),
+                new AbstractConverter<KlipperDatabaseWebcamConfig, IWebCamConfig>(),
             }
         };
         #endregion

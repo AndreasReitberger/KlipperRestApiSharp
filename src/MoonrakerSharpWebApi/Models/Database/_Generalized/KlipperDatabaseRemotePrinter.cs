@@ -1,8 +1,7 @@
 ﻿using AndreasReitberger.API.Print3dServer.Core.Interfaces;
 using Newtonsoft.Json;
-using System.Threading.Tasks;
 using System;
-using CommunityToolkit.Mvvm.ComponentModel;
+using System.Threading.Tasks;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {

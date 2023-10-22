@@ -1523,69 +1523,12 @@ namespace AndreasReitberger.API.Moonraker
         #endregion
 
         #region Download
-        public async Task<byte[]> DownloadFileFromUriAsync(string path, int timeout = 10000)
-        {
-            try
-            {
-                if (restClient == null)
-                {
-                    UpdateRestClientInstance();
-                }
-                RestRequest request = new(path);
+        public Task<byte[]> DownloadFileFromUriAsync(string path, int timeout = 10000) => DownloadFileFromUriAsync(path, AuthHeaders, null, timeout);
 
-                bool validHeader = false;
-                // Prefer usertoken over api key
-                if (!string.IsNullOrEmpty(UserToken))
-                {
-                    request.AddHeader("Authorization", $"Bearer {UserToken}");
-                    validHeader = true;
-                }
-                else if (!string.IsNullOrEmpty(ApiKey))
-                {
-                    request.AddHeader("X-Api-Key", $"{ApiKey}");
-                    validHeader = true;
-                }
-                // https://moonraker.readthedocs.io/en/latest/web_api/#authorization
-                if (!validHeader)
-                {
-                    // Prefer usertoken over api key
-                    if (!string.IsNullOrEmpty(RefreshToken))
-                    {
-                        request.AddParameter("access_token", RefreshToken, ParameterType.QueryString);
-                    }
-                    else if (!string.IsNullOrEmpty(ApiKey))
-                    {
-                        request.AddParameter("token", ApiKey, ParameterType.QueryString);
-                    }
-                }
-
-                request.RequestFormat = DataFormat.Json;
-                request.Method = Method.Get;
-                request.Timeout = timeout;
-
-                Uri fullUrl = restClient.BuildUri(request);
-                CancellationTokenSource cts = new(timeout);
-                byte[] respone = await restClient.DownloadDataAsync(request, cts.Token)
-                    .ConfigureAwait(false)
-                    ;
-
-                return respone;
-                /*
-                // Workaround, because the RestClient returns bad requests
-                using WebClient client = new();
-                byte[] bytes = await client.DownloadDataTaskAsync(fullUrl);
-                return bytes;
-                */
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-                return null;
-            }
-        }
         #endregion
 
         #region Timers
+        [Obsolete("Unused now, will be deleted later")]
         void StopPingTimer()
         {
             if (PingTimer != null)
@@ -1602,6 +1545,7 @@ namespace AndreasReitberger.API.Moonraker
                 }
             }
         }
+        [Obsolete("Unused now, will be deleted later")]
         void StopTimer()
         {
             if (Timer != null)
@@ -1744,15 +1688,19 @@ namespace AndreasReitberger.API.Moonraker
 
         #region Refresh
 
-        public new Task StartListeningAsync(bool stopActiveListening = false) => StartListeningAsync(WebSocketTargetUri, stopActiveListening, new()
+        public new Task StartListeningAsync(bool stopActiveListening = false) => StartListeningAsync(WebSocketTargetUri, stopActiveListening, () => Task.Run(async() =>
         {
-            RefreshExtruderStatusAsync(),
-            RefreshHeaterBedStatusAsync(),
-            RefreshPrintStatusAsync(),
-            RefreshGcodeMoveStatusAsync(),
-            RefreshMotionReportAsync(),
-            RefreshToolHeadStatusAsync(),
-        });
+            List<Task> tasks = new()
+            {
+                RefreshExtruderStatusAsync(),
+                RefreshHeaterBedStatusAsync(),
+                RefreshPrintStatusAsync(),
+                RefreshGcodeMoveStatusAsync(),
+                RefreshMotionReportAsync(),
+                RefreshToolHeadStatusAsync(),
+            };
+            await Task.WhenAll(tasks).ConfigureAwait(false);
+        }));
         
         public new async Task RefreshAllAsync()
         {
@@ -5318,6 +5266,48 @@ namespace AndreasReitberger.API.Moonraker
         public new Task<ObservableCollection<IWebCamConfig>> GetWebCamConfigsAsync() => GetWebCamSettingsAsync();
 
         public async Task<ObservableCollection<IWebCamConfig>> GetWebCamSettingsAsync()
+        {
+            string resultString = string.Empty;
+            IRestApiRequestRespone result = null;
+            ObservableCollection<IWebCamConfig> resultObject = new();
+            try
+            {
+                string targetUri = $"{MoonrakerCommands.Server}";
+                result = await SendRestApiRequestAsync(
+                       requestTargetUri: targetUri,
+                       method: Method.Get,
+                       command: "webcams/list",
+                       jsonObject: null,
+                       authHeaders: AuthHeaders,
+                       //urlSegments: urlSegments,
+                       cts: default
+                       )
+                    .ConfigureAwait(false);
+                KlipperWebcamConfigRespone configs = GetObjectFromJson<KlipperWebcamConfigRespone>(result.Result, NewtonsoftJsonSerializerSettings);
+                if (configs?.Result?.Webcams?.Count > 0)
+                    return new(configs?.Result?.Webcams ?? new());
+                else
+                    // If nothing is returned, try to get it from the database directly.
+                    return await GetWebCamSettingsFromDatabaseAsync().ConfigureAwait(false);
+            }
+            catch (JsonException jecx)
+            {
+                OnError(new JsonConvertEventArgs()
+                {
+                    Exception = jecx,
+                    OriginalString = result?.Result,
+                    TargetType = nameof(KlipperDatabaseItemRespone),
+                    Message = jecx.Message,
+                });
+                return resultObject;
+            }
+            catch (Exception exc)
+            {
+                OnError(new UnhandledExceptionEventArgs(exc, false));
+                return resultObject;
+            }
+        }
+        public async Task<ObservableCollection<IWebCamConfig>> GetWebCamSettingsFromDatabaseAsync()
         {
             string resultString = string.Empty;
             ObservableCollection<IWebCamConfig> resultObject = new();

@@ -125,23 +125,6 @@ namespace MoonrakerSharpWebApi.Test
         }
 
         [Test]
-        public void ExtendedSerializeTest()
-        {
-            try
-            {
-                // Check if all works
-                _ = new KlipperServerConfig()
-                {
-
-                }.ToString();
-            }
-            catch (Exception exc)
-            {
-                Assert.Fail(exc.Message);
-            }
-        }
-
-        [Test]
         public async Task ServerInitTest()
         {
             try
@@ -248,12 +231,15 @@ namespace MoonrakerSharpWebApi.Test
                     await _server.RefreshAllAsync();
                     Assert.IsTrue(_server.InitialDataFetched);
 
-                    var webcamConfigs = await _server.GetWebCamSettingsAsync();
+                    var webcamConfigs = await _server.GetWebCamSettingsFromDatabaseAsync();
+                    Assert.IsTrue(webcamConfigs.Count > 0);
+
+                    webcamConfigs = await _server.GetWebCamSettingsAsync();
                     Assert.IsTrue(webcamConfigs.Count > 0);
 
                     string webcamUri = await _server.GetWebCamUriAsync(0, false);
-                    Assert.IsNotNull(_server.WebCamConfigs);
-                    Assert.IsTrue(_server.WebCamConfigs?.Count > 0);
+                    Assert.IsNotNull(_server.WebCams);
+                    Assert.IsTrue(_server.WebCams?.Count > 0);
                     Assert.IsTrue(!string.IsNullOrEmpty(webcamUri));
 
                     //bool eStop = await _server.EmergencyStopPrinterAsync();
@@ -451,6 +437,8 @@ namespace MoonrakerSharpWebApi.Test
         {
             try
             {
+                if (_skipOnlineTests) return;
+
                 MoonrakerClient _server = new(_host, _api, _port, _ssl);
                 await _server.CheckOnlineAsync();
                 if (_server.IsOnline)
@@ -908,6 +896,7 @@ namespace MoonrakerSharpWebApi.Test
         {
             try
             {
+                if (_skipOnlineTests) return;
                 MoonrakerClient _server = new(_host, _api, _port, _ssl);
                 await _server.CheckOnlineAsync();
                 if (_server.IsOnline)
@@ -1137,6 +1126,8 @@ namespace MoonrakerSharpWebApi.Test
         {
             try
             {
+                if (_skipOnlineTests) return;
+
                 MoonrakerClient _server = new(_host, _api, _port, _ssl);
                 await _server.CheckOnlineAsync();
                 if (_server.IsOnline)
@@ -1348,33 +1339,6 @@ namespace MoonrakerSharpWebApi.Test
         }
         #endregion
 
-        /*
-        [Test]
-        public async Task DownloadPrintReport()
-        {
-            try
-            {
-                OpenScanClient _server = new(_host, _api, _port, _ssl);
-                await _server.CheckOnlineAsync();
-                if (_server.IsOnline)
-                {
-                    await _server.SetPrinterActiveAsync(1);
-                    var report = RepetierServerPro.Instance.GetHistoryReport(522);
-                    Assert.IsTrue(report.Length > 0);
-                    string downloadTarget = @"C:\VS\RepetierServerSharpApi\Source\RepetierServerSharpApi\TestResults\report.pdf";
-                    await File.WriteAllBytesAsync(downloadTarget, report);
-                    Assert.IsTrue(File.Exists(downloadTarget));
-                    //Process.Start(downloadTarget);
-                }
-                else
-                    Assert.Fail($"Server {_server.FullWebAddress} is offline.");
-            }
-            catch (Exception exc)
-            {
-                Assert.Fail(exc.Message);
-            }
-        }
-        */
         [Test]
         public async Task OnlineTest()
         {
@@ -1425,14 +1389,10 @@ namespace MoonrakerSharpWebApi.Test
 
                 await _server.RefreshAllAsync();
 
-                //var test = await _server.GetActiveJobStatusAsync();
-
                 if (_server.LoginRequired)
                 {
                     await _server.LoginUserAsync("TestUser", "TestPassword");
                 }
-                //KlipperAccessTokenResult oneshot = await _server.GetOneshotTokenAsync();
-                //_server.OneShotToken = oneshot.Result;
                 await _server.StartListeningAsync();
 
                 _server.WebSocketConnectionIdChanged += (o, args) =>
