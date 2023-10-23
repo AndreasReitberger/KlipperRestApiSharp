@@ -1,17 +1,24 @@
 ﻿using AndreasReitberger.API.Moonraker.Enum;
+using AndreasReitberger.API.Print3dServer.Core.Enums;
+using AndreasReitberger.API.Print3dServer.Core.Interfaces;
 using Newtonsoft.Json;
 using System;
+using System.Threading.Tasks;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperStatusHeaterBed
+    public partial class KlipperStatusHeaterBed : ObservableObject, IHeaterComponent
     {
         #region Properties
+        [ObservableProperty, JsonIgnore]
+        [property: JsonIgnore]
+        Guid id;
+
         [JsonProperty("temperature")]
-        public double? Temperature { get; set; }
+        public double? TempRead { get; set; }
 
         [JsonProperty("target")]
-        public double? Target { get; set; }
+        public double? TempSet { get; set; }
 
         [JsonProperty("power")]
         public double? Power { get; set; }
@@ -21,6 +28,20 @@ namespace AndreasReitberger.API.Moonraker.Models
 
         [JsonIgnore]
         public KlipperToolState State { get => GetCurrentState(); }
+
+        #region JsonIgnore
+        [ObservableProperty, JsonIgnore]
+        [property: JsonIgnore]
+        string name;
+
+        [ObservableProperty, JsonIgnore]
+        [property: JsonIgnore]
+        long error;
+
+        [ObservableProperty]
+        Printer3dHeaterType type = Printer3dHeaterType.HeatedBed;
+        #endregion
+
         #endregion
 
         #region Methods
@@ -28,12 +49,12 @@ namespace AndreasReitberger.API.Moonraker.Models
         {
             try
             {
-                if (Target == null || Temperature == null)
+                if (TempSet == null || TempRead == null)
                     return KlipperToolState.Idle;
 
-                return Target <= 0
+                return TempSet <= 0
                     ? KlipperToolState.Idle
-                    : Target > Temperature && Math.Abs(Convert.ToDouble(Target - Temperature)) > 2 ? KlipperToolState.Heating : KlipperToolState.Ready;
+                    : TempSet > TempRead && Math.Abs(Convert.ToDouble(TempSet - TempRead)) > 2 ? KlipperToolState.Heating : KlipperToolState.Ready;
             }
             catch (Exception)
             {
@@ -41,6 +62,7 @@ namespace AndreasReitberger.API.Moonraker.Models
             }
 
         }
+        public Task<bool> SetTemperatureAsync(IPrint3dServerClient client, string command, object data) => client?.SetBedTemperatureAsync(command, data);
         #endregion
 
         #region Overrides

@@ -30,7 +30,9 @@ namespace AndreasReitberger.API.Moonraker
                 new TypeMappingConverter<IGcodeMeta, KlipperGcodeMetaResult>(),
                 new TypeMappingConverter<IGcodeImage, KlipperGcodeThumbnail>(),
                 new TypeMappingConverter<IPrint3dJob, KlipperJobQueueItem>(),
+                new TypeMappingConverter<IPrint3dJobStatus, KlipperStatusJob>(),
                 new TypeMappingConverter<IWebCamConfig, KlipperDatabaseWebcamConfig>(),
+                new TypeMappingConverter<IToolhead, KlipperStatusExtruder>(),
             }
         };
         #endregion
@@ -47,7 +49,9 @@ namespace AndreasReitberger.API.Moonraker
                 new TypeMappingConverter<IGcodeMeta, KlipperGcodeMetaResult>(),
                 new TypeMappingConverter<IGcodeImage, KlipperGcodeThumbnail>(),
                 new TypeMappingConverter<IPrint3dJob, KlipperJobQueueItem>(),
+                new TypeMappingConverter<IPrint3dJobStatus, KlipperStatusJob>(),
                 new TypeMappingConverter<IWebCamConfig, KlipperDatabaseWebcamConfig>(),
+                new TypeMappingConverter<IToolhead, KlipperStatusExtruder>(),
             }
         };
         #endregion

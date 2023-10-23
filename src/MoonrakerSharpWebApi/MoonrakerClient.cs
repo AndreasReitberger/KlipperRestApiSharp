@@ -536,9 +536,8 @@ namespace AndreasReitberger.API.Moonraker
         }
 #endif
 
-        [ObservableProperty]
+        [ObservableProperty, Obsolete("Use Toolheads instead")]
         [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-#if ConcurrentDictionary
         ConcurrentDictionary<int, KlipperStatusExtruder> extruders = new();
         partial void OnExtrudersChanged(ConcurrentDictionary<int, KlipperStatusExtruder> value)
         {
@@ -569,40 +568,9 @@ namespace AndreasReitberger.API.Moonraker
             }
             NumberOfToolHeads = value?.Count ?? 0;
         }
-#else
-        Dictionary<int, KlipperStatusExtruder> extruders = new();
-        partial void OnExtrudersChanged(Dictionary<int, KlipperStatusExtruder> value)
-        {
-            // WebSocket is updating this property in a high frequency, so a cooldown can be enabled
-            if (_enableCooldown && !RefreshHeatersDirectly)
-            {
-                if (_cooldownExtruder > 0)
-                    _cooldownExtruder--;
-                else
-                {
-                    _cooldownExtruder = _cooldownFallback;
-                    OnKlipperExtruderStatesChanged(new KlipperExtruderStatesChangedEventArgs()
-                    {
-                        ExtruderStates = value,
-                        SessonId = SessionId,
-                        CallbackId = -1,
-                    });
-                }
-            }
-            else
-            {
-                OnKlipperExtruderStatesChanged(new KlipperExtruderStatesChangedEventArgs()
-                {
-                    ExtruderStates = value,
-                    SessonId = SessionId,
-                    CallbackId = -1,
-                });
-            }
-            NumberOfToolHeads = value?.Count ?? 0;
-        }
-#endif
 
-        [ObservableProperty]
+        /*
+        [ObservableProperty, Obsolete("Use ActiveHeatedBed instead")]
         [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
         KlipperStatusHeaterBed heaterBed;
         partial void OnHeaterBedChanged(KlipperStatusHeaterBed value)
@@ -634,10 +602,10 @@ namespace AndreasReitberger.API.Moonraker
             }
             HasHeatedBed = value != null;
         }
+        */
 
         [ObservableProperty]
         [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-#if ConcurrentDictionary
         ConcurrentDictionary<string, KlipperStatusFan> fans = new();
         partial void OnFansChanged(ConcurrentDictionary<string, KlipperStatusFan> value)
         {
@@ -670,44 +638,9 @@ namespace AndreasReitberger.API.Moonraker
             }
             */
         }
-#else
-        Dictionary<string, KlipperStatusFan> fans = new();
-        partial void OnFansChanged(Dictionary<string, KlipperStatusFan> value)
-        {
-            // WebSocket is updating this property in a high frequency, so a cooldown can be enabled
-            /*
-            if (_enableCooldown && !RefreshHeatersDirectly)
-            {
-                if (_cooldownExtruder > 0)
-                    _cooldownExtruder--;
-                else
-                {
-                    _cooldownExtruder = _cooldownFallback;
-
-                    OnKlipperExtruderStatesChanged(new KlipperExtruderStatesChangedEventArgs()
-                    {
-                        ExtruderStates = value,
-                        SessonId = SessionId,
-                        CallbackId = -1,
-                    });
-                }
-            }
-            else
-            {
-                OnKlipperExtruderStatesChanged(new KlipperExtruderStatesChangedEventArgs()
-                {
-                    ExtruderStates = value,
-                    SessonId = SessionId,
-                    CallbackId = -1,
-                });
-            }
-            */
-        }
-#endif
 
         [ObservableProperty]
         [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-#if ConcurrentDictionary
         ConcurrentDictionary<string, KlipperStatusDriver> drivers = new();
         partial void OnDriversChanged(ConcurrentDictionary<string, KlipperStatusDriver> value)
         {
@@ -740,40 +673,6 @@ namespace AndreasReitberger.API.Moonraker
             }
             */
         }
-#else
-        Dictionary<string, KlipperStatusDriver> drivers = new();
-        partial void OnDriversChanged(Dictionary<string, KlipperStatusDriver> value)
-        {
-            // WebSocket is updating this property in a high frequency, so a cooldown can be enabled
-            /*
-            if (_enableCooldown && !RefreshHeatersDirectly)
-            {
-                if (_cooldownExtruder > 0)
-                    _cooldownExtruder--;
-                else
-                {
-                    _cooldownExtruder = _cooldownFallback;
-
-                    OnKlipperExtruderStatesChanged(new KlipperExtruderStatesChangedEventArgs()
-                    {
-                        ExtruderStates = value,
-                        SessonId = SessionId,
-                        CallbackId = -1,
-                    });
-                }
-            }
-            else
-            {
-                OnKlipperExtruderStatesChanged(new KlipperExtruderStatesChangedEventArgs()
-                {
-                    ExtruderStates = value,
-                    SessonId = SessionId,
-                    CallbackId = -1,
-                });
-            }
-            */
-        }
-#endif
 
         [ObservableProperty]
         [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
@@ -1016,7 +915,7 @@ namespace AndreasReitberger.API.Moonraker
             Id = Guid.NewGuid();
             Target = Print3dServerTarget.Moonraker;
             ApiKeyRegexPattern = "";
-            WebSocketTarget = "/websocket"; 
+            WebSocketTarget = "websocket"; 
             WebCamTarget = "/webcam/?action=stream";
             WebSocketMessageReceived += Client_WebSocketMessageReceived;
             UpdateRestClientInstance();
@@ -1035,7 +934,7 @@ namespace AndreasReitberger.API.Moonraker
             Id = Guid.NewGuid();
             Target = Print3dServerTarget.Moonraker;
             ApiKeyRegexPattern = "";
-            WebSocketTarget = "/websocket";
+            WebSocketTarget = "websocket";
             WebCamTarget = "/webcam/?action=stream";
             WebSocketMessageReceived += Client_WebSocketMessageReceived;
             InitInstance(serverAddress, port, api, isSecure);
@@ -1055,7 +954,7 @@ namespace AndreasReitberger.API.Moonraker
             Id = Guid.NewGuid();
             Target = Print3dServerTarget.Moonraker;
             ApiKeyRegexPattern = "";
-            WebSocketTarget = "/websocket";
+            WebSocketTarget = "websocket";
             WebCamTarget = "/webcam/?action=stream";
             WebSocketMessageReceived += Client_WebSocketMessageReceived;
             InitInstance(serverAddress, port, "", isSecure);
@@ -2763,21 +2662,22 @@ namespace AndreasReitberger.API.Moonraker
                 if (result != null)
                 {
 #if ConcurrentDictionary
-                    ConcurrentDictionary<int, KlipperStatusExtruder> states = new();
-                    states.TryAdd(index, result);
+                    ConcurrentDictionary<int, IToolhead> states = new(Toolheads);
+                    states.AddOrUpdate(index, result, (key, oldValue) => oldValue = result);
 #else
                     Dictionary<int, KlipperStatusExtruder> states = new()
                     {
                         { index, result }
                     };
 #endif
-                    Extruders = states;
+                    //Extruders = states;
+                    Toolheads = states;
                 }
             }
             catch (Exception exc)
             {
                 OnError(new UnhandledExceptionEventArgs(exc, false));
-                Extruders = null;
+                Toolheads = new();
             }
         }
 
@@ -3086,19 +2986,18 @@ namespace AndreasReitberger.API.Moonraker
             try
             {
                 KlipperStatusHeaterBed result = await GetHeaterBedStatusAsync().ConfigureAwait(false);
-                HeaterBed = result;
+                ConcurrentDictionary<int, IHeaterComponent> heaters = new(HeatedBeds);
+                heaters.AddOrUpdate(0, result, (key, oldValue) => oldValue = result);
+                HeatedBeds = heaters;
             }
             catch (Exception exc)
             {
                 OnError(new UnhandledExceptionEventArgs(exc, false));
-                HeaterBed = null;
+                HeatedBeds = new();
             }
         }
 
-        public async Task<string> SubscribePrinterObjectStatusAsync(long? connectionId, List<string> objects)
-        {
-            return await SubscribePrinterObjectStatusAsync((long)connectionId, objects).ConfigureAwait(false);
-        }
+        public Task<string> SubscribePrinterObjectStatusAsync(long? connectionId, List<string> objects) => SubscribePrinterObjectStatusAsync((long)connectionId, objects);
         public async Task<string> SubscribePrinterObjectStatusAsync(long connectionId, List<string> objects)
         {
             IRestApiRequestRespone result = null;

@@ -12,8 +12,6 @@ namespace AndreasReitberger.API.Moonraker
 {
     public partial class MoonrakerClient
     {
-        #region WebSocket
-
         #region Properties
         [ObservableProperty]
         [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
@@ -29,69 +27,6 @@ namespace AndreasReitberger.API.Moonraker
         #endregion
 
         #region Methods
-
-#if WebSocket4Net
-#endif                
-        /*
-        public new async Task ConnectWebSocketAsync(string target)
-        {
-            try
-            {
-                KlipperAccessTokenResult oneshotToken = await GetOneshotTokenAsync().ConfigureAwait(false);
-                SessionId = OneShotToken = oneshotToken?.Result;
-                await ConnectWebSocketAsync(GetWebSocketTargetUri());
-
-                //if (!IsReady) return;
-                if (!string.IsNullOrEmpty(FullWebAddress) && (
-                    Regex.IsMatch(FullWebAddress, RegexHelper.IPv4AddressRegex) ||
-                    Regex.IsMatch(FullWebAddress, RegexHelper.IPv6AddressRegex) ||
-                    Regex.IsMatch(FullWebAddress, RegexHelper.Fqdn)))
-                {
-                    return;
-                }
-                //if (!IsReady || IsListeningToWebsocket) return;
-
-                await DisconnectWebSocketAsync();
-                // https://github.com/Arksine/moonraker/blob/master/docs/web_api.md#appendix
-                // ws://host:port/websocket?token={32 character base32 string}
-                //string target = $"ws://192.168.10.113:80/websocket?token={API}";
-                //string target = $"{(IsSecure ? "wss" : "ws")}://{ServerAddress}:{Port}/websocket{(!string.IsNullOrEmpty(API) ? $"?token={(LoginRequired ? UserToken : API)}" : "")}";
-
-                KlipperAccessTokenResult oneshotToken = await GetOneshotTokenAsync();
-                SessionId = OneShotToken = oneshotToken?.Result;
-                
-
-                string target = $"{(IsSecure ? "wss" : "ws")}://{ServerAddress}:{Port}/websocket?token={OneShotToken}";
-                WebSocket = new WebSocket(target)
-                {
-                    EnableAutoSendPing = false,
-
-                };
-
-                if (IsSecure)
-                {
-                    // https://github.com/sta/websocket-sharp/issues/219#issuecomment-453535816
-                    SslProtocols sslProtocolHack = (SslProtocols)(SslProtocolsHack.Tls12 | SslProtocolsHack.Tls11 | SslProtocolsHack.Tls);
-                    //Avoid TlsHandshakeFailure
-                    if (WebSocket.Security.EnabledSslProtocols != sslProtocolHack)
-                    {
-                        WebSocket.Security.EnabledSslProtocols = sslProtocolHack;
-                    }
-                }
-
-                WebSocket.MessageReceived += WebSocket_MessageReceived;
-                WebSocket.Opened += WebSocket_Opened;
-                WebSocket.Closed += WebSocket_Closed;
-                WebSocket.Error += WebSocket_Error;
-
-                await WebSocket.OpenAsync();
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-            }
-        }
-        */
 
         protected void Client_WebSocketMessageReceived(object sender, WebsocketEventArgs e)
         {
@@ -249,19 +184,16 @@ namespace AndreasReitberger.API.Moonraker
                                         if (!jsonBody.Contains("temperature") || RefreshHeatersDirectly) break;
                                         KlipperStatusHeaterBed heaterBed =
                                             JsonConvert.DeserializeObject<KlipperStatusHeaterBed>(jsonBody);
-                                        if (HeaterBed != null)
+                                        HeatedBeds ??= new();
+                                        if (ActiveHeatedBed is not null)
                                         {
                                             // This property is only sent once if changed, so store it
                                             if (!jsonBody.Contains("target"))
                                             {
-                                                heaterBed.Target = HeaterBed.Target;
-                                            }
-                                            else
-                                            {
-
+                                                heaterBed.TempSet = ActiveHeatedBed.TempSet;
                                             }
                                         }
-                                        HeaterBed = heaterBed;
+                                        HeatedBeds.AddOrUpdate(0, heaterBed, (key, oldValue) => oldValue = heaterBed);
                                         break;
                                     case "extruder":
                                     case "extruder1":
@@ -283,7 +215,7 @@ namespace AndreasReitberger.API.Moonraker
                                             KlipperStatusExtruder previousExtruderState = Extruders[index];
                                             if (!jsonBody.Contains("target"))
                                             {
-                                                extruder.Target = previousExtruderState.Target;
+                                                extruder.TempSet = previousExtruderState.TempSet;
                                             }
                                         }
                                         extruderStats.TryAdd(index, extruder);
@@ -321,9 +253,9 @@ namespace AndreasReitberger.API.Moonraker
                                         KlipperStatusJob job =
                                             JsonConvert.DeserializeObject<KlipperStatusJob>(jsonBody);
                                         //ActiveJobName = job?.Filename;
-                                        JobStatus = job;
+                                        ActiveJob = job;
                                         //if (JobStatus?.Status == KlipperJobStates.Completed)
-                                        if (JobStatus?.State == Print3dJobState.Completed)
+                                        if (ActiveJob?.State == Print3dJobState.Completed)
                                         {
                                             OnJobStatusFinished(new()
                                             {
@@ -612,11 +544,7 @@ namespace AndreasReitberger.API.Moonraker
             }
         }
 
-#if NET_WS
-        new void WebSocket_MessageReceived(object sender, MessageReceivedEventArgs msg)
-#else
         new void WebSocket_MessageReceived(ResponseMessage? msg)
-#endif
         {
             try
             {
@@ -630,11 +558,7 @@ namespace AndreasReitberger.API.Moonraker
                     string jsonBody = string.Empty;
                     try
                     {
-#if ConcurrentDictionary
                         ConcurrentDictionary<int, KlipperStatusExtruder> extruderStats = new();
-#else
-                        Dictionary<int, KlipperStatusExtruder> extruderStats = new();
-#endif
                         KlipperWebSocketMessage method = JsonConvert.DeserializeObject<KlipperWebSocketMessage>(text);
                         for (int i = 0; i < method?.Params?.Count; i++)
                         {
@@ -773,19 +697,16 @@ namespace AndreasReitberger.API.Moonraker
                                         if (!jsonBody.Contains("temperature") || RefreshHeatersDirectly) break;
                                         KlipperStatusHeaterBed heaterBed =
                                             JsonConvert.DeserializeObject<KlipperStatusHeaterBed>(jsonBody);
-                                        if (HeaterBed != null)
+                                        HeatedBeds ??= new();
+                                        if (ActiveHeatedBed is not null)
                                         {
                                             // This property is only sent once if changed, so store it
                                             if (!jsonBody.Contains("target"))
                                             {
-                                                heaterBed.Target = HeaterBed.Target;
-                                            }
-                                            else
-                                            {
-
+                                                heaterBed.TempSet = ActiveHeatedBed.TempSet;
                                             }
                                         }
-                                        HeaterBed = heaterBed;
+                                        HeatedBeds.AddOrUpdate(0, heaterBed, (key, oldValue) => oldValue = heaterBed);
                                         break;
                                     case "extruder":
                                     case "extruder1":
@@ -807,7 +728,7 @@ namespace AndreasReitberger.API.Moonraker
                                             KlipperStatusExtruder previousExtruderState = Extruders[index];
                                             if (!jsonBody.Contains("target"))
                                             {
-                                                extruder.Target = previousExtruderState.Target;
+                                                extruder.TempSet = previousExtruderState.TempSet;
                                             }
                                         }
                                         extruderStats.TryAdd(index, extruder);
@@ -845,9 +766,9 @@ namespace AndreasReitberger.API.Moonraker
                                         KlipperStatusJob job =
                                             JsonConvert.DeserializeObject<KlipperStatusJob>(jsonBody);
                                         //ActiveJobName = job?.Filename;
-                                        JobStatus = job;
+                                        ActiveJob = job;
                                         //if (JobStatus?.Status == KlipperJobStates.Completed)
-                                        if (JobStatus?.State == Print3dJobState.Completed)
+                                        if (ActiveJob?.State == Print3dJobState.Completed)
                                         {
                                             OnJobStatusFinished(new()
                                             {
@@ -1002,7 +923,7 @@ namespace AndreasReitberger.API.Moonraker
                         }
 
                         // Update extruder states if changed
-                        if (extruderStats.Count > 0)
+                        if (extruderStats?.Count > 0)
                         {
                             Extruders = extruderStats;
                         }
@@ -1078,11 +999,7 @@ namespace AndreasReitberger.API.Moonraker
 #if DEBUG
                                         Console.WriteLine($"No Json object found for '{name}' => '{jsonBody}");
 #endif
-#if ConcurrentDictionary
                                         ConcurrentDictionary<string, string> loggedResults = new(IgnoredJsonResults);
-#else
-                                        Dictionary<string, string> loggedResults = new(IgnoredJsonResults);
-#endif
                                         if (!loggedResults.ContainsKey(name))
                                         {
                                             // Log unused json results for further releases
@@ -1133,8 +1050,6 @@ namespace AndreasReitberger.API.Moonraker
                 OnError(new UnhandledExceptionEventArgs(exc, false));
             }
         }
-
-        #endregion
 
         #endregion
     }
