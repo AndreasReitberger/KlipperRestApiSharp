@@ -15,13 +15,6 @@ namespace AndreasReitberger.API.Moonraker
         {
             WebSocketConnectionIdChanged?.Invoke(this, e);
         }
-        /*
-        public event EventHandler<KlipperLoginRequiredEventArgs> LoginResultReceived;
-        protected virtual void OnLoginResultReceived(KlipperLoginRequiredEventArgs e)
-        {
-            LoginResultReceived?.Invoke(this, e);
-        }
-        */
         #endregion
 
         #region State & Config
@@ -173,7 +166,9 @@ namespace AndreasReitberger.API.Moonraker
             KlipperFSensorChanged?.Invoke(this, e);
         }
 
+        [Obsolete("Use OnWebCamConfigChanged instead")]
         public event EventHandler<KlipperWebCamConfigChangedEventArgs> KlipperWebCamConfigChanged;
+        [Obsolete("Use OnWebCamConfigChanged instead")]
         protected virtual void OnKlipperWebCamConfigChanged(KlipperWebCamConfigChangedEventArgs e)
         {
             KlipperWebCamConfigChanged?.Invoke(this, e);

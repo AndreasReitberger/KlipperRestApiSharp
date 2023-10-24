@@ -28,6 +28,36 @@ namespace AndreasReitberger.API.Moonraker
 
         #region Methods
 
+        /* Not available for HTTP
+        public async Task<KlipperAccessTokenResult> GetWebSocketIdAsync()
+        {
+            IRestApiRequestRespone result = null;
+            KlipperAccessTokenResult resultObject = null;
+            try
+            {
+                //object cmd = new { name = ScriptName };
+                result = await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.Get, "websocket_id").ConfigureAwait(false);
+                KlipperAccessTokenResult accessToken = GetObjectFromJson<KlipperAccessTokenResult>(result.Result, NewtonsoftJsonSerializerSettings);
+                SessionId = accessToken?.Result;
+                return accessToken;
+            }
+            catch (JsonException jecx)
+            {
+                OnError(new JsonConvertEventArgs()
+                {
+                    Exception = jecx,
+                    OriginalString = result?.Result,
+                    Message = jecx.Message,
+                });
+                return resultObject;
+            }
+            catch (Exception exc)
+            {
+                OnError(new UnhandledExceptionEventArgs(exc, false));
+                return resultObject;
+            }
+        }
+        */
         protected void Client_WebSocketMessageReceived(object sender, WebsocketEventArgs e)
         {
             try
@@ -41,11 +71,7 @@ namespace AndreasReitberger.API.Moonraker
                     string jsonBody = string.Empty;
                     try
                     {
-#if ConcurrentDictionary
                         ConcurrentDictionary<int, KlipperStatusExtruder> extruderStats = new();
-#else
-                        Dictionary<int, KlipperStatusExtruder> extruderStats = new();
-#endif
                         KlipperWebSocketMessage method = JsonConvert.DeserializeObject<KlipperWebSocketMessage>(text);
                         for (int i = 0; i < method?.Params?.Count; i++)
                         {
@@ -486,11 +512,7 @@ namespace AndreasReitberger.API.Moonraker
 #if DEBUG
                                         Console.WriteLine($"No Json object found for '{name}' => '{jsonBody}");
 #endif
-#if ConcurrentDictionary
                                         ConcurrentDictionary<string, string> loggedResults = new(IgnoredJsonResults);
-#else
-                                        Dictionary<string, string> loggedResults = new(IgnoredJsonResults);
-#endif
                                         if (!loggedResults.ContainsKey(name))
                                         {
                                             // Log unused json results for further releases
