@@ -1,6 +1,5 @@
 ﻿using AndreasReitberger.API.Print3dServer.Core.Enums;
 using AndreasReitberger.API.Print3dServer.Core.Interfaces;
-using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
@@ -14,9 +13,14 @@ namespace AndreasReitberger.API.Moonraker.Models
         [property: JsonIgnore]
         Guid id;
 
-        [ObservableProperty]
-        [JsonProperty("end_time")]
+        [ObservableProperty, JsonIgnore]
+        [NotifyPropertyChangedFor(nameof(Done))]
+        [property: JsonProperty("end_time")]
         double? endTime;
+        partial void OnEndTimeChanged(double? value)
+        {
+            
+        }
 
         [ObservableProperty]
         [JsonProperty("filament_used")]
@@ -28,7 +32,6 @@ namespace AndreasReitberger.API.Moonraker.Models
 
         [ObservableProperty]
         [JsonProperty("metadata")]
-        //[JsonConverter(typeof(StringGcodeMetaConverter), true)]
         IGcodeMeta meta;
 
         [ObservableProperty]
@@ -51,13 +54,27 @@ namespace AndreasReitberger.API.Moonraker.Models
         [JsonConverter(typeof(StringEnumConverter), true)]
         Print3dJobState state;
 
-        [ObservableProperty]
-        [JsonProperty("start_time")]
+        [ObservableProperty, JsonIgnore]
+        [NotifyPropertyChangedFor(nameof(Done))]
+        [property: JsonProperty("start_time")]
         double? startTime;
+        partial void OnStartTimeChanged(double? value)
+        {
+            
+        }
 
         [ObservableProperty]
-        [JsonProperty("total_duration")]
+        [property: JsonIgnore]
+        double? done;
+
+        [ObservableProperty, JsonIgnore]
+        [NotifyPropertyChangedFor(nameof(Done))]
+        [property: JsonProperty("total_duration")]
         double? totalPrintDuration;
+        partial void OnTotalPrintDurationChanged(double? value)
+        {
+
+        }
 
         [ObservableProperty]
         [JsonProperty("job_id")]
