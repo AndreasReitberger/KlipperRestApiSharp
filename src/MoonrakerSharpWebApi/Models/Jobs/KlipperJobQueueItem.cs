@@ -1,4 +1,5 @@
 ﻿using AndreasReitberger.API.Print3dServer.Core.Interfaces;
+using AndreasReitberger.API.Print3dServer.Core.Utilities;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json;
 using System;
@@ -21,13 +22,33 @@ namespace AndreasReitberger.API.Moonraker.Models
         [JsonProperty("job_id")]
         string jobId;
 
-        [ObservableProperty]
-        [JsonProperty("time_added")]
+        [ObservableProperty, JsonIgnore]
+        [NotifyPropertyChangedFor(nameof(TimeAddedGeneralized))]
+        [property: JsonProperty("time_added")]
         double? timeAdded;
+        partial void OnTimeAddedChanged(double? value)
+        {
+            if(value is not null)
+                TimeAddedGeneralized = TimeBaseConvertHelper.FromUnixDate(value);
+        }
 
-        [ObservableProperty]
-        [JsonProperty("time_in_queue")]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonIgnore]
+        DateTime? timeAddedGeneralized;
+
+        [ObservableProperty, JsonIgnore]
+        [NotifyPropertyChangedFor(nameof(TimeInQueueGeneralized))]
+        [property: JsonProperty("time_in_queue")]
         double? timeInQueue;
+        partial void OnTimeInQueueChanged(double? value)
+        {
+            if (value is not null)
+                TimeInQueueGeneralized = TimeBaseConvertHelper.FromUnixDate(value);
+        }
+
+        [ObservableProperty, JsonIgnore]
+        [property: JsonIgnore]
+        DateTime? timeInQueueGeneralized;
         #endregion
 
         #region Methods
