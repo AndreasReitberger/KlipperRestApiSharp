@@ -53,7 +53,6 @@ namespace AndreasReitberger.API.Moonraker
                 }
                 return _instance;
             }
-
             set
             {
                 if (_instance == value) return;
@@ -62,7 +61,6 @@ namespace AndreasReitberger.API.Moonraker
                     _instance = value;
                 }
             }
-
         }
 
         #endregion

@@ -1,4 +1,6 @@
 ﻿using Newtonsoft.Json;
+using System;
+
 #if ConcurrentDictionary
 using System.Collections.Concurrent;
 #else
@@ -7,6 +9,7 @@ using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
+    [Obsolete("Use `IgnoredJsonResultsChangedEventArgs` instead")]
     public class KlipperIgnoredJsonResultsChangedEventArgs : KlipperEventArgs
     {
         #region Properties

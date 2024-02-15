@@ -3,6 +3,7 @@ using System;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
+    [Obsolete("Use `Print3dBaseEventArgs` instead")]
     public class KlipperEventArgs : EventArgs
     {
         #region Properties
