@@ -1,7 +1,9 @@
 ﻿using Newtonsoft.Json;
+using System;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
+    [Obsolete("Use `JobStatusChangedEventArgs` changed instead")]
     public class KlipperJobStatusChangedEventArgs : KlipperEventArgs
     {
         #region Properties

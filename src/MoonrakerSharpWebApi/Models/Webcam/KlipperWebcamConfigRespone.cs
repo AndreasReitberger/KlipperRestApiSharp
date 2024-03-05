@@ -2,18 +2,17 @@
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public class KlipperDatabaseSettingsGeneral
+    public partial class KlipperWebcamConfigRespone : ObservableObject
     {
         #region Properties
-        public string Printername { get; set; } = string.Empty;
-
-        public bool DisplayCancelPrint { get; set; }
-
-        public string Locale { get; set; } = string.Empty;
+        [ObservableProperty]
+        [JsonProperty("result")]
+        KlipperWebcamConfigResult result;
         #endregion
 
         #region Overrides
         public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
+        
         #endregion
     }
 }

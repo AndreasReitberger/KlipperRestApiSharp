@@ -57,9 +57,14 @@ namespace AndreasReitberger.API.Moonraker.Models
         [JsonProperty("filament_weight_total")]
         double filamentWeightTotal = 0;
 
-        [ObservableProperty]
-        [JsonProperty("estimated_time")]
+        [ObservableProperty, JsonIgnore]
+        [NotifyPropertyChangedFor(nameof(EstimatedPrintTime))]
+        [property: JsonProperty("estimated_time")]
         double estimatedTime = 0;
+        partial void OnEstimatedTimeChanged(double value)
+        {
+            EstimatedPrintTime = value;
+        }
 
         [ObservableProperty]
         [JsonProperty("first_layer_extr_temp")]

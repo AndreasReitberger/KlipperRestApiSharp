@@ -2,6 +2,7 @@
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
+    [Obsolete("use `RestEventArgs` instead")]
     public class KlipperRestEventArgs : EventArgs
     {
         #region Properties

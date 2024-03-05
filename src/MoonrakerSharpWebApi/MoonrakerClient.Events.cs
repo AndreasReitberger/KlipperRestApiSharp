@@ -15,13 +15,6 @@ namespace AndreasReitberger.API.Moonraker
         {
             WebSocketConnectionIdChanged?.Invoke(this, e);
         }
-        /*
-        public event EventHandler<KlipperLoginRequiredEventArgs> LoginResultReceived;
-        protected virtual void OnLoginResultReceived(KlipperLoginRequiredEventArgs e)
-        {
-            LoginResultReceived?.Invoke(this, e);
-        }
-        */
         #endregion
 
         #region State & Config
@@ -91,7 +84,9 @@ namespace AndreasReitberger.API.Moonraker
             KlipperVirtualSdCardStateChanged?.Invoke(this, e);
         }
 
+        [Obsolete("Use ToolheadsChangedEvent instead")]
         public event EventHandler<KlipperExtruderStatesChangedEventArgs> KlipperExtruderStatesChanged;
+        [Obsolete("Use ToolheadsChangedEvent instead")]
         protected virtual void OnKlipperExtruderStatesChanged(KlipperExtruderStatesChangedEventArgs e)
         {
             KlipperExtruderStatesChanged?.Invoke(this, e);
@@ -103,7 +98,9 @@ namespace AndreasReitberger.API.Moonraker
             KlipperTemperatureSensorStatesChanged?.Invoke(this, e);
         }
 
+        [Obsolete("Use HeaterChangedEvent instead")]
         public event EventHandler<KlipperHeaterBedStateChangedEventArgs> KlipperHeaterBedStateChanged;
+        [Obsolete("Use HeaterChangedEvent instead")]
         protected virtual void OnKlipperHeaterBedStateChanged(KlipperHeaterBedStateChangedEventArgs e)
         {
             KlipperHeaterBedStateChanged?.Invoke(this, e);
@@ -169,7 +166,9 @@ namespace AndreasReitberger.API.Moonraker
             KlipperFSensorChanged?.Invoke(this, e);
         }
 
+        [Obsolete("Use OnWebCamConfigChanged instead")]
         public event EventHandler<KlipperWebCamConfigChangedEventArgs> KlipperWebCamConfigChanged;
+        [Obsolete("Use OnWebCamConfigChanged instead")]
         protected virtual void OnKlipperWebCamConfigChanged(KlipperWebCamConfigChangedEventArgs e)
         {
             KlipperWebCamConfigChanged?.Invoke(this, e);
@@ -189,41 +188,6 @@ namespace AndreasReitberger.API.Moonraker
             KlipperJobListStateChanged?.Invoke(this, e);
         }
 
-        public event EventHandler<KlipperJobStatusChangedEventArgs> KlipperJobStatusChanged;
-        protected virtual void OnKlipperJobStatusChanged(KlipperJobStatusChangedEventArgs e)
-        {
-            KlipperJobStatusChanged?.Invoke(this, e);
-        }
-
-        public event EventHandler<KlipperCurrentPrintImageChangedEventArgs> KlipperCurrentPrintImageChanged;
-        [Obsolete("Use OnActivePrintImageChanged instead")]
-        protected virtual void OnKlipperCurrentPrintImageChanged(KlipperCurrentPrintImageChangedEventArgs e)
-        {
-            KlipperCurrentPrintImageChanged?.Invoke(this, e);
-        }
-
-        public event EventHandler<KlipperJobListChangedEventArgs> KlipperJobListChanged;
-        [Obsolete("Use OnJobListChangedEvent instead")]
-        protected virtual void OnKlipperJobListChanged(KlipperJobListChangedEventArgs e)
-        {
-            KlipperJobListChanged?.Invoke(this, e);
-        }
-
-        #endregion
-
-        #region ServerStateChanges
-
-        public event EventHandler<KlipperEventListeningChangedEventArgs> ListeningChanged;
-        protected virtual void OnListeningChanged(KlipperEventListeningChangedEventArgs e)
-        {
-            ListeningChanged?.Invoke(this, e);
-        }
-
-        public event EventHandler<KlipperSessionChangedEventArgs> SessionChanged;
-        protected virtual void OnSessionChanged(KlipperSessionChangedEventArgs e)
-        {
-            SessionChanged?.Invoke(this, e);
-        }
         #endregion
 
         #region Login

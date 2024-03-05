@@ -9,48 +9,20 @@ namespace AndreasReitberger.API.Moonraker
     {
         #region Auth
 
-        [JsonProperty(nameof(UserToken))]
-        string _userToken = string.Empty;
-        [JsonIgnore, XmlIgnore]
-        [Obsolete("Use SessionId for this")]
-        public string UserToken
-        {
-            get => _userToken;
-            set
-            {
-                if (_userToken == value) return;
-                _userToken = value;
-                OnPropertyChanged();
-            }
-        }
+        [ObservableProperty]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        string userToken = string.Empty;
+        partial void OnUserTokenChanged(string value) => AddOrUpdateAuthHeader("usertoken", value);
 
-        [JsonProperty(nameof(OneShotToken))]
-        string _oneShotToken = string.Empty;
-        [JsonIgnore, XmlIgnore]
-        public string OneShotToken
-        {
-            get => _oneShotToken;
-            set
-            {
-                if (_oneShotToken == value) return;
-                _oneShotToken = value;
-                OnPropertyChanged();
-            }
-        }
+        [ObservableProperty]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        string refreshToken = string.Empty;
+        partial void OnRefreshTokenChanged(string value) => AddOrUpdateAuthHeader("refreshtoken", value, 1);
 
-        [JsonProperty(nameof(RefreshToken))]
-        string _refreshToken = string.Empty;
-        [JsonIgnore, XmlIgnore]
-        public string RefreshToken
-        {
-            get => _refreshToken;
-            set
-            {
-                if (_refreshToken == value) return;
-                _refreshToken = value;
-                OnPropertyChanged();
-            }
-        }
+        [ObservableProperty]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        string oneShotToken = string.Empty;
+        partial void OnOneShotTokenChanged(string value) => AddOrUpdateAuthHeader("oneshottoken", value, 2);
 
         #endregion
     }
