@@ -21,7 +21,7 @@ namespace AndreasReitberger.API.Moonraker
                 return _client;
             }
 
-            public MoonrakerConnectionBuilder WithServerAddress(string serverAddress, int port = 3344, bool https = false)
+            public MoonrakerConnectionBuilder WithServerAddress(string serverAddress, int port = 80, bool https = false)
             {
                 _client.IsSecure = https;
                 _client.ServerAddress = serverAddress;

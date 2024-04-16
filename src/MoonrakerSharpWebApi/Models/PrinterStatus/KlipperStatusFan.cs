@@ -1,6 +1,7 @@
 ﻿using AndreasReitberger.API.Print3dServer.Core.Interfaces;
 using Newtonsoft.Json;
 using System;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 
 namespace AndreasReitberger.API.Moonraker.Models
@@ -15,8 +16,22 @@ namespace AndreasReitberger.API.Moonraker.Models
         long? voltage;
 
         [ObservableProperty]
-        [JsonProperty("speed")]
-        [property: JsonIgnore]
+        [NotifyPropertyChangedFor(nameof(Speed))]
+        [property: JsonProperty("speed")]
+        double? fanSpeed = 0;
+        partial void OnFanSpeedChanged(double? value)
+        {
+            if (value is not null)
+                Percent = Convert.ToInt32(value * 100);
+            else
+                Percent = 0;
+        }
+
+        public int? Speed => Convert.ToInt32(Percent * 2.55f);
+        /*
+        [ObservableProperty]
+        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
         public int? speed = 0;
         partial void OnSpeedChanged(int? value)
         {
@@ -25,16 +40,20 @@ namespace AndreasReitberger.API.Moonraker.Models
             else
                 Percent = 0;
         }
+        */
 
         [ObservableProperty]
         [JsonProperty("rpm")]
-        [property: JsonIgnore]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
         long? rpm = 0;
 
         [ObservableProperty]
-        [JsonIgnore]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
         int? percent = 0;
-        //public int Percent => GetPercentageSpeed();
+        partial void OnPercentChanged(int? value)
+        {
+            On = value > 0;
+        }
         #endregion
 
         #region Methods
@@ -42,10 +61,8 @@ namespace AndreasReitberger.API.Moonraker.Models
         #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);   
+        
         #endregion
     }
 }

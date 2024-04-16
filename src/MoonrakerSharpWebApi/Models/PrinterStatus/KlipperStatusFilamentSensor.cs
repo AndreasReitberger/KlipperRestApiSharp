@@ -1,14 +1,39 @@
-﻿using Newtonsoft.Json;
+﻿using AndreasReitberger.API.Print3dServer.Core.Enums;
+using AndreasReitberger.API.Print3dServer.Core.Interfaces;
+using Newtonsoft.Json;
+using System;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperStatusFilamentSensor
+    public partial class KlipperStatusFilamentSensor : ObservableObject, ISensorComponent
     {
         #region Properties
-        [JsonProperty("filament_detected")]
-        public bool FilamentDetected { get; set; }
-        [JsonProperty("enabled")]
-        public bool Enabled { get; set; }
+        [ObservableProperty]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        Guid id;
+
+        [ObservableProperty]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        string name = string.Empty;
+
+        [ObservableProperty]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        bool triggered = false;
+
+        [ObservableProperty, JsonIgnore]
+        [NotifyPropertyChangedFor(nameof(Triggered))]
+        [property: JsonProperty("filament_detected")]
+        bool filamentDetected;
+        partial void OnFilamentDetectedChanged(bool value)
+        {
+            Triggered = value;
+        }
+
+        [ObservableProperty]
+        bool enabled;
+
+        [ObservableProperty]
+        Printer3dSensorType type = Printer3dSensorType.Filament;
         #endregion
 
         #region Overrides

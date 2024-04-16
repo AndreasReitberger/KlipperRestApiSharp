@@ -1,5 +1,4 @@
-﻿using AndreasReitberger.API.Moonraker.Enum;
-using AndreasReitberger.API.Moonraker.Models;
+﻿using AndreasReitberger.API.Moonraker.Models;
 using AndreasReitberger.API.Moonraker.Structs;
 using AndreasReitberger.API.Print3dServer.Core.Events;
 using AndreasReitberger.API.Print3dServer.Core.Interfaces;
@@ -886,12 +885,16 @@ namespace AndreasReitberger.API.Moonraker
             try
             {
                 KlipperStatusFan result = await GetFanStatusAsync().ConfigureAwait(false);
-                Fan = result;
+                ConcurrentDictionary<string, IPrint3dFan> fans = new(Fans);
+                fans.AddOrUpdate("", result, (key, oldValue) => oldValue = result);
+                Fans = fans;
+                //Fan = result;
             }
             catch (Exception exc)
             {
                 OnError(new UnhandledExceptionEventArgs(exc, false));
-                Fan = null;
+                //Fan = null;
+                Fans = new();
             }
         }
 
@@ -1006,12 +1009,12 @@ namespace AndreasReitberger.API.Moonraker
             try
             {
                 KlipperStatusToolhead result = await GetToolHeadStatusAsync().ConfigureAwait(false);
-                ToolHead = result;
+                ToolHeadStatus = result;
             }
             catch (Exception exc)
             {
                 OnError(new UnhandledExceptionEventArgs(exc, false));
-                ToolHead = null;
+                ToolHeadStatus = new();
             }
         }
 

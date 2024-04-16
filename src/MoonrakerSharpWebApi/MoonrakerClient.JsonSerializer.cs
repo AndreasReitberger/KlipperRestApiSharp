@@ -33,6 +33,8 @@ namespace AndreasReitberger.API.Moonraker
                 new TypeMappingConverter<IPrint3dJobStatus, KlipperStatusJob>(),
                 new TypeMappingConverter<IWebCamConfig, KlipperDatabaseWebcamConfig>(),
                 new TypeMappingConverter<IToolhead, KlipperStatusExtruder>(),
+                new TypeMappingConverter<IPrint3dFan, KlipperStatusFan>(),
+                new TypeMappingConverter<ISensorComponent, KlipperStatusFilamentSensor>(),
             }
         };
         #endregion

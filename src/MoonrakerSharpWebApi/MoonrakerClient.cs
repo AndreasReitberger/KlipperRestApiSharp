@@ -74,7 +74,7 @@ namespace AndreasReitberger.API.Moonraker
 
         [ObservableProperty]
         string hostName = string.Empty;
-     
+
         #endregion
 
         #region General
@@ -97,22 +97,6 @@ namespace AndreasReitberger.API.Moonraker
         #endregion
 
         #region Jobs
-        /*
-        [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        KlipperStatusJob jobStatus;
-        partial void OnJobStatusChanging(KlipperStatusJob value)
-        {
-            OnKlipperJobStatusChanged(new KlipperJobStatusChangedEventArgs()
-            {
-                NewJobStatus = value,
-                PreviousJobStatus = JobStatus,
-                SessonId = SessionId,
-                CallbackId = -1,
-                Token = !string.IsNullOrEmpty(UserToken) ? UserToken : ApiKey,
-            });
-        }
-        */
 
         [ObservableProperty]
         [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
@@ -129,21 +113,6 @@ namespace AndreasReitberger.API.Moonraker
             });
         }
 
-        /*
-        [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        ObservableCollection<KlipperJobQueueItem> jobList = new();
-        partial void OnJobListChanged(ObservableCollection<KlipperJobQueueItem> value)
-        {
-            OnKlipperJobListChanged(new KlipperJobListChangedEventArgs()
-            {
-                NewJobList = value,
-                SessonId = SessionId,
-                CallbackId = -1,
-                Token = !string.IsNullOrEmpty(UserToken) ? UserToken : ApiKey,
-            });
-        }
-        */
         #endregion
 
         #region State & Config
@@ -430,41 +399,6 @@ namespace AndreasReitberger.API.Moonraker
 
         [ObservableProperty]
         [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        ConcurrentDictionary<string, KlipperStatusFan> fans = new();
-        partial void OnFansChanged(ConcurrentDictionary<string, KlipperStatusFan> value)
-        {
-            // WebSocket is updating this property in a high frequency, so a cooldown can be enabled
-            /*
-            if (_enableCooldown && !RefreshHeatersDirectly)
-            {
-                if (_cooldownExtruder > 0)
-                    _cooldownExtruder--;
-                else
-                {
-                    _cooldownExtruder = _cooldownFallback;
-
-                    OnKlipperExtruderStatesChanged(new KlipperExtruderStatesChangedEventArgs()
-                    {
-                        ExtruderStates = value,
-                        SessonId = SessionId,
-                        CallbackId = -1,
-                    });
-                }
-            }
-            else
-            {
-                OnKlipperExtruderStatesChanged(new KlipperExtruderStatesChangedEventArgs()
-                {
-                    ExtruderStates = value,
-                    SessonId = SessionId,
-                    CallbackId = -1,
-                });
-            }
-            */
-        }
-
-        [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
         ConcurrentDictionary<string, KlipperStatusDriver> drivers = new();
         partial void OnDriversChanged(ConcurrentDictionary<string, KlipperStatusDriver> value)
         {
@@ -578,7 +512,7 @@ namespace AndreasReitberger.API.Moonraker
             }
         }
 
-        [ObservableProperty]
+        [ObservableProperty, Obsolete("Use ActiveFan instead")]
         [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
         KlipperStatusFan fan;
         partial void OnFanChanged(KlipperStatusFan value)
@@ -626,8 +560,8 @@ namespace AndreasReitberger.API.Moonraker
 
         [ObservableProperty]
         [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        KlipperStatusToolhead toolHead;
-        partial void OnToolHeadChanged(KlipperStatusToolhead value)
+        KlipperStatusToolhead toolHeadStatus;
+        partial void OnToolHeadStatusChanged(KlipperStatusToolhead value)
         {
             OnKlipperToolHeadStateChanged(new KlipperToolHeadStateChangedEventArgs()
             {
@@ -721,7 +655,7 @@ namespace AndreasReitberger.API.Moonraker
             Id = Guid.NewGuid();
             Target = Print3dServerTarget.Moonraker;
             ApiKeyRegexPattern = "";
-            WebSocketTarget = "websocket"; 
+            WebSocketTarget = "websocket";
             WebCamTarget = "/webcam/?action=stream";
             WebSocketMessageReceived += Client_WebSocketMessageReceived;
             UpdateRestClientInstance();
@@ -1167,7 +1101,7 @@ namespace AndreasReitberger.API.Moonraker
 
         #region Refresh
 
-        public new Task StartListeningAsync(bool stopActiveListening = false) => StartListeningAsync(WebSocketTargetUri, stopActiveListening, () => Task.Run(async() =>
+        public new Task StartListeningAsync(bool stopActiveListening = false, string[]? commandsOnConnect = null) => StartListeningAsync(WebSocketTargetUri, stopActiveListening, () => Task.Run(async () =>
         {
             List<Task> tasks = new()
             {
@@ -1179,7 +1113,8 @@ namespace AndreasReitberger.API.Moonraker
                 RefreshToolHeadStatusAsync(),
             };
             await Task.WhenAll(tasks).ConfigureAwait(false);
-        }));
+        }), commandsOnConnect: commandsOnConnect
+        );
         
         public new async Task RefreshAllAsync()
         {
@@ -1196,8 +1131,8 @@ namespace AndreasReitberger.API.Moonraker
                 KlipperAccessTokenResult oneshotToken = await GetOneshotTokenAsync().ConfigureAwait(false);
                 SessionId = OneShotToken = oneshotToken?.Result;
                 //await RefreshPrinterListAsync();
-                List<Task> task = new()
-                {
+                List<Task> task =
+                [
                     //Task.Delay(10),
                     RefreshServerConfigAsync(),
                     RefreshPrinterInfoAsync(),
@@ -1223,7 +1158,7 @@ namespace AndreasReitberger.API.Moonraker
                     RefreshGeneralSettingsAsync(),
                     RefreshWebCamConfigAsync(),
                     RefreshRemotePrintersAsync(),
-                };
+                ];
                 await Task.WhenAll(task).ConfigureAwait(false);
                 if (!InitialDataFetched)
                 {

@@ -2,13 +2,13 @@
 using AndreasReitberger.API.Moonraker.Enum;
 using AndreasReitberger.API.Moonraker.Models;
 using AndreasReitberger.API.Print3dServer.Core.Interfaces;
+using AndreasReitberger.API.Print3dServer.Core.JSON.System;
 using AndreasReitberger.Core.Utilities;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using NUnit.Framework.Api;
-using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Security.AccessControl;
 using System.Text;
 using System.Xml.Serialization;
 
@@ -23,22 +23,34 @@ namespace MoonrakerSharpWebApi.Test
 
         private readonly bool _skipOnlineTests = true;
 
+        private string[] wsStartCommands = new string[]
+        { 
+            // Needed to get the ConnectionId
+            $"{{\"jsonrpc\":\"2.0\",\"method\":\"server.info\",\"params\":{{}},\"id\":1}}",
+            $"{{\"jsonrpc\":\"2.0\",\"method\":\"server.websocket.id\",\"params\":{{}},\"id\":2}}",
+        };
+
+        MoonrakerClient? client;
+
         [SetUp]
         public void Setup()
         {
+            client = new MoonrakerClient.MoonrakerConnectionBuilder()
+                .WithName("Test")
+                .WithServerAddress(_host, _port, _ssl)
+                .WithApiKey(_api)
+                .Build();
         }
 
         [Test]
         public void SerializeJsonTest()
         {
-
             var dir = @"TestResults\Serialization\";
             Directory.CreateDirectory(dir);
             string serverConfig = Path.Combine(dir, "server.xml");
             if (File.Exists(serverConfig)) File.Delete(serverConfig);
             try
             {
-
                 MoonrakerClient.Instance = new MoonrakerClient(_host, _api, _port, _ssl)
                 {
                     FreeDiskSpace = 1523165212,
@@ -47,10 +59,9 @@ namespace MoonrakerSharpWebApi.Test
                 };
                 MoonrakerClient.Instance.SetProxy(true, "https://testproxy.de", 447, "User", SecureStringHelper.ConvertToSecureString("my_awesome_pwd"), true);
 
-                var serializedString = System.Text.Json.JsonSerializer.Serialize(MoonrakerClient.Instance);
-                var serializedObject = System.Text.Json.JsonSerializer.Deserialize<MoonrakerClient>(serializedString);
+                string serializedString = System.Text.Json.JsonSerializer.Serialize(MoonrakerClient.Instance, options: MoonrakerClient.DefaultJsonSerializerSettings);
+                MoonrakerClient? serializedObject = System.Text.Json.JsonSerializer.Deserialize<MoonrakerClient>(serializedString, options: MoonrakerClient.DefaultJsonSerializerSettings);
                 Assert.That(serializedObject is MoonrakerClient server && server != null);
-
             }
             catch (Exception exc)
             {
@@ -68,7 +79,6 @@ namespace MoonrakerSharpWebApi.Test
             if (File.Exists(serverConfig)) File.Delete(serverConfig);
             try
             {
-
                 MoonrakerClient.Instance = new MoonrakerClient(_host, _api, _port, _ssl)
                 {
                     FreeDiskSpace = 1523165212,
@@ -76,11 +86,9 @@ namespace MoonrakerSharpWebApi.Test
                     ServerName = "My moonraker server",
                 };
                 MoonrakerClient.Instance.SetProxy(true, "https://testproxy.de", 447, "User", SecureStringHelper.ConvertToSecureString("my_awesome_pwd"), true);
-
-                var serializedString = JsonConvert.SerializeObject(MoonrakerClient.Instance, Formatting.Indented);
-                var serializedObject = JsonConvert.DeserializeObject<MoonrakerClient>(serializedString);
+                string serializedString = JsonConvert.SerializeObject(MoonrakerClient.Instance, Formatting.Indented, settings: MoonrakerClient.DefaultNewtonsoftJsonSerializerSettings);
+                MoonrakerClient? serializedObject = JsonConvert.DeserializeObject<MoonrakerClient>(serializedString, settings: MoonrakerClient.DefaultNewtonsoftJsonSerializerSettings);
                 Assert.That(serializedObject is MoonrakerClient server && server != null);
-
             }
             catch (Exception exc)
             {
@@ -118,6 +126,7 @@ namespace MoonrakerSharpWebApi.Test
                 using (FileStream fileStream = new(serverConfig, FileMode.Open))
                 {
                     MoonrakerClient instance = (MoonrakerClient)xmlSerializer.Deserialize(fileStream);
+                    Assert.That(instance is MoonrakerClient server && server != null);
                 }
             }
             catch (Exception exc)
@@ -138,16 +147,14 @@ namespace MoonrakerSharpWebApi.Test
                     await _server.RefreshAllAsync();
                     Assert.That(_server.InitialDataFetched);
 
-                    //var token = await _server.GetOneshotTokenAsync();
                     KlipperAccessTokenResult token2 = await _server.GetApiKeyAsync();
                     Assert.That(!string.IsNullOrEmpty(token2.Result));
 
-                    //var emergencyStop = await _server.EmergencyStopPrinterAsync();
-                    //var objectList = await _server.GetPrinterObjectListAsync();
                     Dictionary<string, object> objectList = await _server.QueryPrinterObjectStatusAsync(new() { { "gcode_move", "" } });
+                    Assert.That(objectList?.Count > 0);
+
                     objectList = await _server.QueryPrinterObjectStatusAsync(new() { { "toolhead", "position,status" } });
-                    //objectList = await _server.QueryPrinterObjectStatusAsync("toolhead", new string[] { "position", "status" });
-                    //RepetierGcodeScript result = await _server.GetPrinterInfoAsync();
+                    Assert.That(objectList?.Count > 0);
                 }
                 else
                     Assert.Fail($"Server {_server.FullWebAddress} is offline.");
@@ -173,38 +180,31 @@ namespace MoonrakerSharpWebApi.Test
                     };
 
                     await _server.RefreshAllAsync();
+                    await Task.Delay(250);
+
                     Assert.That(_server.InitialDataFetched);
 
-                    //await _server.RefreshIdleStatusAsync();
                     Assert.That(_server.IdleState is not null);
-
-                    //await _server.RefreshDisplayStatusAsync();
                     Assert.That(_server.DisplayStatus is not null);
-
-                    //await _server.RefreshToolHeadStatusAsync();
-                    Assert.That(_server.ToolHead is not null);
-
-                    //await _server.RefreshGcodeMoveStatusAsync();
                     Assert.That(_server.GcodeMove is not null);
-
-                    //await _server.RefreshVirtualSdCardStatusAsync();
                     Assert.That(_server.VirtualSdCard is not null);
 
-                    //await _server.RefreshHeaterBedStatusAsync();
                     Assert.That(_server.HeatedBeds?.Count > 0);
+                    Assert.That(_server.HeatedBeds?.FirstOrDefault().Value?.TempRead > 0);
+                    Assert.That(_server.ActiveHeatedBed?.TempRead > 0);
 
-                    //await _server.RefreshExtruderStatusAsync();
                     Assert.That(_server.Toolheads?.Count > 0);
+                    Assert.That(_server.Toolheads?.FirstOrDefault().Value?.TempRead > 0);
+                    Assert.That(_server.ActiveToolhead?.TempRead > 0);
 
-                    //await _server.RefreshPrintStatusAsync();
                     Assert.That(_server.PrintStats is not null);
 
-                    //await _server.RefreshAvailableFilesAsync();
                     Assert.That(_server.Files is not null);
                     Assert.That(_server.Files?.Count > 0);
 
-                    //bool eStop = await _server.EmergencyStopPrinterAsync();
-                    //Assert.That(eStop);
+                    Assert.That(_server.Fans is not null);
+                    Assert.That(_server.Fans?.Count > 0);
+                    Assert.That(_server.ActiveFan?.Speed > 0);
                 }
                 else
                     Assert.Fail($"Server {_server.FullWebAddress} is offline.");
@@ -233,7 +233,7 @@ namespace MoonrakerSharpWebApi.Test
                     await _server.RefreshAllAsync();
                     Assert.That(_server.InitialDataFetched);
 
-                    var webcamConfigs = await _server.GetWebCamSettingsFromDatabaseAsync();
+                    ObservableCollection<IWebCamConfig> webcamConfigs = await _server.GetWebCamSettingsFromDatabaseAsync();
                     Assert.That(webcamConfigs.Count > 0);
 
                     webcamConfigs = await _server.GetWebCamSettingsAsync();
@@ -243,9 +243,6 @@ namespace MoonrakerSharpWebApi.Test
                     Assert.That(_server.WebCams?.Count > 0);
                     Assert.That(_server.WebCams?.Count > 0);
                     Assert.That(!string.IsNullOrEmpty(webcamUri));
-
-                    //bool eStop = await _server.EmergencyStopPrinterAsync();
-                    //Assert.That(eStop);
                 }
                 else
                     Assert.Fail($"Server {_server.FullWebAddress} is offline.");
@@ -274,13 +271,13 @@ namespace MoonrakerSharpWebApi.Test
                     {
                         Assert.Fail(args.Message);
                     };
-                    await _server.StartListeningAsync();
+                    await _server.StartListeningAsync(commandsOnConnect: wsStartCommands);
 
                     Dictionary<string, KlipperStatusFilamentSensor> fSensors = await _server.GetFilamentSensorsAsync();
                     Assert.That(fSensors?.Count > 0);
 
                     Dictionary<string, string> macros = new();
-                    var availableMacros = await _server.GetPrinterObjectListAsync("gcode_macro");
+                    List<string> availableMacros = await _server.GetPrinterObjectListAsync("gcode_macro");
                     for (int i = 0; i < availableMacros.Count; i++)
                     {
                         macros.Add(availableMacros[i], string.Empty);
@@ -1414,7 +1411,7 @@ namespace MoonrakerSharpWebApi.Test
                 {
                     await _server.LoginUserAsync("TestUser", "TestPassword");
                 }
-                await _server.StartListeningAsync();
+                await _server.StartListeningAsync(commandsOnConnect: wsStartCommands);
 
                 _server.WebSocketConnectionIdChanged += (o, args) =>
                 {
@@ -1436,16 +1433,19 @@ namespace MoonrakerSharpWebApi.Test
                 };
 
                 // Subscirbe to state changes
-                _server.KlipperExtruderStatesChanged += (o, args) =>
+                _server.ToolheadsChanged += (o, args) =>
                 {
-                    foreach (var pair in args.ExtruderStates)
+                    foreach (var pair in args.Toolheads)
                     {
                         Debug.WriteLine($"Extruder{pair.Key}: {pair.Value?.TempRead} �C (Target: {pair.Value?.TempSet} �C)");
                     }
                 };
-                _server.KlipperHeaterBedStateChanged += (o, args) =>
+                _server.HeatersChanged += (o, args) =>
                 {
-                    Debug.WriteLine($"HeatedBed: {args.NewHeaterBedState.TempRead} �C (Target: {args.NewHeaterBedState.TempSet} �C)");
+                    foreach (var pair in args.Heaters)
+                    {
+                        Debug.WriteLine($"HeatedBed{pair.Key}: {pair.Value?.TempRead} �C (Target: {pair.Value?.TempSet} �C)");
+                    }
                 };
                 _server.KlipperDisplayStatusChanged += (o, args) =>
                 {
@@ -1530,7 +1530,7 @@ namespace MoonrakerSharpWebApi.Test
                 }
                 //KlipperAccessTokenResult oneshot = await _server.GetOneshotTokenAsync();
                 //_server.OneShotToken = oneshot.Result;
-                await _server.StartListeningAsync();
+                await _server.StartListeningAsync(commandsOnConnect: wsStartCommands);
 
                 _server.WebSocketConnectionIdChanged += (o, args) =>
                 {
@@ -1552,16 +1552,19 @@ namespace MoonrakerSharpWebApi.Test
                 };
 
                 // Subscirbe to state changes
-                _server.KlipperExtruderStatesChanged += (o, args) =>
+                _server.ToolheadsChanged += (o, args) =>
                 {
-                    foreach (var pair in args.ExtruderStates)
+                    foreach (var pair in args.Toolheads)
                     {
                         Debug.WriteLine($"Extruder{pair.Key}: {pair.Value?.TempRead} �C (Target: {pair.Value?.TempSet} �C)");
                     }
                 };
-                _server.KlipperHeaterBedStateChanged += (o, args) =>
+                _server.HeatersChanged += (o, args) =>
                 {
-                    Debug.WriteLine($"HeatedBed: {args.NewHeaterBedState?.TempRead} �C (Target: {args.NewHeaterBedState?.TempSet} �C)");
+                    foreach (var pair in args.Heaters)
+                    {
+                        Debug.WriteLine($"HeatedBed{pair.Key}: {pair.Value?.TempRead} �C (Target: {pair.Value?.TempSet} �C)");
+                    }
                 };
                 _server.KlipperDisplayStatusChanged += (o, args) =>
                 {
@@ -1583,7 +1586,7 @@ namespace MoonrakerSharpWebApi.Test
                     if (!string.IsNullOrEmpty(args.Message))
                     {
                         websocketMessages.Add(DateTime.Now, args.Message);
-                        //Debug.WriteLine($"WebSocket Data: {args.Message} (Total: {websocketMessages.Count})");
+                        Debug.WriteLine($"WebSocket Data: {args.Message} (Total: {websocketMessages.Count})");
                     }
                 };
 

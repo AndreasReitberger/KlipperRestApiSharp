@@ -203,7 +203,7 @@ namespace AndreasReitberger.API.Moonraker
                                     case "toolhead":
                                         KlipperStatusToolhead toolhead =
                                             JsonConvert.DeserializeObject<KlipperStatusToolhead>(jsonBody);
-                                        ToolHead = toolhead;
+                                        ToolHeadStatus = toolhead;
                                         break;
                                     case "heater_bed":
                                         // In the status report the temp is missing, so do not parse the heater then.
@@ -712,7 +712,7 @@ namespace AndreasReitberger.API.Moonraker
                                     case "toolhead":
                                         KlipperStatusToolhead toolhead =
                                             JsonConvert.DeserializeObject<KlipperStatusToolhead>(jsonBody);
-                                        ToolHead = toolhead;
+                                        ToolHeadStatus = toolhead;
                                         break;
                                     case "heater_bed":
                                         // In the status report the temp is missing, so do not parse the heater then.
