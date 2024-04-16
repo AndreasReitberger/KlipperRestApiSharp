@@ -5,6 +5,8 @@ using AndreasReitberger.API.Print3dServer.Core.Interfaces;
 using AndreasReitberger.Core.Utilities;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using NUnit.Framework.Api;
+using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Text;
@@ -1301,6 +1303,48 @@ namespace MoonrakerSharpWebApi.Test
 
                     List<string> deletedIds = await _server.DeleteHistoryJobAsync(uid);
                     Assert.That(deletedIds?.Count > 0);
+                }
+                else
+                    Assert.Fail($"Server {_server.FullWebAddress} is offline.");
+            }
+            catch (Exception exc)
+            {
+                Assert.Fail(exc.Message);
+            }
+            finally
+            {
+
+            }
+        }
+        #endregion
+
+        #region Print3dServer implementation tests
+        [Test]
+        public async Task Print3dServerApiTest()
+        {
+            try
+            {
+                MoonrakerClient _server = new(_host, _api, _port, _ssl);
+                await _server.CheckOnlineAsync();
+                if (_server.IsOnline)
+                {
+                    await _server.RefreshAllAsync();
+                    Assert.That(_server.InitialDataFetched);
+
+                    ObservableCollection<IPrinter3d> printers = await _server.GetPrintersAsync();
+                    Assert.That(printers?.Count > 0);
+
+                    ObservableCollection<IGcode> gcodes = await _server.GetFilesAsync();
+                    Assert.That(gcodes?.Count > 0);
+
+                    IToolhead toolheads = await _server.GetExtruderStatusAsync();
+                    Assert.That(toolheads is not null);
+
+                    IPrint3dFan fan = await _server.GetFanStatusAsync();
+                    Assert.That(fan is not null);
+
+                    IHeaterComponent heaterBed = await _server.GetHeaterBedStatusAsync();
+                    Assert.That(heaterBed is not null);
                 }
                 else
                     Assert.Fail($"Server {_server.FullWebAddress} is offline.");

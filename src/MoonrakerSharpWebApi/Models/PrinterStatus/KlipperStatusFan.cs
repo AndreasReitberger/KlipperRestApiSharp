@@ -1,35 +1,44 @@
-﻿using Newtonsoft.Json;
+﻿using AndreasReitberger.API.Print3dServer.Core.Interfaces;
+using Newtonsoft.Json;
 using System;
+using System.Threading.Tasks;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperStatusFan
+    public partial class KlipperStatusFan : ObservableObject, IPrint3dFan
     {
         #region Properties
-        [JsonIgnore]
-        public int Percent => GetPercentageSpeed();
+        [ObservableProperty]
+        bool on; 
+        
+        [ObservableProperty]
+        long? voltage;
 
+        [ObservableProperty]
         [JsonProperty("speed")]
-        public double? Speed { get; set; }
+        [property: JsonIgnore]
+        public int? speed = 0;
+        partial void OnSpeedChanged(int? value)
+        {
+            if (value is not null)
+                Percent = Convert.ToInt32(value * 100);
+            else
+                Percent = 0;
+        }
 
+        [ObservableProperty]
         [JsonProperty("rpm")]
-        public long? Rpm { get; set; }
+        [property: JsonIgnore]
+        long? rpm = 0;
+
+        [ObservableProperty]
+        [JsonIgnore]
+        int? percent = 0;
+        //public int Percent => GetPercentageSpeed();
         #endregion
 
-        #region MyRegion
-        int GetPercentageSpeed()
-        {
-            try
-            {
-                if (Speed == null || Speed <= 0) return 0;
-                int calc = Convert.ToInt32(Speed * 100);
-                return calc;
-            }
-            catch (Exception)
-            {
-                return 0;
-            }
-        }
+        #region Methods
+        public Task<bool> SetFanSpeedAsync(IPrint3dServerClient client, string command, object data) => client?.SetFanSpeedAsync(command, data);
         #endregion
 
         #region Overrides

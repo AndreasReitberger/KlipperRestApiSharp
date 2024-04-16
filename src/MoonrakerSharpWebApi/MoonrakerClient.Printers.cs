@@ -1177,7 +1177,7 @@ namespace AndreasReitberger.API.Moonraker
         public Task<string> SubscribePrinterObjectStatusAsync(long? connectionId, List<string> objects) => SubscribePrinterObjectStatusAsync((long)connectionId, objects);
         public async Task<string> SubscribePrinterObjectStatusAsync(long connectionId, List<string> objects)
         {
-            IRestApiRequestRespone result = null;
+            IRestApiRequestRespone? result = null;
             string resultObject = null;
             try
             {

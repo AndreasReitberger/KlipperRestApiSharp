@@ -600,7 +600,7 @@ namespace AndreasReitberger.API.Moonraker
             }
         }
 
-        public async Task<byte[]> DownloadFileAsync(string relativeFilePath)
+        public override async Task<byte[]> DownloadFileAsync(string relativeFilePath)
         {
             try
             {
