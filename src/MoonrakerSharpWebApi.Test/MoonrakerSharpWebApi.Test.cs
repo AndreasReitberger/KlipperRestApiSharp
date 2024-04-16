@@ -47,7 +47,7 @@ namespace MoonrakerSharpWebApi.Test
 
                 var serializedString = System.Text.Json.JsonSerializer.Serialize(MoonrakerClient.Instance);
                 var serializedObject = System.Text.Json.JsonSerializer.Deserialize<MoonrakerClient>(serializedString);
-                Assert.IsTrue(serializedObject is MoonrakerClient server && server != null);
+                Assert.That(serializedObject is MoonrakerClient server && server != null);
 
             }
             catch (Exception exc)
@@ -77,7 +77,7 @@ namespace MoonrakerSharpWebApi.Test
 
                 var serializedString = JsonConvert.SerializeObject(MoonrakerClient.Instance, Formatting.Indented);
                 var serializedObject = JsonConvert.DeserializeObject<MoonrakerClient>(serializedString);
-                Assert.IsTrue(serializedObject is MoonrakerClient server && server != null);
+                Assert.That(serializedObject is MoonrakerClient server && server != null);
 
             }
             catch (Exception exc)
@@ -109,7 +109,7 @@ namespace MoonrakerSharpWebApi.Test
                     MoonrakerClient.Instance.SetProxy(true, "https://testproxy.de", 447, "User", SecureStringHelper.ConvertToSecureString("my_awesome_pwd"), true);
 
                     xmlSerializer.Serialize(fileStream, MoonrakerClient.Instance);
-                    Assert.IsTrue(File.Exists(Path.Combine(dir, "server.xml")));
+                    Assert.That(File.Exists(Path.Combine(dir, "server.xml")));
                 }
 
                 xmlSerializer = new XmlSerializer(typeof(MoonrakerClient));
@@ -134,11 +134,11 @@ namespace MoonrakerSharpWebApi.Test
                 if (_server.IsOnline)
                 {
                     await _server.RefreshAllAsync();
-                    Assert.IsTrue(_server.InitialDataFetched);
+                    Assert.That(_server.InitialDataFetched);
 
                     //var token = await _server.GetOneshotTokenAsync();
                     KlipperAccessTokenResult token2 = await _server.GetApiKeyAsync();
-                    Assert.IsTrue(!string.IsNullOrEmpty(token2.Result));
+                    Assert.That(!string.IsNullOrEmpty(token2.Result));
 
                     //var emergencyStop = await _server.EmergencyStopPrinterAsync();
                     //var objectList = await _server.GetPrinterObjectListAsync();
@@ -167,42 +167,42 @@ namespace MoonrakerSharpWebApi.Test
                 {
                     _server.RestJsonConvertError += (o, args) =>
                     {
-                        Assert.Fail(args.Message);
+                        Assert.Fail(args?.Message);
                     };
 
                     await _server.RefreshAllAsync();
-                    Assert.IsTrue(_server.InitialDataFetched);
+                    Assert.That(_server.InitialDataFetched);
 
                     //await _server.RefreshIdleStatusAsync();
-                    Assert.IsNotNull(_server.IdleState);
+                    Assert.That(_server.IdleState is not null);
 
                     //await _server.RefreshDisplayStatusAsync();
-                    Assert.IsNotNull(_server.DisplayStatus);
+                    Assert.That(_server.DisplayStatus is not null);
 
                     //await _server.RefreshToolHeadStatusAsync();
-                    Assert.IsNotNull(_server.ToolHead);
+                    Assert.That(_server.ToolHead is not null);
 
                     //await _server.RefreshGcodeMoveStatusAsync();
-                    Assert.IsNotNull(_server.GcodeMove);
+                    Assert.That(_server.GcodeMove is not null);
 
                     //await _server.RefreshVirtualSdCardStatusAsync();
-                    Assert.IsNotNull(_server.VirtualSdCard);
+                    Assert.That(_server.VirtualSdCard is not null);
 
                     //await _server.RefreshHeaterBedStatusAsync();
-                    Assert.IsNotNull(_server.HeaterBed);
+                    Assert.That(_server.HeatedBeds?.Count > 0);
 
                     //await _server.RefreshExtruderStatusAsync();
-                    Assert.IsNotNull(_server.Extruders);
+                    Assert.That(_server.Toolheads?.Count > 0);
 
                     //await _server.RefreshPrintStatusAsync();
-                    Assert.IsNotNull(_server.PrintStats);
+                    Assert.That(_server.PrintStats is not null);
 
                     //await _server.RefreshAvailableFilesAsync();
-                    Assert.IsNotNull(_server.Files);
-                    Assert.IsTrue(_server.Files?.Count > 0);
+                    Assert.That(_server.Files is not null);
+                    Assert.That(_server.Files?.Count > 0);
 
                     //bool eStop = await _server.EmergencyStopPrinterAsync();
-                    //Assert.IsTrue(eStop);
+                    //Assert.That(eStop);
                 }
                 else
                     Assert.Fail($"Server {_server.FullWebAddress} is offline.");
@@ -229,21 +229,21 @@ namespace MoonrakerSharpWebApi.Test
                     };
 
                     await _server.RefreshAllAsync();
-                    Assert.IsTrue(_server.InitialDataFetched);
+                    Assert.That(_server.InitialDataFetched);
 
                     var webcamConfigs = await _server.GetWebCamSettingsFromDatabaseAsync();
-                    Assert.IsTrue(webcamConfigs.Count > 0);
+                    Assert.That(webcamConfigs.Count > 0);
 
                     webcamConfigs = await _server.GetWebCamSettingsAsync();
-                    Assert.IsTrue(webcamConfigs.Count > 0);
+                    Assert.That(webcamConfigs.Count > 0);
 
                     string webcamUri = await _server.GetWebCamUriAsync(0, false);
-                    Assert.IsNotNull(_server.WebCams);
-                    Assert.IsTrue(_server.WebCams?.Count > 0);
-                    Assert.IsTrue(!string.IsNullOrEmpty(webcamUri));
+                    Assert.That(_server.WebCams?.Count > 0);
+                    Assert.That(_server.WebCams?.Count > 0);
+                    Assert.That(!string.IsNullOrEmpty(webcamUri));
 
                     //bool eStop = await _server.EmergencyStopPrinterAsync();
-                    //Assert.IsTrue(eStop);
+                    //Assert.That(eStop);
                 }
                 else
                     Assert.Fail($"Server {_server.FullWebAddress} is offline.");
@@ -266,7 +266,7 @@ namespace MoonrakerSharpWebApi.Test
                 if (_server.IsOnline)
                 {
                     await _server.RefreshAllAsync();
-                    Assert.IsTrue(_server.InitialDataFetched);
+                    Assert.That(_server.InitialDataFetched);
 
                     _server.RestJsonConvertError += (o, args) =>
                     {
@@ -274,8 +274,8 @@ namespace MoonrakerSharpWebApi.Test
                     };
                     await _server.StartListeningAsync();
 
-                    var fSensors = await _server.GetFilamentSensorsAsync();
-                    Assert.IsNotNull(fSensors);
+                    Dictionary<string, KlipperStatusFilamentSensor> fSensors = await _server.GetFilamentSensorsAsync();
+                    Assert.That(fSensors?.Count > 0);
 
                     Dictionary<string, string> macros = new();
                     var availableMacros = await _server.GetPrinterObjectListAsync("gcode_macro");
@@ -284,14 +284,14 @@ namespace MoonrakerSharpWebApi.Test
                         macros.Add(availableMacros[i], string.Empty);
                     }
 
-                    var gcMacros = await _server.GetGcodeMacrosAsync();
-                    Assert.IsNotNull(gcMacros);
+                    Dictionary<string, KlipperGcodeMacro> gcMacros = await _server.GetGcodeMacrosAsync();
+                    Assert.That(gcMacros?.Count > 0);
 
                     List<string> objects = await _server.GetPrinterObjectListAsync();
-                    Assert.IsNotNull(objects);
+                    Assert.That(objects?.Count > 0);
 
                     KlipperEndstopQueryResult endstops = await _server.QueryEndstopsAsync();
-                    Assert.IsNotNull(endstops);
+                    Assert.That(endstops is not null);
 
                     macros.Clear();
                     Dictionary<string, string> targets = new();
@@ -306,13 +306,13 @@ namespace MoonrakerSharpWebApi.Test
                     //targets.Add("extruder", "target,temperature");
 
                     Dictionary<string, KlipperGcodeMacro> availableMarcros = await _server.GetGcodeMacrosAsync();
-                    Assert.IsNotNull(availableMarcros);
+                    Assert.That(availableMarcros?.Count > 0);
 
                     Dictionary<string, object> objectStates = await _server.QueryPrinterObjectStatusAsync(targets);
-                    Assert.IsNotNull(objectStates);
+                    Assert.That(objectStates?.Count > 0);
 
                     long? connectionId = _server.WebSocketConnectionId; // ""; // Get from WebSocket?
-                    var result = await _server.SubscribePrinterObjectStatusAsync(connectionId, objects);
+                    string result = await _server.SubscribePrinterObjectStatusAsync(connectionId, objects);
                 }
                 else
                     Assert.Fail($"Server {_server.FullWebAddress} is offline.");
@@ -333,7 +333,7 @@ namespace MoonrakerSharpWebApi.Test
                 if (_server.IsOnline)
                 {
                     await _server.RefreshAllAsync();
-                    Assert.IsTrue(_server.InitialDataFetched);
+                    Assert.That(_server.InitialDataFetched);
 
                     _server.RestJsonConvertError += (o, args) =>
                     {
@@ -355,7 +355,7 @@ namespace MoonrakerSharpWebApi.Test
                     }
 
                     Dictionary<string, KlipperGcodeMacro> gcMacros = await _server.GetGcodeMacrosAsync();
-                    Assert.IsNotNull(gcMacros);
+                    Assert.That(gcMacros?.Count > 0);
                 }
                 else
                     Assert.Fail($"Server {_server.FullWebAddress} is offline.");
@@ -380,7 +380,7 @@ namespace MoonrakerSharpWebApi.Test
                 if (_server.IsOnline)
                 {
                     await _server.RefreshAllAsync();
-                    Assert.IsTrue(_server.InitialDataFetched);
+                    Assert.That(_server.InitialDataFetched);
 
                     _server.RestJsonConvertError += (o, args) =>
                     {
@@ -389,11 +389,11 @@ namespace MoonrakerSharpWebApi.Test
 
                     ObservableCollection<IGcode> models = await _server.GetAvailableFilesAsync("gcodes", true);
                     //var childItems = models?.Where(model => model.Path.Contains("/")).ToList();
-                    Assert.IsTrue(models?.Any());
-                    foreach (KlipperFile gcodeFile in models.Cast<KlipperFile>()?.Where(g => g?.Meta?.GcodeImages?.Count > 0))
+                    Assert.That(models?.Count > 0);
+                    foreach (KlipperFile? gcodeFile in models?.Cast<KlipperFile>()?.Where(g => g?.Meta?.GcodeImages?.Count > 0))
                     {
                         byte[] thumbnail = await _server.GetGcodeThumbnailImageAsync(gcodeFile?.Meta);
-                        Assert.IsNotNull(thumbnail);
+                        Assert.That(thumbnail is not null);
                     }
                 }
                 else
@@ -415,13 +415,10 @@ namespace MoonrakerSharpWebApi.Test
                 if (_server.IsOnline)
                 {
                     await _server.RefreshAllAsync();
-                    Assert.IsTrue(_server.InitialDataFetched);
+                    Assert.That(_server.InitialDataFetched);
 
                     KlipperPrinterStateMessageResult info = await _server.GetPrinterInfoAsync();
-                    Assert.IsNotNull(info);
-
-                    //bool eStop = await _server.EmergencyStopPrinterAsync();
-                    //Assert.IsTrue(eStop);
+                    Assert.That(info is not null);
                 }
                 else
                     Assert.Fail($"Server {_server.FullWebAddress} is offline.");
@@ -444,17 +441,17 @@ namespace MoonrakerSharpWebApi.Test
                 if (_server.IsOnline)
                 {
                     await _server.RefreshAllAsync();
-                    Assert.IsTrue(_server.InitialDataFetched);
+                    Assert.That(_server.InitialDataFetched);
 
                     int fanSpeed = 128;
                     string gcode = $"M106 S{fanSpeed}";
-                    var result = await _server.RunGcodeScriptAsync(gcode);
-                    Assert.IsNotNull(result);
+                    bool result = await _server.RunGcodeScriptAsync(gcode);
+                    Assert.That(result);
 
                     fanSpeed = 0;
                     gcode = $"M106 S{fanSpeed}";
                     result = await _server.RunGcodeScriptAsync(gcode);
-                    Assert.IsNotNull(result);
+                    Assert.That(result);
                 }
                 else
                     Assert.Fail($"Server {_server.FullWebAddress} is offline.");
@@ -477,10 +474,10 @@ namespace MoonrakerSharpWebApi.Test
                 if (_server.IsOnline)
                 {
                     await _server.RefreshAllAsync();
-                    Assert.IsTrue(_server.InitialDataFetched);
+                    Assert.That(_server.InitialDataFetched);
 
                     var homed = await _server.HomeAxesAsync(true, true, true);
-                    Assert.IsTrue(homed, "Not homed!");
+                    Assert.That(homed, "Not homed!");
 
                     // Move all 3 axes to ensure they all move correctly
                     var newX = 100;
@@ -493,10 +490,10 @@ namespace MoonrakerSharpWebApi.Test
                         z: newZ,
                         relative: false);
                     var end = await _server.GetToolHeadStatusAsync();
-                    Assert.IsTrue(moved, "Did not move");
-                    Assert.AreEqual(newX, end.Position[0], message: "X didn't move as expected");
-                    Assert.AreEqual(newY, end.Position[1], message: "Y didn't move as expected");
-                    Assert.AreEqual(newZ, end.Position[2], message: "Z didn't move as expected");
+                    Assert.That(moved, "Did not move");
+                    Assert.That(newX == end.Position[0], message: "X didn't move as expected");
+                    Assert.That(newY == end.Position[1], message: "Y didn't move as expected");
+                    Assert.That(newZ == end.Position[2], message: "Z didn't move as expected");
 
                     // Move all 3 axes independently to make sure they move as expected
                     newX = 50;
@@ -512,9 +509,9 @@ namespace MoonrakerSharpWebApi.Test
                         speed: 6000,
                         z: newZ);
                     end = await _server.GetToolHeadStatusAsync();
-                    Assert.AreEqual(newX, end.Position[0], message: "X didn't move as expected");
-                    Assert.AreEqual(newY, end.Position[1], message: "Y didn't move as expected");
-                    Assert.AreEqual(newZ, end.Position[2], message: "Z didn't move as expected");
+                    Assert.That(newX == end.Position[0], message: "X didn't move as expected");
+                    Assert.That(newY == end.Position[1], message: "Y didn't move as expected");
+                    Assert.That(newZ == end.Position[2], message: "Z didn't move as expected");
                 }
                 else
                     Assert.Fail($"Server {_server.FullWebAddress} is offline.");
@@ -538,26 +535,26 @@ namespace MoonrakerSharpWebApi.Test
                 if (_server.IsOnline)
                 {
                     await _server.RefreshAllAsync();
-                    Assert.IsTrue(_server.InitialDataFetched);
+                    Assert.That(_server.InitialDataFetched);
 
-                    var fan = await _server.SetFanSpeedTargetAsync(128, false);
+                    bool fan = await _server.SetFanSpeedTargetAsync(128, false);
                     fan = await _server.SetFanSpeedTargetAsync(0, false);
                     fan = await _server.SetFanSpeedTargetAsync(100, true);
                     fan = await _server.SetFanSpeedTargetAsync(0, false);
 
-                    var extruder = await _server.SetExtruderTargetAsync(50);
+                    bool extruder = await _server.SetExtruderTargetAsync(50);
                     extruder = await _server.SetExtruderTargetAsync(50, 1);
                     await Task.Delay(5000);
                     extruder = await _server.SetExtruderTargetAsync(0);
                     extruder = await _server.SetExtruderTargetAsync(0, 1);
 
-                    var heaterBed = await _server.SetHeaterBedTargetAsync(50);
+                    bool heaterBed = await _server.SetHeaterBedTargetAsync(50);
                     await Task.Delay(5000);
                     heaterBed = await _server.SetHeaterBedTargetAsync(0);
 
                     string fileName = "test.gcode";
                     bool printStarted = await _server.PrintFileAsync(fileName);
-                    Assert.IsTrue(printStarted);
+                    Assert.That(printStarted);
 
                     if (printStarted)
                     {
@@ -565,19 +562,19 @@ namespace MoonrakerSharpWebApi.Test
                         await Task.Delay(60 * 1000);
                         bool paused = await _server.PausePrintAsync();
                         await Task.Delay(5000);
-                        Assert.IsTrue(paused);
+                        Assert.That(paused);
 
                         if (paused)
                         {
                             bool resumed = await _server.ResumePrintAsync();
                             await Task.Delay(5000);
-                            Assert.IsTrue(resumed);
+                            Assert.That(resumed);
 
                             if (resumed)
                             {
                                 bool cancelled = await _server.CancelPrintAsync();
                                 await Task.Delay(5000);
-                                Assert.IsTrue(cancelled);
+                                Assert.That(cancelled);
                             }
                         }
                     }
@@ -605,11 +602,11 @@ namespace MoonrakerSharpWebApi.Test
                 if (_server.IsOnline)
                 {
                     await _server.RefreshAllAsync();
-                    Assert.IsTrue(_server.InitialDataFetched);
+                    Assert.That(_server.InitialDataFetched);
 
                     //var token = await _server.GetOneshotTokenAsync();
                     KlipperAccessTokenResult token2 = await _server.GetApiKeyAsync();
-                    Assert.IsTrue(!string.IsNullOrEmpty(token2.Result));
+                    Assert.That(!string.IsNullOrEmpty(token2.Result));
                 }
                 else
                     Assert.Fail($"Server {_server.FullWebAddress} is offline.");
@@ -630,23 +627,21 @@ namespace MoonrakerSharpWebApi.Test
                 if (_server.IsOnline)
                 {
                     await _server.RefreshAllAsync();
-                    Assert.IsTrue(_server.InitialDataFetched);
+                    Assert.That(_server.InitialDataFetched);
 
                     KlipperServerConfig config = await _server.GetServerConfigAsync();
-                    Assert.IsNotNull(config);
+                    Assert.That(config is not null);
 
                     Dictionary<string, KlipperTemperatureSensorHistory> tempData = await _server.GetServerCachedTemperatureDataAsync();
-                    //Assert.IsNotNull(tempData);
-                    Assert.IsTrue(tempData?.Count > 0);
+                    Assert.That(tempData?.Count > 0);
 
                     List<KlipperGcode> cachedGcodes = await _server.GetServerCachedGcodesAsync();
-                    Assert.IsNotNull(cachedGcodes);
-                    //Assert.IsTrue(cachedGcodes?.Count > 0);
+                    Assert.That(cachedGcodes?.Count > 0);
 
                     if (!_skipOnlineTests)
                     {
                         bool restart = await _server.RestartServerAsync();
-                        Assert.IsTrue(restart);
+                        Assert.That(restart);
                     }
                 }
                 else
@@ -668,14 +663,14 @@ namespace MoonrakerSharpWebApi.Test
                 if (_server.IsOnline)
                 {
                     await _server.RefreshAllAsync();
-                    Assert.IsTrue(_server.InitialDataFetched);
+                    Assert.That(_server.InitialDataFetched);
 
                     Dictionary<string, string> help = await _server.GetGcodeHelpAsync();
-                    Assert.IsNotNull(help);
+                    Assert.That(help?.Count > 0);
                     if (!_skipOnlineTests)
                     {
                         bool succeed = await _server.RunGcodeScriptAsync("G28");
-                        Assert.IsTrue(succeed);
+                        Assert.That(succeed);
                     }
                 }
                 else
@@ -698,29 +693,29 @@ namespace MoonrakerSharpWebApi.Test
                 if (_server.IsOnline)
                 {
                     await _server.RefreshAllAsync();
-                    Assert.IsTrue(_server.InitialDataFetched);
+                    Assert.That(_server.InitialDataFetched);
 
                     KlipperMachineInfo info = await _server.GetMachineSystemInfoAsync();
-                    Assert.IsNotNull(info);
+                    Assert.That(info is not null);
 
                     bool restarted = await _server.RestartSystemServiceAsync(KlipperServices.webcamd);
-                    Assert.IsTrue(restarted);
+                    Assert.That(restarted);
                     await Task.Delay(10 * 1000);
 
                     bool stopped = await _server.StopSystemServiceAsync(KlipperServices.webcamd);
-                    Assert.IsTrue(stopped);
+                    Assert.That(stopped);
                     await Task.Delay(10 * 1000);
 
                     bool started = await _server.StartSystemServiceAsync(KlipperServices.webcamd);
-                    Assert.IsTrue(started);
+                    Assert.That(started);
                     await Task.Delay(10 * 1000);
 
                     bool rebooted = await _server.MachineRebootAsync();
-                    Assert.IsTrue(rebooted);
+                    Assert.That(rebooted);
                     await Task.Delay(10 * 1000);
 
                     bool shutdown = await _server.MachineShutdownAsync();
-                    Assert.IsTrue(shutdown);
+                    Assert.That(shutdown);
                 }
                 else
                     Assert.Fail($"Server {_server.FullWebAddress} is offline.");
@@ -741,10 +736,10 @@ namespace MoonrakerSharpWebApi.Test
                 if (_server.IsOnline)
                 {
                     await _server.RefreshAllAsync();
-                    Assert.IsTrue(_server.InitialDataFetched);
+                    Assert.That(_server.InitialDataFetched);
 
                     KlipperMoonrakerProcessStatsResult info = await _server.GetMoonrakerProcessStatsAsync();
-                    Assert.IsNotNull(info);
+                    Assert.That(info is not null);
                 }
                 else
                     Assert.Fail($"Server {_server.FullWebAddress} is offline.");
@@ -765,40 +760,40 @@ namespace MoonrakerSharpWebApi.Test
                 if (_server.IsOnline)
                 {
                     await _server.RefreshAllAsync();
-                    Assert.IsTrue(_server.InitialDataFetched);
+                    Assert.That(_server.InitialDataFetched);
 
                     ObservableCollection<IGcode> files = await _server.GetAvailableFilesAsync();
-                    Assert.IsNotNull(files);
+                    Assert.That(files?.Count > 0);
 
-                    string fileName = files[0]?.FilePath;
+                    string? fileName = files[0]?.FilePath;
                     KlipperGcodeMetaResult meta = await _server.GetGcodeMetadataAsync(fileName);
-                    Assert.IsNotNull(meta);
+                    Assert.That(meta is not null);
 
 
                     files = await _server.GetAvailableFilesAsync("config");
-                    Assert.IsNotNull(files);
+                    Assert.That(files?.Count > 0);
 
                     files = await _server.GetAvailableFilesAsync("config_examples");
-                    Assert.IsNotNull(files);
+                    Assert.That(files?.Count > 0);
 
                     files = await _server.GetAvailableFilesAsync("docs ");
-                    Assert.IsNotNull(files);
+                    Assert.That(files?.Count > 0);
 
                     string dirName = "gcodes/Kundenaufträge";
                     KlipperDirectoryActionResult created = await _server.CreateDirectoryAsync(dirName);
-                    Assert.IsNotNull(created);
+                    Assert.That(created is not null);
 
                     KlipperDirectoryActionResult copyFile = await _server.CopyDirectoryOrFileAsync($"gcodes/{fileName}", $"{dirName}/{fileName}");
-                    Assert.IsNotNull(copyFile);
+                    Assert.That(copyFile is not null);
 
                     KlipperDirectoryInfoResult dirs = await _server.GetDirectoryInformationAsync(dirName);
-                    Assert.IsNotNull(dirs);
+                    Assert.That(dirs is not null);
 
-                    var deleteFile = await _server.DeleteFileAsync($"{dirName}/{fileName}");
-                    Assert.IsNotNull(dirs);
+                    KlipperDirectoryActionResult deleteFile = await _server.DeleteFileAsync($"{dirName}/{fileName}");
+                    Assert.That(deleteFile is not null);
 
                     KlipperDirectoryActionResult deleted = await _server.DeleteDirectoryAsync(dirName);
-                    Assert.IsNotNull(deleted);
+                    Assert.That(deleted is not null);
                 }
                 else
                     Assert.Fail($"Server {_server.FullWebAddress} is offline.");
@@ -822,31 +817,30 @@ namespace MoonrakerSharpWebApi.Test
                 if (_server.IsOnline)
                 {
                     await _server.RefreshAllAsync();
-                    Assert.IsTrue(_server.InitialDataFetched);
+                    Assert.That(_server.InitialDataFetched);
 
                     string testFile = @"Files/Groot_0.2mm_PETG_MK3S_11h28m.gcode";
-                    //string testFile = @"Files/Test.gcode";
-                    Assert.IsTrue(File.Exists(testFile));
+
+                    Assert.That(File.Exists(testFile));
                     FileInfo info = new(testFile);
                     string fullPath = info.FullName;
 
-                    byte[] file = null;
-                    file = await File.ReadAllBytesAsync(testFile);
+                    byte[]? file = await File.ReadAllBytesAsync(testFile);
 
                     KlipperFileActionResult msg = await _server.UploadFileAsync(fullPath);
-                    Assert.IsNotNull(msg);
+                    Assert.That(msg is not null);
 
-                    var meta = await _server.GetGcodeMetadataAsync(msg.Item.Path);
-                    Assert.IsNotNull(meta);
+                    KlipperGcodeMetaResult? meta = await _server.GetGcodeMetadataAsync(msg.Item.Path);
+                    Assert.That(meta is not null);
 
-                    string thumbnail = meta.GcodeImages.FirstOrDefault()?.Path;
+                    string? thumbnail = meta?.GcodeImages.FirstOrDefault()?.Path;
                     // Get small image (30x30)
                     byte[] image = await _server.GetGcodeThumbnailImageAsync(thumbnail);
                     // Get big image (400x300)
                     byte[] image2 = await _server.GetGcodeThumbnailImageAsync(meta, 1);
 
                     KlipperDirectoryActionResult deleted = await _server.DeleteFileAsync("gcodes", info.Name);
-                    Assert.IsNotNull(deleted);
+                    Assert.That(deleted is not null);
                 }
                 else
                     Assert.Fail($"Server {_server.FullWebAddress} is offline.");
@@ -867,15 +861,15 @@ namespace MoonrakerSharpWebApi.Test
                 if (_server.IsOnline)
                 {
                     await _server.RefreshAllAsync();
-                    Assert.IsTrue(_server.InitialDataFetched);
+                    Assert.That(_server.InitialDataFetched);
 
                     byte[] logFile = await _server.DownloadLogFileAsync(KlipperLogFileTypes.Klippy);
                     await File.WriteAllBytesAsync("klippy.log", logFile);
-                    Assert.IsNotNull(logFile);
+                    Assert.That(logFile?.Length > 0);
 
                     logFile = await _server.DownloadLogFileAsync(KlipperLogFileTypes.Moonraker);
                     await File.WriteAllBytesAsync("moonraker.log", logFile);
-                    Assert.IsNotNull(logFile);
+                    Assert.That(logFile?.Length > 0);
 
                     File.Delete("klippy.log");
                     File.Delete("moonraker.log");
@@ -907,13 +901,13 @@ namespace MoonrakerSharpWebApi.Test
                     KlipperUserActionResult login2 = await _server.LoginUserAsync(username, password);
 
                     await _server.RefreshAllAsync();
-                    Assert.IsTrue(_server.InitialDataFetched);
+                    Assert.That(_server.InitialDataFetched);
 
                     KlipperUserActionResult userCreated = await _server.CreateUserAsync(username, password);
-                    Assert.IsNotNull(userCreated);
+                    Assert.That(userCreated is not null);
 
                     List<KlipperUser> users = await _server.ListAvailableUsersAsync();
-                    Assert.IsTrue(users?.Count > 0);
+                    Assert.That(users?.Count > 0);
 
                     KlipperUser currentUser = await _server.GetCurrentUserAsync();
                     if (currentUser != null)
@@ -922,32 +916,32 @@ namespace MoonrakerSharpWebApi.Test
                     }
 
                     KlipperUserActionResult login = await _server.LoginUserAsync(username, password);
-                    Assert.IsNotNull(login);
-                    Assert.IsTrue(login.Username == username);
+                    Assert.That(login is not null);
+                    Assert.That(login.Username == username);
 
                     currentUser = await _server.GetCurrentUserAsync();
-                    Assert.IsNotNull(currentUser);
+                    Assert.That(currentUser is not null);
 
                     KlipperUserActionResult newTokenResult = await _server.RefreshJSONWebTokenAsync();
-                    Assert.IsNotNull(newTokenResult);
-                    Assert.IsTrue(_server.UserToken == newTokenResult.Token);
+                    Assert.That(newTokenResult is not null);
+                    Assert.That(_server.UserToken == newTokenResult.Token);
 
                     string newPassword = "TestPasswordChanged";
                     KlipperUserActionResult refreshPassword = await _server.ResetUserPasswordAsync(password, newPassword);
-                    Assert.IsNotNull(refreshPassword);
+                    Assert.That(refreshPassword is not null);
 
                     KlipperUserActionResult logout = await _server.LogoutCurrentUserAsync();
-                    Assert.IsNotNull(logout);
+                    Assert.That(logout is not null);
 
                     login = await _server.LoginUserAsync(username, newPassword);
-                    Assert.IsNotNull(login);
-                    Assert.IsTrue(login.Username == username);
+                    Assert.That(login is not null);
+                    Assert.That(login?.Username == username);
 
                     logout = await _server.LogoutCurrentUserAsync();
-                    Assert.IsNotNull(logout);
+                    Assert.That(logout is not null);
 
                     KlipperUserActionResult userDeleted = await _server.DeleteUserAsync(username);
-                    Assert.IsNotNull(userDeleted);
+                    Assert.That(userDeleted is not null);
                 }
                 else
                     Assert.Fail($"Server {_server.FullWebAddress} is offline.");
@@ -980,10 +974,10 @@ namespace MoonrakerSharpWebApi.Test
                 if (_server.IsOnline)
                 {
                     await _server.RefreshAllAsync();
-                    Assert.IsTrue(_server.InitialDataFetched);
+                    Assert.That(_server.InitialDataFetched);
 
                     //List<string> namespaces = await _server.ListDatabaseNamespacesAsync();
-                    Assert.IsTrue(_server.AvailableNamespaces?.Count > 0);
+                    Assert.That(_server.AvailableNamespaces?.Count > 0);
                     if (_server.OperatingSystem == MoonrakerOperatingSystems.FluiddPi)
                     {
                         _server.ApiKey = _api;
@@ -991,11 +985,11 @@ namespace MoonrakerSharpWebApi.Test
 
                     string currentNamespace = _server.OperatingSystem == MoonrakerOperatingSystems.MainsailOS ? "mainsail" : "fluidd";
                     Dictionary<string, object> items = await _server.GetDatabaseItemAsync(currentNamespace);
-                    Assert.IsNotNull(items);
+                    Assert.That(items?.Count > 0);
 
                     foreach (KeyValuePair<string, object> pair in items)
                     {
-                        var type = pair.Value.GetType();
+                        Type type = pair.Value.GetType();
                         if (pair.Value is JObject jObject)
                         {
                             foreach (var property in jObject.Properties())
@@ -1009,34 +1003,27 @@ namespace MoonrakerSharpWebApi.Test
 
                     Dictionary<string, object> webcams = await _server.GetDatabaseItemAsync(currentNamespace,
                         _server.OperatingSystem == MoonrakerOperatingSystems.MainsailOS ? "webcam" : "cameras");
-                    Assert.IsNotNull(webcams);
+                    Assert.That(webcams?.Count > 0);
 
-                    /*
-                    Dictionary<string, object> remotePrinters = await _server.GetDatabaseItemAsync(currentNamespace, "remote_printers");
-                    Assert.IsNotNull(remotePrinters);
-
-                    List<KlipperDatabaseMainsailValueRemotePrinter> remotePrinters2 = await _server.GetRemotePrintersAsync();
-                    Assert.IsNotNull(remotePrinters2);
-                    */
                     ObservableCollection<IWebCamConfig> webcamConfig = await _server.GetWebCamSettingsAsync();
-                    Assert.IsNotNull(webcamConfig);
+                    Assert.That(webcamConfig?.Count > 0);
                     if (webcamConfig.Count > 0)
-                        Assert.IsTrue(!string.IsNullOrEmpty(webcamConfig.FirstOrDefault()?.WebCamUrlDynamic?.ToString()));
+                        Assert.That(!string.IsNullOrEmpty(webcamConfig.FirstOrDefault()?.WebCamUrlDynamic?.ToString()));
 
                     List<KlipperDatabaseTemperaturePreset> presets = await _server.GetDashboardPresetsAsync();
-                    Assert.IsNotNull(presets);
+                    Assert.That(presets?.Count > 0);
 
                     if (_server.OperatingSystem == MoonrakerOperatingSystems.MainsailOS)
                     {
                         KlipperDatabaseMainsailValueHeightmapSettings heightmap = await _server.GetMeshHeightMapSettingsAsync();
-                        Assert.IsNotNull(heightmap);
+                        Assert.That(heightmap is not null);
                     }
 
                     Dictionary<string, object> add = await _server.AddDatabaseItemAsync(currentNamespace, "testkey", 56);
-                    Assert.IsNotNull(add);
+                    Assert.That(add?.Count > 0);
 
                     Dictionary<string, object> delete = await _server.DeleteDatabaseItemAsync(currentNamespace, "testkey");
-                    Assert.IsNotNull(delete);
+                    Assert.That(delete?.Count > 0);
 
                 }
                 else
@@ -1068,16 +1055,14 @@ namespace MoonrakerSharpWebApi.Test
                 if (_server.IsOnline)
                 {
                     await _server.RefreshAllAsync();
-                    Assert.IsTrue(_server.InitialDataFetched);
+                    Assert.That(_server.InitialDataFetched);
 
                     //List<string> namespaces = await _server.ListDatabaseNamespacesAsync();
-                    Assert.IsTrue(_server.AvailableNamespaces?.Count > 0);
+                    Assert.That(_server.AvailableNamespaces?.Count > 0);
 
                     string currentNamespace = _server.OperatingSystem == MoonrakerOperatingSystems.MainsailOS ? "mainsail" : "fluidd";
                     List<KlipperDatabaseRemotePrinter> printers = await _server.GetRemotePrintersAsync();
-                    Assert.IsNotNull(printers);
-
-
+                    Assert.That(printers?.Count > 0);
                 }
                 else
                     Assert.Fail($"Server {_server.FullWebAddress} is offline.");
@@ -1104,10 +1089,10 @@ namespace MoonrakerSharpWebApi.Test
                 if (_server.IsOnline)
                 {
                     await _server.RefreshAllAsync();
-                    Assert.IsTrue(_server.InitialDataFetched);
+                    Assert.That(_server.InitialDataFetched);
 
                     KlipperJobQueueResult jobstatus = await _server.GetJobQueueStatusAsync();
-                    Assert.IsNotNull(jobstatus);
+                    Assert.That(jobstatus is not null);
                 }
                 else
                     Assert.Fail($"Server {_server.FullWebAddress} is offline.");
@@ -1133,33 +1118,28 @@ namespace MoonrakerSharpWebApi.Test
                 if (_server.IsOnline)
                 {
                     await _server.RefreshAllAsync();
-                    Assert.IsTrue(_server.InitialDataFetched);
+                    Assert.That(_server.InitialDataFetched);
 
                     KlipperJobQueueResult jobstatus = await _server.GetJobQueueStatusAsync();
-                    Assert.IsNotNull(jobstatus);
+                    Assert.That(jobstatus is not null);
 
                     ObservableCollection<IGcode> files = await _server.GetAvailableFilesAsync();
-                    Assert.IsNotNull(files);
+                    Assert.That(files?.Count > 0);
 
-                    string fileName = files[0]?.FilePath;
+                    string? fileName = files[0]?.FilePath;
                     KlipperJobQueueResult queued = await _server.EnqueueJobsAsync(new string[] { fileName });
 
                     jobstatus = await _server.GetJobQueueStatusAsync();
-                    Assert.IsNotNull(jobstatus);
+                    Assert.That(jobstatus is not null);
 
                     KlipperJobQueueResult start = await _server.StartJobQueueAsync();
-                    Assert.IsNotNull(start);
+                    Assert.That(start is not null);
 
                     KlipperJobQueueResult pause = await _server.PauseJobQueueAsync();
-                    Assert.IsNotNull(pause);
+                    Assert.That(pause is not null);
 
                     KlipperJobQueueResult removedAll = await _server.RemoveAllJobAsync();
-                    Assert.IsNotNull(removedAll);
-
-                    // Once a printer is available, use real ids
-                    //string[] ids = new string[] { "00000000000000001", "00000000000323" };
-                    //KlipperJobQueueResult removedIDs = await _server.RemoveJobAsync(ids);
-                    //Assert.IsNotNull(removedIDs);
+                    Assert.That(removedAll is not null);
                 }
                 else
                     Assert.Fail($"Server {_server.FullWebAddress} is offline.");
@@ -1186,23 +1166,23 @@ namespace MoonrakerSharpWebApi.Test
                 if (_server.IsOnline)
                 {
                     await _server.RefreshAllAsync();
-                    Assert.IsTrue(_server.InitialDataFetched);
+                    Assert.That(_server.InitialDataFetched);
 
-                    var devices = await _server.GetDeviceListAsync();
-                    Assert.IsNotNull(devices);
+                    List<KlipperDevice> devices = await _server.GetDeviceListAsync();
+                    Assert.That(devices?.Count > 0);
 
                     string device = devices[0].Device;
-                    var status = await _server.GetDeviceStatusAsync(device);
-                    Assert.IsNotNull(status);
-                    Assert.IsTrue(status["printer"] == "off");
+                    Dictionary<string, string> status = await _server.GetDeviceStatusAsync(device);
+                    Assert.That(status?.Count > 0);
+                    Assert.That(status["printer"] == "off");
 
                     Dictionary<string, string> stateChanged = await _server.SetDeviceStateAsync(device, KlipperDeviceActions.On);
-                    Assert.IsNotNull(stateChanged);
-                    Assert.IsTrue(stateChanged["printer"] == "on");
+                    Assert.That(stateChanged?.Count > 0);
+                    Assert.That(stateChanged["printer"] == "on");
 
                     stateChanged = await _server.SetDeviceStateAsync(device, KlipperDeviceActions.Off);
-                    Assert.IsNotNull(stateChanged);
-                    Assert.IsTrue(stateChanged["printer"] == "off");
+                    Assert.That(stateChanged?.Count > 0);
+                    Assert.That(stateChanged["printer"] == "off");
                 }
                 else
                     Assert.Fail($"Server {_server.FullWebAddress} is offline.");
@@ -1229,10 +1209,10 @@ namespace MoonrakerSharpWebApi.Test
                 if (_server.IsOnline)
                 {
                     await _server.RefreshAllAsync();
-                    Assert.IsTrue(_server.InitialDataFetched);
+                    Assert.That(_server.InitialDataFetched);
 
-                    var status = await _server.GetUpdateStatusAsync();
-                    Assert.IsNotNull(status);
+                    KlipperUpdateStatusResult status = await _server.GetUpdateStatusAsync();
+                    Assert.That(status is not null);
                 }
                 else
                     Assert.Fail($"Server {_server.FullWebAddress} is offline.");
@@ -1259,31 +1239,28 @@ namespace MoonrakerSharpWebApi.Test
                 if (_server.IsOnline)
                 {
                     await _server.RefreshAllAsync();
-                    Assert.IsTrue(_server.InitialDataFetched);
+                    Assert.That(_server.InitialDataFetched);
 
                     OctoprintApiVersionResult version = await _server.GetOctoPrintApiVersionInfoAsync();
-                    Assert.IsNotNull(version);
+                    Assert.That(version is not null);
 
                     OctoprintApiServerStatusResult server = await _server.GetOctoPrintApiServerStatusAsync();
-                    Assert.IsNotNull(server);
-
-                    //var userInfo = await _server.GetUserInformationAsync();
-                    //Assert.IsNotNull(userInfo);
+                    Assert.That(server is not null);
 
                     OctoprintApiSettingsResult settings = await _server.GetOctoPrintApiSettingsAsync();
-                    Assert.IsNotNull(settings);
+                    Assert.That(settings is not null);
 
                     OctoprintApiJobResult jobStatus = await _server.GetOctoPrintApiJobStatusAsync();
-                    Assert.IsNotNull(jobStatus);
+                    Assert.That(jobStatus is not null);
 
                     OctoprintApiPrinterStatusResult printerStatus = await _server.GetOctoPrintApiPrinterStatusAsync();
-                    Assert.IsNotNull(printerStatus);
+                    Assert.That(printerStatus is not null);
 
                     Dictionary<string, OctoprintApiPrinter> printerProfiles = await _server.GetOctoPrintApiPrinterProfilesAsync();
-                    Assert.IsNotNull(printerProfiles);
+                    Assert.That(printerProfiles?.Count > 0);
 
                     bool gcodeCommand = await _server.SendOctoPrintApiGcodeCommandAsync("G28");
-                    Assert.IsTrue(gcodeCommand);
+                    Assert.That(gcodeCommand);
                 }
                 else
                     Assert.Fail($"Server {_server.FullWebAddress} is offline.");
@@ -1310,20 +1287,20 @@ namespace MoonrakerSharpWebApi.Test
                 if (_server.IsOnline)
                 {
                     await _server.RefreshAllAsync();
-                    Assert.IsTrue(_server.InitialDataFetched);
+                    Assert.That(_server.InitialDataFetched);
 
                     List<KlipperJobItem> history = await _server.GetHistoryJobListAsync();
-                    Assert.IsNotNull(history);
+                    Assert.That(history?.Count > 0);
 
                     KlipperHistoryJobTotalsResult total = await _server.GetHistoryTotalJobsAsync();
-                    Assert.IsNotNull(total);
+                    Assert.That(total is not null);
 
                     string uid = history[0].JobId;
                     KlipperJobItem job = await _server.GetHistoryJobAsync(uid);
-                    Assert.IsNotNull(job);
+                    Assert.That(job is not null);
 
-                    var deletedIds = await _server.DeleteHistoryJobAsync(uid);
-                    Assert.IsNotNull(job);
+                    List<string> deletedIds = await _server.DeleteHistoryJobAsync(uid);
+                    Assert.That(deletedIds?.Count > 0);
                 }
                 else
                     Assert.Fail($"Server {_server.FullWebAddress} is offline.");
@@ -1365,7 +1342,7 @@ namespace MoonrakerSharpWebApi.Test
                     Debug.WriteLine($"Online: {_server.IsOnline}");
                     //await _server.RefreshAllAsync();
                 } while (_server.IsOnline && !cts.IsCancellationRequested);
-                Assert.IsTrue(cts.IsCancellationRequested);
+                Assert.That(cts.IsCancellationRequested);
             }
             catch (Exception exc)
             {
@@ -1385,7 +1362,7 @@ namespace MoonrakerSharpWebApi.Test
                 };
 
                 await _server.CheckOnlineAsync();
-                Assert.IsTrue(_server.IsOnline);
+                Assert.That(_server.IsOnline);
 
                 await _server.RefreshAllAsync();
 
@@ -1397,8 +1374,8 @@ namespace MoonrakerSharpWebApi.Test
 
                 _server.WebSocketConnectionIdChanged += (o, args) =>
                 {
-                    Assert.IsNotNull(args.ConnectionId);
-                    Assert.IsTrue(args.ConnectionId > 0);
+                    Assert.That(args?.ConnectionId is not null);
+                    Assert.That(args?.ConnectionId > 0);
                     Task.Run(async () =>
                     {
                         string subResult = await _server.SubscribeAllPrinterObjectStatusAsync(args.ConnectionId);
@@ -1419,12 +1396,12 @@ namespace MoonrakerSharpWebApi.Test
                 {
                     foreach (var pair in args.ExtruderStates)
                     {
-                        Debug.WriteLine($"Extruder{pair.Key}: {pair.Value?.Temperature} �C (Target: {pair.Value?.Target} �C)");
+                        Debug.WriteLine($"Extruder{pair.Key}: {pair.Value?.TempRead} �C (Target: {pair.Value?.TempSet} �C)");
                     }
                 };
                 _server.KlipperHeaterBedStateChanged += (o, args) =>
                 {
-                    Debug.WriteLine($"HeatedBed: {args.NewHeaterBedState.Temperature} �C (Target: {args.NewHeaterBedState.Target} �C)");
+                    Debug.WriteLine($"HeatedBed: {args.NewHeaterBedState.TempRead} �C (Target: {args.NewHeaterBedState.TempSet} �C)");
                 };
                 _server.KlipperDisplayStatusChanged += (o, args) =>
                 {
@@ -1478,7 +1455,7 @@ namespace MoonrakerSharpWebApi.Test
                 }
                 await File.WriteAllTextAsync("ws_messages.txt", sb.ToString());
 
-                Assert.IsTrue(cts.IsCancellationRequested);
+                Assert.That(cts.IsCancellationRequested);
             }
             catch (Exception exc)
             {
@@ -1497,7 +1474,7 @@ namespace MoonrakerSharpWebApi.Test
                 };
 
                 await _server.CheckOnlineAsync();
-                Assert.IsTrue(_server.IsOnline);
+                Assert.That(_server.IsOnline);
 
                 await _server.RefreshAllAsync();
 
@@ -1513,8 +1490,8 @@ namespace MoonrakerSharpWebApi.Test
 
                 _server.WebSocketConnectionIdChanged += (o, args) =>
                 {
-                    Assert.IsNotNull(args.ConnectionId);
-                    Assert.IsTrue(args.ConnectionId > 0);
+                    Assert.That(args?.ConnectionId is not null);
+                    Assert.That(args?.ConnectionId > 0);
                     Task.Run(async () =>
                     {
                         string subResult = await _server.SubscribeAllPrinterObjectStatusAsync(args.ConnectionId);
@@ -1535,12 +1512,12 @@ namespace MoonrakerSharpWebApi.Test
                 {
                     foreach (var pair in args.ExtruderStates)
                     {
-                        Debug.WriteLine($"Extruder{pair.Key}: {pair.Value?.Temperature} �C (Target: {pair.Value?.Target} �C)");
+                        Debug.WriteLine($"Extruder{pair.Key}: {pair.Value?.TempRead} �C (Target: {pair.Value?.TempSet} �C)");
                     }
                 };
                 _server.KlipperHeaterBedStateChanged += (o, args) =>
                 {
-                    Debug.WriteLine($"HeatedBed: {args.NewHeaterBedState?.Temperature} �C (Target: {args.NewHeaterBedState?.Target} �C)");
+                    Debug.WriteLine($"HeatedBed: {args.NewHeaterBedState?.TempRead} �C (Target: {args.NewHeaterBedState?.TempSet} �C)");
                 };
                 _server.KlipperDisplayStatusChanged += (o, args) =>
                 {
@@ -1594,7 +1571,7 @@ namespace MoonrakerSharpWebApi.Test
                 }
                 await File.WriteAllTextAsync("ws_messages.txt", sb.ToString());
 
-                Assert.IsTrue(cts.IsCancellationRequested);
+                Assert.That(cts.IsCancellationRequested);
             }
             catch (Exception exc)
             {
