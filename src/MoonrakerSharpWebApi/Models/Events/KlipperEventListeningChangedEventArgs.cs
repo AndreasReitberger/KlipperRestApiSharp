@@ -1,7 +1,9 @@
 ﻿using Newtonsoft.Json;
+using System;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
+    [Obsolete("Use `ListeningChangedEventArgs` instead")]
     public class KlipperEventListeningChangedEventArgs : KlipperSessionChangedEventArgs
     {
         #region Properties

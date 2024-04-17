@@ -17,10 +17,11 @@ namespace AndreasReitberger.API.Moonraker
 
             public MoonrakerClient Build()
             {
+                _client.Target = Print3dServer.Core.Enums.Print3dServerTarget.Moonraker;
                 return _client;
             }
 
-            public MoonrakerConnectionBuilder WithServerAddress(string serverAddress, int port = 3344, bool https = false)
+            public MoonrakerConnectionBuilder WithServerAddress(string serverAddress, int port = 80, bool https = false)
             {
                 _client.IsSecure = https;
                 _client.ServerAddress = serverAddress;
@@ -31,6 +32,12 @@ namespace AndreasReitberger.API.Moonraker
             public MoonrakerConnectionBuilder WithApiKey(string apiKey)
             {
                 _client.ApiKey = apiKey;
+                return this;
+            }
+
+            public MoonrakerConnectionBuilder WithName(string name)
+            {
+                _client.ServerName = name;
                 return this;
             }
 

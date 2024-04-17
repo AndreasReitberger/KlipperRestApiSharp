@@ -1,18 +1,25 @@
 ﻿using AndreasReitberger.API.Moonraker.Enum;
+using AndreasReitberger.API.Print3dServer.Core.Enums;
+using AndreasReitberger.API.Print3dServer.Core.Interfaces;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperStatusExtruder
+    public partial class KlipperStatusExtruder : ObservableObject, IToolhead
     {
         #region Properties
+        [ObservableProperty, JsonIgnore]
+        [property: JsonIgnore]
+        Guid id;
+
         [JsonProperty("temperature")]
-        public double? Temperature { get; set; }
+        public double? TempRead { get; set; }
 
         [JsonProperty("target")]
-        public double? Target { get; set; }
+        public double? TempSet { get; set; }
 
         [JsonProperty("power")]
         public double? Power { get; set; }
@@ -57,13 +64,36 @@ namespace AndreasReitberger.API.Moonraker.Models
         public List<double> Position { get; set; } = new();
 
         [JsonProperty("extruder")]
-        public string Extruder { get; set; }
+        public string Name { get; set; }
 
         [JsonIgnore]
         public bool CanUpdateTarget { get; set; } = false;
 
         [JsonIgnore]
         public KlipperToolState State { get => GetCurrentState(); }
+
+        [ObservableProperty]
+        Printer3dHeaterType type = Printer3dHeaterType.Other;
+
+        #region Interface, unused
+        [ObservableProperty, JsonIgnore]
+        [property: JsonIgnore]
+        double x = 0;
+
+        [ObservableProperty, JsonIgnore]
+        [property: JsonIgnore]
+        double y = 0;
+
+        [ObservableProperty, JsonIgnore]
+        [property: JsonIgnore]
+        double z = 0;
+
+        [ObservableProperty, JsonIgnore]
+        [property: JsonIgnore]
+        long error;
+
+        #endregion
+
         #endregion
 
         #region Methods
@@ -71,11 +101,11 @@ namespace AndreasReitberger.API.Moonraker.Models
         {
             try
             {
-                if (Target == null || Temperature == null)
+                if (TempSet == null || TempRead == null)
                     return KlipperToolState.Idle;
-                return Target <= 0
+                return TempSet <= 0
                     ? KlipperToolState.Idle
-                    : Target > Temperature && Math.Abs(Convert.ToDouble(Target - Temperature)) > 2 ? KlipperToolState.Heating : KlipperToolState.Ready;
+                    : TempSet > TempRead && Math.Abs(Convert.ToDouble(TempSet - TempRead)) > 2 ? KlipperToolState.Heating : KlipperToolState.Ready;
             }
             catch (Exception)
             {
@@ -83,13 +113,12 @@ namespace AndreasReitberger.API.Moonraker.Models
             }
 
         }
+        public Task<bool> SetTemperatureAsync(IPrint3dServerClient client, string command, object data) => client?.SetExtruderTemperatureAsync(command, data);
         #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
+
         #endregion
     }
 }

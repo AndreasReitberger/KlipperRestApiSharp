@@ -14,6 +14,7 @@ namespace AndreasReitberger.API.Moonraker
         #region Debug
 
         [ObservableProperty]
+        [property: Newtonsoft.Json.JsonIgnore, JsonIgnore, XmlIgnore]
         JsonSerializerOptions jsonSerializerSettings = DefaultJsonSerializerSettings;
 
         public new static JsonSerializerOptions DefaultJsonSerializerSettings = new()
@@ -29,6 +30,11 @@ namespace AndreasReitberger.API.Moonraker
                 new TypeMappingConverter<IGcodeMeta, KlipperGcodeMetaResult>(),
                 new TypeMappingConverter<IGcodeImage, KlipperGcodeThumbnail>(),
                 new TypeMappingConverter<IPrint3dJob, KlipperJobQueueItem>(),
+                new TypeMappingConverter<IPrint3dJobStatus, KlipperStatusJob>(),
+                new TypeMappingConverter<IWebCamConfig, KlipperDatabaseWebcamConfig>(),
+                new TypeMappingConverter<IToolhead, KlipperStatusExtruder>(),
+                new TypeMappingConverter<IPrint3dFan, KlipperStatusFan>(),
+                new TypeMappingConverter<ISensorComponent, KlipperStatusFilamentSensor>(),
             }
         };
         #endregion
@@ -45,6 +51,9 @@ namespace AndreasReitberger.API.Moonraker
                 new TypeMappingConverter<IGcodeMeta, KlipperGcodeMetaResult>(),
                 new TypeMappingConverter<IGcodeImage, KlipperGcodeThumbnail>(),
                 new TypeMappingConverter<IPrint3dJob, KlipperJobQueueItem>(),
+                new TypeMappingConverter<IPrint3dJobStatus, KlipperStatusJob>(),
+                new TypeMappingConverter<IWebCamConfig, KlipperDatabaseWebcamConfig>(),
+                new TypeMappingConverter<IToolhead, KlipperStatusExtruder>(),
             }
         };
         #endregion

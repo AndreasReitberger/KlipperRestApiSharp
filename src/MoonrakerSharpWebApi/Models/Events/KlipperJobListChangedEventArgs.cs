@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using AndreasReitberger.API.Print3dServer.Core.Interfaces;
+using Newtonsoft.Json;
 using System.Collections.ObjectModel;
 
 namespace AndreasReitberger.API.Moonraker.Models
@@ -7,6 +8,7 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         public ObservableCollection<KlipperJobQueueItem> NewJobList { get; set; } = new();
+        //public ObservableCollection<IPrint3dJob> NewJobList { get; set; } = new();
         //public string NewJobListStatus { get; set; } = string.Empty;
         #endregion
 
