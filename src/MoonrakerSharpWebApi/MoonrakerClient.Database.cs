@@ -356,7 +356,7 @@ namespace AndreasReitberger.API.Moonraker
                                     valuePair.Key, new KlipperDatabaseTemperaturePresetHeater()
                                     {
                                         Name = valuePair.Key,
-                                        Active = valuePair.Value.Bool,
+                                        Active = valuePair.Value.BoolValue,
                                         Type = valuePair.Value.Type,
                                         Value = valuePair.Value.Value,
                                     }))),

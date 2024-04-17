@@ -3,32 +3,40 @@ using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperWebSocketKlipperStatusResult
+    public partial class KlipperWebSocketKlipperStatusResult : ObservableObject
     {
         #region Properties
-        [JsonProperty("klippy_connected")]
-        public bool KlippyConnected { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("klippy_connected")]
+        bool klippyConnected;
 
-        [JsonProperty("klippy_state")]
-        public string KlippyState { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("klippy_state")]
+        string klippyState = string.Empty;
 
-        [JsonProperty("components")]
-        public List<string> Components { get; set; } = [];
+        [ObservableProperty]
+        [property: JsonProperty("components")]
+        List<string> components = [];
 
-        [JsonProperty("failed_components")]
-        public List<object> FailedComponents { get; set; } = [];
+        [ObservableProperty]
+        [property: JsonProperty("failed_components")]
+        List<object> failedComponents = [];
 
-        [JsonProperty("registered_directories")]
-        public List<string> RegisteredDirectories { get; set; } = [];
+        [ObservableProperty]
+        [property: JsonProperty("registered_directories")]
+        List<string> registeredDirectories = [];
 
-        [JsonProperty("warnings")]
-        public List<object> Warnings { get; set; } = [];
+        [ObservableProperty]
+        [property: JsonProperty("warnings")]
+        List<object> warnings = [];
 
-        [JsonProperty("websocket_count")]
-        public long WebsocketCount { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("websocket_count")]
+        long websocketCount;
 
-        [JsonProperty("moonraker_version")]
-        public string MoonrakerVersion { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("moonraker_version")]
+        string moonrakerVersion = string.Empty;
         #endregion
 
         #region Overrides

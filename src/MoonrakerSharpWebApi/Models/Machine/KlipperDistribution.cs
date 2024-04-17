@@ -2,26 +2,32 @@
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperDistribution
+    public partial class KlipperDistribution : ObservableObject
     {
         #region Properties
-        [JsonProperty("name")]
-        public string Name { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("name")]
+        string name = string.Empty;
 
-        [JsonProperty("id")]
-        public string Id { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("id")]
+        string id = string.Empty;
 
-        [JsonProperty("version")]
-        public long Version { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("version")]
+        long version;
 
-        [JsonProperty("version_parts")]
-        public KlipperVersion? KlipperVersion { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("version_parts")]
+        KlipperVersion? klipperVersion;
 
-        [JsonProperty("like")]
-        public string Like { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("like")]
+        string like = string.Empty;
 
-        [JsonProperty("codename")]
-        public string Codename { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("codename")]
+        string codename = string.Empty;
         #endregion
 
         #region Overrides

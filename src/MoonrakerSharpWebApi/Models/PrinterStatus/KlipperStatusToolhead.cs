@@ -3,44 +3,56 @@ using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperStatusToolhead
+    public partial class KlipperStatusToolhead : ObservableObject
     {
         #region Properties
-        [JsonProperty("square_corner_velocity")]
-        public double? SquareCornerVelocity { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("square_corner_velocity")]
+        double? squareCornerVelocity;
 
-        [JsonProperty("max_accel")]
-        public double? MaxAccel { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("max_accel")]
+        double? maxAccel;
 
-        [JsonProperty("homed_axes")]
-        public string HomedAxes { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("homed_axes")]
+        string homedAxes = string.Empty;
 
-        [JsonProperty("estimated_print_time")]
-        public double? EstimatedPrintTime { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("estimated_print_time")]
+        double? estimatedPrintTime;
 
-        [JsonProperty("max_velocity")]
-        public double? MaxVelocity { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("max_velocity")]
+        double? maxVelocity;
 
-        [JsonProperty("print_time")]
-        public double? PrintTime { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("print_time")]
+        double? printTime;
 
-        [JsonProperty("max_accel_to_decel")]
-        public double? MaxAccelToDecel { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("max_accel_to_decel")]
+        double? maxAccelToDecel;
 
-        [JsonProperty("axis_minimum")]
-        public List<double> AxisMinimum { get; set; } = new();
+        [ObservableProperty]
+        [property: JsonProperty("axis_minimum")]
+        List<double> axisMinimum = new();
 
-        [JsonProperty("stalls")]
-        public double? Stalls { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("stalls")]
+        double? stalls;
 
-        [JsonProperty("axis_maximum")]
-        public List<double> AxisMaximum { get; set; } = new();
+        [ObservableProperty]
+        [property: JsonProperty("axis_maximum")]
+        List<double> axisMaximum = new();
 
-        [JsonProperty("position")]
-        public List<double> Position { get; set; } = new();
+        [ObservableProperty]
+        [property: JsonProperty("position")]
+        List<double> position = new();
 
-        [JsonProperty("extruder")]
-        public string Extruder { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("extruder")]
+        string extruder = string.Empty;
         #endregion
 
         #region Methods

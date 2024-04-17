@@ -3,23 +3,28 @@ using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperMoonrakerProcessStatsResult
+    public partial class KlipperMoonrakerProcessStatsResult : ObservableObject
     {
         #region Properties
-        [JsonProperty("moonraker_stats")]
-        public List<MoonrakerStatInfo> MoonrakerStats { get; set; } = [];
+        [ObservableProperty]
+        [property: JsonProperty("moonraker_stats")]
+        List<MoonrakerStatInfo> moonrakerStats = [];
 
-        [JsonProperty("throttled_state")]
-        public MoonrakerThrottledState? ThrottledState { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("throttled_state")]
+        MoonrakerThrottledState? throttledState;
 
-        [JsonProperty("cpu_temp")]
-        public double CpuTemp { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("cpu_temp")]
+        double cpuTemp;
 
-        [JsonProperty("network")]
-        public Dictionary<string, KlipperNetworkInterface> Network { get; set; } = [];
+        [ObservableProperty]
+        [property: JsonProperty("network")]
+        Dictionary<string, KlipperNetworkInterface> network = [];
 
-        [JsonProperty("websocket_connections")]
-        public long WebsocketConnections { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("websocket_connections")]
+        long websocketConnections;
         #endregion
 
         #region Overrides

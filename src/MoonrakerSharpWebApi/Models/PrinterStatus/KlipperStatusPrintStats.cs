@@ -4,30 +4,37 @@ using Newtonsoft.Json.Converters;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperStatusPrintStats
+    public partial class KlipperStatusPrintStats : ObservableObject
     {
         #region Properties
-        [JsonProperty("print_duration")]
-        public double? PrintDuration { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("print_duration")]
+        double? printDuration;
 
-        [JsonProperty("total_duration")]
-        public double? TotalDuration { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("total_duration")]
+        double? totalDuration;
 
-        [JsonProperty("filament_used")]
-        public double? FilamentUsed { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("filament_used")]
+        double? filamentUsed;
 
-        [JsonProperty("filename")]
-        public string Filename { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("filename")]
+        string filename = string.Empty;
 
-        [JsonProperty("state")]
+        [ObservableProperty]
+        [property: JsonProperty("state")]
         [JsonConverter(typeof(StringEnumConverter), true)]
-        public KlipperPrintStates State { get; set; }
+        KlipperPrintStates state;
 
-        [JsonProperty("message")]
-        public string Message { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("message")]
+        string message = string.Empty;
 
         [JsonIgnore]
-        public bool ValidPrintState { get; set; } = false;
+        [ObservableProperty]
+        bool validPrintState = false;
         #endregion
 
         #region Overrides

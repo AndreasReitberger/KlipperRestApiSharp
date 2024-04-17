@@ -42,8 +42,8 @@ namespace AndreasReitberger.API.Moonraker.Models
         */
 
         [ObservableProperty]
-        [JsonProperty("rpm")]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        [property: JsonProperty("rpm")]
+        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
         long? rpm = 0;
 
         [ObservableProperty]

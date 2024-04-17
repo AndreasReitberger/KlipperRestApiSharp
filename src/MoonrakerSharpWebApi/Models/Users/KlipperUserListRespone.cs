@@ -2,11 +2,12 @@
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperUserListRespone
+    public partial class KlipperUserListRespone : ObservableObject
     {
         #region Properties
-        [JsonProperty("result")]
-        public KlipperUserListResult? Result { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("result")]
+        KlipperUserListResult? result;
         #endregion
 
         #region Overrides

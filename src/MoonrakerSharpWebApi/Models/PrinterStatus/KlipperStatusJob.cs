@@ -30,15 +30,15 @@ namespace AndreasReitberger.API.Moonraker.Models
         DateTime? endTimeGeneralized;
 
         [ObservableProperty]
-        [JsonProperty("filament_used")]
+        [property: JsonProperty("filament_used")]
         double? filamentUsed;
 
         [ObservableProperty]
-        [JsonProperty("filename")]
+        [property: JsonProperty("filename")]
         string fileName = string.Empty;
 
         [ObservableProperty]
-        [JsonProperty("metadata")]
+        [property: JsonProperty("metadata")]
         IGcodeMeta? meta;
 
         [ObservableProperty, JsonIgnore]
@@ -56,7 +56,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         TimeSpan? printDurationGeneralized;
         /*
         [ObservableProperty]
-        [JsonProperty("status")]
+        [property: JsonProperty("status")]
         [JsonConverter(typeof(StringEnumConverter), true)]
         KlipperJobStates status;
         partial void OnStatusChanged(KlipperJobStates value)
@@ -66,7 +66,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         */
 
         [ObservableProperty]
-        [JsonProperty("status")]
+        [property: JsonProperty("status")]
         [JsonConverter(typeof(StringEnumConverter), true)]
         Print3dJobState state;
 
@@ -105,11 +105,11 @@ namespace AndreasReitberger.API.Moonraker.Models
         TimeSpan? totalPrintDurationGeneralized;
 
         [ObservableProperty]
-        [JsonProperty("job_id")]
+        [property: JsonProperty("job_id")]
         string jobId = string.Empty;
 
         [ObservableProperty]
-        [JsonProperty("exists")]
+        [property: JsonProperty("exists")]
         bool fileExists;
 
         #endregion

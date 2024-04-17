@@ -3,23 +3,28 @@ using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperNetworkInterface
+    public partial class KlipperNetworkInterface : ObservableObject
     {
         #region Properties
-        [JsonProperty("mac_address")]
-        public string MacAddress { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("mac_address")]
+        string macAddress = string.Empty;
 
-        [JsonProperty("ip_addresses")]
-        public List<KlipperIpAddress> IpAddresses { get; set; } = [];
+        [ObservableProperty]
+        [property: JsonProperty("ip_addresses")]
+        List<KlipperIpAddress> ipAddresses = [];
 
-        [JsonProperty("rx_bytes")]
-        public long RxBytes { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("rx_bytes")]
+        long rxBytes;
 
-        [JsonProperty("tx_bytes")]
-        public long TxBytes { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("tx_bytes")]
+        long txBytes;
 
-        [JsonProperty("bandwidth")]
-        public double Bandwidth { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("bandwidth")]
+        double bandwidth;
         #endregion
 
         #region Overrides

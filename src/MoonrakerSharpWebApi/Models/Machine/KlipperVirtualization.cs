@@ -2,14 +2,16 @@
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperVirtualization
+    public partial class KlipperVirtualization : ObservableObject
     {
         #region Properties
-        [JsonProperty("virt_type")]
-        public string VirtType { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("virt_type")]
+        string virtType = string.Empty;
 
-        [JsonProperty("virt_identifier")]
-        public string VirtIdentifier { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("virt_identifier")]
+        string virtIdentifier = string.Empty;
         #endregion
 
         #region Overrides

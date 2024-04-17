@@ -2,20 +2,24 @@
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class OctoprintApiPrinterAxes
+    public partial class OctoprintApiPrinterAxes : ObservableObject
     {
         #region Properties
-        [JsonProperty("e")]
-        public OctoprintApiPrinterAxesAttribute? E { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("e")]
+        OctoprintApiPrinterAxesAttribute? e;
 
-        [JsonProperty("x")]
-        public OctoprintApiPrinterAxesAttribute? X { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("x")]
+        OctoprintApiPrinterAxesAttribute? x;
 
-        [JsonProperty("y")]
-        public OctoprintApiPrinterAxesAttribute? Y { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("y")]
+        OctoprintApiPrinterAxesAttribute? y;
 
-        [JsonProperty("z")]
-        public OctoprintApiPrinterAxesAttribute? Z { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("z")]
+        OctoprintApiPrinterAxesAttribute? z;
         #endregion
 
         #region Overrides

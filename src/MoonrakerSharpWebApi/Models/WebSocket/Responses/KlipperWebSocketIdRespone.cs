@@ -2,11 +2,12 @@
 
 namespace AndreasReitberger.API.Moonraker.Models.WebSocket
 {
-    public partial class KlipperWebSocketIdRespone
+    public partial class KlipperWebSocketIdRespone : ObservableObject
     {
         #region Properties
-        [JsonProperty("websocket_id", Required = Required.Always)]
-        public long WebsocketId { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("websocket_id", Required = Required.Always)]
+        long websocketId;
         #endregion
 
         #region Overrides

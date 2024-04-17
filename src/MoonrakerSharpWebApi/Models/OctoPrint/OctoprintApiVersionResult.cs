@@ -2,17 +2,20 @@
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class OctoprintApiVersionResult
+    public partial class OctoprintApiVersionResult : ObservableObject
     {
         #region Properties
-        [JsonProperty("server")]
-        public string Server { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("server")]
+        string server = string.Empty;
 
-        [JsonProperty("api")]
-        public string Api { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("api")]
+        string api = string.Empty;
 
-        [JsonProperty("text")]
-        public string Text { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("text")]
+        string text = string.Empty;
         #endregion
 
         #region Overrides

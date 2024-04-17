@@ -2,17 +2,20 @@
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class OctoprintApiPrinterStatusResult
+    public partial class OctoprintApiPrinterStatusResult : ObservableObject
     {
         #region Properties
-        [JsonProperty("temperature", NullValueHandling = NullValueHandling.Ignore)]
-        public OctoprintApiPrinterStateTemperature? Temperature { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("temperature", NullValueHandling = NullValueHandling.Ignore)]
+        OctoprintApiPrinterStateTemperature? temperature;
 
-        [JsonProperty("sd", NullValueHandling = NullValueHandling.Ignore)]
-        public OctoprintApiPrinterStateSd? Sd { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("sd", NullValueHandling = NullValueHandling.Ignore)]
+        OctoprintApiPrinterStateSd? sd;
 
-        [JsonProperty("state", NullValueHandling = NullValueHandling.Ignore)]
-        public OctoprintApiPrinterState? State { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("state", NullValueHandling = NullValueHandling.Ignore)]
+        OctoprintApiPrinterState? state;
         #endregion
 
         #region Overrides

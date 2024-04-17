@@ -3,11 +3,12 @@ using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class OctoprintApiPrinterProfilesResult
+    public partial class OctoprintApiPrinterProfilesResult : ObservableObject
     {
         #region Properties
-        [JsonProperty("profiles")]
-        public Dictionary<string, OctoprintApiPrinter> Profiles { get; set; } = new();
+        [ObservableProperty]
+        [property: JsonProperty("profiles")]
+        Dictionary<string, OctoprintApiPrinter> profiles = [];
         #endregion
 
         #region Overrides

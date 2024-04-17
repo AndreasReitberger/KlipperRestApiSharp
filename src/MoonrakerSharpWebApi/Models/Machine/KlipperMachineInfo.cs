@@ -3,29 +3,36 @@ using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperMachineInfo
+    public partial class KlipperMachineInfo : ObservableObject
     {
         #region Properties
-        [JsonProperty("cpu_info")]
-        public KlipperCpuInfo? CpuInfo { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("cpu_info")]
+        KlipperCpuInfo? cpuInfo;
 
-        [JsonProperty("sd_info")]
-        public KlipperSdInfo? SdInfo { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("sd_info")]
+        KlipperSdInfo? sdInfo;
 
-        [JsonProperty("distribution")]
-        public KlipperDistribution? Distribution { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("distribution")]
+        KlipperDistribution? distribution;
 
-        [JsonProperty("virtualization")]
-        public KlipperVirtualization? Virtualization { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("virtualization")]
+        KlipperVirtualization? virtualization;
 
-        [JsonProperty("available_services")]
-        public List<string> AvailableServices { get; set; } = [];
+        [ObservableProperty]
+        [property: JsonProperty("available_services")]
+        List<string> availableServices = [];
 
-        [JsonProperty("service_state")]
-        public Dictionary<string, KlipperState> ServiceState { get; set; } = [];
+        [ObservableProperty]
+        [property: JsonProperty("service_state")]
+        Dictionary<string, KlipperState> serviceState = [];
 
-        [JsonProperty("network")]
-        public Dictionary<string, KlipperNetworkInterface> Network { get; set; } = [];
+        [ObservableProperty]
+        [property: JsonProperty("network")]
+        Dictionary<string, KlipperNetworkInterface> network = [];
         #endregion
 
         #region Overrides

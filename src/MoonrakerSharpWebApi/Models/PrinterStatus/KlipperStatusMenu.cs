@@ -2,20 +2,24 @@
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperStatusMenu
+    public partial class KlipperStatusMenu : ObservableObject
     {
         #region Properties
-        [JsonProperty("running")]
-        public bool Running { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("running")]
+        bool running;
 
-        [JsonProperty("rows")]
-        public long? Rows { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("rows")]
+        long? rows;
 
-        [JsonProperty("cols")]
-        public long? Cols { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("cols")]
+        long? cols;
 
-        [JsonProperty("timeout")]
-        public long? Timeout { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("timeout")]
+        long? timeout;
         #endregion
 
         #region Overrides

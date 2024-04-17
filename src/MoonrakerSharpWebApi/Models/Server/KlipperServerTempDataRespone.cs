@@ -3,11 +3,12 @@ using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperServerTempDataRespone
+    public partial class KlipperServerTempDataRespone : ObservableObject
     {
         #region Properties
-        [JsonProperty("result")]
-        public Dictionary<string, KlipperTemperatureSensorHistory> Result { get; set; } = new();
+        [ObservableProperty]
+        [property: JsonProperty("result")]
+        Dictionary<string, KlipperTemperatureSensorHistory> result = [];
         //public KlipperServerTempData Result { get; set; }
         #endregion
 

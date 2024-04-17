@@ -2,17 +2,20 @@
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperVersion
+    public partial class KlipperVersion : ObservableObject
     {
         #region Properties
-        [JsonProperty("major")]
-        public long Major { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("major")]
+        long major;
 
-        [JsonProperty("minor")]
-        public string Minor { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("minor")]
+        string minor = string.Empty;
 
-        [JsonProperty("build_number")]
-        public string BuildNumber { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("build_number")]
+        string buildNumber = string.Empty;
         #endregion
 
         #region Overrides

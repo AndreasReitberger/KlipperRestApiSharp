@@ -3,20 +3,24 @@ using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperStatusMcu
+    public partial class KlipperStatusMcu : ObservableObject
     {
         #region Properties
-        [JsonProperty("mcu_build_versions")]
-        public string McuBuildVersions { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("mcu_build_versions")]
+        string mcuBuildVersions = string.Empty;
 
-        [JsonProperty("mcu_version")]
-        public string McuVersion { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("mcu_version")]
+        string mcuVersion = string.Empty;
 
-        [JsonProperty("last_stats")]
-        public Dictionary<string, double> LastStats { get; set; } = [];
+        [ObservableProperty]
+        [property: JsonProperty("last_stats")]
+        Dictionary<string, double> lastStats = [];
 
-        [JsonProperty("mcu_constants")]
-        public Dictionary<string, object> McuConstants { get; set; } = [];
+        [ObservableProperty]
+        [property: JsonProperty("mcu_constants")]
+        Dictionary<string, object> mcuConstants = [];
         #endregion
 
         #region Overrides

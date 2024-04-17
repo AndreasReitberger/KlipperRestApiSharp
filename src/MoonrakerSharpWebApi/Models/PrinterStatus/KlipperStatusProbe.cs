@@ -2,14 +2,16 @@
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperStatusProbe
+    public partial class KlipperStatusProbe : ObservableObject
     {
         #region Properties
-        [JsonProperty("last_z_result")]
-        public double? LastZResult { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("last_z_result")]
+        double? lastZResult;
 
-        [JsonProperty("last_query")]
-        public bool LastQuery { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("last_query")]
+        bool lastQuery;
         #endregion
 
         #region Overrides

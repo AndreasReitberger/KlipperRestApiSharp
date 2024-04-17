@@ -14,17 +14,20 @@ namespace AndreasReitberger.API.Moonraker.Models
         [property: JsonIgnore]
         Guid id;
 
-        [JsonProperty("temperature")]
-        public double? TempRead { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("temperature")]
+        public double? tempRead;
 
-        [JsonProperty("target")]
-        public double? TempSet { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("target")]
+        public double? tempSet;
 
-        [JsonProperty("power")]
-        public double? Power { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("power")]
+        public double? power;
 
         [JsonIgnore]
-        public bool CanUpdateTarget { get; set; } = false;
+        public bool CanUpdateTarget = false;
 
         [JsonIgnore]
         public KlipperToolState State { get => GetCurrentState(); }

@@ -2,11 +2,13 @@
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperSettingForceMove
+    public partial class KlipperSettingForceMove : ObservableObject
     {
         #region Properties
-        [JsonProperty("enable_force_move")]
-        public bool EnableForceMove { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("enable_force_move")]
+        bool enableForceMove;
+    
         #endregion
 
         #region Overrides

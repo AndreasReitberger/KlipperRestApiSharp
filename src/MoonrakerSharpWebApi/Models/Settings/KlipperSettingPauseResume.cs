@@ -2,11 +2,12 @@
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperSettingPauseResume
+    public partial class KlipperSettingPauseResume : ObservableObject
     {
         #region Properties
-        [JsonProperty("recover_velocity")]
-        public long RecoverVelocity { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("recover_velocity")]
+        long recoverVelocity;
         #endregion
 
         #region Overrides

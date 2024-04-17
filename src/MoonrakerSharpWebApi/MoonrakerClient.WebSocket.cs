@@ -73,9 +73,9 @@ namespace AndreasReitberger.API.Moonraker
                     {
                         ConcurrentDictionary<int, KlipperStatusExtruder> extruderStats = new();
                         KlipperWebSocketMessage? method = JsonConvert.DeserializeObject<KlipperWebSocketMessage>(text);
-                        for (int i = 0; i < method?.Params?.Count; i++)
+                        for (int i = 0; i < method?.Parameters?.Count; i++)
                         {
-                            if (method.Params[i] is not JObject jsonObject)
+                            if (method.Parameters[i] is not JObject jsonObject)
                             {
                                 continue;
                             }
@@ -593,9 +593,9 @@ namespace AndreasReitberger.API.Moonraker
                     {
                         ConcurrentDictionary<int, KlipperStatusExtruder> extruderStats = new();
                         KlipperWebSocketMessage? method = JsonConvert.DeserializeObject<KlipperWebSocketMessage>(text);
-                        for (int i = 0; i < method?.Params?.Count; i++)
+                        for (int i = 0; i < method?.Parameters?.Count; i++)
                         {
-                            if (method.Params[i] is not JObject jsonObject)
+                            if (method.Parameters[i] is not JObject jsonObject)
                             {
                                 continue;
                             }

@@ -4,18 +4,21 @@ using System;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class OctoprintApiPrinterStateTemperatureInfo
+    public partial class OctoprintApiPrinterStateTemperatureInfo : ObservableObject
     {
         #region Properties
 
-        [JsonProperty("actual", NullValueHandling = NullValueHandling.Ignore)]
-        public double Actual { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("actual", NullValueHandling = NullValueHandling.Ignore)]
+        double actual;
 
-        [JsonProperty("target")]
-        public long Target { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("target")]
+        long target;
 
-        [JsonProperty("offset", NullValueHandling = NullValueHandling.Ignore)]
-        public long Offset { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("offset", NullValueHandling = NullValueHandling.Ignore)]
+        long offset;
 
         [JsonIgnore]
         public OctoprintApiCurrentToolState State { get => GetCurrentState(); }

@@ -3,23 +3,28 @@ using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperStatusMotionReport
+    public partial class KlipperStatusMotionReport : ObservableObject
     {
         #region Properties
-        [JsonProperty("live_position")]
-        public List<double> LivePosition { get; set; } = new();
+        [ObservableProperty]
+        [property: JsonProperty("live_position")]
+        List<double> livePosition = new();
 
-        [JsonProperty("steppers")]
-        public List<string> Steppers { get; set; } = new();
+        [ObservableProperty]
+        [property: JsonProperty("steppers")]
+        List<string> steppers = new();
 
-        [JsonProperty("live_velocity")]
-        public double? LiveVelocity { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("live_velocity")]
+        double? liveVelocity;
 
-        [JsonProperty("live_extruder_velocity")]
-        public double? LiveExtruderVelocity { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("live_extruder_velocity")]
+        double? liveExtruderVelocity;
 
-        [JsonProperty("trapq")]
-        public List<string> Trapq { get; set; } = new();
+        [ObservableProperty]
+        [property: JsonProperty("trapq")]
+        List<string> trapq = new();
         #endregion
 
         #region Overrides

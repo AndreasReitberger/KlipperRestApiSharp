@@ -2,10 +2,11 @@
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public class KlipperProfile
+    public partial class KlipperProfile : ObservableObject
     {
         #region Properties
-        public string Name { get; set; } = string.Empty;
+        [ObservableProperty]
+        string name = string.Empty;
         #endregion
 
         #region Overrides

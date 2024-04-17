@@ -2,17 +2,20 @@
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperIpAddress
+    public partial class KlipperIpAddress : ObservableObject
     {
         #region Properties
-        [JsonProperty("family")]
-        public string Family { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("family")]
+        string family = string.Empty;
 
-        [JsonProperty("address")]
-        public string Address { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("address")]
+        string address = string.Empty;
 
-        [JsonProperty("is_link_local")]
-        public bool IsLinkLocal { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("is_link_local")]
+        bool isLinkLocal;
         #endregion
 
         #region Overrides

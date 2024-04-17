@@ -3,20 +3,24 @@ using Newtonsoft.Json;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class MoonrakerStatInfo
+    public partial class MoonrakerStatInfo : ObservableObject
     {
         #region Properties
-        [JsonProperty("time")]
-        public double? Time { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("time")]
+        double? time;
 
-        [JsonProperty("cpu_usage")]
-        public double? CpuUsage { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("cpu_usage")]
+        double? cpuUsage;
 
-        [JsonProperty("memory")]
-        public long? Memory { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("memory")]
+        long? memory;
 
-        [JsonProperty("mem_units", NullValueHandling = NullValueHandling.Ignore)]
-        public MoonrakerMemUnits? MemUnits { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("mem_units", NullValueHandling = NullValueHandling.Ignore)]
+        MoonrakerMemUnits? memUnits;
         #endregion
 
         #region Overrides

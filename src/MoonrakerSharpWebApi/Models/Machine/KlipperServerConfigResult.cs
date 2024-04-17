@@ -2,11 +2,12 @@
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperMachineInfoResult
+    public partial class KlipperMachineInfoResult : ObservableObject
     {
         #region Properties
-        [JsonProperty("system_info")]
-        public KlipperMachineInfo? SystemInfo { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("system_info")]
+        KlipperMachineInfo? systemInfo;
         #endregion
 
         #region Overrides

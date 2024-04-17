@@ -2,11 +2,12 @@
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperEndstopQueryRespone
+    public partial class KlipperEndstopQueryRespone : ObservableObject
     {
         #region Properties
-        [JsonProperty("result")]
-        public KlipperEndstopQueryResult? Result { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("result")]
+        KlipperEndstopQueryResult? result;
         #endregion
 
         #region Overrides

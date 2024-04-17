@@ -3,17 +3,20 @@ using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperExtruderHistory
+    public partial class KlipperExtruderHistory : ObservableObject
     {
         #region Properties
-        [JsonProperty("temperatures")]
-        public List<double> Temperatures { get; set; } = new();
+        [ObservableProperty]
+        [property: JsonProperty("temperatures")]
+        List<double> temperatures = new();
 
-        [JsonProperty("targets")]
-        public List<long> Targets { get; set; } = new();
+        [ObservableProperty]
+        [property: JsonProperty("targets")]
+        List<long> targets = new();
 
-        [JsonProperty("powers")]
-        public List<long> Powers { get; set; } = new();
+        [ObservableProperty]
+        [property: JsonProperty("powers")]
+        List<long> powers = new();
         #endregion
 
         #region Overrides

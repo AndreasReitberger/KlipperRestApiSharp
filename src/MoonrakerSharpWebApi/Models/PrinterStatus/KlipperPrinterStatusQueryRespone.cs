@@ -3,11 +3,12 @@
 namespace AndreasReitberger.API.Moonraker.Models
 {
     // Maybe delete later?
-    public partial class KlipperPrinterStatusQueryRespone
+    public partial class KlipperPrinterStatusQueryRespone : ObservableObject
     {
         #region Properties
-        [JsonProperty("result")]
-        public KlipperPrinterStatusQueryResult? Result { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("result")]
+        KlipperPrinterStatusQueryResult? result;
         #endregion
 
         #region Overrides

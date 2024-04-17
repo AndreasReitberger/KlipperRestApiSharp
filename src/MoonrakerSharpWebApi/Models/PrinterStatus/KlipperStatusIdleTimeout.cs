@@ -4,19 +4,21 @@ using Newtonsoft.Json.Converters;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperStatusIdleTimeout
+    public partial class KlipperStatusIdleTimeout : ObservableObject
     {
         #region Properties
-        [JsonProperty("state")]
+        [ObservableProperty]
+        [property: JsonProperty("state")]
         [JsonConverter(typeof(StringEnumConverter), true)]
-        //public string State { get; set; }
-        public KlipperIdleStates State { get; set; }
+        KlipperIdleStates state;
 
-        [JsonProperty("printing_time")]
-        public double? PrintingTime { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("printing_time")]
+        double? printingTime;
 
+        [ObservableProperty]
         [JsonIgnore]
-        public bool ValidState { get; set; } = false;
+        bool validState = false;
         #endregion
 
         #region Overrides

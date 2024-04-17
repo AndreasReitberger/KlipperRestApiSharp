@@ -3,17 +3,20 @@ using System;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperStatusDisplay
+    public partial class KlipperStatusDisplay : ObservableObject
     {
         #region Properties
         [JsonIgnore]
         public int PercentageProgress => GetPercentageProgress();
 
-        [JsonProperty("progress")]
-        public double? Progress { get; set; }
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(PercentageProgress))]
+        [property: JsonProperty("progress")]
+        double? progress;
 
-        [JsonProperty("message")]
-        public string Message { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("message")]
+        string message = string.Empty;
         #endregion
 
         #region Methods

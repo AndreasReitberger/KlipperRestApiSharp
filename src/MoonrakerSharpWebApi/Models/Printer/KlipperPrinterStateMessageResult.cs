@@ -2,35 +2,44 @@
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperPrinterStateMessageResult
+    public partial class KlipperPrinterStateMessageResult : ObservableObject
     {
         #region Properties
-        [JsonProperty("state_message")]
-        public string StateMessage { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("state_message")]
+        string stateMessage = string.Empty;
 
-        [JsonProperty("klipper_path")]
-        public string KlipperPath { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("klipper_path")]
+        string klipperPath = string.Empty;
 
-        [JsonProperty("config_file")]
-        public string ConfigFile { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("config_file")]
+        string configFile = string.Empty;
 
-        [JsonProperty("software_version")]
-        public string SoftwareVersion { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("software_version")]
+        string softwareVersion = string.Empty;
 
-        [JsonProperty("hostname")]
-        public string Hostname { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("hostname")]
+        string hostname = string.Empty;
 
-        [JsonProperty("cpu_info")]
-        public string CpuInfo { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("cpu_info")]
+        string cpuInfo = string.Empty;
 
-        [JsonProperty("state")]
-        public string State { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("state")]
+        string state = string.Empty;
 
-        [JsonProperty("python_path")]
-        public string PythonPath { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("python_path")]
+        string pythonPath = string.Empty;
 
-        [JsonProperty("log_file")]
-        public string LogFile { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("log_file")]
+        string logFile = string.Empty;
         #endregion
 
         #region Overrides

@@ -3,79 +3,104 @@ using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperUpdateVersionInfo
+    public partial class KlipperUpdateVersionInfo : ObservableObject
     {
         #region Properties
-        [JsonProperty("name")]
-        public string Name { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("name")]
+        string name = string.Empty;
 
-        [JsonProperty("channel")]
-        public string Channel { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("channel")]
+        string channel = string.Empty;
 
-        [JsonProperty("debug_enabled")]
-        public bool DebugEnabled { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("debug_enabled")]
+        bool debugEnabled;
 
-        [JsonProperty("need_channel_update")]
-        public bool NeedChannelUpdate { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("need_channel_update")]
+        bool needChannelUpdate;
 
-        [JsonProperty("is_valid")]
-        public bool IsValid { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("is_valid")]
+        bool isValid;
 
-        [JsonProperty("configured_type")]
-        public string ConfiguredType { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("configured_type")]
+        string configuredType = string.Empty;
 
-        [JsonProperty("detected_type")]
-        public string DetectedType { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("detected_type")]
+        string detectedType = string.Empty;
 
-        [JsonProperty("remote_alias")]
-        public string RemoteAlias { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("remote_alias")]
+        string remoteAlias = string.Empty;
 
-        [JsonProperty("branch")]
-        public string Branch { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("branch")]
+        string branch = string.Empty;
 
-        [JsonProperty("owner")]
-        public string Owner { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("owner")]
+        string owner = string.Empty;
 
-        [JsonProperty("repo_name")]
-        public string RepoName { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("repo_name")]
+        string repoName = string.Empty;
 
-        [JsonProperty("version")]
-        public string Version { get; set; } = string.Empty;
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(UpdateAvailable))]
+        [property: JsonProperty("version")]
+        string version = string.Empty;
 
-        [JsonProperty("remote_version")]
-        public string RemoteVersion { get; set; } = string.Empty;
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(UpdateAvailable))]
+        [property: JsonProperty("remote_version")]
+        string remoteVersion = string.Empty;
 
-        [JsonProperty("current_hash")]
-        public string CurrentHash { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("current_hash")]
+        string currentHash = string.Empty;
 
-        [JsonProperty("remote_hash")]
-        public string RemoteHash { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("remote_hash")]
+        string remoteHash = string.Empty;
 
-        [JsonProperty("is_dirty")]
-        public bool IsDirty { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("is_dirty")]
+        bool isDirty;
 
-        [JsonProperty("detached")]
-        public bool Detached { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("detached")]
+        bool detached;
 
-        [JsonProperty("commits_behind")]
-        public List<KlipperUpdateCommitsBehind> CommitsBehind { get; set; } = new();
+        [ObservableProperty]
+        [property: JsonProperty("commits_behind")]
+        List<KlipperUpdateCommitsBehind> commitsBehind = new();
 
-        [JsonProperty("git_messages")]
-        public List<object> GitMessages { get; set; } = new();
+        [ObservableProperty]
+        [property: JsonProperty("git_messages")]
+        List<object> gitMessages = new();
 
-        [JsonProperty("full_version_string")]
-        public string FullVersionString { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("full_version_string")]
+        string fullVersionString = string.Empty;
 
-        [JsonProperty("pristine")]
-        public bool Pristine { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("pristine")]
+        bool pristine;
 
-        [JsonProperty("package_count")]
-        public long PackageCount { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("package_count")]
+        long packageCount;
 
-        [JsonProperty("package_list")]
-        public List<object> PackageList { get; set; } = new();
+        [ObservableProperty]
+        [property: JsonProperty("package_list")]
+        List<object> packageList = new();
 
-        public bool UpdateAvailable => Version != RemoteVersion;
+        bool UpdateAvailable => Version != RemoteVersion;
         #endregion
 
         #region Overrides
