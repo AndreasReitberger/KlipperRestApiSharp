@@ -126,7 +126,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         [ObservableProperty]
         [property: JsonIgnore]
         [JsonIgnore]
-        byte[] currentPrintImage = Array.Empty<byte>();
+        byte[] currentPrintImage = [];
 
         [ObservableProperty, JsonIgnore]
         [property: JsonIgnore]
@@ -157,7 +157,7 @@ namespace AndreasReitberger.API.Moonraker.Models
 
         [ObservableProperty]
         [property: JsonIgnore]
-        string? activeJobState;
+        string? activeJobState = string.Empty;
 
         [ObservableProperty]
         [property: JsonIgnore]
@@ -169,7 +169,7 @@ namespace AndreasReitberger.API.Moonraker.Models
 
         #region Methods
 
-        public Task<bool> HomeAsync(IPrint3dServerClient client, bool x, bool y, bool z) => client?.HomeAsync(x, y, z);
+        public Task<bool> HomeAsync(IPrint3dServerClient client, bool x, bool y, bool z) => client.HomeAsync(x, y, z);
 
         #endregion
 

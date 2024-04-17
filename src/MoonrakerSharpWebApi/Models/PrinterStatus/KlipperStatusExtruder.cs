@@ -113,7 +113,7 @@ namespace AndreasReitberger.API.Moonraker.Models
             }
 
         }
-        public Task<bool> SetTemperatureAsync(IPrint3dServerClient client, string command, object data) => client?.SetExtruderTemperatureAsync(command, data);
+        public Task<bool> SetTemperatureAsync(IPrint3dServerClient client, string command, object? data) => client.SetExtruderTemperatureAsync(command, data);
         #endregion
 
         #region Overrides

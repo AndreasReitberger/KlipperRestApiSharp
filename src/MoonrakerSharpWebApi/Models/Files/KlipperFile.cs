@@ -58,11 +58,11 @@ namespace AndreasReitberger.API.Moonraker.Models
 
         [ObservableProperty]
         [JsonIgnore]
-        byte[] thumbnail = Array.Empty<byte>();
+        byte[] thumbnail = [];
 
         [ObservableProperty]
         [JsonIgnore]
-        byte[] image = Array.Empty<byte>();
+        byte[] image = [];
 
         [ObservableProperty]
         [JsonIgnore]

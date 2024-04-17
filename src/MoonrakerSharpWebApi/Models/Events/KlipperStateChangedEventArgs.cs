@@ -1,8 +1,9 @@
-﻿using Newtonsoft.Json;
+﻿using AndreasReitberger.API.Print3dServer.Core.Events;
+using Newtonsoft.Json;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public class KlipperStateChangedEventArgs : KlipperEventArgs
+    public class KlipperStateChangedEventArgs : Print3dBaseEventArgs
     {
         #region Properties
         public string NewState { get; set; }

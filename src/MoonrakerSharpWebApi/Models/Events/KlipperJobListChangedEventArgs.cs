@@ -1,10 +1,10 @@
-﻿using AndreasReitberger.API.Print3dServer.Core.Interfaces;
+﻿using AndreasReitberger.API.Print3dServer.Core.Events;
 using Newtonsoft.Json;
 using System.Collections.ObjectModel;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public class KlipperJobListChangedEventArgs : KlipperEventArgs
+    public class KlipperJobListChangedEventArgs : Print3dBaseEventArgs
     {
         #region Properties
         public ObservableCollection<KlipperJobQueueItem> NewJobList { get; set; } = new();

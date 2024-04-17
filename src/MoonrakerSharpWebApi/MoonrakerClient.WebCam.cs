@@ -38,7 +38,7 @@ namespace AndreasReitberger.API.Moonraker
         public async Task<ObservableCollection<IWebCamConfig>> GetWebCamSettingsAsync()
         {
             string resultString = string.Empty;
-            IRestApiRequestRespone result = null;
+            IRestApiRequestRespone? result = null;
             ObservableCollection<IWebCamConfig> resultObject = new();
             try
             {
@@ -53,7 +53,7 @@ namespace AndreasReitberger.API.Moonraker
                        cts: default
                        )
                     .ConfigureAwait(false);
-                KlipperWebcamConfigRespone configs = GetObjectFromJson<KlipperWebcamConfigRespone>(result.Result, NewtonsoftJsonSerializerSettings);
+                KlipperWebcamConfigRespone configs = GetObjectFromJson<KlipperWebcamConfigRespone>(result?.Result, NewtonsoftJsonSerializerSettings);
                 if (configs?.Result?.Webcams?.Count > 0)
                     return new(configs?.Result?.Webcams ?? new());
                 else

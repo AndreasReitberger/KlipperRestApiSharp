@@ -1,8 +1,9 @@
-﻿using Newtonsoft.Json;
+﻿using AndreasReitberger.API.Print3dServer.Core.Events;
+using Newtonsoft.Json;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public class KlipperVirtualSdCardStateChangedEventArgs : KlipperEventArgs
+    public class KlipperVirtualSdCardStateChangedEventArgs : Print3dBaseEventArgs
     {
         #region Properties
         public KlipperStatusVirtualSdcard NewState { get; set; }

@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using AndreasReitberger.API.Print3dServer.Core.Events;
+using Newtonsoft.Json;
 #if ConcurrentDictionary
 using System.Collections.Concurrent;
 #else
@@ -7,7 +8,7 @@ using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public class KlipperSystemMemoryChangedEventArgs : KlipperEventArgs
+    public class KlipperSystemMemoryChangedEventArgs : Print3dBaseEventArgs
     {
         #region Properties
 #if ConcurrentDictionary

@@ -62,13 +62,13 @@ namespace AndreasReitberger.API.Moonraker
             catch (Exception exc)
             {
                 OnError(new UnhandledExceptionEventArgs(exc, false));
-                Files = new ObservableCollection<IGcode>();
+                Files = [];
             }
         }
 
         public async Task<ObservableCollection<IGcode>> GetAvailableFilesAsync(string rootPath = "", bool includeGcodeMeta = true)
         {
-            IRestApiRequestRespone result = null;
+            IRestApiRequestRespone? result = null;
             ObservableCollection<IGcode> resultObject = new();
             try
             {
@@ -90,7 +90,7 @@ namespace AndreasReitberger.API.Moonraker
                        )
                     .ConfigureAwait(false);
                 //result = await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Get, "files/list", default, null, urlSegments).ConfigureAwait(false);
-                KlipperFileListRespone files = GetObjectFromJson<KlipperFileListRespone>(result.Result, NewtonsoftJsonSerializerSettings);
+                KlipperFileListRespone files = GetObjectFromJson<KlipperFileListRespone>(result?.Result, NewtonsoftJsonSerializerSettings);
                 if (includeGcodeMeta)
                 {
                     for (int i = 0; i < files?.Result?.Count; i++)
@@ -126,11 +126,11 @@ namespace AndreasReitberger.API.Moonraker
         }
         public async Task<List<IGcode>> GetAvailableFilesAsListAsync(string rootPath = "")
         {
-            List<IGcode> resultObject = new();
+            List<IGcode> resultObject = [];
             try
             {
                 ObservableCollection<IGcode> result = await GetAvailableFilesAsync(rootPath).ConfigureAwait(false);
-                return result?.ToList();
+                return result.ToList();
             }
             catch (Exception exc)
             {
@@ -140,10 +140,10 @@ namespace AndreasReitberger.API.Moonraker
         }
         public override Task<ObservableCollection<IGcode>> GetFilesAsync() => GetAvailableFilesAsync();
 
-        public async Task<KlipperGcodeMetaResult> GetGcodeMetadataAsync(string fileName)
+        public async Task<KlipperGcodeMetaResult?> GetGcodeMetadataAsync(string fileName)
         {
-            IRestApiRequestRespone result = null;
-            KlipperGcodeMetaResult resultObject = null;
+            IRestApiRequestRespone? result = null;
+            KlipperGcodeMetaResult? resultObject = null;
             try
             {
                 if (string.IsNullOrEmpty(fileName)) return resultObject;
@@ -165,7 +165,7 @@ namespace AndreasReitberger.API.Moonraker
                        )
                     .ConfigureAwait(false);
                 //result = await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Get, "files/metadata", default, null, urlSegments).ConfigureAwait(false);
-                KlipperGcodeMetaRespone queryResult = GetObjectFromJson<KlipperGcodeMetaRespone>(result.Result, NewtonsoftJsonSerializerSettings);
+                KlipperGcodeMetaRespone? queryResult = GetObjectFromJson<KlipperGcodeMetaRespone>(result?.Result, NewtonsoftJsonSerializerSettings);
                 return queryResult?.Result;
             }
             catch (JsonException jecx)
@@ -198,7 +198,7 @@ namespace AndreasReitberger.API.Moonraker
                 }
                 else
                 {
-                    CurrentPrintImage = Array.Empty<byte>();
+                    CurrentPrintImage = [];
                 }
             }
             catch (Exception exc)
@@ -212,24 +212,21 @@ namespace AndreasReitberger.API.Moonraker
         {
             try
             {
-                //Uri target = new($"{FullWebAddress}/server/files/gcodes/{relativePath}");
                 string target = $"{FullWebAddress}/server/files/gcodes/{relativePath}";
-                byte[] thumb = await DownloadFileFromUriAsync(target, timeout)
-                    .ConfigureAwait(false)
-                    ;
-
-                return thumb;
+                byte[]? thumb = await DownloadFileFromUriAsync(target, timeout)
+                    .ConfigureAwait(false);
+                return thumb ?? [];
             }
             catch (Exception exc)
             {
                 OnError(new UnhandledExceptionEventArgs(exc, false));
-                return Array.Empty<byte>();
+                return [];
             }
         }
-        public async Task<byte[]> GetGcodeThumbnailImageAsync(IGcodeMeta gcodeMeta, int index = 0, int timeout = 10000)
+        public async Task<byte[]?> GetGcodeThumbnailImageAsync(IGcodeMeta gcodeMeta, int index = 0, int timeout = 10000)
         {
-            if (gcodeMeta is null || gcodeMeta?.GcodeImages is null) return Array.Empty<byte>();
-            string path = gcodeMeta.GcodeImages.Count > index ?
+            if (gcodeMeta is null || gcodeMeta?.GcodeImages is null) return [];
+            string? path = gcodeMeta.GcodeImages.Count > index ?
                 gcodeMeta.GcodeImages[index]?.Path : gcodeMeta.GcodeImages.FirstOrDefault()?.Path;
 
             string subfolder = string.Empty;
@@ -238,15 +235,13 @@ namespace AndreasReitberger.API.Moonraker
                 subfolder = gcodeMeta.FileName[..gcodeMeta.FileName.LastIndexOf("/")];
                 subfolder += "/";
             }
-
             return string.IsNullOrEmpty(path) ? null : await GetGcodeThumbnailImageAsync(subfolder + path, timeout)
-                .ConfigureAwait(false)
-                ;
+                .ConfigureAwait(false);
         }
-        public async Task<byte[]> GetGcodeLargestThumbnailImageAsync(KlipperGcodeMetaResult gcodeMeta, int timeout = 10000)
+        public async Task<byte[]?> GetGcodeLargestThumbnailImageAsync(KlipperGcodeMetaResult gcodeMeta, int timeout = 10000)
         {
-            if (gcodeMeta is null || gcodeMeta?.GcodeImages is null) return Array.Empty<byte>();
-            string path = gcodeMeta.GcodeImages
+            if (gcodeMeta is null || gcodeMeta?.GcodeImages is null) return [];
+            string? path = gcodeMeta.GcodeImages
                 .OrderByDescending(image => image.Size)
                 .FirstOrDefault()?.Path
                 ;
@@ -262,10 +257,10 @@ namespace AndreasReitberger.API.Moonraker
                 .ConfigureAwait(false)
                 ;
         }
-        public async Task<byte[]> GetGcodeSmallestThumbnailImageAsync(KlipperGcodeMetaResult gcodeMeta, int timeout = 10000)
+        public async Task<byte[]?> GetGcodeSmallestThumbnailImageAsync(KlipperGcodeMetaResult gcodeMeta, int timeout = 10000)
         {
-            if (gcodeMeta is null || gcodeMeta?.GcodeImages is null) return Array.Empty<byte>();
-            string path = gcodeMeta.GcodeImages
+            if (gcodeMeta is null || gcodeMeta?.GcodeImages is null) return [];
+            string? path = gcodeMeta.GcodeImages
                 .OrderBy(image => image.Size)
                 .FirstOrDefault()?.Path
                 ;
@@ -282,10 +277,10 @@ namespace AndreasReitberger.API.Moonraker
                 .ConfigureAwait(false)
                 ;
         }
-        public async Task<byte[]> GetGcodeSecondThumbnailImageAsync(IGcodeMeta gcodeMeta, int timeout = 10000)
+        public async Task<byte[]?> GetGcodeSecondThumbnailImageAsync(IGcodeMeta gcodeMeta, int timeout = 10000)
         {
-            if (gcodeMeta is null || gcodeMeta?.GcodeImages is null) return Array.Empty<byte>();
-            string path = gcodeMeta.GcodeImages
+            if (gcodeMeta is null || gcodeMeta?.GcodeImages is null) return [];
+            string? path = gcodeMeta.GcodeImages
                 .OrderBy(image => image.Size)?
                 .Skip(1)? // Skipped the smallest image
                 .FirstOrDefault()?.Path
@@ -316,10 +311,10 @@ namespace AndreasReitberger.API.Moonraker
             }
         }
 
-        public async Task<KlipperDirectoryInfoResult> GetDirectoryInformationAsync(string path, bool extended = true)
+        public async Task<KlipperDirectoryInfoResult?> GetDirectoryInformationAsync(string path, bool extended = true)
         {
-            IRestApiRequestRespone result = null;
-            KlipperDirectoryInfoResult resultObject = null;
+            IRestApiRequestRespone? result = null;
+            KlipperDirectoryInfoResult? resultObject = null;
             try
             {
                 Dictionary<string, string> urlSegments = new()
@@ -340,9 +335,8 @@ namespace AndreasReitberger.API.Moonraker
                        )
                     .ConfigureAwait(false);
                 //result = await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Get, "files/directory", default, null, urlSegments).ConfigureAwait(false);
-
-                KlipperDirectoryInfoRespone queryResult = GetObjectFromJson<KlipperDirectoryInfoRespone>(result.Result, NewtonsoftJsonSerializerSettings);
-                if (queryResult?.Result?.DiskUsage != null)
+                KlipperDirectoryInfoRespone? queryResult = GetObjectFromJson<KlipperDirectoryInfoRespone>(result?.Result, NewtonsoftJsonSerializerSettings);
+                if (queryResult?.Result?.DiskUsage is not null)
                 {
                     FreeDiskSpace = queryResult.Result.DiskUsage.Free;
                     TotalDiskSpace = queryResult.Result.DiskUsage.Total;
@@ -405,10 +399,10 @@ namespace AndreasReitberger.API.Moonraker
             }
         }
 
-        public async Task<KlipperDirectoryActionResult> CreateDirectoryAsync(string directory)
+        public async Task<KlipperDirectoryActionResult?> CreateDirectoryAsync(string directory)
         {
-            IRestApiRequestRespone result = null;
-            KlipperDirectoryActionResult resultObject = null;
+            IRestApiRequestRespone? result = null;
+            KlipperDirectoryActionResult? resultObject = null;
             try
             {
                 Dictionary<string, string> urlSegments = new()
@@ -432,7 +426,7 @@ namespace AndreasReitberger.API.Moonraker
                     await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Post, $"files/directory", jsonObject: null, cts: default, urlSegments: urlSegments)
                     .ConfigureAwait(false);
                 */
-                KlipperDirectoryActionRespone queryResult = GetObjectFromJson<KlipperDirectoryActionRespone>(result.Result, NewtonsoftJsonSerializerSettings);
+                KlipperDirectoryActionRespone? queryResult = GetObjectFromJson<KlipperDirectoryActionRespone>(result?.Result, NewtonsoftJsonSerializerSettings);
                 return queryResult?.Result;
             }
             catch (JsonException jecx)
@@ -453,10 +447,10 @@ namespace AndreasReitberger.API.Moonraker
             }
         }
 
-        public async Task<KlipperDirectoryActionResult> DeleteDirectoryAsync(string directory, bool force = false)
+        public async Task<KlipperDirectoryActionResult?> DeleteDirectoryAsync(string directory, bool force = false)
         {
-            IRestApiRequestRespone result = null;
-            KlipperDirectoryActionResult resultObject = null;
+            IRestApiRequestRespone? result = null;
+            KlipperDirectoryActionResult? resultObject = null;
             try
             {
                 Dictionary<string, string> urlSegments = new()
@@ -481,7 +475,7 @@ namespace AndreasReitberger.API.Moonraker
                     await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Delete, $"files/directory", jsonObject: null, cts: default, urlSegments: urlSegments)
                     .ConfigureAwait(false);
                 */
-                KlipperDirectoryActionRespone queryResult = GetObjectFromJson<KlipperDirectoryActionRespone>(result.Result, NewtonsoftJsonSerializerSettings);
+                KlipperDirectoryActionRespone? queryResult = GetObjectFromJson<KlipperDirectoryActionRespone>(result?.Result, NewtonsoftJsonSerializerSettings);
                 return queryResult?.Result;
             }
             catch (JsonException jecx)
@@ -502,10 +496,10 @@ namespace AndreasReitberger.API.Moonraker
             }
         }
 
-        public async Task<KlipperDirectoryActionResult> MoveDirectoryOrFileAsync(string source, string destination)
+        public async Task<KlipperDirectoryActionResult?> MoveDirectoryOrFileAsync(string source, string destination)
         {
-            IRestApiRequestRespone result = null;
-            KlipperDirectoryActionResult resultObject = null;
+            IRestApiRequestRespone? result = null;
+            KlipperDirectoryActionResult? resultObject = null;
             try
             {
                 Dictionary<string, string> urlSegments = new()
@@ -530,7 +524,7 @@ namespace AndreasReitberger.API.Moonraker
                     await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Post, $"files/move", jsonObject: null, cts: default, urlSegments: urlSegments)
                     .ConfigureAwait(false);
                 */
-                KlipperDirectoryActionRespone queryResult = GetObjectFromJson<KlipperDirectoryActionRespone>(result.Result, NewtonsoftJsonSerializerSettings);
+                KlipperDirectoryActionRespone? queryResult = GetObjectFromJson<KlipperDirectoryActionRespone>(result?.Result, NewtonsoftJsonSerializerSettings);
                 return queryResult?.Result;
             }
             catch (JsonException jecx)
@@ -551,10 +545,10 @@ namespace AndreasReitberger.API.Moonraker
             }
         }
 
-        public async Task<KlipperDirectoryActionResult> CopyDirectoryOrFileAsync(string source, string destination)
+        public async Task<KlipperDirectoryActionResult?> CopyDirectoryOrFileAsync(string source, string destination)
         {
-            IRestApiRequestRespone result = null;
-            KlipperDirectoryActionResult resultObject = null;
+            IRestApiRequestRespone? result = null;
+            KlipperDirectoryActionResult? resultObject = null;
             try
             {
                 Dictionary<string, string> urlSegments = new()
@@ -579,7 +573,7 @@ namespace AndreasReitberger.API.Moonraker
                     await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Post, $"files/copy", jsonObject: null, cts: default, urlSegments: urlSegments)
                     .ConfigureAwait(false);
                 */
-                KlipperDirectoryActionRespone queryResult = GetObjectFromJson<KlipperDirectoryActionRespone>(result.Result, NewtonsoftJsonSerializerSettings);
+                KlipperDirectoryActionRespone? queryResult = GetObjectFromJson<KlipperDirectoryActionRespone>(result?.Result, NewtonsoftJsonSerializerSettings);
                 return queryResult?.Result;
             }
             catch (JsonException jecx)
@@ -600,13 +594,13 @@ namespace AndreasReitberger.API.Moonraker
             }
         }
 
-        public override async Task<byte[]> DownloadFileAsync(string relativeFilePath)
+        public override async Task<byte[]?> DownloadFileAsync(string relativeFilePath)
         {
             try
             {
                 //Uri uri = new($"{FullWebAddress}/server/files/{relativeFilePath}");
                 string uri = $"{FullWebAddress}/server/files/{relativeFilePath}";
-                byte[] file = await DownloadFileFromUriAsync(uri)
+                byte[]? file = await DownloadFileFromUriAsync(uri)
                     .ConfigureAwait(false)
                     ;
                 return file;
@@ -618,14 +612,14 @@ namespace AndreasReitberger.API.Moonraker
             }
         }
 
-        public async Task<KlipperFileActionResult> UploadFileAsync(string file, string root = "gcodes", string path = "", int timeout = 100000)
+        public async Task<KlipperFileActionResult?> UploadFileAsync(string file, string root = "gcodes", string path = "", int timeout = 100000)
         {
-            IRestApiRequestRespone result = null;
-            KlipperFileActionResult resultObject = null;
+            IRestApiRequestRespone? result = null;
+            KlipperFileActionResult? resultObject = null;
             try
             {
                 result = await SendMultipartFormDataFileRestApiRequestAsync(file, root, path, timeout).ConfigureAwait(false);
-                KlipperFileActionResult queryResult = GetObjectFromJson<KlipperFileActionResult>(result.Result, NewtonsoftJsonSerializerSettings);
+                KlipperFileActionResult? queryResult = GetObjectFromJson<KlipperFileActionResult>(result?.Result, NewtonsoftJsonSerializerSettings);
                 return queryResult;
                 //return result?.Result;
             }
@@ -647,14 +641,14 @@ namespace AndreasReitberger.API.Moonraker
             }
         }
 
-        public async Task<KlipperFileActionResult> UploadFileAsync(string fileName, byte[] file, string root = "gcodes", string path = "", int timeout = 10000)
+        public async Task<KlipperFileActionResult?> UploadFileAsync(string fileName, byte[] file, string root = "gcodes", string path = "", int timeout = 10000)
         {
-            IRestApiRequestRespone result = null;
-            KlipperFileActionResult resultObject = null;
+            IRestApiRequestRespone? result = null;
+            KlipperFileActionResult? resultObject = null;
             try
             {
                 result = await SendMultipartFormDataFileRestApiRequestAsync(fileName, file, root, path, timeout).ConfigureAwait(false);
-                KlipperFileActionResult queryResult = GetObjectFromJson<KlipperFileActionResult>(result.Result, NewtonsoftJsonSerializerSettings);
+                KlipperFileActionResult? queryResult = GetObjectFromJson<KlipperFileActionResult>(result?.Result, NewtonsoftJsonSerializerSettings);
                 return queryResult;
                 //return result?.Result;
             }
@@ -676,10 +670,10 @@ namespace AndreasReitberger.API.Moonraker
             }
         }
 
-        public async Task<KlipperDirectoryActionResult> DeleteFileAsync(string root, string filePath)
+        public async Task<KlipperDirectoryActionResult?> DeleteFileAsync(string root, string filePath)
         {
-            IRestApiRequestRespone result = null;
-            KlipperDirectoryActionResult resultObject = null;
+            IRestApiRequestRespone? result = null;
+            KlipperDirectoryActionResult? resultObject = null;
             try
             {
                 string targetUri = $"{MoonrakerCommands.Server}";
@@ -698,7 +692,7 @@ namespace AndreasReitberger.API.Moonraker
                     await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Delete, $"files/{root}/{filePath}")
                     .ConfigureAwait(false);
                 */
-                KlipperDirectoryActionRespone queryResult = GetObjectFromJson<KlipperDirectoryActionRespone>(result.Result, NewtonsoftJsonSerializerSettings);
+                KlipperDirectoryActionRespone? queryResult = GetObjectFromJson<KlipperDirectoryActionRespone>(result?.Result, NewtonsoftJsonSerializerSettings);
                 return queryResult?.Result;
             }
             catch (JsonException jecx)
@@ -718,10 +712,10 @@ namespace AndreasReitberger.API.Moonraker
                 return resultObject;
             }
         }
-        public async Task<KlipperDirectoryActionResult> DeleteFileAsync(string filePath)
+        public async Task<KlipperDirectoryActionResult?> DeleteFileAsync(string filePath)
         {
-            IRestApiRequestRespone result = null;
-            KlipperDirectoryActionResult resultObject = null;
+            IRestApiRequestRespone? result = null;
+            KlipperDirectoryActionResult? resultObject = null;
             if (string.IsNullOrEmpty(filePath))
             {
                 return resultObject;
@@ -744,7 +738,7 @@ namespace AndreasReitberger.API.Moonraker
                     await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Delete, $"files/{filePath}")
                     .ConfigureAwait(false);
                 */
-                KlipperDirectoryActionRespone queryResult = GetObjectFromJson<KlipperDirectoryActionRespone>(result.Result, NewtonsoftJsonSerializerSettings);
+                KlipperDirectoryActionRespone? queryResult = GetObjectFromJson<KlipperDirectoryActionRespone>(result?.Result, NewtonsoftJsonSerializerSettings);
                 return queryResult?.Result;
             }
             catch (JsonException jecx)
@@ -765,14 +759,13 @@ namespace AndreasReitberger.API.Moonraker
             }
         }
 
-        public async Task<byte[]> DownloadLogFileAsync(KlipperLogFileTypes logType)
+        public async Task<byte[]?> DownloadLogFileAsync(KlipperLogFileTypes logType)
         {
             try
             {
                 string uri = $"{FullWebAddress}/server/files/{logType.ToString().ToLower()}.log";
-                byte[] file = await DownloadFileFromUriAsync(uri)
+                byte[]? file = await DownloadFileFromUriAsync(uri)
                     .ConfigureAwait(false);
-                ;
                 return file;
             }
             catch (Exception exc)

@@ -31,13 +31,13 @@ namespace AndreasReitberger.API.Moonraker
         /* Not available for HTTP
         public async Task<KlipperAccessTokenResult> GetWebSocketIdAsync()
         {
-            IRestApiRequestRespone result = null;
+            IRestApiRequestRespone? result = null;
             KlipperAccessTokenResult resultObject = null;
             try
             {
                 //object cmd = new { name = ScriptName };
                 result = await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.Get, "websocket_id").ConfigureAwait(false);
-                KlipperAccessTokenResult accessToken = GetObjectFromJson<KlipperAccessTokenResult>(result.Result, NewtonsoftJsonSerializerSettings);
+                KlipperAccessTokenResult accessToken = GetObjectFromJson<KlipperAccessTokenResult>(result?.Result, NewtonsoftJsonSerializerSettings);
                 SessionId = accessToken?.Result;
                 return accessToken;
             }
@@ -133,7 +133,7 @@ namespace AndreasReitberger.API.Moonraker
                                         break;
                                     case "system_cpu_usage":
                                         Dictionary<string, double?> tempUsageObject = JsonConvert.DeserializeObject<Dictionary<string, double?>>(jsonBody);
-                                        if (tempUsageObject != null)
+                                        if (tempUsageObject is not null)
                                         {
                                             foreach (KeyValuePair<string, double?> cpuUsageItem in tempUsageObject)
                                             {
@@ -151,7 +151,7 @@ namespace AndreasReitberger.API.Moonraker
                                         break;
                                     case "system_memory":
                                         Dictionary<string, long?> tempMemoryObject = JsonConvert.DeserializeObject<Dictionary<string, long?>>(jsonBody);
-                                        if (tempMemoryObject != null)
+                                        if (tempMemoryObject is not null)
                                         {
                                             foreach (KeyValuePair<string, long?> memoryUsage in tempMemoryObject)
                                             {
@@ -185,7 +185,7 @@ namespace AndreasReitberger.API.Moonraker
                                         KlipperStatusPrintStats printStats =
                                             JsonConvert.DeserializeObject<KlipperStatusPrintStats>(jsonBody);
                                         printStats.ValidPrintState = jsonBody.Contains("state");
-                                        if (PrintStats != null)
+                                        if (PrintStats is not null)
                                         {
                                             // This property is only sent once if changed, so store it
                                             if (!jsonBody.Contains("filename"))
@@ -334,7 +334,7 @@ namespace AndreasReitberger.API.Moonraker
                                                     string fanName = fan[fan.Length - 1];
 #endif
                                                     KlipperStatusFan fanObject = JsonConvert.DeserializeObject<KlipperStatusFan>(jsonBody);
-                                                    if (fanObject != null)
+                                                    if (fanObject is not null)
                                                     {
                                                         if (Fans.ContainsKey(fanName))
                                                         {
@@ -359,7 +359,7 @@ namespace AndreasReitberger.API.Moonraker
                                                     string sensorName = sensor[sensor.Length - 1];
 #endif
                                                     KlipperStatusTemperatureSensor tempObject = JsonConvert.DeserializeObject<KlipperStatusTemperatureSensor>(jsonBody);
-                                                    if (tempObject != null)
+                                                    if (tempObject is not null)
                                                     {
                                                         if (TemperatureSensors.ContainsKey(sensorName))
                                                         {
@@ -384,7 +384,7 @@ namespace AndreasReitberger.API.Moonraker
                                                     string driverName = driver[driver.Length - 1];
 #endif
                                                     KlipperStatusDriverRespone drvObject = JsonConvert.DeserializeObject<KlipperStatusDriverRespone>(jsonBody);
-                                                    if (drvObject != null)
+                                                    if (drvObject is not null)
                                                     {
                                                         if (Drivers.ContainsKey(driverName))
                                                         {
@@ -642,7 +642,7 @@ namespace AndreasReitberger.API.Moonraker
                                         break;
                                     case "system_cpu_usage":
                                         Dictionary<string, double?> tempUsageObject = JsonConvert.DeserializeObject<Dictionary<string, double?>>(jsonBody);
-                                        if (tempUsageObject != null)
+                                        if (tempUsageObject is not null)
                                         {
                                             foreach (KeyValuePair<string, double?> cpuUsageItem in tempUsageObject)
                                             {
@@ -660,7 +660,7 @@ namespace AndreasReitberger.API.Moonraker
                                         break;
                                     case "system_memory":
                                         Dictionary<string, long?> tempMemoryObject = JsonConvert.DeserializeObject<Dictionary<string, long?>>(jsonBody);
-                                        if (tempMemoryObject != null)
+                                        if (tempMemoryObject is not null)
                                         {
                                             foreach (KeyValuePair<string, long?> memoryUsage in tempMemoryObject)
                                             {
@@ -694,7 +694,7 @@ namespace AndreasReitberger.API.Moonraker
                                         KlipperStatusPrintStats printStats =
                                             JsonConvert.DeserializeObject<KlipperStatusPrintStats>(jsonBody);
                                         printStats.ValidPrintState = jsonBody.Contains("state");
-                                        if (PrintStats != null)
+                                        if (PrintStats is not null)
                                         {
                                             // This property is only sent once if changed, so store it
                                             if (!jsonBody.Contains("filename"))
@@ -843,7 +843,7 @@ namespace AndreasReitberger.API.Moonraker
                                                     string fanName = fan[fan.Length - 1];
 #endif
                                                     KlipperStatusFan fanObject = JsonConvert.DeserializeObject<KlipperStatusFan>(jsonBody);
-                                                    if (fanObject != null)
+                                                    if (fanObject is not null)
                                                     {
                                                         if (Fans.ContainsKey(fanName))
                                                         {
@@ -868,7 +868,7 @@ namespace AndreasReitberger.API.Moonraker
                                                     string sensorName = sensor[sensor.Length - 1];
 #endif
                                                     KlipperStatusTemperatureSensor tempObject = JsonConvert.DeserializeObject<KlipperStatusTemperatureSensor>(jsonBody);
-                                                    if (tempObject != null)
+                                                    if (tempObject is not null)
                                                     {
                                                         if (TemperatureSensors.ContainsKey(sensorName))
                                                         {
@@ -893,7 +893,7 @@ namespace AndreasReitberger.API.Moonraker
                                                     string driverName = driver[driver.Length - 1];
 #endif
                                                     KlipperStatusDriverRespone drvObject = JsonConvert.DeserializeObject<KlipperStatusDriverRespone>(jsonBody);
-                                                    if (drvObject != null)
+                                                    if (drvObject is not null)
                                                     {
                                                         if (Drivers.ContainsKey(driverName))
                                                         {

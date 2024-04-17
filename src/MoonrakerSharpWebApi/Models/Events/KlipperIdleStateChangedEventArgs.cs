@@ -1,12 +1,13 @@
-﻿using Newtonsoft.Json;
+﻿using AndreasReitberger.API.Print3dServer.Core.Events;
+using Newtonsoft.Json;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public class KlipperIdleStateChangedEventArgs : KlipperEventArgs
+    public class KlipperIdleStateChangedEventArgs : Print3dBaseEventArgs
     {
         #region Properties
-        public KlipperStatusIdleTimeout NewState { get; set; }
-        public KlipperStatusIdleTimeout PreviousState { get; set; }
+        public KlipperStatusIdleTimeout? NewState { get; set; }
+        public KlipperStatusIdleTimeout? PreviousState { get; set; }
         #endregion
 
         #region Overrides

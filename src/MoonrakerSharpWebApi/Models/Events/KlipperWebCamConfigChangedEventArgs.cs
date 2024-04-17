@@ -1,9 +1,10 @@
-﻿using Newtonsoft.Json;
+﻿using AndreasReitberger.API.Print3dServer.Core.Events;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public class KlipperWebCamConfigChangedEventArgs : KlipperEventArgs
+    public class KlipperWebCamConfigChangedEventArgs : Print3dBaseEventArgs
     {
         #region Properties
         public List<KlipperDatabaseWebcamConfig> NewConfig { get; set; }
