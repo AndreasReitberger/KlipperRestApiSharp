@@ -10,7 +10,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         #region Properties
         [ObservableProperty]
         [JsonProperty("dirname")]
-        string directoryName;
+        string directoryName = string.Empty;
         partial void OnDirectoryNameChanged(string value)
         {
             if (string.IsNullOrEmpty(Name))
@@ -19,11 +19,11 @@ namespace AndreasReitberger.API.Moonraker.Models
 
         [ObservableProperty]
         [JsonProperty("path")]
-        string path;
+        string path = string.Empty;
 
         [ObservableProperty]
         [JsonProperty("root")]
-        string root;
+        string root = string.Empty;
 
         [ObservableProperty]
         [JsonProperty("modified")]
@@ -35,23 +35,20 @@ namespace AndreasReitberger.API.Moonraker.Models
 
         [ObservableProperty]
         [JsonProperty("permissions")]
-        string permissions;
+        string permissions = string.Empty;
 
         #region JsonIgnore
         [ObservableProperty]
         Guid id;
 
         [ObservableProperty]
-        string name;
+        string name = string.Empty;
         #endregion
 
         #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
         #endregion
     }
 }

@@ -6,17 +6,14 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [JsonProperty("extruder")]
-        public KlipperDatabaseMainsailValueDashboardExtruder Extruder { get; set; }
+        public KlipperDatabaseMainsailValueDashboardExtruder? Extruder { get; set; }
 
         [JsonProperty("control")]
-        public KlipperDatabaseMainsailValueDashboardControl Control { get; set; }
+        public KlipperDatabaseMainsailValueDashboardControl? Control { get; set; }
         #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
         #endregion
     }
 }

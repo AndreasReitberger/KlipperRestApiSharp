@@ -6,17 +6,14 @@ namespace AndreasReitberger.API.Moonraker.Models.WebSocket
     {
         #region Properties
         [JsonProperty("heater_bed", Required = Required.Always)]
-        public KlipperStatusHeaterBed HeaterBed { get; set; }
+        public KlipperStatusHeaterBed? HeaterBed { get; set; }
 
         [JsonProperty("toolhead", Required = Required.Always)]
-        public KlipperStatusToolhead ToolHead { get; set; }
+        public KlipperStatusToolhead? ToolHead { get; set; }
         #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
         #endregion
     }
 }

@@ -7,23 +7,20 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [JsonProperty("mcu_build_versions")]
-        public string McuBuildVersions { get; set; }
+        public string McuBuildVersions { get; set; } = string.Empty;
 
         [JsonProperty("mcu_version")]
-        public string McuVersion { get; set; }
+        public string McuVersion { get; set; } = string.Empty;
 
         [JsonProperty("last_stats")]
-        public Dictionary<string, double> LastStats { get; set; }
+        public Dictionary<string, double> LastStats { get; set; } = [];
 
         [JsonProperty("mcu_constants")]
-        public Dictionary<string, object> McuConstants { get; set; }
+        public Dictionary<string, object> McuConstants { get; set; } = [];
         #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
         #endregion
     }
 }

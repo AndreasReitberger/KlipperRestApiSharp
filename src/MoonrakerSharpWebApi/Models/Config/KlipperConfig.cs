@@ -6,55 +6,50 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [JsonProperty("virtual_sdcard")]
-        public KlipperConfigVirtualSdcard VirtualSdcard { get; set; }
+        public KlipperConfigVirtualSdcard? VirtualSdcard { get; set; }
 
         [JsonProperty("printer")]
-        public KlipperConfigPrinter Printer { get; set; }
+        public KlipperConfigPrinter? Printer { get; set; }
 
         [JsonProperty("pause_resume")]
-        public KlipperStatusPauseResume PauseResume { get; set; }
+        public KlipperStatusPauseResume? PauseResume { get; set; }
 
         [JsonProperty("display_status")]
-        public KlipperStatusDisplay DisplayStatus { get; set; }
+        public KlipperStatusDisplay? DisplayStatus { get; set; }
 
         [JsonProperty("stepper_y")]
-        public KlipperConfigStepper StepperY { get; set; }
+        public KlipperConfigStepper? StepperY { get; set; }
 
         [JsonProperty("stepper_x")]
-        public KlipperConfigStepper StepperX { get; set; }
+        public KlipperConfigStepper? StepperX { get; set; }
 
         [JsonProperty("gcode_macro RESUME")]
-        public KlipperGcodeMacro GcodeMacroResume { get; set; }
+        public KlipperGcodeMacro? GcodeMacroResume { get; set; }
 
         [JsonProperty("gcode_macro PAUSE")]
-        public KlipperGcodeMacro GcodeMacroPause { get; set; }
+        public KlipperGcodeMacro? GcodeMacroPause { get; set; }
 
         [JsonProperty("gcode_macro CANCEL_PRINT")]
-        public KlipperGcodeMacro GcodeMacroCancelPrint { get; set; }
+        public KlipperGcodeMacro? GcodeMacroCancelPrint { get; set; }
 
         [JsonProperty("fan")]
-        public KlipperConfigFan Fan { get; set; }
+        public KlipperConfigFan? Fan { get; set; }
 
         [JsonProperty("stepper_z")]
-        public KlipperConfigStepper StepperZ { get; set; }
+        public KlipperConfigStepper? StepperZ { get; set; }
 
         [JsonProperty("mcu")]
-        public KlipperConfigMcu Mcu { get; set; }
+        public KlipperConfigMcu? Mcu { get; set; }
 
         [JsonProperty("display")]
-        public KlipperConfigDisplay Display { get; set; }
-        // Actually just a list of pin names
-        //public Dictionary<string, string> Display { get; set; } = new();
+        public KlipperConfigDisplay? Display { get; set; }
 
         [JsonProperty("extruder")]
-        public KlipperConfigExtruder Extruder { get; set; }
+        public KlipperConfigExtruder? Extruder { get; set; }
         #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
         #endregion
     }
 }

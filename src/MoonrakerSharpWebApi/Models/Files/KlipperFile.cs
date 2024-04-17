@@ -22,12 +22,12 @@ namespace AndreasReitberger.API.Moonraker.Models
         [ObservableProperty]
         [JsonProperty("filename")]
         [property: JsonIgnore]
-        string fileName;
+        string fileName = string.Empty;
 
         [ObservableProperty]
         [JsonProperty("path")]
         [property: JsonIgnore]
-        string filePath;
+        string filePath = string.Empty;
 
         [ObservableProperty]
         [JsonProperty("modified")]
@@ -42,13 +42,13 @@ namespace AndreasReitberger.API.Moonraker.Models
         [ObservableProperty]
         [JsonProperty("permissions")]
         [property: JsonIgnore]
-        string permissions;
+        string permissions = string.Empty;
 
         #region JsonIgnore
         [ObservableProperty]
         [JsonIgnore]
-        IGcodeMeta meta;
-        partial void OnMetaChanged(IGcodeMeta value)
+        IGcodeMeta? meta;
+        partial void OnMetaChanged(IGcodeMeta? value)
         {
             if (value is not null)
             {
@@ -58,11 +58,11 @@ namespace AndreasReitberger.API.Moonraker.Models
 
         [ObservableProperty]
         [JsonIgnore]
-        byte[] thumbnail = Array.Empty<byte>();
+        byte[]? thumbnail = [];
 
         [ObservableProperty]
         [JsonIgnore]
-        byte[] image = Array.Empty<byte>();
+        byte[]? image = [];
 
         [ObservableProperty]
         [JsonIgnore]
@@ -78,7 +78,7 @@ namespace AndreasReitberger.API.Moonraker.Models
 
         [ObservableProperty]
         [JsonIgnore]
-        string group;
+        string group = string.Empty;
 
         [ObservableProperty]
         [JsonIgnore]

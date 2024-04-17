@@ -15,11 +15,11 @@ namespace AndreasReitberger.API.Moonraker.Models
 
         [ObservableProperty]
         [JsonProperty("filename")]
-        string fileName;
+        string fileName = string.Empty;
 
         [ObservableProperty]
         [JsonProperty("job_id")]
-        string jobId;
+        string jobId = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [NotifyPropertyChangedFor(nameof(TimeAddedGeneralized))]
@@ -51,11 +51,11 @@ namespace AndreasReitberger.API.Moonraker.Models
         #endregion
 
         #region Methods
-        public Task<bool> StartJobAsync(IPrint3dServerClient client, string command, object? data) => client?.StartJobAsync(this, command, data);
+        public Task<bool> StartJobAsync(IPrint3dServerClient client, string command, object? data) => client.StartJobAsync(this, command, data);
 
-        public Task<bool> PauseJobAsync(IPrint3dServerClient client, string command, object? data) => client?.PauseJobAsync(command, data);
+        public Task<bool> PauseJobAsync(IPrint3dServerClient client, string command, object? data) => client.PauseJobAsync(command, data);
 
-        public Task<bool> StopJobAsync(IPrint3dServerClient client, string command, object? data) => client?.StopJobAsync(command, data);
+        public Task<bool> StopJobAsync(IPrint3dServerClient client, string command, object? data) => client.StopJobAsync(command, data);
 
         public Task<bool> RemoveFromQueueAsync(IPrint3dServerClient client, string command, object? data) => client.RemoveJobAsync(this, command, data);
 

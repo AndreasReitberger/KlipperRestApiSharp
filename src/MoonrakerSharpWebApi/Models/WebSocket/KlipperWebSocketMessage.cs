@@ -8,23 +8,20 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [JsonProperty("jsonrpc")]
-        public string Jsonrpc { get; set; }
+        public string Jsonrpc { get; set; } = string.Empty;
 
         [JsonProperty("method")]
-        public string Method { get; set; }
+        public string Method { get; set; } = string.Empty;
 
         [JsonProperty("params")]
-        public List<object> Params { get; set; } = new();
+        public List<object> Params { get; set; } = [];
 
         [JsonProperty("id")]
         public long? Id { get; set; }
         #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
         #endregion
     }
 }

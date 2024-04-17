@@ -29,13 +29,10 @@ namespace AndreasReitberger.API.Moonraker.Models
 
         [JsonProperty("extrude_factor")]
         public double? ExtrudeFactor { get; set; }
-        #endregion 
+        #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
         #endregion
     }
 }

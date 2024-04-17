@@ -7,20 +7,17 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [JsonProperty("plugins")]
-        public Dictionary<string, OctoprintApiPlugin> Plugins { get; set; }
+        public Dictionary<string, OctoprintApiPlugin> Plugins { get; set; } = [];
 
         [JsonProperty("feature")]
-        public OctoprintApiFeature Feature { get; set; }
+        public OctoprintApiFeature? Feature { get; set; }
 
         [JsonProperty("webcam")]
-        public OctoprintApiWebcam Webcam { get; set; }
+        public OctoprintApiWebcam? Webcam { get; set; }
         #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
         #endregion
     }
 }

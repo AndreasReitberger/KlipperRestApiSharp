@@ -6,29 +6,26 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [JsonProperty("sha")]
-        public string Sha { get; set; }
+        public string Sha { get; set; } = string.Empty;
 
         [JsonProperty("author")]
-        public string Author { get; set; }
+        public string Author { get; set; } = string.Empty;
 
         [JsonProperty("date")]
         public long Date { get; set; }
 
         [JsonProperty("subject")]
-        public string Subject { get; set; }
+        public string Subject { get; set; } = string.Empty;
 
         [JsonProperty("message")]
-        public string Message { get; set; }
+        public string Message { get; set; } = string.Empty;
 
         [JsonProperty("tag")]
-        public object Tag { get; set; }
+        public object? Tag { get; set; }
         #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
         #endregion
     }
 }

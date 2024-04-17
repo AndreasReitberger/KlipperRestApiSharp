@@ -35,11 +35,11 @@ namespace AndreasReitberger.API.Moonraker.Models
 
         [ObservableProperty]
         [JsonProperty("filename")]
-        string fileName;
+        string fileName = string.Empty;
 
         [ObservableProperty]
         [JsonProperty("metadata")]
-        IGcodeMeta meta;
+        IGcodeMeta? meta;
 
         [ObservableProperty, JsonIgnore]
         [NotifyPropertyChangedFor(nameof(PrintDurationGeneralized))]
@@ -106,7 +106,7 @@ namespace AndreasReitberger.API.Moonraker.Models
 
         [ObservableProperty]
         [JsonProperty("job_id")]
-        string jobId;
+        string jobId = string.Empty;
 
         [ObservableProperty]
         [JsonProperty("exists")]

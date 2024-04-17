@@ -6,23 +6,20 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [JsonProperty("file", NullValueHandling = NullValueHandling.Ignore)]
-        public OctoprintAbiJobInfoFile File { get; set; }
+        public OctoprintAbiJobInfoFile? File { get; set; }
 
         [JsonProperty("estimatedPrintTime", NullValueHandling = NullValueHandling.Ignore)]
         public long EstimatedPrintTime { get; set; }
 
         [JsonProperty("filament", NullValueHandling = NullValueHandling.Ignore)]
-        public OctoprintApiFilamentInfo Filament { get; set; }
+        public OctoprintApiFilamentInfo? Filament { get; set; }
 
         [JsonProperty("user", NullValueHandling = NullValueHandling.Ignore)]
-        public object User { get; set; }
+        public object? User { get; set; }
         #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
         #endregion
     }
 }

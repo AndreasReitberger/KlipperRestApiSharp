@@ -9,7 +9,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         public bool EnableAutoRefresh { get; set; }
 
         [JsonProperty("channel")]
-        public string Channel { get; set; }
+        public string Channel { get; set; } = string.Empty;
 
         [JsonProperty("enable_repo_debug")]
         public bool EnableRepoDebug { get; set; }
@@ -18,20 +18,17 @@ namespace AndreasReitberger.API.Moonraker.Models
         public bool EnableSystemUpdates { get; set; }
 
         [JsonProperty("type")]
-        public string Type { get; set; }
+        public string Type { get; set; } = string.Empty;
 
         [JsonProperty("client_repo")]
-        public object ClientRepo { get; set; }
+        public object? ClientRepo { get; set; }
 
         [JsonProperty("client_path")]
-        public object ClientPath { get; set; }
+        public object? ClientPath { get; set; }
         #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
         #endregion
     }
 

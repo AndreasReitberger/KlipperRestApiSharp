@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
@@ -6,17 +7,14 @@ namespace AndreasReitberger.API.Moonraker.Models
     public class KlipperRestEventArgs : EventArgs
     {
         #region Properties
-        public string Message { get; set; }
-        public string Status { get; set; }
-        public Uri Uri { get; set; }
-        public Exception Exception { get; set; }
+        public string Message { get; set; } = string.Empty;
+        public string Status { get; set; } = string.Empty;
+        public Uri? Uri { get; set; }
+        public Exception? Exception { get; set; }
         #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            return string.Format("{0} ({1}) - Target: {2}", Message, Status, Uri);
-        }
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
         #endregion
     }
 }

@@ -19,7 +19,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         public bool IsActive { get; set; }
 
         [JsonProperty("file_path")]
-        public string FilePath { get; set; }
+        public string FilePath { get; set; } = string.Empty;
 
         [JsonProperty("file_size")]
         public long? FileSize { get; set; }
@@ -42,10 +42,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
         #endregion
     }
 }

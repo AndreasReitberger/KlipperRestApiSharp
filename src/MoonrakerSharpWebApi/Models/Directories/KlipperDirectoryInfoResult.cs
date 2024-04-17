@@ -7,23 +7,20 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [JsonProperty("dirs")]
-        public List<KlipperDirectory> Dirs { get; set; }
+        public List<KlipperDirectory> Dirs { get; set; } = [];
 
         [JsonProperty("files")]
-        public List<KlipperFile> Files { get; set; }
+        public List<KlipperFile> Files { get; set; } = [];
 
         [JsonProperty("disk_usage")]
-        public KlipperDiskUsage DiskUsage { get; set; }
+        public KlipperDiskUsage? DiskUsage { get; set; }
 
         [JsonProperty("root_info")]
-        public KlipperRootInfo RootInfo { get; set; }
+        public KlipperRootInfo? RootInfo { get; set; }
         #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
         #endregion
     }
 }

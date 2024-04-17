@@ -9,17 +9,14 @@ namespace AndreasReitberger.API.Moonraker.Models
         public long CallbackId { get; set; }
 
         [JsonProperty("data")]
-        public object Data { get; set; }
+        public object? Data { get; set; }
 
         [JsonProperty("session")]
-        public string Session { get; set; }
+        public string Session { get; set; } = string.Empty;
         #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
         #endregion
     }
 }

@@ -6,20 +6,17 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [JsonProperty("item")]
-        public KlipperDirectory Item { get; set; }
+        public KlipperDirectory? Item { get; set; }
 
         [JsonProperty("source_item")]
-        public KlipperDirectory SourceItem { get; set; }
+        public KlipperDirectory? SourceItem { get; set; }
 
         [JsonProperty("action")]
-        public string Action { get; set; }
+        public string Action { get; set; } = string.Empty;
         #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
         #endregion
     }
 }

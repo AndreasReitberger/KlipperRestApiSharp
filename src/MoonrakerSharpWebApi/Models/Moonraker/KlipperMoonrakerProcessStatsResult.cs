@@ -7,26 +7,23 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [JsonProperty("moonraker_stats")]
-        public List<MoonrakerStatInfo> MoonrakerStats { get; set; }
+        public List<MoonrakerStatInfo> MoonrakerStats { get; set; } = [];
 
         [JsonProperty("throttled_state")]
-        public MoonrakerThrottledState ThrottledState { get; set; }
+        public MoonrakerThrottledState? ThrottledState { get; set; }
 
         [JsonProperty("cpu_temp")]
         public double CpuTemp { get; set; }
 
         [JsonProperty("network")]
-        public Dictionary<string, KlipperNetworkInterface> Network { get; set; }
+        public Dictionary<string, KlipperNetworkInterface> Network { get; set; } = [];
 
         [JsonProperty("websocket_connections")]
         public long WebsocketConnections { get; set; }
         #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
         #endregion
     }
 }

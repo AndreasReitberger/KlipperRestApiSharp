@@ -12,7 +12,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         public long MaxZVelocity { get; set; }
 
         [JsonProperty("kinematics")]
-        public string Kinematics { get; set; }
+        public string Kinematics { get; set; } = string.Empty;
 
         [JsonProperty("max_accel")]
         public long MaxAccel { get; set; }
@@ -39,10 +39,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
         #endregion
     }
 }

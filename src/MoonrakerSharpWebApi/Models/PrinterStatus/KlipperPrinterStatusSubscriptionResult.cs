@@ -6,17 +6,14 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [JsonProperty("status")]
-        public KlipperPrinterStatusSubscriptionStatus Status { get; set; }
+        public KlipperPrinterStatusSubscriptionStatus? Status { get; set; }
 
         [JsonProperty("eventtime")]
         public double? Eventtime { get; set; }
-        #endregion 
+        #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
         #endregion
     }
 }

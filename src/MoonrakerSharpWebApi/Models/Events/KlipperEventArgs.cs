@@ -7,18 +7,15 @@ namespace AndreasReitberger.API.Moonraker.Models
     public class KlipperEventArgs : EventArgs
     {
         #region Properties
-        public string Message { get; set; }
-        public string Printer { get; set; }
+        public string Message { get; set; } = string.Empty;
+        public string Printer { get; set; } = string.Empty;
         public long CallbackId { get; set; }
-        public string SessonId { get; set; }
-        public string Token { get; set; }
+        public string SessonId { get; set; } = string.Empty;
+        public string Token { get; set; } = string.Empty;
         #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
         #endregion
     }
 }

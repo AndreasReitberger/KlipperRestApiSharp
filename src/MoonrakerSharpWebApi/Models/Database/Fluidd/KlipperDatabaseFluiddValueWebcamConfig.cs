@@ -13,19 +13,19 @@ namespace AndreasReitberger.API.Moonraker.Models
         public bool Enabled { get; set; }
 
         [JsonProperty("name")]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         [JsonProperty("service")]
-        public string Service { get; set; }
+        public string Service { get; set; } = string.Empty;
 
         [JsonProperty("targetFps")]
         public long Fpstarget { get; set; }
 
         [JsonProperty("urlStream")]
-        public string UrlStream { get; set; }
+        public string UrlStream { get; set; } = string.Empty;
 
         [JsonProperty("urlSnapshot")]
-        public string UrlSnapshot { get; set; }
+        public string UrlSnapshot { get; set; } = string.Empty;
 
         [JsonProperty("flipX")]
         public bool FlipX { get; set; }
@@ -38,10 +38,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
         #endregion
     }
 }

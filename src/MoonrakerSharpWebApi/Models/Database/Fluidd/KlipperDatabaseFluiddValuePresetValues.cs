@@ -6,19 +6,17 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [JsonProperty("extruder")]
-        public KlipperDatabaseFluiddHeaterElement Extruder { get; set; }
+        public KlipperDatabaseFluiddHeaterElement? Extruder { get; set; }
+
         [JsonProperty("extruder1")]
-        public KlipperDatabaseFluiddHeaterElement Extruder1 { get; set; }
+        public KlipperDatabaseFluiddHeaterElement? Extruder1 { get; set; }
 
         [JsonProperty("heater_bed")]
-        public KlipperDatabaseFluiddHeaterElement HeaterBed { get; set; }
+        public KlipperDatabaseFluiddHeaterElement? HeaterBed { get; set; }
         #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
         #endregion
     }
 }

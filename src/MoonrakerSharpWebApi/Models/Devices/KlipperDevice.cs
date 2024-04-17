@@ -6,23 +6,20 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [JsonProperty("device")]
-        public string Device { get; set; }
+        public string Device { get; set; } = string.Empty;
 
         [JsonProperty("status")]
-        public string Status { get; set; }
+        public string Status { get; set; } = string.Empty;
 
         [JsonProperty("locked_while_printing")]
         public bool LockedWhilePrinting { get; set; }
 
         [JsonProperty("type")]
-        public string Type { get; set; }
+        public string Type { get; set; } = string.Empty;
         #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
         #endregion
     }
 }

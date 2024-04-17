@@ -15,17 +15,14 @@ namespace AndreasReitberger.API.Moonraker.Models
         public bool Rotate90 { get; set; }
 
         [JsonProperty("streamUrl")]
-        public string StreamUrl { get; set; }
+        public string StreamUrl { get; set; } = string.Empty;
 
         [JsonProperty("webcamEnabled")]
         public bool WebcamEnabled { get; set; }
         #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
         #endregion
     }
 }

@@ -6,30 +6,26 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [JsonProperty("name")]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         [JsonProperty("id")]
-        public string Id { get; set; }
+        public string Id { get; set; } = string.Empty;
 
         [JsonProperty("version")]
-        //[JsonConverter(typeof(ParseStringConverter))]
         public long Version { get; set; }
 
         [JsonProperty("version_parts")]
-        public KlipperVersion KlipperVersion { get; set; }
+        public KlipperVersion? KlipperVersion { get; set; }
 
         [JsonProperty("like")]
-        public string Like { get; set; }
+        public string Like { get; set; } = string.Empty;
 
         [JsonProperty("codename")]
-        public string Codename { get; set; }
+        public string Codename { get; set; } = string.Empty;
         #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
         #endregion
     }
 }

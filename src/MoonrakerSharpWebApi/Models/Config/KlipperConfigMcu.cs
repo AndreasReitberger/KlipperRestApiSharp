@@ -9,17 +9,14 @@ namespace AndreasReitberger.API.Moonraker.Models
         public long Baud { get; set; }
 
         [JsonProperty("serial")]
-        public string Serial { get; set; }
+        public string Serial { get; set; } = string.Empty;
 
         [JsonProperty("max_stepper_error")]
         public double MaxStepperError { get; set; }
         #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
         #endregion
     }
 }

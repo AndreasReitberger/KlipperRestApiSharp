@@ -6,7 +6,7 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [JsonProperty("item")]
-        public KlipperFileItem Item { get; set; }
+        public KlipperFileItem? Item { get; set; }
 
         [JsonProperty("print_started")]
         public bool PrintStarted { get; set; }
@@ -15,14 +15,11 @@ namespace AndreasReitberger.API.Moonraker.Models
         public bool PrintQueued { get; set; }
 
         [JsonProperty("action")]
-        public string Action { get; set; }
+        public string Action { get; set; } = string.Empty;
         #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
         #endregion
     }
 }

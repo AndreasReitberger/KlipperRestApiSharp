@@ -6,20 +6,17 @@ namespace AndreasReitberger.API.Moonraker.Models.WebSocket
     {
         #region Properties
         [JsonProperty("mcu", Required = Required.Always)]
-        public KlipperStatusMcu Mcu { get; set; }
+        public KlipperStatusMcu? Mcu { get; set; }
 
         [JsonProperty("system_stats", Required = Required.Always)]
-        public KlipperStatusSystemStats SystemStats { get; set; }
+        public KlipperStatusSystemStats? SystemStats { get; set; }
 
         [JsonProperty("toolhead", Required = Required.Always)]
-        public KlipperStatusToolhead Toolhead { get; set; }
+        public KlipperStatusToolhead? Toolhead { get; set; }
         #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
         #endregion
     }
 }

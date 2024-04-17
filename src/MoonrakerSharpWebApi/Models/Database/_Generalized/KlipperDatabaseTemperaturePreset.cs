@@ -9,11 +9,11 @@ namespace AndreasReitberger.API.Moonraker.Models
         #region Properties
         public Guid Id { get; set; } = Guid.Empty;
 
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
-        public string Gcode { get; set; }
+        public string Gcode { get; set; } = string.Empty;
 
-        public Dictionary<string, KlipperDatabaseTemperaturePresetHeater> Values { get; set; } = new();
+        public Dictionary<string, KlipperDatabaseTemperaturePresetHeater> Values { get; set; } = [];
         //public List<KlipperDatabaseTemperaturePresetHeater> Values { get; set; } = new();
         #endregion
 

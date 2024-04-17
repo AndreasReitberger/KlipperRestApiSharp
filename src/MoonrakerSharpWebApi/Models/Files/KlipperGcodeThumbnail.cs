@@ -26,7 +26,7 @@ namespace AndreasReitberger.API.Moonraker.Models
 
         [ObservableProperty]
         [JsonProperty("relative_path")]
-        string path;
+        string path = string.Empty;
         partial void OnPathChanged(string value)
         {
             IsPathRelative = value is not null;

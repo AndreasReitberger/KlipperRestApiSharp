@@ -11,21 +11,18 @@ namespace AndreasReitberger.API.Moonraker.Models
         public Guid Id { get; set; } = Guid.Empty;
 
         [JsonProperty("name")]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         [JsonProperty("gcode")]
-        public string Gcode { get; set; }
+        public string Gcode { get; set; } = string.Empty;
 
         [JsonProperty("values")]
-        public Dictionary<string, KlipperDatabaseFluiddHeaterElement> Values { get; set; } = new();
+        public Dictionary<string, KlipperDatabaseFluiddHeaterElement> Values { get; set; } = [];
         //public KlipperDatabaseMainsailValuePresetValues Values { get; set; }
         #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
         #endregion
     }
 }

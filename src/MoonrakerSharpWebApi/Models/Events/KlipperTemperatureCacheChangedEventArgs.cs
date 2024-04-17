@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using AndreasReitberger.API.Print3dServer.Core.Events;
+using Newtonsoft.Json;
 #if ConcurrentDictionary
 using System.Collections.Concurrent;
 #else
@@ -7,7 +8,7 @@ using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public class KlipperTemperatureCacheChangedEventArgs : KlipperEventArgs
+    public class KlipperTemperatureCacheChangedEventArgs : Print3dBaseEventArgs
     {
         #region Properties
 #if ConcurrentDictionary
@@ -18,10 +19,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
         #endregion
     }
 }

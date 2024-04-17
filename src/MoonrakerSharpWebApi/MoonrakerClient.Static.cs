@@ -15,14 +15,14 @@ namespace AndreasReitberger.API.Moonraker
         public static ObservableCollection<string> SupportedOperatingSystemNames = new(
             SupportedOperatingSystems.Select(item => item.ToString()));
 
-        public static void AddToConcurrentDictionary<T1, T2>(Dictionary<T1, T2> source, ConcurrentDictionary<T1, T2> target)
+        public static void AddToConcurrentDictionary<T1, T2>(Dictionary<T1, T2> source, ConcurrentDictionary<T1, T2> target) where T1 : notnull
         {
             foreach (KeyValuePair<T1, T2> keypair in source)
             {
                 target.AddOrUpdate(keypair.Key, keypair.Value, (k, v) => keypair.Value);
             }
         }
-        public static ConcurrentDictionary<T1, T2> ToConcurrent<T1, T2>(Dictionary<T1, T2> source)
+        public static ConcurrentDictionary<T1, T2> ToConcurrent<T1, T2>(Dictionary<T1, T2> source) where T1 : notnull
         {
             ConcurrentDictionary<T1, T2> target = new();
             if (source == null) return target;
@@ -32,9 +32,9 @@ namespace AndreasReitberger.API.Moonraker
             }
             return target;
         }
-        public static Dictionary<T1, T2> ToDictionary<T1, T2>(ConcurrentDictionary<T1, T2> source)
+        public static Dictionary<T1, T2> ToDictionary<T1, T2>(ConcurrentDictionary<T1, T2> source) where T1 : notnull
         {
-            Dictionary<T1, T2> target = new();
+            Dictionary<T1, T2> target = [];
             if (source == null) return target;
             foreach (KeyValuePair<T1, T2> keypair in source)
             {

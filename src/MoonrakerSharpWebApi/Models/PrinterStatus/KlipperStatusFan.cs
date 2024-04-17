@@ -1,7 +1,6 @@
 ﻿using AndreasReitberger.API.Print3dServer.Core.Interfaces;
 using Newtonsoft.Json;
 using System;
-using System.Security.Cryptography;
 using System.Threading.Tasks;
 
 namespace AndreasReitberger.API.Moonraker.Models
@@ -57,7 +56,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         #endregion
 
         #region Methods
-        public Task<bool> SetFanSpeedAsync(IPrint3dServerClient client, string command, object data) => client?.SetFanSpeedAsync(command, data);
+        public Task<bool> SetFanSpeedAsync(IPrint3dServerClient client, string command, object? data) => client.SetFanSpeedAsync(command, data);
         #endregion
 
         #region Overrides

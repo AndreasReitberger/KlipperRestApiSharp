@@ -15,10 +15,10 @@ namespace AndreasReitberger.API.Moonraker.Models
         public double FilamentUsed { get; set; }
 
         [JsonProperty("filename")]
-        public string Filename { get; set; }
+        public string Filename { get; set; } = string.Empty;
 
         [JsonProperty("metadata")]
-        public IGcodeMeta Metadata { get; set; }
+        public IGcodeMeta? Metadata { get; set; }
         //public KlipperGcodeMetaResult Metadata { get; set; }
 
         [JsonProperty("print_duration")]
@@ -36,7 +36,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         public double TotalDuration { get; set; }
 
         [JsonProperty("job_id")]
-        public string JobId { get; set; }
+        public string JobId { get; set; } = string.Empty;
 
         [JsonProperty("exists")]
         public bool Exists { get; set; }
@@ -44,10 +44,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
         #endregion
     }
 }
