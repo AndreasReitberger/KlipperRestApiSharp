@@ -2,20 +2,24 @@
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperUpdateManagerMainsail
+    public partial class KlipperUpdateManagerMainsail : ObservableObject
     {
         #region Properties
-        [JsonProperty("type")]
-        public string Type { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("type")]
+        string type = string.Empty;
 
-        [JsonProperty("repo")]
-        public string Repo { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("repo")]
+        string repo = string.Empty;
 
-        [JsonProperty("path")]
-        public string Path { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("path")]
+        string path = string.Empty;
 
-        [JsonProperty("persistent_files")]
-        public object? PersistentFiles { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("persistent_files")]
+        object? persistentFiles;
         #endregion
 
         #region Overrides

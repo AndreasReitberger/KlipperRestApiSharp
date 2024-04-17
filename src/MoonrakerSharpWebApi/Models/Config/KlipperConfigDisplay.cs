@@ -1,55 +1,69 @@
 ﻿using Newtonsoft.Json;
-using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperConfigDisplay
+    public partial class KlipperConfigDisplay : ObservableObject
     {
         #region Properties
-        [JsonProperty("down_pin")]
-        public string DownPin { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("down_pin")]
+        string downPin = string.Empty;
 
-        [JsonProperty("analog_range_back_pin")]
-        public string AnalogRangeBackPin { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("analog_range_back_pin")]
+        string analogRangeBackPin = string.Empty;
 
-        [JsonProperty("click_pin")]
-        public string ClickPin { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("click_pin")]
+        string clickPin = string.Empty;
 
-        [JsonProperty("d6_pin")]
-        public string D6Pin { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("d6_pin")]
+        string d6Pin = string.Empty;
 
-        [JsonProperty("d4_pin")]
-        public string D4Pin { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("d4_pin")]
+        string d4Pin = string.Empty;
 
-        [JsonProperty("lcd_type")]
-        public string LcdType { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("lcd_type")]
+        string lcdType = string.Empty;
 
-        [JsonProperty("d5_pin")]
-        public string D5Pin { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("d5_pin")]
+        string d5Pin = string.Empty;
 
-        [JsonProperty("e_pin")]
-        public string EPin { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("e_pin")]
+        string ePin = string.Empty;
 
-        [JsonProperty("back_pin")]
-        public string BackPin { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("back_pin")]
+        string backPin = string.Empty;
 
-        [JsonProperty("rs_pin")]
-        public string RsPin { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("rs_pin")]
+        string rsPin = string.Empty;
 
-        [JsonProperty("analog_range_down_pin")]
-        public string AnalogRangeDownPin { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("analog_range_down_pin")]
+        string analogRangeDownPin = string.Empty;
 
-        [JsonProperty("analog_range_up_pin")]
-        public string AnalogRangeUpPin { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("analog_range_up_pin")]
+        string analogRangeUpPin = string.Empty;
 
-        [JsonProperty("up_pin")]
-        public string UpPin { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("up_pin")]
+        string upPin = string.Empty;
 
-        [JsonProperty("d7_pin")]
-        public string D7Pin { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("d7_pin")]
+        string d7Pin = string.Empty;
 
-        [JsonProperty("analog_range_click_pin")]
-        public string AnalogRangeClickPin { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("analog_range_click_pin")]
+        string analogRangeClickPin = string.Empty;
         #endregion
 
         #region Overrides

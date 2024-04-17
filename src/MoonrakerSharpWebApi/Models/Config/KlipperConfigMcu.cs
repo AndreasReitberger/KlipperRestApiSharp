@@ -2,17 +2,20 @@
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperConfigMcu
+    public partial class KlipperConfigMcu : ObservableObject
     {
         #region Properties
-        [JsonProperty("baud")]
-        public long Baud { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("baud")]
+        long baud;
 
-        [JsonProperty("serial")]
-        public string Serial { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("serial")]
+        string serial = string.Empty;
 
-        [JsonProperty("max_stepper_error")]
-        public double MaxStepperError { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("max_stepper_error")]
+        double maxStepperError;
         #endregion
 
         #region Overrides

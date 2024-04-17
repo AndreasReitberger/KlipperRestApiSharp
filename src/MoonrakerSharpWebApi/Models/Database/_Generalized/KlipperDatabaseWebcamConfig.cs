@@ -14,7 +14,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         public bool enabled;
 
         [ObservableProperty]
-        [JsonProperty("name")]
+        [property: JsonProperty("name")]
         public string alias = string.Empty;
 
         [ObservableProperty]
@@ -55,7 +55,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         public bool flipY;
 
         [ObservableProperty]
-        [JsonProperty("rotation")]
+        [property: JsonProperty("rotation")]
         public long orientation;
 
         [ObservableProperty]

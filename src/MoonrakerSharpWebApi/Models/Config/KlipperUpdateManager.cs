@@ -2,29 +2,36 @@
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperUpdateManager
+    public partial class KlipperUpdateManager : ObservableObject
     {
         #region Properties
-        [JsonProperty("enable_auto_refresh")]
-        public bool EnableAutoRefresh { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("enable_auto_refresh")]
+        bool enableAutoRefresh;
 
-        [JsonProperty("channel")]
-        public string Channel { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("channel")]
+        string channel = string.Empty;
 
-        [JsonProperty("enable_repo_debug")]
-        public bool EnableRepoDebug { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("enable_repo_debug")]
+        bool enableRepoDebug;
 
-        [JsonProperty("enable_system_updates")]
-        public bool EnableSystemUpdates { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("enable_system_updates")]
+        bool enableSystemUpdates;
 
-        [JsonProperty("type")]
-        public string Type { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("type")]
+        string type = string.Empty;
 
-        [JsonProperty("client_repo")]
-        public object? ClientRepo { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("client_repo")]
+        object? clientRepo;
 
-        [JsonProperty("client_path")]
-        public object? ClientPath { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("client_path")]
+        object? clientPath;
         #endregion
 
         #region Overrides

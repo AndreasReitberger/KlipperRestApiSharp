@@ -2,50 +2,64 @@
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperConfig
+    public partial class KlipperConfig : ObservableObject
     {
         #region Properties
-        [JsonProperty("virtual_sdcard")]
-        public KlipperConfigVirtualSdcard? VirtualSdcard { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("virtual_sdcard")]
+        KlipperConfigVirtualSdcard? virtualSdcard;
 
-        [JsonProperty("printer")]
-        public KlipperConfigPrinter? Printer { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("printer")]
+        KlipperConfigPrinter? printer;
 
-        [JsonProperty("pause_resume")]
-        public KlipperStatusPauseResume? PauseResume { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("pause_resume")]
+        KlipperStatusPauseResume? pauseResume;
 
-        [JsonProperty("display_status")]
-        public KlipperStatusDisplay? DisplayStatus { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("display_status")]
+        KlipperStatusDisplay? displayStatus;
 
-        [JsonProperty("stepper_y")]
-        public KlipperConfigStepper? StepperY { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("stepper_y")]
+        KlipperConfigStepper? stepperY;
 
-        [JsonProperty("stepper_x")]
-        public KlipperConfigStepper? StepperX { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("stepper_x")]
+        KlipperConfigStepper? stepperX;
 
-        [JsonProperty("gcode_macro RESUME")]
-        public KlipperGcodeMacro? GcodeMacroResume { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("gcode_macro RESUME")]
+        KlipperGcodeMacro? gcodeMacroResume;
 
-        [JsonProperty("gcode_macro PAUSE")]
-        public KlipperGcodeMacro? GcodeMacroPause { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("gcode_macro PAUSE")]
+        KlipperGcodeMacro? gcodeMacroPause;
 
-        [JsonProperty("gcode_macro CANCEL_PRINT")]
-        public KlipperGcodeMacro? GcodeMacroCancelPrint { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("gcode_macro CANCEL_PRINT")]
+        KlipperGcodeMacro? gcodeMacroCancelPrint;
 
-        [JsonProperty("fan")]
-        public KlipperConfigFan? Fan { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("fan")]
+        KlipperConfigFan? fan;
 
-        [JsonProperty("stepper_z")]
-        public KlipperConfigStepper? StepperZ { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("stepper_z")]
+        KlipperConfigStepper? stepperZ;
 
-        [JsonProperty("mcu")]
-        public KlipperConfigMcu? Mcu { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("mcu")]
+        KlipperConfigMcu? mcu;
 
-        [JsonProperty("display")]
-        public KlipperConfigDisplay? Display { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("display")]
+        KlipperConfigDisplay? display;
 
-        [JsonProperty("extruder")]
-        public KlipperConfigExtruder? Extruder { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("extruder")]
+        KlipperConfigExtruder? extruder;
         #endregion
 
         #region Overrides

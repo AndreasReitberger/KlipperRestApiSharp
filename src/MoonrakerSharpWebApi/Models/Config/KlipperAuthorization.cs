@@ -1,23 +1,26 @@
 ﻿using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperAuthorization
+    public partial class KlipperAuthorization : ObservableObject
     {
         #region Properties
-        [JsonProperty("login_timeout")]
-        public long LoginTimeout { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("login_timeout")]
+        long loginTimeout;
 
-        [JsonProperty("force_logins")]
-        public bool ForceLogins { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("force_logins")]
+        bool forceLogins;
 
-        [JsonProperty("cors_domains")]
-        public List<string> CorsDomains { get; set; } = new();
+        [ObservableProperty]
+        [property: JsonProperty("cors_domains")]
+        List<string> corsDomains = [];
 
-        [JsonProperty("trusted_clients")]
-        public List<string> TrustedClients { get; set; } = new();
+        [ObservableProperty]
+        [property: JsonProperty("trusted_clients")]
+        List<string> trustedClients = [];
         #endregion
 
         #region Overrides

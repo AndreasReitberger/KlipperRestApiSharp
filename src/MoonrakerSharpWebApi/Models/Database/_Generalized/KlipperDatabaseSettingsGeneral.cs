@@ -2,14 +2,17 @@
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public class KlipperDatabaseSettingsGeneral
+    public partial class KlipperDatabaseSettingsGeneral : ObservableObject
     {
         #region Properties
-        public string Printername { get; set; } = string.Empty;
+        [ObservableProperty]
+        string printername = string.Empty;
 
-        public bool DisplayCancelPrint { get; set; }
+        [ObservableProperty]
+        bool displayCancelPrint;
 
-        public string Locale { get; set; } = string.Empty;
+        [ObservableProperty]
+        string locale = string.Empty;
         #endregion
 
         #region Overrides

@@ -2,15 +2,20 @@
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public class KlipperDatabaseTemperaturePresetHeater
+    public partial class KlipperDatabaseTemperaturePresetHeater : ObservableObject
     {
         #region Properties
-        public string Name { get; set; } = string.Empty;
-        public bool Active { get; set; }
+        [ObservableProperty]
+        string name= string.Empty;
 
-        public long? Value { get; set; }
+        [ObservableProperty]
+        bool active;
 
-        public string Type { get; set; } = string.Empty;
+        [ObservableProperty]
+        long? value;
+
+        [ObservableProperty]
+        string type = string.Empty;
         #endregion
 
         #region Overrides
