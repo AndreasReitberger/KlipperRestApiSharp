@@ -6,20 +6,17 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [JsonProperty("temperature", NullValueHandling = NullValueHandling.Ignore)]
-        public OctoprintApiPrinterStateTemperature Temperature { get; set; }
+        public OctoprintApiPrinterStateTemperature? Temperature { get; set; }
 
         [JsonProperty("sd", NullValueHandling = NullValueHandling.Ignore)]
-        public OctoprintApiPrinterStateSd Sd { get; set; }
+        public OctoprintApiPrinterStateSd? Sd { get; set; }
 
         [JsonProperty("state", NullValueHandling = NullValueHandling.Ignore)]
-        public OctoprintApiPrinterState State { get; set; }
+        public OctoprintApiPrinterState? State { get; set; }
         #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
         #endregion
     }
 }

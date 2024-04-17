@@ -9,23 +9,20 @@ namespace AndreasReitberger.API.Moonraker.Models
         public long Depth { get; set; }
 
         [JsonProperty("formFactor")]
-        public string FormFactor { get; set; }
+        public string FormFactor { get; set; } = string.Empty;
 
         [JsonProperty("height")]
         public long Height { get; set; }
 
         [JsonProperty("origin")]
-        public string Origin { get; set; }
+        public string Origin { get; set; } = string.Empty;
 
         [JsonProperty("width")]
         public long Width { get; set; }
         #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
         #endregion
     }
 }

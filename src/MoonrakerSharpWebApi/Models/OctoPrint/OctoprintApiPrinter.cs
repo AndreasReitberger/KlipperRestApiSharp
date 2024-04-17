@@ -70,7 +70,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         }
 
         [JsonIgnore]
-        string _job;
+        string _job = string.Empty;
         [JsonIgnore]
         public string Job
         {
@@ -103,12 +103,11 @@ namespace AndreasReitberger.API.Moonraker.Models
             set { SetProperty(ref _isSelected, value); }
         }
 
-
         [JsonProperty("axes")]
-        public OctoprintApiPrinterAxes Axes { get; set; }
+        public OctoprintApiPrinterAxes? Axes { get; set; }
 
         [JsonProperty("color")]
-        public string Color { get; set; }
+        public string Color { get; set; } = string.Empty;
 
         [JsonProperty("current")]
         public bool Current { get; set; }
@@ -117,7 +116,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         public bool DefaultDefault { get; set; }
 
         [JsonProperty("extruder")]
-        public OctoprintApiPrinterExtruder Extruder { get; set; }
+        public OctoprintApiPrinterExtruder? Extruder { get; set; }
 
         [JsonProperty("heatedBed")]
         public bool HasHeatedBed { get; set; }
@@ -126,26 +125,23 @@ namespace AndreasReitberger.API.Moonraker.Models
         public bool HasHeatedChamber { get; set; }
 
         [JsonProperty("id")]
-        public string Id { get; set; }
+        public string Id { get; set; } = string.Empty;
 
         [JsonProperty("model")]
-        public string Model { get; set; }
+        public string Model { get; set; } = string.Empty;
 
         [JsonProperty("name")]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         [JsonProperty("resource")]
-        public Uri Resource { get; set; }
+        public Uri? Resource { get; set; }
 
         [JsonProperty("volume")]
-        public OctoprintApiPrinterVolume Volume { get; set; }
+        public OctoprintApiPrinterVolume? Volume { get; set; }
         #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
         #endregion
     }
 }

@@ -6,14 +6,11 @@ namespace AndreasReitberger.API.Moonraker.Models
     public class KlipperSessionChangedEventArgs : Print3dBaseEventArgs
     {
         #region Properties
-        public KlipperEventSession Sesson { get; set; }
+        public KlipperEventSession? Session { get; set; }
         #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
         #endregion
     }
 }

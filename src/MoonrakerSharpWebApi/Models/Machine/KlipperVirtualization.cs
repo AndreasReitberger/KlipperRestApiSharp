@@ -6,17 +6,14 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [JsonProperty("virt_type")]
-        public string VirtType { get; set; }
+        public string VirtType { get; set; } = string.Empty;
 
         [JsonProperty("virt_identifier")]
-        public string VirtIdentifier { get; set; }
+        public string VirtIdentifier { get; set; } = string.Empty;
         #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
         #endregion
     }
 }

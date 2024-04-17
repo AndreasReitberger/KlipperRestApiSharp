@@ -6,17 +6,14 @@ namespace AndreasReitberger.API.Moonraker.Models
     public class KlipperJsonConvertEventArgs : EventArgs
     {
         #region Properties
-        public string Message { get; set; }
-        public string OriginalString { get; set; }
-        public string TargetType { get; set; }
-        public Exception Exception { get; set; }
+        public string Message { get; set; } = string.Empty;
+        public string OriginalString { get; set; } = string.Empty;
+        public string TargetType { get; set; } = string.Empty;
+        public Exception? Exception { get; set; }
         #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
         #endregion
     }
 }

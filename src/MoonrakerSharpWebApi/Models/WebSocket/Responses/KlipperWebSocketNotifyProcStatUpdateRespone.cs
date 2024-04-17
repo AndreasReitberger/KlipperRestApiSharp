@@ -8,26 +8,23 @@ namespace AndreasReitberger.API.Moonraker.Models.WebSocket
         #region Properties
 
         [JsonProperty("moonraker_stats", Required = Required.Always)]
-        public MoonrakerStatInfo MoonrakerStats { get; set; }
+        public MoonrakerStatInfo? MoonrakerStats { get; set; }
 
         [JsonProperty("throttled_state")]
-        public MoonrakerThrottledState ThrottledState { get; set; }
+        public MoonrakerThrottledState? ThrottledState { get; set; }
 
         [JsonProperty("cpu_temp", Required = Required.Always)]
         public double CpuTemp { get; set; }
 
         [JsonProperty("network", Required = Required.Always)]
-        public Dictionary<string, KlipperNetworkInterface> Network { get; set; }
+        public Dictionary<string, KlipperNetworkInterface> Network { get; set; } = [];
 
         [JsonProperty("websocket_connections", Required = Required.Always)]
         public long WebsocketConnections { get; set; }
         #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
         #endregion
     }
 }

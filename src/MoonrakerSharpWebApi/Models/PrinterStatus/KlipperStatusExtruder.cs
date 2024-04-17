@@ -37,7 +37,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         public double? MaxAccel { get; set; }
 
         [JsonProperty("homed_axes")]
-        public string HomedAxes { get; set; }
+        public string HomedAxes { get; set; } = string.Empty;
 
         [JsonProperty("estimated_print_time")]
         public double? EstimatedPrintTime { get; set; }
@@ -64,7 +64,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         public List<double> Position { get; set; } = new();
 
         [JsonProperty("extruder")]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         [JsonIgnore]
         public bool CanUpdateTarget { get; set; } = false;

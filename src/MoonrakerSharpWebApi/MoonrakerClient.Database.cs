@@ -44,7 +44,7 @@ namespace AndreasReitberger.API.Moonraker
                     await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Get, $"database/list")
                     .ConfigureAwait(false);
                 */
-                KlipperDatabaseNamespaceListRespone queryResult = GetObjectFromJson<KlipperDatabaseNamespaceListRespone>(result?.Result, NewtonsoftJsonSerializerSettings);
+                KlipperDatabaseNamespaceListRespone? queryResult = GetObjectFromJson<KlipperDatabaseNamespaceListRespone>(result?.Result, NewtonsoftJsonSerializerSettings);
                 return queryResult?.Result?.Namespaces ?? new();
             }
             catch (JsonException jecx)
@@ -82,14 +82,14 @@ namespace AndreasReitberger.API.Moonraker
             catch (Exception exc)
             {
                 OnError(new UnhandledExceptionEventArgs(exc, false));
-                AvailableNamespaces = new();
+                AvailableNamespaces = [];
             }
         }
 
         public async Task<Dictionary<string, object>> GetDatabaseItemAsync(string namespaceName, string key = "", bool throwOnMissingNamespace = false)
         {
             IRestApiRequestRespone? result = null;
-            Dictionary<string, object> resultObject = new();
+            Dictionary<string, object> resultObject = [];
             try
             {
                 if (AvailableNamespaces?.Count == 0 || AvailableNamespaces == null)
@@ -127,12 +127,12 @@ namespace AndreasReitberger.API.Moonraker
                 result = await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Get, $"database/item", default, null, urlSegments)
                             .ConfigureAwait(false);
                 */
-                KlipperDatabaseItemRespone queryResult = GetObjectFromJson<KlipperDatabaseItemRespone>(result?.Result);
-                if (queryResult is not null)
+                KlipperDatabaseItemRespone? queryResult = GetObjectFromJson<KlipperDatabaseItemRespone>(result?.Result);
+                if (queryResult?.Result?.Value is not null)
                 {
                     resultObject = new()
                     {
-                        { $"{namespaceName}{(!string.IsNullOrEmpty(key) ? $"|{key}" : "")}", queryResult?.Result?.Value }
+                        { $"{namespaceName}{(!string.IsNullOrEmpty(key) ? $"|{key}" : "")}", queryResult.Result.Value }
                     };
                 }
                 return resultObject;
@@ -486,7 +486,7 @@ namespace AndreasReitberger.API.Moonraker
                     .ConfigureAwait(false);
                 //result = await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Post, "database/item", cmd).ConfigureAwait(false);
                 KlipperDatabaseItemRespone? queryResult = GetObjectFromJson<KlipperDatabaseItemRespone>(result?.Result, NewtonsoftJsonSerializerSettings);
-                if (queryResult is not null)
+                if (queryResult is not null && queryResult.Result?.Value is not null)
                 {
                     resultObject = new()
                     {
@@ -542,7 +542,7 @@ namespace AndreasReitberger.API.Moonraker
                     .ConfigureAwait(false);
                 */
                 KlipperDatabaseItemRespone? queryResult = GetObjectFromJson<KlipperDatabaseItemRespone>(result?.Result, NewtonsoftJsonSerializerSettings);
-                if (queryResult is not null)
+                if (queryResult?.Result?.Value is not null)
                 {
                     resultObject = new()
                     {

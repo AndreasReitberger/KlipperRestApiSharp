@@ -30,23 +30,23 @@ namespace AndreasReitberger.API.Moonraker.Models
         public string url = string.Empty;
         partial void OnUrlChanged(string value)
         {
-            if (!string.IsNullOrEmpty(value) && Uri.TryCreate(value, UriKind.RelativeOrAbsolute, out Uri result))
+            if (!string.IsNullOrEmpty(value) && Uri.TryCreate(value, UriKind.RelativeOrAbsolute, out Uri? result))
                 WebCamUrlDynamic = result;
         }
 
         [ObservableProperty]
-        public Uri webCamUrlDynamic;
+        public Uri? webCamUrlDynamic;
         
         [ObservableProperty]
         public string urlSnapshot = string.Empty;
         partial void OnUrlSnapshotChanged(string value)
         {
-            if (!string.IsNullOrEmpty(value) && Uri.TryCreate(value, UriKind.RelativeOrAbsolute, out Uri result))
+            if (!string.IsNullOrEmpty(value) && Uri.TryCreate(value, UriKind.RelativeOrAbsolute, out Uri? result))
                 WebCamUrlStatic = result;
         }
 
         [ObservableProperty]
-        public Uri webCamUrlStatic;
+        public Uri? webCamUrlStatic;
 
         [ObservableProperty]
         public bool flipX;

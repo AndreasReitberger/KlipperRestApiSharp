@@ -6,7 +6,7 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [JsonProperty("pin")]
-        public string Pin { get; set; }
+        public string Pin { get; set; } = string.Empty;
 
         [JsonProperty("cycle_time")]
         public double CycleTime { get; set; }
@@ -28,10 +28,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
         #endregion
     }
 }

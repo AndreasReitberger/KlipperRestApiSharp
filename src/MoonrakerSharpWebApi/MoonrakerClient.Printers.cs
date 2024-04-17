@@ -736,7 +736,7 @@ namespace AndreasReitberger.API.Moonraker
                 return resultObject;
             }
         }
-        public async Task<Dictionary<string, KlipperStatusFilamentSensor>> GetFilamentSensorsAsync(Dictionary<string, string> macros = null)
+        public async Task<Dictionary<string, KlipperStatusFilamentSensor>> GetFilamentSensorsAsync(Dictionary<string, string>? macros = null)
         {
             IRestApiRequestRespone? result = null;
             Dictionary<string, KlipperStatusFilamentSensor> resultObject = [];
@@ -970,9 +970,9 @@ namespace AndreasReitberger.API.Moonraker
             }
         }
 
-        public async Task<KlipperStatusDisplay> GetDisplayStatusAsync()
+        public async Task<KlipperStatusDisplay?> GetDisplayStatusAsync()
         {
-            KlipperStatusDisplay resultObject = null;
+            KlipperStatusDisplay? resultObject = null;
             try
             {
                 string key = "display_status";
@@ -999,7 +999,7 @@ namespace AndreasReitberger.API.Moonraker
         {
             try
             {
-                KlipperStatusDisplay result = await GetDisplayStatusAsync().ConfigureAwait(false);
+                KlipperStatusDisplay? result = await GetDisplayStatusAsync().ConfigureAwait(false);
                 DisplayStatus = result;
             }
             catch (Exception exc)
@@ -1009,9 +1009,9 @@ namespace AndreasReitberger.API.Moonraker
             }
         }
 
-        public async Task<KlipperStatusToolhead> GetToolHeadStatusAsync()
+        public async Task<KlipperStatusToolhead?> GetToolHeadStatusAsync()
         {
-            KlipperStatusToolhead resultObject = null;
+            KlipperStatusToolhead? resultObject = null;
             try
             {
                 string key = "toolhead";
@@ -1026,7 +1026,6 @@ namespace AndreasReitberger.API.Moonraker
                 if (result.ContainsKey(key) && result?[key] is KlipperStatusToolhead stateObj)
                     resultObject = stateObj;
                 return resultObject;
-
             }
             catch (Exception exc)
             {
@@ -1038,7 +1037,7 @@ namespace AndreasReitberger.API.Moonraker
         {
             try
             {
-                KlipperStatusToolhead result = await GetToolHeadStatusAsync().ConfigureAwait(false);
+                KlipperStatusToolhead? result = await GetToolHeadStatusAsync().ConfigureAwait(false);
                 ToolHeadStatus = result;
             }
             catch (Exception exc)
@@ -1048,9 +1047,9 @@ namespace AndreasReitberger.API.Moonraker
             }
         }
 
-        public async Task<KlipperStatusGcodeMove> GetGcodeMoveStatusAsync()
+        public async Task<KlipperStatusGcodeMove?> GetGcodeMoveStatusAsync()
         {
-            KlipperStatusGcodeMove resultObject = null;
+            KlipperStatusGcodeMove? resultObject = null;
             try
             {
                 string key = "gcode_move";
@@ -1077,7 +1076,7 @@ namespace AndreasReitberger.API.Moonraker
         {
             try
             {
-                KlipperStatusGcodeMove result = await GetGcodeMoveStatusAsync().ConfigureAwait(false);
+                KlipperStatusGcodeMove? result = await GetGcodeMoveStatusAsync().ConfigureAwait(false);
                 GcodeMove = result;
             }
             catch (Exception exc)
@@ -1087,9 +1086,9 @@ namespace AndreasReitberger.API.Moonraker
             }
         }
 
-        public async Task<KlipperStatusMotionReport> GetMotionReportAsync()
+        public async Task<KlipperStatusMotionReport?> GetMotionReportAsync()
         {
-            KlipperStatusMotionReport resultObject = null;
+            KlipperStatusMotionReport? resultObject = null;
             try
             {
                 string key = "motion_report";
@@ -1116,7 +1115,7 @@ namespace AndreasReitberger.API.Moonraker
         {
             try
             {
-                KlipperStatusMotionReport result = await GetMotionReportAsync().ConfigureAwait(false);
+                KlipperStatusMotionReport? result = await GetMotionReportAsync().ConfigureAwait(false);
                 MotionReport = result;
             }
             catch (Exception exc)
@@ -1126,9 +1125,9 @@ namespace AndreasReitberger.API.Moonraker
             }
         }
 
-        public async Task<KlipperStatusVirtualSdcard> GetVirtualSdCardStatusAsync()
+        public async Task<KlipperStatusVirtualSdcard?> GetVirtualSdCardStatusAsync()
         {
-            KlipperStatusVirtualSdcard resultObject = null;
+            KlipperStatusVirtualSdcard? resultObject = null;
             try
             {
                 string key = "virtual_sdcard";
@@ -1155,7 +1154,7 @@ namespace AndreasReitberger.API.Moonraker
         {
             try
             {
-                KlipperStatusVirtualSdcard result = await GetVirtualSdCardStatusAsync().ConfigureAwait(false);
+                KlipperStatusVirtualSdcard? result = await GetVirtualSdCardStatusAsync().ConfigureAwait(false);
                 VirtualSdCard = result;
             }
             catch (Exception exc)
@@ -1165,9 +1164,9 @@ namespace AndreasReitberger.API.Moonraker
             }
         }
 
-        public async Task<KlipperStatusHeaterBed> GetHeaterBedStatusAsync()
+        public async Task<KlipperStatusHeaterBed?> GetHeaterBedStatusAsync()
         {
-            KlipperStatusHeaterBed resultObject = null;
+            KlipperStatusHeaterBed? resultObject = null;
             try
             {
                 string key = "heater_bed";
@@ -1195,9 +1194,10 @@ namespace AndreasReitberger.API.Moonraker
         {
             try
             {
-                KlipperStatusHeaterBed result = await GetHeaterBedStatusAsync().ConfigureAwait(false);
+                KlipperStatusHeaterBed? result = await GetHeaterBedStatusAsync().ConfigureAwait(false);
                 ConcurrentDictionary<int, IHeaterComponent> heaters = new(HeatedBeds);
-                heaters.AddOrUpdate(0, result, (key, oldValue) => oldValue = result);
+                if (result is not null)
+                    heaters.AddOrUpdate(0, result, (key, oldValue) => oldValue = result);
                 HeatedBeds = heaters;
             }
             catch (Exception exc)
@@ -1207,11 +1207,11 @@ namespace AndreasReitberger.API.Moonraker
             }
         }
 
-        public Task<string> SubscribePrinterObjectStatusAsync(long? connectionId, List<string> objects) => SubscribePrinterObjectStatusAsync((long)connectionId, objects);
-        public async Task<string> SubscribePrinterObjectStatusAsync(long connectionId, List<string> objects)
+        //public Task<string> SubscribePrinterObjectStatusAsync(long? connectionId, List<string> objects) => SubscribePrinterObjectStatusAsync((long)connectionId, objects);
+        public async Task<string> SubscribePrinterObjectStatusAsync(long? connectionId, List<string> objects)
         {
             IRestApiRequestRespone? result = null;
-            string resultObject = null;
+            string? resultObject = "";
             try
             {
                 Dictionary<string, string> urlSegments = new()
@@ -1241,7 +1241,7 @@ namespace AndreasReitberger.API.Moonraker
                 result = await SendRestApiRequestAsync(MoonrakerCommandBase.printer, Method.Post, "objects/subscribe", jsonObject: null, cts: default, urlSegments: urlSegments)
                     .ConfigureAwait(false);
                 */
-                return result?.Result;
+                return result?.Result ?? resultObject;
             }
             catch (Exception exc)
             {
@@ -1253,12 +1253,12 @@ namespace AndreasReitberger.API.Moonraker
         public async Task<string> SubscribeAllPrinterObjectStatusAsync(long? connectionId)
         {
             List<string> objects = await GetPrinterObjectListAsync().ConfigureAwait(false);
-            return await SubscribePrinterObjectStatusAsync((long)connectionId, objects).ConfigureAwait(false);
+            return await SubscribePrinterObjectStatusAsync(connectionId, objects).ConfigureAwait(false);
         }
-        public async Task<KlipperEndstopQueryResult> QueryEndstopsAsync()
+        public async Task<KlipperEndstopQueryResult?> QueryEndstopsAsync()
         {
             IRestApiRequestRespone? result = null;
-            KlipperEndstopQueryResult resultObject = null;
+            KlipperEndstopQueryResult? resultObject = null;
             try
             {
                 string targetUri = $"{MoonrakerCommands.Printer}";
@@ -1273,7 +1273,7 @@ namespace AndreasReitberger.API.Moonraker
                        )
                     .ConfigureAwait(false);
                 //result = await SendRestApiRequestAsync(MoonrakerCommandBase.printer, Method.Get, "query_endstops/status").ConfigureAwait(false);
-                KlipperEndstopQueryRespone queryResult = GetObjectFromJson<KlipperEndstopQueryRespone>(result?.Result, NewtonsoftJsonSerializerSettings);
+                KlipperEndstopQueryRespone? queryResult = GetObjectFromJson<KlipperEndstopQueryRespone>(result?.Result, NewtonsoftJsonSerializerSettings);
                 return queryResult?.Result;
             }
             catch (JsonException jecx)

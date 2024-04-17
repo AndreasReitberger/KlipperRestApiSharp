@@ -7,7 +7,7 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [JsonProperty("control")]
-        public string Control { get; set; }
+        public string Control { get; set; } = string.Empty;
 
         [JsonProperty("pid_kp")]
         public double PidKp { get; set; }
@@ -16,10 +16,10 @@ namespace AndreasReitberger.API.Moonraker.Models
         public long PullupResistor { get; set; }
 
         [JsonProperty("sensor_pin")]
-        public string SensorPin { get; set; }
+        public string SensorPin { get; set; } = string.Empty;
 
         [JsonProperty("heater_pin")]
-        public string HeaterPin { get; set; }
+        public string HeaterPin { get; set; } = string.Empty;
 
         [JsonProperty("max_power")]
         public long MaxPower { get; set; }
@@ -28,7 +28,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         public long MinExtrudeTemp { get; set; }
 
         [JsonProperty("sensor_type")]
-        public string SensorType { get; set; }
+        public string SensorType { get; set; } = string.Empty;
 
         [JsonProperty("inline_resistor")]
         public long InlineResistor { get; set; }
@@ -54,10 +54,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
         #endregion
     }
 }

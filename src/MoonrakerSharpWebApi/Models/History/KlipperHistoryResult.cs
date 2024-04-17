@@ -10,14 +10,11 @@ namespace AndreasReitberger.API.Moonraker.Models
         public long Count { get; set; }
 
         [JsonProperty("jobs")]
-        public List<KlipperJobItem> Jobs { get; set; }
+        public List<KlipperJobItem> Jobs { get; set; } = [];
         #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
         #endregion
     }
 }

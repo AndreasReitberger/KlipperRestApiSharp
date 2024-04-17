@@ -6,7 +6,7 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [JsonProperty("host")]
-        public string Host { get; set; }
+        public string Host { get; set; } = string.Empty;
 
         [JsonProperty("port")]
         public long Port { get; set; }
@@ -15,16 +15,16 @@ namespace AndreasReitberger.API.Moonraker.Models
         public long SslPort { get; set; }
 
         [JsonProperty("klippy_uds_address")]
-        public string KlippyUdsAddress { get; set; }
+        public string KlippyUdsAddress { get; set; } = string.Empty;
 
         [JsonProperty("max_upload_size")]
         public long MaxUploadSize { get; set; }
 
         [JsonProperty("ssl_certificate_path")]
-        public object SslCertificatePath { get; set; }
+        public object? SslCertificatePath { get; set; }
 
         [JsonProperty("ssl_key_path")]
-        public object SslKeyPath { get; set; }
+        public object? SslKeyPath { get; set; }
 
         [JsonProperty("enable_debug_logging")]
         public bool EnableDebugLogging { get; set; }
@@ -33,16 +33,16 @@ namespace AndreasReitberger.API.Moonraker.Models
         public bool EnableDatabaseDebug { get; set; }
 
         [JsonProperty("database_path")]
-        public string DatabasePath { get; set; }
+        public string DatabasePath { get; set; } = string.Empty;
 
         [JsonProperty("queue_gcode_uploads")]
         public bool QueueGcodeUploads { get; set; }
 
         [JsonProperty("config_path")]
-        public string ConfigPath { get; set; }
+        public string ConfigPath { get; set; } = string.Empty;
 
         [JsonProperty("log_path")]
-        public string LogPath { get; set; }
+        public string LogPath { get; set; } = string.Empty;
 
         [JsonProperty("temperature_store_size")]
         public long TemperatureStoreSize { get; set; }
@@ -60,14 +60,11 @@ namespace AndreasReitberger.API.Moonraker.Models
         public double JobTransitionDelay { get; set; }
 
         [JsonProperty("job_transition_gcode")]
-        public string JobTransitionGcode { get; set; }
+        public string JobTransitionGcode { get; set; } = string.Empty;
         #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
         #endregion
     }
 

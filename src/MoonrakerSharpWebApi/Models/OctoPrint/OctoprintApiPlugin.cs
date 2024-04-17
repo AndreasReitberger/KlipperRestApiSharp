@@ -12,7 +12,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         public bool InlineThumbnail { get; set; }
 
         [JsonProperty("inline_thumbnail_align_value")]
-        public string InlineThumbnailAlignValue { get; set; }
+        public string InlineThumbnailAlignValue { get; set; } = string.Empty;
 
         [JsonProperty("inline_thumbnail_scale_value")]
         public long InlineThumbnailScaleValue { get; set; }
@@ -21,7 +21,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         public bool Installed { get; set; }
 
         [JsonProperty("installed_version")]
-        public string InstalledVersion { get; set; }
+        public string InstalledVersion { get; set; } = string.Empty;
 
         [JsonProperty("scale_inline_thumbnail")]
         public bool ScaleInlineThumbnail { get; set; }
@@ -31,10 +31,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
         #endregion
     }
 }

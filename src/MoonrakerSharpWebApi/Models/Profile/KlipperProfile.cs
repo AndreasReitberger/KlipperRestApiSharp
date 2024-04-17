@@ -5,14 +5,11 @@ namespace AndreasReitberger.API.Moonraker.Models
     public class KlipperProfile
     {
         #region Properties
-        public string Name { get; set; }
-        #endregion 
+        public string Name { get; set; } = string.Empty;
+        #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
         #endregion
     }
 }

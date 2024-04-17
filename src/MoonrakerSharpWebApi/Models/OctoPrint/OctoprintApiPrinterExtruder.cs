@@ -12,17 +12,14 @@ namespace AndreasReitberger.API.Moonraker.Models
         public double NozzleDiameter { get; set; }
 
         [JsonProperty("offsets")]
-        public long[][] Offsets { get; set; }
+        public long[][] Offsets { get; set; } = [];
 
         [JsonProperty("sharedNozzle")]
         public bool SharedNozzle { get; set; }
         #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
         #endregion
     }
 }

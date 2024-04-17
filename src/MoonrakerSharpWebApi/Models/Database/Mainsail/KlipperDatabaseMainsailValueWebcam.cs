@@ -7,17 +7,14 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [JsonProperty("configs")]
-        public List<KlipperDatabaseMainsailValueWebcamConfig> Configs { get; set; }
+        public List<KlipperDatabaseMainsailValueWebcamConfig> Configs { get; set; } = [];
 
         [JsonProperty("boolNavi")]
         public bool BoolNavi { get; set; }
         #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
         #endregion
     }
 }

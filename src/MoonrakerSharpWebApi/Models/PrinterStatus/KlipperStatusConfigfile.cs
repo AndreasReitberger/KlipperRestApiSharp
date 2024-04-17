@@ -7,23 +7,20 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [JsonProperty("warnings")]
-        public List<object> Warnings { get; set; } = new();
+        public List<object> Warnings { get; set; } = [];
 
         [JsonProperty("config")]
-        public KlipperConfig Config { get; set; }
+        public KlipperConfig? Config { get; set; }
 
         [JsonProperty("settings")]
-        public KlipperSettings Settings { get; set; }
+        public KlipperSettings? Settings { get; set; }
 
         [JsonProperty("save_config_pending")]
         public bool SaveConfigPending { get; set; }
-        #endregion 
+        #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
         #endregion
     }
 }

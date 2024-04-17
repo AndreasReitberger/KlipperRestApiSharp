@@ -9,11 +9,11 @@ namespace AndreasReitberger.API.Moonraker.Models
         #region Properties
         [ObservableProperty]
         [JsonProperty("queued_jobs")]
-        List<IPrint3dJob> queuedJobs = new();
+        List<IPrint3dJob> queuedJobs = [];
 
         [ObservableProperty]
         [JsonProperty("queue_state")]
-        string queueState;
+        string queueState = string.Empty;
         #endregion
 
         #region Overrides

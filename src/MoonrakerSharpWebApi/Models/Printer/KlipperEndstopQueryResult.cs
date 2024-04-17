@@ -6,20 +6,17 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [JsonProperty("y")]
-        public string Y { get; set; }
+        public string Y { get; set; } = string.Empty;
 
         [JsonProperty("x")]
-        public string X { get; set; }
+        public string X { get; set; } = string.Empty;
 
         [JsonProperty("z")]
-        public string Z { get; set; }
+        public string Z { get; set; } = string.Empty;
         #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
         #endregion
     }
 }

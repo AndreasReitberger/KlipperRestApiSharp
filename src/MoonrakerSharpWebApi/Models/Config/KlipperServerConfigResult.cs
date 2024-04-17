@@ -6,7 +6,7 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [JsonProperty("config")]
-        public KlipperServerConfig Config { get; set; }
+        public KlipperServerConfig? Config { get; set; }
         #endregion
 
         #region Overrides

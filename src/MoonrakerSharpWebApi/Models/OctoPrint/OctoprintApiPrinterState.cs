@@ -7,17 +7,14 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [JsonProperty("text", NullValueHandling = NullValueHandling.Ignore)]
-        public string Text { get; set; }
+        public string Text { get; set; } = string.Empty;
 
         [JsonProperty("flags", NullValueHandling = NullValueHandling.Ignore)]
-        public Dictionary<string, bool> Flags { get; set; } = new();
+        public Dictionary<string, bool> Flags { get; set; } = [];
         #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
         #endregion
     }
 }

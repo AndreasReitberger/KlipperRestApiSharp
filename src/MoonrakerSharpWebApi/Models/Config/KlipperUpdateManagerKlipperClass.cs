@@ -7,38 +7,35 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [JsonProperty("type")]
-        public string Type { get; set; }
+        public string Type { get; set; } = string.Empty;
 
         [JsonProperty("venv_args")]
-        public string VenvArgs { get; set; }
+        public string VenvArgs { get; set; } = string.Empty;
 
         [JsonProperty("is_system_service")]
         public bool IsSystemService { get; set; }
 
         [JsonProperty("moved_origin")]
-        public Uri MovedOrigin { get; set; }
+        public Uri? MovedOrigin { get; set; }
 
         [JsonProperty("origin")]
-        public Uri Origin { get; set; }
+        public Uri? Origin { get; set; }
 
         [JsonProperty("primary_branch")]
-        public string PrimaryBranch { get; set; }
+        public string PrimaryBranch { get; set; } = string.Empty;
 
         [JsonProperty("enable_node_updates")]
         public bool EnableNodeUpdates { get; set; }
 
         [JsonProperty("requirements")]
-        public string Requirements { get; set; }
+        public string Requirements { get; set; } = string.Empty;
 
         [JsonProperty("install_script")]
-        public string InstallScript { get; set; }
+        public string InstallScript { get; set; } = string.Empty;
         #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
         #endregion
     }
 }

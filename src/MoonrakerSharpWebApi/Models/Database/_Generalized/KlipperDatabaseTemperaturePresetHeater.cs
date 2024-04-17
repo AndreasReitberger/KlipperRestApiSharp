@@ -10,7 +10,7 @@ namespace AndreasReitberger.API.Moonraker.Models
 
         public long? Value { get; set; }
 
-        public string Type { get; set; }
+        public string Type { get; set; } = string.Empty;
         #endregion
 
         #region Overrides

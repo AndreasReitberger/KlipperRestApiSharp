@@ -12,17 +12,14 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
 #if ConcurrentDictionary
-        public ConcurrentDictionary<string, KlipperStatusTemperatureSensor> TemperatureStates { get; set; }
+        public ConcurrentDictionary<string, KlipperStatusTemperatureSensor> TemperatureStates { get; set; } = [];
 #else
-        public Dictionary<string, KlipperStatusTemperatureSensor> TemperatureStates { get; set; }
+        public Dictionary<string, KlipperStatusTemperatureSensor> TemperatureStates { get; set; } = [];
 #endif
         #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
         #endregion
     }
 }

@@ -13,7 +13,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         public double? Progress { get; set; }
 
         [JsonProperty("message")]
-        public string Message { get; set; }
+        public string Message { get; set; } = string.Empty;
         #endregion
 
         #region Methods
@@ -33,10 +33,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
         #endregion
     }
 }

@@ -15,11 +15,11 @@ namespace AndreasReitberger.API.Moonraker.Models
 
         [ObservableProperty]
         [JsonProperty("filename")]
-        string fileName;
+        string fileName = string.Empty;
 
         [ObservableProperty]
         [JsonProperty("job_id")]
-        string jobId;
+        string jobId = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [NotifyPropertyChangedFor(nameof(TimeAddedGeneralized))]

@@ -36,12 +36,12 @@ namespace AndreasReitberger.API.Moonraker
         int _cooldownTemperatureSensor = 4;
         int _cooldownCpuUsage = 4;
         int _cooldownSystemMemory = 4;
-        int _cooldownHeaterBed = 4;
+        //int _cooldownHeaterBed = 4;
 
         #endregion
 
         #region Instance
-        static MoonrakerClient _instance = null;
+        static MoonrakerClient? _instance = null;
         static readonly object Lock = new();
         public new static MoonrakerClient Instance
         {
@@ -118,7 +118,7 @@ namespace AndreasReitberger.API.Moonraker
         #region State & Config
         [ObservableProperty]
         [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        string klipperState;
+        string klipperState = string.Empty;
         partial void OnKlipperStateChanging(string value)
         {
             OnKlipperStateChangedEvent(new KlipperStateChangedEventArgs()
@@ -223,8 +223,8 @@ namespace AndreasReitberger.API.Moonraker
 
         [ObservableProperty]
         [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        KlipperStatusVirtualSdcard virtualSdCard;
-        partial void OnVirtualSdCardChanged(KlipperStatusVirtualSdcard value)
+        KlipperStatusVirtualSdcard? virtualSdCard;
+        partial void OnVirtualSdCardChanged(KlipperStatusVirtualSdcard? value)
         {
             OnKlipperVirtualSdCardStateChanged(new KlipperVirtualSdCardStateChangedEventArgs()
             {
@@ -514,8 +514,8 @@ namespace AndreasReitberger.API.Moonraker
 
         [ObservableProperty, Obsolete("Use ActiveFan instead")]
         [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        KlipperStatusFan fan;
-        partial void OnFanChanged(KlipperStatusFan value)
+        KlipperStatusFan? fan;
+        partial void OnFanChanged(KlipperStatusFan? value)
         {
             OnKlipperFanStateChanged(new KlipperFanStateChangedEventArgs()
             {
@@ -528,8 +528,8 @@ namespace AndreasReitberger.API.Moonraker
 
         [ObservableProperty]
         [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        KlipperStatusMotionReport motionReport;
-        partial void OnMotionReportChanging(KlipperStatusMotionReport value)
+        KlipperStatusMotionReport? motionReport;
+        partial void OnMotionReportChanging(KlipperStatusMotionReport? value)
         {
             OnKlipperMotionReportChanged(new KlipperMotionReportChangedEventArgs()
             {
@@ -539,7 +539,7 @@ namespace AndreasReitberger.API.Moonraker
                 CallbackId = -1,
             });
         }
-        partial void OnMotionReportChanged(KlipperStatusMotionReport value)
+        partial void OnMotionReportChanged(KlipperStatusMotionReport? value)
         {
             UpdateMotionReportDependencies();
         }
@@ -560,8 +560,8 @@ namespace AndreasReitberger.API.Moonraker
 
         [ObservableProperty]
         [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        KlipperStatusToolhead toolHeadStatus;
-        partial void OnToolHeadStatusChanged(KlipperStatusToolhead value)
+        KlipperStatusToolhead? toolHeadStatus;
+        partial void OnToolHeadStatusChanged(KlipperStatusToolhead? value)
         {
             OnKlipperToolHeadStateChanged(new KlipperToolHeadStateChangedEventArgs()
             {
@@ -573,7 +573,7 @@ namespace AndreasReitberger.API.Moonraker
 
         [ObservableProperty]
         [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        string activeJobName;
+        string activeJobName = string.Empty;
         partial void OnActiveJobNameChanging(string value)
         {
             OnKlipperActiveJobStateChanged(new KlipperActiveJobStateChangedEventArgs()
@@ -587,8 +587,8 @@ namespace AndreasReitberger.API.Moonraker
 
         [ObservableProperty]
         [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        KlipperStatusDisplay displayStatus;
-        partial void OnDisplayStatusChanging(KlipperStatusDisplay value)
+        KlipperStatusDisplay? displayStatus;
+        partial void OnDisplayStatusChanging(KlipperStatusDisplay? value)
         {
             OnKlipperDisplayStatusChanged(new KlipperDisplayStatusChangedEventArgs()
             {
@@ -601,8 +601,8 @@ namespace AndreasReitberger.API.Moonraker
 
         [ObservableProperty]
         [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        KlipperStatusFilamentSensor filamentSensor = new() { FilamentDetected = false };
-        partial void OnFilamentSensorChanging(KlipperStatusFilamentSensor value)
+        KlipperStatusFilamentSensor? filamentSensor = new() { FilamentDetected = false };
+        partial void OnFilamentSensorChanging(KlipperStatusFilamentSensor? value)
         {
             OnKlipperFSensorChanged(new KlipperFSensorStateChangedEventArgs()
             {
@@ -616,7 +616,7 @@ namespace AndreasReitberger.API.Moonraker
 
         [ObservableProperty]
         [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        List<KlipperDatabaseTemperaturePreset> presets = new();
+        List<KlipperDatabaseTemperaturePreset> presets = [];
         partial void OnPresetsChanged(List<KlipperDatabaseTemperaturePreset> value)
         {
             OnKlipperPresetsChanged(new KlipperPresetsChangedEventArgs()
@@ -842,8 +842,11 @@ namespace AndreasReitberger.API.Moonraker
                 Uri? fullUri = restClient?.BuildUri(request);
                 try
                 {
-                    RestResponse respone = await restClient.ExecuteAsync(request, cts.Token);
-                    apiRsponeResult = ValidateResponse(respone, fullUri);
+                    if (restClient is not null)
+                    {
+                        RestResponse respone = await restClient.ExecuteAsync(request, cts.Token);
+                        apiRsponeResult = ValidateResponse(respone, fullUri);
+                    }
                 }
                 catch (TaskCanceledException texp)
                 {
@@ -936,8 +939,11 @@ namespace AndreasReitberger.API.Moonraker
                 Uri? fullUri = restClient?.BuildUri(request);
                 try
                 {
-                    RestResponse respone = await restClient.ExecuteAsync(request, cts.Token);
-                    apiRsponeResult = ValidateResponse(respone, fullUri);
+                    if (restClient is not null)
+                    {
+                        RestResponse respone = await restClient.ExecuteAsync(request, cts.Token);
+                        apiRsponeResult = ValidateResponse(respone, fullUri);
+                    }
                 }
                 catch (TaskCanceledException texp)
                 {
@@ -979,7 +985,7 @@ namespace AndreasReitberger.API.Moonraker
         #endregion
 
         #region State & Config
-        void UpdateServerConfig(KlipperServerConfig newConfig)
+        void UpdateServerConfig(KlipperServerConfig? newConfig)
         {
             try
             {
@@ -990,7 +996,7 @@ namespace AndreasReitberger.API.Moonraker
                 OnError(new UnhandledExceptionEventArgs(exc, false));
             }
         }
-        void UpdatePrinterInfo(KlipperPrinterStateMessageResult newPrinterInfo)
+        void UpdatePrinterInfo(KlipperPrinterStateMessageResult? newPrinterInfo)
         {
             try
             {
@@ -1018,7 +1024,7 @@ namespace AndreasReitberger.API.Moonraker
                 }
                 else
                 {
-                    ActiveJobName = null;
+                    ActiveJobName = string.Empty;
                     GcodeMeta = null;
                 }
             }
@@ -1175,7 +1181,7 @@ namespace AndreasReitberger.API.Moonraker
 
         #region Login
         [Obsolete("Not needed anymore, will be removed")]
-        string EncryptPassword(string UserName, SecureString Password, string SessionId)
+        internal string EncryptPassword(string UserName, SecureString Password, string SessionId)
         {
             // Password is MD5(sessionId + MD5(login + password))
             // Source: https://www.godo.dev/tutorials/csharp-md5/
@@ -1185,7 +1191,7 @@ namespace AndreasReitberger.API.Moonraker
             md5.ComputeHash(Encoding.UTF8.GetBytes(credentials));
             List<byte> inputBuffer = Encoding.UTF8.GetBytes(SessionId).ToList();
 
-            string hexHash = BitConverter.ToString(md5.Hash).Replace("-", string.Empty).ToLowerInvariant();
+            string hexHash = BitConverter.ToString(md5?.Hash).Replace("-", string.Empty).ToLowerInvariant();
             inputBuffer.AddRange(Encoding.UTF8.GetBytes(hexHash));
 
             md5.ComputeHash(inputBuffer.ToArray());
@@ -1350,7 +1356,7 @@ namespace AndreasReitberger.API.Moonraker
         {
             try
             {
-                KlipperServerConfig result = await GetServerConfigAsync().ConfigureAwait(false);
+                KlipperServerConfig? result = await GetServerConfigAsync().ConfigureAwait(false);
                 Config = result;
             }
             catch (Exception exc)
@@ -2214,7 +2220,7 @@ namespace AndreasReitberger.API.Moonraker
                 KlipperUserActionRespone? queryResult = GetObjectFromJson<KlipperUserActionRespone>(result?.Result, NewtonsoftJsonSerializerSettings);
 
                 UserToken = queryResult?.Result?.Token ?? string.Empty;
-                if (queryResult is not null)
+                if (queryResult is not null && queryResult.Result is not null)
                     queryResult.Result.RefreshToken = token;
 
                 return queryResult?.Result;
@@ -3712,7 +3718,7 @@ namespace AndreasReitberger.API.Moonraker
             List<KlipperJobItem> resultObject = [];
             try
             {
-                KlipperHistoryResult result = await GetHistoryJobListResultAsync(limit, start, since, before, order).ConfigureAwait(false);
+                KlipperHistoryResult? result = await GetHistoryJobListResultAsync(limit, start, since, before, order).ConfigureAwait(false);
                 return result?.Jobs ?? resultObject;
             }
             catch (Exception exc)
@@ -3974,16 +3980,14 @@ namespace AndreasReitberger.API.Moonraker
                 return string.Empty;
             }
         }
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (obj is not MoonrakerClient item)
                 return false;
             return Id.Equals(item.Id);
         }
-        public override int GetHashCode()
-        {
-            return Id.GetHashCode();
-        }
+        public override int GetHashCode() => Id.GetHashCode();
+        
         #endregion
 
     }

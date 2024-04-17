@@ -14,7 +14,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         Guid id;
 
         [ObservableProperty]
-        string hostname;
+        string hostname = string.Empty;
 
         [ObservableProperty]
         long port;
@@ -23,13 +23,13 @@ namespace AndreasReitberger.API.Moonraker.Models
         long webPort;
 
         [ObservableProperty]
-        object settings;
+        object? settings;
 
         #region Interface
 
         [ObservableProperty]
         [property: JsonIgnore]
-        string activeJobId;
+        string activeJobId = string.Empty;
 
         [ObservableProperty]
         [property: JsonIgnore]
@@ -176,17 +176,14 @@ namespace AndreasReitberger.API.Moonraker.Models
         #region Overrides
         public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (obj is not KlipperDatabaseRemotePrinter item)
                 return false;
-            return this.Equals(item);
+            return Equals(item);
         }
 
-        public override int GetHashCode()
-        {
-            return Slug.GetHashCode();
-        }
+        public override int GetHashCode() => Slug.GetHashCode();
 
         #endregion
 

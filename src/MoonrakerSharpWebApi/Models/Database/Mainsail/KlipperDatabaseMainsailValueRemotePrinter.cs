@@ -6,7 +6,7 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [JsonProperty("hostname")]
-        public string Hostname { get; set; }
+        public string Hostname { get; set; } = string.Empty;
 
         [JsonProperty("port")]
         public long Port { get; set; }
@@ -15,14 +15,11 @@ namespace AndreasReitberger.API.Moonraker.Models
         public long WebPort { get; set; }
 
         [JsonProperty("settings")]
-        public object Settings { get; set; }
+        public object? Settings { get; set; }
         #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
         #endregion
     }
 }

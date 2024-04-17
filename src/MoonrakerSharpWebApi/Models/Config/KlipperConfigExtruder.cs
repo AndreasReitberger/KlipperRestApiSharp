@@ -7,52 +7,52 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [JsonProperty("control")]
-        public string Control { get; set; }
+        public string Control { get; set; } = string.Empty;
 
         [JsonProperty("pid_kp")]
-        public string PidKp { get; set; }
+        public string PidKp { get; set; } = string.Empty;
 
         [JsonProperty("sensor_type")]
-        public string SensorType { get; set; }
+        public string SensorType { get; set; } = string.Empty;
 
         [JsonProperty("sensor_pin")]
-        public string SensorPin { get; set; }
+        public string SensorPin { get; set; } = string.Empty;
 
         [JsonProperty("nozzle_diameter")]
-        public string NozzleDiameter { get; set; }
+        public string NozzleDiameter { get; set; } = string.Empty;
 
         [JsonProperty("rotation_distance")]
-        public string RotationDistance { get; set; }
+        public string RotationDistance { get; set; } = string.Empty;
 
         [JsonProperty("heater_pin")]
-        public string HeaterPin { get; set; }
+        public string HeaterPin { get; set; } = string.Empty;
 
         [JsonProperty("step_pin")]
-        public string StepPin { get; set; }
+        public string StepPin { get; set; } = string.Empty;
 
         [JsonProperty("min_temp")]
         public long MinTemp { get; set; }
 
         [JsonProperty("pid_kd")]
-        public string PidKd { get; set; }
+        public string PidKd { get; set; } = string.Empty;
 
         [JsonProperty("microsteps")]
         public long Microsteps { get; set; }
 
         [JsonProperty("pid_ki")]
-        public string PidKi { get; set; }
+        public string PidKi { get; set; } = string.Empty;
 
         [JsonProperty("filament_diameter")]
-        public string FilamentDiameter { get; set; }
+        public string FilamentDiameter { get; set; } = string.Empty;
 
         [JsonProperty("dir_pin")]
-        public string DirPin { get; set; }
+        public string DirPin { get; set; } = string.Empty;
 
         [JsonProperty("max_temp")]
         public long MaxTemp { get; set; }
 
         [JsonProperty("enable_pin")]
-        public string EnablePin { get; set; }
+        public string EnablePin { get; set; } = string.Empty;
 
         [JsonProperty("pullup_resistor")]
         public long PullupResistor { get; set; }
@@ -61,7 +61,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         public double MaxExtrudeOnlyVelocity { get; set; }
 
         [JsonProperty("gear_ratio")]
-        public List<object> GearRatio { get; set; }
+        public List<object> GearRatio { get; set; } = [];
 
         [JsonProperty("max_extrude_only_distance")]
         public long MaxExtrudeOnlyDistance { get; set; }
@@ -102,10 +102,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
         #endregion
     }
 }

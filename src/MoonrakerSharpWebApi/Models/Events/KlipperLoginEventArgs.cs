@@ -6,18 +6,15 @@ namespace AndreasReitberger.API.Moonraker.Models
     public class KlipperLoginEventArgs : Print3dBaseEventArgs
     {
         #region Properties
-        public string UserName { get; set; }
-        public string Action { get; set; }
-        public string UserToken { get; set; }
-        public string RefreshToken { get; set; }
+        public string UserName { get; set; } = string.Empty;
+        public string Action { get; set; } = string.Empty;
+        public string UserToken { get; set; } = string.Empty;
+        public string RefreshToken { get; set; } = string.Empty;
         public bool Succeeded { get; set; } = false;
         #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this, Formatting.Indented);
-        }
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
         #endregion
     }
 }

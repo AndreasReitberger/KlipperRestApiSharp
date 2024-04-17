@@ -6,23 +6,20 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [JsonProperty("e")]
-        public OctoprintApiPrinterAxesAttribute E { get; set; }
+        public OctoprintApiPrinterAxesAttribute? E { get; set; }
 
         [JsonProperty("x")]
-        public OctoprintApiPrinterAxesAttribute X { get; set; }
+        public OctoprintApiPrinterAxesAttribute? X { get; set; }
 
         [JsonProperty("y")]
-        public OctoprintApiPrinterAxesAttribute Y { get; set; }
+        public OctoprintApiPrinterAxesAttribute? Y { get; set; }
 
         [JsonProperty("z")]
-        public OctoprintApiPrinterAxesAttribute Z { get; set; }
+        public OctoprintApiPrinterAxesAttribute? Z { get; set; }
         #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
         #endregion
     }
 }

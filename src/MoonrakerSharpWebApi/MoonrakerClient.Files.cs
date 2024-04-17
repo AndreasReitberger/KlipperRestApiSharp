@@ -90,22 +90,25 @@ namespace AndreasReitberger.API.Moonraker
                        )
                     .ConfigureAwait(false);
                 //result = await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Get, "files/list", default, null, urlSegments).ConfigureAwait(false);
-                KlipperFileListRespone files = GetObjectFromJson<KlipperFileListRespone>(result?.Result, NewtonsoftJsonSerializerSettings);
+                KlipperFileListRespone? files = GetObjectFromJson<KlipperFileListRespone>(result?.Result, NewtonsoftJsonSerializerSettings);
                 if (includeGcodeMeta)
                 {
                     for (int i = 0; i < files?.Result?.Count; i++)
                     {
-                        KlipperFile current = files?.Result[i];
-                        current.Meta = await GetGcodeMetadataAsync(current.FilePath).ConfigureAwait(false);
-                        if (current.Meta?.GcodeImages?.Count > 0)
+                        using KlipperFile? current = files?.Result[i];
+                        if (current is not null)
                         {
-                            current.Image = await GetGcodeSecondThumbnailImageAsync(current?.Meta)
-                                .ConfigureAwait(false)
-                                ;
+                            current.Meta = await GetGcodeMetadataAsync(current.FilePath).ConfigureAwait(false);
+                            if (current.Meta?.GcodeImages?.Count > 0)
+                            {
+                                current.Image = await GetGcodeSecondThumbnailImageAsync(current.Meta)
+                                    .ConfigureAwait(false)
+                                    ;
+                            }
                         }
                     }
                 }
-                return new(files?.Result ?? new());
+                return [.. files?.Result];
             }
             catch (JsonException jecx)
             {
@@ -130,7 +133,7 @@ namespace AndreasReitberger.API.Moonraker
             try
             {
                 ObservableCollection<IGcode> result = await GetAvailableFilesAsync(rootPath).ConfigureAwait(false);
-                return result.ToList();
+                return [.. result];
             }
             catch (Exception exc)
             {
@@ -189,12 +192,12 @@ namespace AndreasReitberger.API.Moonraker
         {
             try
             {
-                KlipperGcodeMetaResult meta = await GetGcodeMetadataAsync(fileName).ConfigureAwait(false);
+                KlipperGcodeMetaResult? meta = await GetGcodeMetadataAsync(fileName).ConfigureAwait(false);
                 GcodeMeta = meta;
                 if (PrintStats?.State == KlipperPrintStates.Printing)
                 {
                     // Get current print image 
-                    CurrentPrintImage = await GetGcodeLargestThumbnailImageAsync(GcodeMeta);
+                    CurrentPrintImage = await GetGcodeLargestThumbnailImageAsync(GcodeMeta) ?? [];
                 }
                 else
                 {
@@ -223,7 +226,7 @@ namespace AndreasReitberger.API.Moonraker
                 return [];
             }
         }
-        public async Task<byte[]?> GetGcodeThumbnailImageAsync(IGcodeMeta gcodeMeta, int index = 0, int timeout = 10000)
+        public async Task<byte[]?> GetGcodeThumbnailImageAsync(IGcodeMeta? gcodeMeta, int index = 0, int timeout = 10000)
         {
             if (gcodeMeta is null || gcodeMeta?.GcodeImages is null) return [];
             string? path = gcodeMeta.GcodeImages.Count > index ?
@@ -238,7 +241,7 @@ namespace AndreasReitberger.API.Moonraker
             return string.IsNullOrEmpty(path) ? null : await GetGcodeThumbnailImageAsync(subfolder + path, timeout)
                 .ConfigureAwait(false);
         }
-        public async Task<byte[]?> GetGcodeLargestThumbnailImageAsync(KlipperGcodeMetaResult gcodeMeta, int timeout = 10000)
+        public async Task<byte[]?> GetGcodeLargestThumbnailImageAsync(KlipperGcodeMetaResult? gcodeMeta, int timeout = 10000)
         {
             if (gcodeMeta is null || gcodeMeta?.GcodeImages is null) return [];
             string? path = gcodeMeta.GcodeImages
@@ -257,7 +260,7 @@ namespace AndreasReitberger.API.Moonraker
                 .ConfigureAwait(false)
                 ;
         }
-        public async Task<byte[]?> GetGcodeSmallestThumbnailImageAsync(KlipperGcodeMetaResult gcodeMeta, int timeout = 10000)
+        public async Task<byte[]?> GetGcodeSmallestThumbnailImageAsync(KlipperGcodeMetaResult? gcodeMeta, int timeout = 10000)
         {
             if (gcodeMeta is null || gcodeMeta?.GcodeImages is null) return [];
             string? path = gcodeMeta.GcodeImages
@@ -277,7 +280,7 @@ namespace AndreasReitberger.API.Moonraker
                 .ConfigureAwait(false)
                 ;
         }
-        public async Task<byte[]?> GetGcodeSecondThumbnailImageAsync(IGcodeMeta gcodeMeta, int timeout = 10000)
+        public async Task<byte[]?> GetGcodeSecondThumbnailImageAsync(IGcodeMeta? gcodeMeta, int timeout = 10000)
         {
             if (gcodeMeta is null || gcodeMeta?.GcodeImages is null) return [];
             string? path = gcodeMeta.GcodeImages
@@ -303,7 +306,7 @@ namespace AndreasReitberger.API.Moonraker
             {
                 if (string.IsNullOrEmpty(path))
                     path = "gcodes";
-                KlipperDirectoryInfoResult result = await GetDirectoryInformationAsync(path, extended).ConfigureAwait(false);
+                KlipperDirectoryInfoResult? result = await GetDirectoryInformationAsync(path, extended).ConfigureAwait(false);
             }
             catch (Exception exc)
             {
@@ -364,16 +367,15 @@ namespace AndreasReitberger.API.Moonraker
 
         public async Task<List<KlipperDirectory>> GetAvailableDirectoriesAsync(string path = "")
         {
-            List<KlipperDirectory> resultObject = new();
+            List<KlipperDirectory> resultObject = [];
             try
             {
                 if (string.IsNullOrEmpty(path))
                 {
                     path = "gcodes";
                 }
-                KlipperDirectoryInfoResult result = await GetDirectoryInformationAsync(path, false).ConfigureAwait(false);
-                resultObject = result?.Dirs ?? new();
-                return resultObject;
+                KlipperDirectoryInfoResult? result = await GetDirectoryInformationAsync(path, false).ConfigureAwait(false);
+                return [.. result?.Dirs];
             }
             catch (Exception exc)
             {

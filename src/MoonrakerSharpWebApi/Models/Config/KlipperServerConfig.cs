@@ -6,35 +6,32 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [JsonProperty("server")]
-        public KlipperServer Server { get; set; }
+        public KlipperServer? Server { get; set; }
 
         [JsonProperty("authorization")]
-        public KlipperAuthorization Authorization { get; set; }
+        public KlipperAuthorization? Authorization { get; set; }
 
         [JsonProperty("octoprint_compat")]
-        public object OctoprintCompat { get; set; }
+        public object? OctoprintCompat { get; set; }
 
         [JsonProperty("history")]
-        public object History { get; set; }
+        public object? History { get; set; }
 
         [JsonProperty("update_manager")]
-        public KlipperUpdateManager UpdateManager { get; set; }
+        public KlipperUpdateManager? UpdateManager { get; set; }
 
         [JsonProperty("update_manager moonraker")]
-        public KlipperUpdateManagerKlipperClass UpdateManagerMoonraker { get; set; }
+        public KlipperUpdateManagerKlipperClass? UpdateManagerMoonraker { get; set; }
 
         [JsonProperty("update_manager klipper")]
-        public KlipperUpdateManagerKlipperClass UpdateManagerKlipper { get; set; }
+        public KlipperUpdateManagerKlipperClass? UpdateManagerKlipper { get; set; }
 
         [JsonProperty("update_manager mainsail")]
-        public KlipperUpdateManagerMainsail UpdateManagerMainsail { get; set; }
+        public KlipperUpdateManagerMainsail? UpdateManagerMainsail { get; set; }
         #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
         #endregion
     }
 }

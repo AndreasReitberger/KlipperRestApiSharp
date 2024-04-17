@@ -19,19 +19,19 @@ namespace AndreasReitberger.API.Moonraker.Models
         public long FullStepsPerRotation { get; set; }
 
         [JsonProperty("endstop_pin")]
-        public string EndstopPin { get; set; }
+        public string EndstopPin { get; set; } = string.Empty;
 
         [JsonProperty("rotation_distance")]
         public long RotationDistance { get; set; }
 
         [JsonProperty("gear_ratio")]
-        public List<object> GearRatio { get; set; }
+        public List<object> GearRatio { get; set; } = [];
 
         [JsonProperty("second_homing_speed")]
         public double SecondHomingSpeed { get; set; }
 
         [JsonProperty("step_pin")]
-        public string StepPin { get; set; }
+        public string StepPin { get; set; } = string.Empty;
 
         [JsonProperty("position_min")]
         public long PositionMin { get; set; }
@@ -46,20 +46,17 @@ namespace AndreasReitberger.API.Moonraker.Models
         public long PositionMax { get; set; }
 
         [JsonProperty("dir_pin")]
-        public string DirPin { get; set; }
+        public string DirPin { get; set; } = string.Empty;
 
         [JsonProperty("homing_retract_speed")]
         public long HomingRetractSpeed { get; set; }
 
         [JsonProperty("enable_pin")]
-        public string EnablePin { get; set; }
+        public string EnablePin { get; set; } = string.Empty;
         #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
         #endregion
     }
 }

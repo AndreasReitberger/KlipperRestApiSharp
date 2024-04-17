@@ -7,7 +7,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         #region Properties
         [ObservableProperty]
         [JsonProperty("result")]
-        KlipperWebcamConfigResult result;
+        KlipperWebcamConfigResult? result;
         #endregion
 
         #region Overrides

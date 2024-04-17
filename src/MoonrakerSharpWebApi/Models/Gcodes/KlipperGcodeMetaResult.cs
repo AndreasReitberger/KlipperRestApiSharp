@@ -31,11 +31,11 @@ namespace AndreasReitberger.API.Moonraker.Models
 
         [ObservableProperty]
         [JsonProperty("slicer")]
-        string slicer;
+        string slicer = string.Empty;
 
         [ObservableProperty]
         [JsonProperty("slicer_version")]
-        string slicerVersion;
+        string slicerVersion = string.Empty;
 
         [ObservableProperty]
         [JsonProperty("layer_height")]
@@ -84,15 +84,15 @@ namespace AndreasReitberger.API.Moonraker.Models
 
         [ObservableProperty]
         [JsonProperty("job_id")]
-        string jobId;
+        string jobId = string.Empty;
 
         [ObservableProperty]
         [JsonProperty("filename")]
-        string fileName;
+        string fileName = string.Empty;    
 
         [ObservableProperty]
         [JsonProperty("thumbnails")]
-        ObservableCollection<IGcodeImage> gcodeImages = new();
+        ObservableCollection<IGcodeImage> gcodeImages = [];
 
         [JsonIgnore]
         public long Layers => GetLayersCount();

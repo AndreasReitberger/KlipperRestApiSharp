@@ -53,9 +53,9 @@ namespace AndreasReitberger.API.Moonraker
                        cts: default
                        )
                     .ConfigureAwait(false);
-                KlipperWebcamConfigRespone configs = GetObjectFromJson<KlipperWebcamConfigRespone>(result?.Result, NewtonsoftJsonSerializerSettings);
+                KlipperWebcamConfigRespone? configs = GetObjectFromJson<KlipperWebcamConfigRespone>(result?.Result, NewtonsoftJsonSerializerSettings);
                 if (configs?.Result?.Webcams?.Count > 0)
-                    return new(configs?.Result?.Webcams ?? new());
+                    return [.. configs?.Result?.Webcams];
                 else
                     // If nothing is returned, try to get it from the database directly.
                     return await GetWebCamSettingsFromDatabaseAsync().ConfigureAwait(false);
@@ -80,7 +80,7 @@ namespace AndreasReitberger.API.Moonraker
 
         public async Task<ObservableCollection<IWebCamConfig>> GetWebCamSettingsFromDatabaseAsync()
         {
-            string resultString = string.Empty;
+            string? resultString = string.Empty;
             ObservableCollection<IWebCamConfig> resultObject = new();
             try
             {
@@ -98,14 +98,13 @@ namespace AndreasReitberger.API.Moonraker
                 KeyValuePair<string, object>? pair = result?.FirstOrDefault();
                 if (string.IsNullOrEmpty(pair?.Key)) return resultObject;
 
-                //resultString = pair.Value.ToString();
                 resultString = pair.Value.Value.ToString();
 
                 switch (OperatingSystem)
                 {
                     case MoonrakerOperatingSystems.MainsailOS:
                     case MoonrakerOperatingSystems.FluiddPi:
-                        Dictionary<Guid, KlipperDatabaseFluiddValueWebcamConfig> fluiddObject = GetObjectFromJson<Dictionary<Guid, KlipperDatabaseFluiddValueWebcamConfig>>(resultString, NewtonsoftJsonSerializerSettings);
+                        Dictionary<Guid, KlipperDatabaseFluiddValueWebcamConfig>? fluiddObject = GetObjectFromJson<Dictionary<Guid, KlipperDatabaseFluiddValueWebcamConfig>>(resultString, NewtonsoftJsonSerializerSettings);
                         if (fluiddObject?.Count > 0)
                         {
                             IEnumerable<KlipperDatabaseWebcamConfig> temp = fluiddObject.Select(item => new KlipperDatabaseWebcamConfig()
@@ -119,7 +118,7 @@ namespace AndreasReitberger.API.Moonraker
                                 TargetFps = item.Value.Fpstarget,
                                 Url = item.Value.UrlStream,
                                 UrlSnapshot = item.Value.UrlSnapshot,
-                                Orientation = (long)item.Value.Rotation,
+                                Orientation = (item.Value.Rotation ?? 0),
                             });
                             resultObject = new(temp);
                         }
@@ -153,75 +152,14 @@ namespace AndreasReitberger.API.Moonraker
             try
             {
                 ObservableCollection<IWebCamConfig> result = await GetWebCamSettingsAsync().ConfigureAwait(false);
-                WebCams = result ?? new();
+                WebCams = [.. result];
             }
             catch (Exception exc)
             {
                 OnError(new UnhandledExceptionEventArgs(exc, false));
-                WebCams = new();
+                WebCams = [];
             }
         }
-
-        /*
-        
-        [Obsolete("Replaced by base method")]
-        public string GetDefaultWebCamUriOld()
-        {
-            try
-            {
-                string token = !string.IsNullOrEmpty(ApiKey) ? ApiKey : UserToken;
-                return $"{FullWebAddress}/webcam/?action=stream{(!string.IsNullOrEmpty(token) ? $"?t={token}" : "")}";
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-                return "";
-            }
-        }
-
-        [Obsolete("Replaced by base method")]
-        public async Task<string> GetWebCamUriAsyncOld(int index = 0, bool refreshWebCamConfig = false)
-        {
-            try
-            {
-                if (WebCamConfigs?.Count <= 0 || refreshWebCamConfig)
-                {
-                    await RefreshWebCamConfigAsync().ConfigureAwait(false);
-                }
-                KlipperDatabaseWebcamConfig config = null;
-                if (WebCamConfigs?.Count > index)
-                {
-                    config = WebCamConfigs[index];
-                }
-                else if (WebCamConfigs.Count > 0)
-                {
-                    config = WebCamConfigs.FirstOrDefault();
-                }
-                // If nothing is found, try the default setup
-                else
-                {
-                    config = new KlipperDatabaseWebcamConfig()
-                    {
-                        Id = Guid.NewGuid(),
-                        Alias = "Default",
-                        Enabled = true,
-                        FlipX = false,
-                        FlipY = false,
-                        TargetFps = 15,
-                        Url = "/webcam?action=stream"
-                    };
-                }
-                string token = !string.IsNullOrEmpty(ApiKey) ? ApiKey : UserToken;
-                return config == null ? GetDefaultWebCamUri() : $"{FullWebAddress}{config.Url}{(!string.IsNullOrEmpty(token) ? $"&t={token}" : "")}";
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-                return "";
-            }
-        }
-        */
-
         #endregion
     }
 }

@@ -7,10 +7,10 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [JsonProperty("mac_address")]
-        public string MacAddress { get; set; }
+        public string MacAddress { get; set; } = string.Empty;
 
         [JsonProperty("ip_addresses")]
-        public List<KlipperIpAddress> IpAddresses { get; set; }
+        public List<KlipperIpAddress> IpAddresses { get; set; } = [];
 
         [JsonProperty("rx_bytes")]
         public long RxBytes { get; set; }
@@ -23,10 +23,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
         #endregion
     }
 }

@@ -58,7 +58,7 @@ namespace AndreasReitberger.API.Moonraker
             }
         }
         */
-        protected void Client_WebSocketMessageReceived(object sender, WebsocketEventArgs e)
+        protected void Client_WebSocketMessageReceived(object? sender, WebsocketEventArgs e)
         {
             try
             {
@@ -72,7 +72,7 @@ namespace AndreasReitberger.API.Moonraker
                     try
                     {
                         ConcurrentDictionary<int, KlipperStatusExtruder> extruderStats = new();
-                        KlipperWebSocketMessage method = JsonConvert.DeserializeObject<KlipperWebSocketMessage>(text);
+                        KlipperWebSocketMessage? method = JsonConvert.DeserializeObject<KlipperWebSocketMessage>(text);
                         for (int i = 0; i < method?.Params?.Count; i++)
                         {
                             if (method.Params[i] is not JObject jsonObject)
@@ -90,7 +90,7 @@ namespace AndreasReitberger.API.Moonraker
                                         KlipperState = jsonBody;
                                         break;
                                     case "probe":
-                                        KlipperStatusProbe probe =
+                                        KlipperStatusProbe? probe =
                                             JsonConvert.DeserializeObject<KlipperStatusProbe>(jsonBody);
                                         break;
                                     case "virtual_sdcard":
@@ -98,7 +98,7 @@ namespace AndreasReitberger.API.Moonraker
                                         {
                                             //break;
                                         }
-                                        KlipperStatusVirtualSdcard virtualSdcardState =
+                                        KlipperStatusVirtualSdcard? virtualSdcardState =
                                             JsonConvert.DeserializeObject<KlipperStatusVirtualSdcard>(jsonBody);
                                         VirtualSdCard = virtualSdcardState;
                                         break;
@@ -107,32 +107,32 @@ namespace AndreasReitberger.API.Moonraker
                                         {
                                             break;
                                         }
-                                        KlipperStatusDisplay displayState =
+                                        KlipperStatusDisplay? displayState =
                                             JsonConvert.DeserializeObject<KlipperStatusDisplay>(jsonBody);
                                         DisplayStatus = displayState;
                                         break;
                                     case "moonraker_stats":
-                                        MoonrakerStatInfo notifyProcState =
+                                        MoonrakerStatInfo? notifyProcState =
                                             JsonConvert.DeserializeObject<MoonrakerStatInfo>(jsonBody);
                                         break;
                                     case "mcu":
-                                        KlipperStatusMcu mcuState =
+                                        KlipperStatusMcu? mcuState =
                                             JsonConvert.DeserializeObject<KlipperStatusMcu>(jsonBody);
                                         break;
                                     case "system_stats":
-                                        KlipperStatusSystemStats systemState =
+                                        KlipperStatusSystemStats? systemState =
                                             JsonConvert.DeserializeObject<KlipperStatusSystemStats>(jsonBody);
                                         break;
                                     case "registered_directories":
                                         RegisteredDirectories =
-                                            JsonConvert.DeserializeObject<List<string>>(jsonBody);
+                                            [.. JsonConvert.DeserializeObject<List<string>>(jsonBody)];
                                         break;
                                     case "cpu_temp":
                                         CpuTemp =
                                             JsonConvert.DeserializeObject<double>(jsonBody.Replace(",", "."));
                                         break;
                                     case "system_cpu_usage":
-                                        Dictionary<string, double?> tempUsageObject = JsonConvert.DeserializeObject<Dictionary<string, double?>>(jsonBody);
+                                        Dictionary<string, double?>? tempUsageObject = JsonConvert.DeserializeObject<Dictionary<string, double?>>(jsonBody);
                                         if (tempUsageObject is not null)
                                         {
                                             foreach (KeyValuePair<string, double?> cpuUsageItem in tempUsageObject)
@@ -150,7 +150,7 @@ namespace AndreasReitberger.API.Moonraker
                                         }
                                         break;
                                     case "system_memory":
-                                        Dictionary<string, long?> tempMemoryObject = JsonConvert.DeserializeObject<Dictionary<string, long?>>(jsonBody);
+                                        Dictionary<string, long?>? tempMemoryObject = JsonConvert.DeserializeObject<Dictionary<string, long?>>(jsonBody);
                                         if (tempMemoryObject is not null)
                                         {
                                             foreach (KeyValuePair<string, long?> memoryUsage in tempMemoryObject)
@@ -174,52 +174,59 @@ namespace AndreasReitberger.API.Moonraker
                                         int wsConnections = JsonConvert.DeserializeObject<int>(jsonBody);
                                         break;
                                     case "network":
-                                        Dictionary<string, KlipperNetworkInterface> network =
+                                        Dictionary<string, KlipperNetworkInterface>? network =
                                             JsonConvert.DeserializeObject<Dictionary<string, KlipperNetworkInterface>>(jsonBody);
                                         break;
                                     case "gcode_move":
-                                        KlipperStatusGcodeMove gcodeMoveState = JsonConvert.DeserializeObject<KlipperStatusGcodeMove>(jsonBody);
+                                        KlipperStatusGcodeMove? gcodeMoveState = JsonConvert.DeserializeObject<KlipperStatusGcodeMove>(jsonBody);
                                         GcodeMove = gcodeMoveState;
                                         break;
                                     case "print_stats":
-                                        KlipperStatusPrintStats printStats =
+                                        KlipperStatusPrintStats? printStats =
                                             JsonConvert.DeserializeObject<KlipperStatusPrintStats>(jsonBody);
-                                        printStats.ValidPrintState = jsonBody.Contains("state");
-                                        if (PrintStats is not null)
+                                        if (printStats is not null)
                                         {
-                                            // This property is only sent once if changed, so store it
-                                            if (!jsonBody.Contains("filename"))
+                                            printStats.ValidPrintState = jsonBody.Contains("state");
+                                            if (PrintStats is not null)
                                             {
-                                                printStats.Filename = PrintStats.Filename;
+                                                // This property is only sent once if changed, so store it
+                                                if (!jsonBody.Contains("filename"))
+                                                {
+                                                    printStats.Filename = PrintStats.Filename;
+                                                }
                                             }
                                         }
                                         PrintStats = printStats;
                                         break;
                                     case "fan":
-                                        KlipperStatusFan fanState =
+                                        KlipperStatusFan? fanState =
                                             JsonConvert.DeserializeObject<KlipperStatusFan>(jsonBody);
-                                        Fan = fanState;
+                                        ActiveFan = fanState;
+                                        //Fan = fanState;
                                         break;
                                     case "toolhead":
-                                        KlipperStatusToolhead toolhead =
+                                        KlipperStatusToolhead? toolhead =
                                             JsonConvert.DeserializeObject<KlipperStatusToolhead>(jsonBody);
                                         ToolHeadStatus = toolhead;
                                         break;
                                     case "heater_bed":
                                         // In the status report the temp is missing, so do not parse the heater then.
                                         if (!jsonBody.Contains("temperature") || RefreshHeatersDirectly) break;
-                                        KlipperStatusHeaterBed heaterBed =
+                                        KlipperStatusHeaterBed? heaterBed =
                                             JsonConvert.DeserializeObject<KlipperStatusHeaterBed>(jsonBody);
                                         HeatedBeds ??= new();
-                                        if (ActiveHeatedBed is not null)
+                                        if (heaterBed is not null)
                                         {
-                                            // This property is only sent once if changed, so store it
-                                            if (!jsonBody.Contains("target"))
+                                            if (ActiveHeatedBed is not null)
                                             {
-                                                heaterBed.TempSet = ActiveHeatedBed.TempSet;
+                                                // This property is only sent once if changed, so store it
+                                                if (!jsonBody.Contains("target"))
+                                                {
+                                                    heaterBed.TempSet = ActiveHeatedBed.TempSet;
+                                                }
                                             }
+                                            HeatedBeds.AddOrUpdate(0, heaterBed, (key, oldValue) => oldValue = heaterBed);
                                         }
-                                        HeatedBeds.AddOrUpdate(0, heaterBed, (key, oldValue) => oldValue = heaterBed);
                                         break;
                                     case "extruder":
                                     case "extruder1":
@@ -231,52 +238,57 @@ namespace AndreasReitberger.API.Moonraker
                                         string extruderIndex = name.Replace("extruder", string.Empty);
                                         if (extruderIndex.Length > 0)
                                         {
-                                            int.TryParse(extruderIndex, out index);
+                                            _ = int.TryParse(extruderIndex, out index);
                                         }
-                                        KlipperStatusExtruder extruder =
+                                        KlipperStatusExtruder? extruder =
                                             JsonConvert.DeserializeObject<KlipperStatusExtruder>(jsonBody);
-                                        if (Extruders.ContainsKey(index))
+                                        if (extruder is not null)
                                         {
-                                            // This property is only sent once if changed, so store it
-                                            KlipperStatusExtruder previousExtruderState = Extruders[index];
-                                            if (!jsonBody.Contains("target"))
+                                            if (Extruders.ContainsKey(index))
                                             {
-                                                extruder.TempSet = previousExtruderState.TempSet;
+                                                // This property is only sent once if changed, so store it
+                                                KlipperStatusExtruder previousExtruderState = Extruders[index];
+                                                if (!jsonBody.Contains("target"))
+                                                {
+                                                    extruder.TempSet = previousExtruderState.TempSet;
+                                                }
                                             }
+                                            extruderStats.TryAdd(index, extruder);
                                         }
-                                        extruderStats.TryAdd(index, extruder);
                                         break;
                                     case "motion_report":
-                                        KlipperStatusMotionReport motionReport =
+                                        KlipperStatusMotionReport? motionReport =
                                             JsonConvert.DeserializeObject<KlipperStatusMotionReport>(jsonBody);
                                         MotionReport = motionReport;
                                         break;
                                     case "idle_timeout":
-                                        KlipperStatusIdleTimeout idleTimeout =
+                                        KlipperStatusIdleTimeout? idleTimeout =
                                             JsonConvert.DeserializeObject<KlipperStatusIdleTimeout>(jsonBody);
-                                        idleTimeout.ValidState = jsonBody.Contains("state");
+
+                                        if (idleTimeout is not null)
+                                            idleTimeout.ValidState = jsonBody.Contains("state");
                                         IdleState = idleTimeout;
                                         break;
                                     case "filament_switch_sensor fsensor":
-                                        KlipperStatusFilamentSensor fSensor =
+                                        KlipperStatusFilamentSensor? fSensor =
                                             JsonConvert.DeserializeObject<KlipperStatusFilamentSensor>(jsonBody);
                                         FilamentSensor = fSensor;
                                         break;
                                     case "pause_resume":
-                                        KlipperStatusPauseResume pauseResume =
+                                        KlipperStatusPauseResume? pauseResume =
                                             JsonConvert.DeserializeObject<KlipperStatusPauseResume>(jsonBody);
-                                        IsPaused = pauseResume.IsPaused;
+                                        IsPaused = pauseResume?.IsPaused ?? false;
                                         break;
                                     case "action":
                                         string action = jsonBody;
                                         break;
                                     case "bed_mesh":
-                                        KlipperStatusMesh mesh =
+                                        KlipperStatusMesh? mesh =
                                             JsonConvert.DeserializeObject<KlipperStatusMesh>(jsonBody);
                                         break;
                                     case "job":
                                         if (!jsonBody.Contains("filename")) break;
-                                        KlipperStatusJob job =
+                                        KlipperStatusJob? job =
                                             JsonConvert.DeserializeObject<KlipperStatusJob>(jsonBody);
                                         //ActiveJobName = job?.Filename;
                                         ActiveJob = job;
@@ -296,12 +308,12 @@ namespace AndreasReitberger.API.Moonraker
                                     case "updated_queue":
                                         if (string.IsNullOrEmpty(jsonBody))
                                         {
-                                            Jobs = new();
+                                            Jobs = [];
                                             break;
                                         }
-                                        List<KlipperJobQueueItem> queueUpdate =
+                                        List<KlipperJobQueueItem>? queueUpdate =
                                             JsonConvert.DeserializeObject<List<KlipperJobQueueItem>>(jsonBody);
-                                        Jobs = new(queueUpdate);
+                                        Jobs = [.. queueUpdate];
                                         break;
                                     case "queue_state":
                                         string state = jsonBody;
@@ -333,7 +345,7 @@ namespace AndreasReitberger.API.Moonraker
 #else
                                                     string fanName = fan[fan.Length - 1];
 #endif
-                                                    KlipperStatusFan fanObject = JsonConvert.DeserializeObject<KlipperStatusFan>(jsonBody);
+                                                    KlipperStatusFan? fanObject = JsonConvert.DeserializeObject<KlipperStatusFan>(jsonBody);
                                                     if (fanObject is not null)
                                                     {
                                                         if (Fans.ContainsKey(fanName))
@@ -358,7 +370,7 @@ namespace AndreasReitberger.API.Moonraker
 #else
                                                     string sensorName = sensor[sensor.Length - 1];
 #endif
-                                                    KlipperStatusTemperatureSensor tempObject = JsonConvert.DeserializeObject<KlipperStatusTemperatureSensor>(jsonBody);
+                                                    KlipperStatusTemperatureSensor? tempObject = JsonConvert.DeserializeObject<KlipperStatusTemperatureSensor>(jsonBody);
                                                     if (tempObject is not null)
                                                     {
                                                         if (TemperatureSensors.ContainsKey(sensorName))
@@ -383,8 +395,8 @@ namespace AndreasReitberger.API.Moonraker
 #else
                                                     string driverName = driver[driver.Length - 1];
 #endif
-                                                    KlipperStatusDriverRespone drvObject = JsonConvert.DeserializeObject<KlipperStatusDriverRespone>(jsonBody);
-                                                    if (drvObject is not null)
+                                                    KlipperStatusDriverRespone? drvObject = JsonConvert.DeserializeObject<KlipperStatusDriverRespone>(jsonBody);
+                                                    if (drvObject?.DrvStatus is not null)
                                                     {
                                                         if (Drivers.ContainsKey(driverName))
                                                         {
@@ -434,7 +446,6 @@ namespace AndreasReitberger.API.Moonraker
                                 }
                             }
                         }
-
                         // Update extruder states if changed
                         if (extruderStats.Count > 0)
                         {
@@ -464,7 +475,7 @@ namespace AndreasReitberger.API.Moonraker
                 {
                     try
                     {
-                        KlipperWebSocketResult result = JsonConvert.DeserializeObject<KlipperWebSocketResult>(text);
+                        KlipperWebSocketResult? result = JsonConvert.DeserializeObject<KlipperWebSocketResult>(text);
                         //var type = result?.Result?.GetType();
                         if (result?.Result is JObject jsonObject)
                         {
@@ -485,7 +496,7 @@ namespace AndreasReitberger.API.Moonraker
                                         break;
                                     case "registered_directories":
                                         RegisteredDirectories =
-                                            JsonConvert.DeserializeObject<List<string>>(jsonBody);
+                                            [.. JsonConvert.DeserializeObject<List<string>>(jsonBody)];
                                         break;
                                     case "cpu_temp":
                                         CpuTemp =
@@ -570,7 +581,7 @@ namespace AndreasReitberger.API.Moonraker
         {
             try
             {
-                if (msg.Text == null || string.IsNullOrEmpty(msg.Text))
+                if (msg?.Text == null || string.IsNullOrEmpty(msg.Text))
                     return;
                 base.WebSocket_MessageReceived(msg);
                 string text = msg.Text;
@@ -581,7 +592,7 @@ namespace AndreasReitberger.API.Moonraker
                     try
                     {
                         ConcurrentDictionary<int, KlipperStatusExtruder> extruderStats = new();
-                        KlipperWebSocketMessage method = JsonConvert.DeserializeObject<KlipperWebSocketMessage>(text);
+                        KlipperWebSocketMessage? method = JsonConvert.DeserializeObject<KlipperWebSocketMessage>(text);
                         for (int i = 0; i < method?.Params?.Count; i++)
                         {
                             if (method.Params[i] is not JObject jsonObject)
@@ -599,7 +610,7 @@ namespace AndreasReitberger.API.Moonraker
                                         KlipperState = jsonBody;
                                         break;
                                     case "probe":
-                                        KlipperStatusProbe probe =
+                                        KlipperStatusProbe? probe =
                                             JsonConvert.DeserializeObject<KlipperStatusProbe>(jsonBody);
                                         break;
                                     case "virtual_sdcard":
@@ -607,7 +618,7 @@ namespace AndreasReitberger.API.Moonraker
                                         {
                                             //break;
                                         }
-                                        KlipperStatusVirtualSdcard virtualSdcardState =
+                                        KlipperStatusVirtualSdcard? virtualSdcardState =
                                             JsonConvert.DeserializeObject<KlipperStatusVirtualSdcard>(jsonBody);
                                         VirtualSdCard = virtualSdcardState;
                                         break;
@@ -616,32 +627,32 @@ namespace AndreasReitberger.API.Moonraker
                                         {
                                             break;
                                         }
-                                        KlipperStatusDisplay displayState =
+                                        KlipperStatusDisplay? displayState =
                                             JsonConvert.DeserializeObject<KlipperStatusDisplay>(jsonBody);
                                         DisplayStatus = displayState;
                                         break;
                                     case "moonraker_stats":
-                                        MoonrakerStatInfo notifyProcState =
+                                        MoonrakerStatInfo? notifyProcState =
                                             JsonConvert.DeserializeObject<MoonrakerStatInfo>(jsonBody);
                                         break;
                                     case "mcu":
-                                        KlipperStatusMcu mcuState =
+                                        KlipperStatusMcu? mcuState =
                                             JsonConvert.DeserializeObject<KlipperStatusMcu>(jsonBody);
                                         break;
                                     case "system_stats":
-                                        KlipperStatusSystemStats systemState =
+                                        KlipperStatusSystemStats? systemState =
                                             JsonConvert.DeserializeObject<KlipperStatusSystemStats>(jsonBody);
                                         break;
                                     case "registered_directories":
                                         RegisteredDirectories =
-                                            JsonConvert.DeserializeObject<List<string>>(jsonBody);
+                                            [.. JsonConvert.DeserializeObject<List<string>>(jsonBody)];
                                         break;
                                     case "cpu_temp":
                                         CpuTemp =
                                             JsonConvert.DeserializeObject<double>(jsonBody.Replace(",", "."));
                                         break;
                                     case "system_cpu_usage":
-                                        Dictionary<string, double?> tempUsageObject = JsonConvert.DeserializeObject<Dictionary<string, double?>>(jsonBody);
+                                        Dictionary<string, double?>? tempUsageObject = JsonConvert.DeserializeObject<Dictionary<string, double?>>(jsonBody);
                                         if (tempUsageObject is not null)
                                         {
                                             foreach (KeyValuePair<string, double?> cpuUsageItem in tempUsageObject)
@@ -659,7 +670,7 @@ namespace AndreasReitberger.API.Moonraker
                                         }
                                         break;
                                     case "system_memory":
-                                        Dictionary<string, long?> tempMemoryObject = JsonConvert.DeserializeObject<Dictionary<string, long?>>(jsonBody);
+                                        Dictionary<string, long?>? tempMemoryObject = JsonConvert.DeserializeObject<Dictionary<string, long?>>(jsonBody);
                                         if (tempMemoryObject is not null)
                                         {
                                             foreach (KeyValuePair<string, long?> memoryUsage in tempMemoryObject)
@@ -683,52 +694,58 @@ namespace AndreasReitberger.API.Moonraker
                                         int wsConnections = JsonConvert.DeserializeObject<int>(jsonBody);
                                         break;
                                     case "network":
-                                        Dictionary<string, KlipperNetworkInterface> network =
+                                        Dictionary<string, KlipperNetworkInterface>? network =
                                             JsonConvert.DeserializeObject<Dictionary<string, KlipperNetworkInterface>>(jsonBody);
                                         break;
                                     case "gcode_move":
-                                        KlipperStatusGcodeMove gcodeMoveState = JsonConvert.DeserializeObject<KlipperStatusGcodeMove>(jsonBody);
+                                        KlipperStatusGcodeMove? gcodeMoveState = JsonConvert.DeserializeObject<KlipperStatusGcodeMove>(jsonBody);
                                         GcodeMove = gcodeMoveState;
                                         break;
                                     case "print_stats":
-                                        KlipperStatusPrintStats printStats =
+                                        KlipperStatusPrintStats? printStats =
                                             JsonConvert.DeserializeObject<KlipperStatusPrintStats>(jsonBody);
-                                        printStats.ValidPrintState = jsonBody.Contains("state");
-                                        if (PrintStats is not null)
+                                        if (printStats is not null)
                                         {
-                                            // This property is only sent once if changed, so store it
-                                            if (!jsonBody.Contains("filename"))
+                                            printStats.ValidPrintState = jsonBody.Contains("state");
+                                            if (PrintStats is not null)
                                             {
-                                                printStats.Filename = PrintStats.Filename;
+                                                // This property is only sent once if changed, so store it
+                                                if (!jsonBody.Contains("filename"))
+                                                {
+                                                    printStats.Filename = PrintStats.Filename;
+                                                }
                                             }
+                                            PrintStats = printStats;
                                         }
-                                        PrintStats = printStats;
                                         break;
                                     case "fan":
-                                        KlipperStatusFan fanState =
+                                        KlipperStatusFan? fanState =
                                             JsonConvert.DeserializeObject<KlipperStatusFan>(jsonBody);
-                                        Fan = fanState;
+                                        ActiveFan = fanState;
                                         break;
                                     case "toolhead":
-                                        KlipperStatusToolhead toolhead =
+                                        KlipperStatusToolhead? toolhead =
                                             JsonConvert.DeserializeObject<KlipperStatusToolhead>(jsonBody);
                                         ToolHeadStatus = toolhead;
                                         break;
                                     case "heater_bed":
                                         // In the status report the temp is missing, so do not parse the heater then.
                                         if (!jsonBody.Contains("temperature") || RefreshHeatersDirectly) break;
-                                        KlipperStatusHeaterBed heaterBed =
+                                        KlipperStatusHeaterBed? heaterBed =
                                             JsonConvert.DeserializeObject<KlipperStatusHeaterBed>(jsonBody);
                                         HeatedBeds ??= new();
-                                        if (ActiveHeatedBed is not null)
+                                        if (heaterBed is not null)
                                         {
-                                            // This property is only sent once if changed, so store it
-                                            if (!jsonBody.Contains("target"))
+                                            if (ActiveHeatedBed is not null)
                                             {
-                                                heaterBed.TempSet = ActiveHeatedBed.TempSet;
+                                                // This property is only sent once if changed, so store it
+                                                if (!jsonBody.Contains("target"))
+                                                {
+                                                    heaterBed.TempSet = ActiveHeatedBed.TempSet;
+                                                }
                                             }
+                                            HeatedBeds.AddOrUpdate(0, heaterBed, (key, oldValue) => oldValue = heaterBed);
                                         }
-                                        HeatedBeds.AddOrUpdate(0, heaterBed, (key, oldValue) => oldValue = heaterBed);
                                         break;
                                     case "extruder":
                                     case "extruder1":
@@ -740,52 +757,56 @@ namespace AndreasReitberger.API.Moonraker
                                         string extruderIndex = name.Replace("extruder", string.Empty);
                                         if (extruderIndex.Length > 0)
                                         {
-                                            int.TryParse(extruderIndex, out index);
+                                            _ = int.TryParse(extruderIndex, out index);
                                         }
-                                        KlipperStatusExtruder extruder =
+                                        KlipperStatusExtruder? extruder =
                                             JsonConvert.DeserializeObject<KlipperStatusExtruder>(jsonBody);
-                                        if (Extruders.ContainsKey(index))
+                                        if (extruder is not null)
                                         {
-                                            // This property is only sent once if changed, so store it
-                                            KlipperStatusExtruder previousExtruderState = Extruders[index];
-                                            if (!jsonBody.Contains("target"))
+                                            if (Extruders.ContainsKey(index))
                                             {
-                                                extruder.TempSet = previousExtruderState.TempSet;
+                                                // This property is only sent once if changed, so store it
+                                                KlipperStatusExtruder previousExtruderState = Extruders[index];
+                                                if (!jsonBody.Contains("target"))
+                                                {
+                                                    extruder.TempSet = previousExtruderState.TempSet;
+                                                }
                                             }
+                                            extruderStats.TryAdd(index, extruder);
                                         }
-                                        extruderStats.TryAdd(index, extruder);
                                         break;
                                     case "motion_report":
-                                        KlipperStatusMotionReport motionReport =
+                                        KlipperStatusMotionReport? motionReport =
                                             JsonConvert.DeserializeObject<KlipperStatusMotionReport>(jsonBody);
                                         MotionReport = motionReport;
                                         break;
                                     case "idle_timeout":
-                                        KlipperStatusIdleTimeout idleTimeout =
+                                        KlipperStatusIdleTimeout? idleTimeout =
                                             JsonConvert.DeserializeObject<KlipperStatusIdleTimeout>(jsonBody);
-                                        idleTimeout.ValidState = jsonBody.Contains("state");
+                                        if (idleTimeout is not null)
+                                            idleTimeout.ValidState = jsonBody.Contains("state");
                                         IdleState = idleTimeout;
                                         break;
                                     case "filament_switch_sensor fsensor":
-                                        KlipperStatusFilamentSensor fSensor =
+                                        KlipperStatusFilamentSensor? fSensor =
                                             JsonConvert.DeserializeObject<KlipperStatusFilamentSensor>(jsonBody);
                                         FilamentSensor = fSensor;
                                         break;
                                     case "pause_resume":
-                                        KlipperStatusPauseResume pauseResume =
+                                        KlipperStatusPauseResume? pauseResume =
                                             JsonConvert.DeserializeObject<KlipperStatusPauseResume>(jsonBody);
-                                        IsPaused = pauseResume.IsPaused;
+                                        IsPaused = pauseResume?.IsPaused ?? false;
                                         break;
                                     case "action":
                                         string action = jsonBody;
                                         break;
                                     case "bed_mesh":
-                                        KlipperStatusMesh mesh =
+                                        KlipperStatusMesh? mesh =
                                             JsonConvert.DeserializeObject<KlipperStatusMesh>(jsonBody);
                                         break;
                                     case "job":
                                         if (!jsonBody.Contains("filename")) break;
-                                        KlipperStatusJob job =
+                                        KlipperStatusJob? job =
                                             JsonConvert.DeserializeObject<KlipperStatusJob>(jsonBody);
                                         //ActiveJobName = job?.Filename;
                                         ActiveJob = job;
@@ -805,12 +826,12 @@ namespace AndreasReitberger.API.Moonraker
                                     case "updated_queue":
                                         if (string.IsNullOrEmpty(jsonBody))
                                         {
-                                            Jobs = new();
+                                            Jobs = [];
                                             break;
                                         }
-                                        List<KlipperJobQueueItem> queueUpdate =
+                                        List<KlipperJobQueueItem>? queueUpdate =
                                             JsonConvert.DeserializeObject<List<KlipperJobQueueItem>>(jsonBody);
-                                        Jobs = new(queueUpdate);
+                                        Jobs = [.. queueUpdate];
                                         break;
                                     case "queue_state":
                                         string state = jsonBody;
@@ -842,7 +863,7 @@ namespace AndreasReitberger.API.Moonraker
 #else
                                                     string fanName = fan[fan.Length - 1];
 #endif
-                                                    KlipperStatusFan fanObject = JsonConvert.DeserializeObject<KlipperStatusFan>(jsonBody);
+                                                    KlipperStatusFan? fanObject = JsonConvert.DeserializeObject<KlipperStatusFan>(jsonBody);
                                                     if (fanObject is not null)
                                                     {
                                                         if (Fans.ContainsKey(fanName))
@@ -867,7 +888,7 @@ namespace AndreasReitberger.API.Moonraker
 #else
                                                     string sensorName = sensor[sensor.Length - 1];
 #endif
-                                                    KlipperStatusTemperatureSensor tempObject = JsonConvert.DeserializeObject<KlipperStatusTemperatureSensor>(jsonBody);
+                                                    KlipperStatusTemperatureSensor? tempObject = JsonConvert.DeserializeObject<KlipperStatusTemperatureSensor>(jsonBody);
                                                     if (tempObject is not null)
                                                     {
                                                         if (TemperatureSensors.ContainsKey(sensorName))
@@ -892,8 +913,8 @@ namespace AndreasReitberger.API.Moonraker
 #else
                                                     string driverName = driver[driver.Length - 1];
 #endif
-                                                    KlipperStatusDriverRespone drvObject = JsonConvert.DeserializeObject<KlipperStatusDriverRespone>(jsonBody);
-                                                    if (drvObject is not null)
+                                                    KlipperStatusDriverRespone? drvObject = JsonConvert.DeserializeObject<KlipperStatusDriverRespone>(jsonBody);
+                                                    if (drvObject?.DrvStatus is not null)
                                                     {
                                                         if (Drivers.ContainsKey(driverName))
                                                         {
@@ -943,7 +964,6 @@ namespace AndreasReitberger.API.Moonraker
                                 }
                             }
                         }
-
                         // Update extruder states if changed
                         if (extruderStats?.Count > 0)
                         {
@@ -973,7 +993,7 @@ namespace AndreasReitberger.API.Moonraker
                 {
                     try
                     {
-                        KlipperWebSocketResult result = JsonConvert.DeserializeObject<KlipperWebSocketResult>(text);
+                        KlipperWebSocketResult? result = JsonConvert.DeserializeObject<KlipperWebSocketResult>(text);
                         //var type = result?.Result?.GetType();
                         if (result?.Result is JObject jsonObject)
                         {
@@ -994,7 +1014,7 @@ namespace AndreasReitberger.API.Moonraker
                                         break;
                                     case "registered_directories":
                                         RegisteredDirectories =
-                                            JsonConvert.DeserializeObject<List<string>>(jsonBody);
+                                            [.. JsonConvert.DeserializeObject<List<string>>(jsonBody)];
                                         break;
                                     case "cpu_temp":
                                         CpuTemp =
@@ -1063,7 +1083,7 @@ namespace AndreasReitberger.API.Moonraker
                 OnError(new JsonConvertEventArgs()
                 {
                     Exception = jecx,
-                    OriginalString = msg.Text,
+                    OriginalString = msg?.Text,
                     Message = jecx.Message,
                 });
             }

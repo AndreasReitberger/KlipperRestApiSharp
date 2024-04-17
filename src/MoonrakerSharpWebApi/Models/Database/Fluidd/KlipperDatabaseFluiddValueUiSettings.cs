@@ -6,18 +6,15 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [JsonProperty("general")]
-        public KlipperDatabaseFluiddValueUiSettingsGeneral General { get; set; }
+        public KlipperDatabaseFluiddValueUiSettingsGeneral? General { get; set; }
 
         [JsonProperty("dashboard")]
-        public KlipperDatabaseFluiddValueUiSettingsDashboard Dashboard { get; set; }
+        public KlipperDatabaseFluiddValueUiSettingsDashboard? Dashboard { get; set; }
 
         #endregion
 
         #region Overrides
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
+        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
         #endregion
     }
 }
