@@ -8,8 +8,10 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Reflection;
 using System.Security.AccessControl;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Xml.Serialization;
 
 namespace MoonrakerSharpWebApi.Test
@@ -30,7 +32,7 @@ namespace MoonrakerSharpWebApi.Test
             $"{{\"jsonrpc\":\"2.0\",\"method\":\"server.websocket.id\",\"params\":{{}},\"id\":2}}",
         };
 
-        MoonrakerClient? client;
+        MoonrakerClient? client = null;
 
         [SetUp]
         public void Setup()
@@ -40,6 +42,12 @@ namespace MoonrakerSharpWebApi.Test
                 .WithServerAddress(_host, _port, _ssl)
                 .WithApiKey(_api)
                 .Build();
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            client?.Dispose();
         }
 
         [Test]
@@ -89,6 +97,47 @@ namespace MoonrakerSharpWebApi.Test
                 string serializedString = JsonConvert.SerializeObject(MoonrakerClient.Instance, Formatting.Indented, settings: MoonrakerClient.DefaultNewtonsoftJsonSerializerSettings);
                 MoonrakerClient? serializedObject = JsonConvert.DeserializeObject<MoonrakerClient>(serializedString, settings: MoonrakerClient.DefaultNewtonsoftJsonSerializerSettings);
                 Assert.That(serializedObject is MoonrakerClient server && server != null);
+            }
+            catch (Exception exc)
+            {
+                Assert.Fail(exc.Message);
+            }
+        }
+
+        [Test]
+        public void SerializeAllTypesWithJsonNewtonsoftTest()
+        {
+
+            var dir = @"TestResults\Serialization\";
+            Directory.CreateDirectory(dir);
+            string serverConfig = Path.Combine(dir, "server.xml");
+            if (File.Exists(serverConfig)) File.Delete(serverConfig);
+            try
+            {
+                List<Type> types = AppDomain.CurrentDomain.GetAssemblies()
+                       .SelectMany(t => t.GetTypes())
+                       .Where(t => t.IsClass && !t.Name.StartsWith("<") && t.Namespace?.StartsWith("AndreasReitberger.API.Moonraker") is true)
+                       .ToList()
+                       ;
+                Regex r = new(@"(?<=\"")[A-Z]*[A-Z][a-zA-Z]*(?=\"")");
+                foreach(Type t in types)
+                {
+                    object? obj = Activator.CreateInstance(t);
+                    if (obj is null) continue;
+                    string serializedString = 
+                        JsonConvert.SerializeObject(obj, Formatting.Indented, settings: MoonrakerClient.DefaultNewtonsoftJsonSerializerSettings);
+                    if (serializedString == "{}") continue;
+
+                    var properties = serializedString.Split(",", StringSplitOptions.RemoveEmptyEntries)
+                        .Select(p => p.Trim())
+                        .ToList()
+                        ;
+                    foreach(var property in properties)
+                    {
+                        bool valid = r.IsMatch(property);
+                        Assert.That(valid, message: $"Type: {t} => {property}");
+                    }
+                }
             }
             catch (Exception exc)
             {
