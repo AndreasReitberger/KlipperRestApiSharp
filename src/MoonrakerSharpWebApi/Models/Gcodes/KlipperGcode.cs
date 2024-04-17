@@ -2,17 +2,20 @@
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperGcode
+    public partial class KlipperGcode : ObservableObject
     {
         #region Properties
-        [JsonProperty("message")]
-        public string Message { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("message")]
+        string message = string.Empty;
 
-        [JsonProperty("time")]
-        public double Time { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("time")]
+        double time;
 
-        [JsonProperty("type")]
-        public string Type { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("type")]
+        string type = string.Empty;
         #endregion
 
         #region Overrides

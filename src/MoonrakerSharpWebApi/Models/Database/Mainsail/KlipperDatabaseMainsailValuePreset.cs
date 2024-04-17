@@ -3,17 +3,20 @@ using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperDatabaseMainsailValuePreset
+    public partial class KlipperDatabaseMainsailValuePreset : ObservableObject
     {
         #region Properties
-        [JsonProperty("name")]
-        public string Name { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("name")]
+        string name = string.Empty;
 
-        [JsonProperty("gcode")]
-        public string Gcode { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("gcode")]
+        string gcode = string.Empty;
 
-        [JsonProperty("values")]
-        public Dictionary<string, KlipperDatabaseMainsailHeaterElement> Values { get; set; } = [];
+        [ObservableProperty]
+        [property: JsonProperty("values")]
+        Dictionary<string, KlipperDatabaseMainsailHeaterElement> values = [];
         //public KlipperDatabaseMainsailValuePresetValues Values { get; set; }
         #endregion
 

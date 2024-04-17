@@ -2,17 +2,20 @@
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperDatabaseMainsailHeaterElement
+    public partial class KlipperDatabaseMainsailHeaterElement : ObservableObject
     {
         #region Properties
-        [JsonProperty("bool")]
-        public bool Bool { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("bool")]
+        bool boolValue;
 
-        [JsonProperty("value")]
-        public long? Value { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("value")]
+        long? value;
 
-        [JsonProperty("type")]
-        public string Type { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("type")]
+        string type = string.Empty;
         #endregion
 
         #region Overrides

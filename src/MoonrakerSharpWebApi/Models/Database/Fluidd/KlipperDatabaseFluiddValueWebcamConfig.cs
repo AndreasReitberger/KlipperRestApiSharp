@@ -3,38 +3,48 @@ using System;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperDatabaseFluiddValueWebcamConfig
+    public partial class KlipperDatabaseFluiddValueWebcamConfig : ObservableObject
     {
         #region Properties
-        [JsonProperty("id")]
-        public Guid Id { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("id")]
+        Guid id;
 
-        [JsonProperty("enabled")]
-        public bool Enabled { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("enabled")]
+        bool enabled;
 
-        [JsonProperty("name")]
-        public string Name { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("name")]
+        string name = string.Empty;
 
-        [JsonProperty("service")]
-        public string Service { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("service")]
+        string service = string.Empty;
 
-        [JsonProperty("targetFps")]
-        public long Fpstarget { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("targetFps")]
+        long fpstarget;
 
-        [JsonProperty("urlStream")]
-        public string UrlStream { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("urlStream")]
+        string urlStream = string.Empty;
 
-        [JsonProperty("urlSnapshot")]
-        public string UrlSnapshot { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("urlSnapshot")]
+        string urlSnapshot = string.Empty;
 
-        [JsonProperty("flipX")]
-        public bool FlipX { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("flipX")]
+        bool flipX;
 
-        [JsonProperty("flipY")]
-        public bool FlipY { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("flipY")]
+        bool flipY;
 
-        [JsonProperty("rotation")]
-        public int? Rotation { get; set; } = 0;
+        [ObservableProperty]
+        [property: JsonProperty("rotation")]
+        int? rotation = 0;
         #endregion
 
         #region Overrides

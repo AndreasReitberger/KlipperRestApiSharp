@@ -2,14 +2,16 @@
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperDatabaseMainsailValueDashboard
+    public partial class KlipperDatabaseMainsailValueDashboard : ObservableObject
     {
         #region Properties
-        [JsonProperty("extruder")]
-        public KlipperDatabaseMainsailValueDashboardExtruder? Extruder { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("extruder")]
+        public KlipperDatabaseMainsailValueDashboardExtruder? extruder;
 
-        [JsonProperty("control")]
-        public KlipperDatabaseMainsailValueDashboardControl? Control { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("control")]
+        public KlipperDatabaseMainsailValueDashboardControl? control;
         #endregion
 
         #region Overrides

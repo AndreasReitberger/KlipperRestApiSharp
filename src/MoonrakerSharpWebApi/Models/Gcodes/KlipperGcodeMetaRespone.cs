@@ -2,11 +2,12 @@
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperGcodeMetaRespone
+    public partial class KlipperGcodeMetaRespone : ObservableObject
     {
         #region Properties
-        [JsonProperty("result")]
-        public KlipperGcodeMetaResult? Result { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("result")]
+        KlipperGcodeMetaResult? result;
         #endregion
 
         #region Overrides

@@ -2,11 +2,12 @@
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperGcodeMacroRespone
+    public partial class KlipperGcodeMacroRespone : ObservableObject
     {
         #region Properties
-        [JsonProperty("result")]
-        public KlipperGcodeMacroResult? Result { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("result")]
+        KlipperGcodeMacroResult? result;
         #endregion
 
         #region Overrides

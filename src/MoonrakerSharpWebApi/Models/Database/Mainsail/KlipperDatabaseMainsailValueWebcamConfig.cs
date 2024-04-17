@@ -2,29 +2,36 @@
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperDatabaseMainsailValueWebcamConfig
+    public partial class KlipperDatabaseMainsailValueWebcamConfig : ObservableObject
     {
         #region Properties
-        [JsonProperty("name")]
-        public string Name { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("name")]
+        public string name = string.Empty;
 
-        [JsonProperty("icon")]
-        public string Icon { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("icon")]
+        public string icon = string.Empty;
 
-        [JsonProperty("service")]
-        public string Service { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("service")]
+        public string service = string.Empty;
 
-        [JsonProperty("targetFps")]
-        public long TargetFps { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("targetFps")]
+        public long targetFps;
 
-        [JsonProperty("url")]
-        public string Url { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("url")]
+        public string url = string.Empty;
 
-        [JsonProperty("flipX")]
-        public bool FlipX { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("flipX")]
+        public bool flipX;
 
-        [JsonProperty("flipY")]
-        public bool FlipY { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("flipY")]
+        public bool flipY;
         #endregion
 
         #region Overrides

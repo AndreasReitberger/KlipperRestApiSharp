@@ -20,28 +20,28 @@ namespace AndreasReitberger.API.Moonraker.Models
         GcodeTimeBaseTarget timeBaseTarget = GcodeTimeBaseTarget.DoubleHoursUnix;
 
         [ObservableProperty]
-        [JsonProperty("filename")]
-        [property: JsonIgnore]
+        [property: JsonProperty("filename")]
+        [JsonIgnore]
         string fileName = string.Empty;
 
         [ObservableProperty]
-        [JsonProperty("path")]
-        [property: JsonIgnore]
+        [property: JsonProperty("path")]
+        [JsonIgnore]
         string filePath = string.Empty;
 
         [ObservableProperty]
-        [JsonProperty("modified")]
-        [property: JsonIgnore]
+        [property: JsonProperty("modified")]
+        [JsonIgnore]
         double modified;
 
         [ObservableProperty]
-        [JsonProperty("size")]
-        [property: JsonIgnore]
+        [property: JsonProperty("size")]
+        [JsonIgnore]
         long size;
 
         [ObservableProperty]
-        [JsonProperty("permissions")]
-        [property: JsonIgnore]
+        [property: JsonProperty("permissions")]
+        [JsonIgnore]
         string permissions = string.Empty;
 
         #region JsonIgnore

@@ -3,11 +3,12 @@ using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperDatabaseNamespaceListResult
+    public partial class KlipperDatabaseNamespaceListResult : ObservableObject
     {
         #region Properties
-        [JsonProperty("namespaces")]
-        public List<string> Namespaces { get; set; } = [];
+        [ObservableProperty]
+        [property: JsonProperty("namespaces")]
+        List<string> namespaces = [];
         #endregion
 
         #region Overrides

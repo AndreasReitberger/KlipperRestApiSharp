@@ -2,17 +2,20 @@
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperDatabaseItemResult
+    public partial class KlipperDatabaseItemResult : ObservableObject
     {
         #region Properties
-        [JsonProperty("namespace")]
-        public string Namespace { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("namespace")]
+        string namespaceValue = string.Empty;
 
-        [JsonProperty("key")]
-        public string Key { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("key")]
+        string key = string.Empty;
 
-        [JsonProperty("value")]
-        public object? Value { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("value")]
+        object? value;
         #endregion
 
         #region Overrides

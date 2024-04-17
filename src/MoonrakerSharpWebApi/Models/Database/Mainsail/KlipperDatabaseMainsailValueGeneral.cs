@@ -2,14 +2,16 @@
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperDatabaseMainsailValueGeneral
+    public partial class KlipperDatabaseMainsailValueGeneral : ObservableObject
     {
         #region Properties
-        [JsonProperty("printername")]
-        public string Printername { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("printername")]
+        public string printername = string.Empty;
 
-        [JsonProperty("displayCancelPrint")]
-        public bool DisplayCancelPrint { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("displayCancelPrint")]
+        public bool displayCancelPrint;
         #endregion
 
         #region Overrides

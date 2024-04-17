@@ -1,13 +1,13 @@
 ﻿using Newtonsoft.Json;
-using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperDeviceListRespone
+    public partial class KlipperDeviceListRespone : ObservableObject
     {
         #region Properties
-        [JsonProperty("result")]
-        public KlipperDeviceListResult? Result { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("result")]
+        KlipperDeviceListResult? result;
         #endregion
 
         #region Overrides

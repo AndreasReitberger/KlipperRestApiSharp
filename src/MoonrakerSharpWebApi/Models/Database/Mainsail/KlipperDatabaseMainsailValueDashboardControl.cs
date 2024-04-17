@@ -2,11 +2,12 @@
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperDatabaseMainsailValueDashboardControl
+    public partial class KlipperDatabaseMainsailValueDashboardControl : ObservableObject
     {
         #region Properties
-        [JsonProperty("useCross")]
-        public bool UseCross { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("useCross")]
+        bool useCross;
         #endregion
 
         #region Overrides

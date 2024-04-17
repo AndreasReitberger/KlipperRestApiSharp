@@ -2,17 +2,20 @@
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperDiskUsage
+    public partial class KlipperDiskUsage : ObservableObject
     {
         #region Properties
-        [JsonProperty("total")]
-        public long Total { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("total")]
+        long total;
 
-        [JsonProperty("used")]
-        public long Used { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("used")]
+        long used;
 
-        [JsonProperty("free")]
-        public long Free { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("free")]
+        long free;
         #endregion
 
         #region Overrides

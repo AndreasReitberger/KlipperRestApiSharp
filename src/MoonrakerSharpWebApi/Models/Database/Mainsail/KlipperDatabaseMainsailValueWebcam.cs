@@ -3,14 +3,16 @@ using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperDatabaseMainsailValueWebcam
+    public partial class KlipperDatabaseMainsailValueWebcam : ObservableObject
     {
         #region Properties
+        [ObservableProperty]
         [JsonProperty("configs")]
-        public List<KlipperDatabaseMainsailValueWebcamConfig> Configs { get; set; } = [];
+        List<KlipperDatabaseMainsailValueWebcamConfig> configs = [];
 
+        [ObservableProperty]
         [JsonProperty("boolNavi")]
-        public bool BoolNavi { get; set; }
+        bool boolNavi;
         #endregion
 
         #region Overrides

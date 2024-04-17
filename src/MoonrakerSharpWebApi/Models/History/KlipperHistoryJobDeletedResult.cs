@@ -3,11 +3,12 @@ using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperHistoryJobDeletedResult
+    public partial class KlipperHistoryJobDeletedResult : ObservableObject
     {
         #region Properties
-        [JsonProperty("deleted_jobs")]
-        public List<string> DeletedJobs { get; set; } = [];
+        [ObservableProperty]
+        [property: JsonProperty("deleted_jobs")]
+        List<string> deletedJobs = [];
         #endregion
 
         #region Overrides

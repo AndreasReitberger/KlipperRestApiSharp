@@ -2,20 +2,24 @@
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperDevice
+    public partial class KlipperDevice : ObservableObject
     {
         #region Properties
-        [JsonProperty("device")]
-        public string Device { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("device")]
+        public string device = string.Empty;
 
-        [JsonProperty("status")]
-        public string Status { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("status")]
+        public string status = string.Empty;
 
-        [JsonProperty("locked_while_printing")]
-        public bool LockedWhilePrinting { get; set; }
+        [ObservableProperty]
+        [property: JsonProperty("locked_while_printing")]
+        public bool lockedWhilePrinting;
 
-        [JsonProperty("type")]
-        public string Type { get; set; } = string.Empty;
+        [ObservableProperty]
+        [property: JsonProperty("type")]
+        public string type = string.Empty;
         #endregion
 
         #region Overrides

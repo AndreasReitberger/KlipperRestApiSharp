@@ -13,19 +13,19 @@ namespace AndreasReitberger.API.Moonraker.Models
         Guid id;
 
         [ObservableProperty]
-        [JsonProperty("width")]
+        [property: JsonProperty("width")]
         long width;
 
         [ObservableProperty]
-        [JsonProperty("height")]
+        [property: JsonProperty("height")]
         long height;
 
         [ObservableProperty]
-        [JsonProperty("size")]
+        [property: JsonProperty("size")]
         long size;
 
         [ObservableProperty]
-        [JsonProperty("relative_path")]
+        [property: JsonProperty("relative_path")]
         string path = string.Empty;
         partial void OnPathChanged(string value)
         {

@@ -4,11 +4,12 @@ using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperDatabaseMainsailValuePresets
+    public partial class KlipperDatabaseMainsailValuePresets : ObservableObject
     {
         #region Properties
-        [JsonProperty("presets")]
-        public Dictionary<Guid, KlipperDatabaseMainsailValuePreset> Presets { get; set; } = new();
+        [ObservableProperty]
+        [property: JsonProperty("presets")]
+        Dictionary<Guid, KlipperDatabaseMainsailValuePreset> presets = [];
         #endregion
 
         #region Overrides
