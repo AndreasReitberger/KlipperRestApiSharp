@@ -36,7 +36,7 @@ namespace AndreasReitberger.API.Moonraker.Models
 
         [ObservableProperty, JsonIgnore]
         public Uri? webCamUrlDynamic;
-        
+
         [ObservableProperty, JsonIgnore]
         public string urlSnapshot = string.Empty;
         partial void OnUrlSnapshotChanged(string value)

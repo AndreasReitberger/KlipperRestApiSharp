@@ -9,7 +9,7 @@ namespace AndreasReitberger.API.Moonraker
         #region EventHandlers
 
         #region WebSocket
-        
+
         public event EventHandler<KlipperWebSocketConnectionChangedEventArgs>? WebSocketConnectionIdChanged;
         protected virtual void OnWebSocketConnectionIdChanged(KlipperWebSocketConnectionChangedEventArgs e)
         {

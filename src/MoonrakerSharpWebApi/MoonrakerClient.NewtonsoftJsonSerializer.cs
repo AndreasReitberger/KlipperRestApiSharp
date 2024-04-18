@@ -43,7 +43,7 @@ namespace AndreasReitberger.API.Moonraker
         public new static JsonSerializerSettings DefaultNewtonsoftJsonSerializerSettings = new()
         {
             // Ignore if the json respone has more or less properties than the target class
-            MissingMemberHandling = MissingMemberHandling.Ignore,          
+            MissingMemberHandling = MissingMemberHandling.Ignore,
             NullValueHandling = NullValueHandling.Ignore,
             TypeNameHandling = TypeNameHandling.Auto,
             Converters =

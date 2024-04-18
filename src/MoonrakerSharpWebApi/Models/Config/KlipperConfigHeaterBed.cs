@@ -7,7 +7,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         #region Properties
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("control")]
-        string control= string.Empty;
+        string control = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("pid_kp")]
@@ -19,11 +19,11 @@ namespace AndreasReitberger.API.Moonraker.Models
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("sensor_pin")]
-        string sensorPin= string.Empty;
+        string sensorPin = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("heater_pin")]
-        string heaterPin= string.Empty;
+        string heaterPin = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("max_power")]
@@ -35,7 +35,7 @@ namespace AndreasReitberger.API.Moonraker.Models
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("sensor_type")]
-        string sensorType= string.Empty;
+        string sensorType = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("inline_resistor")]

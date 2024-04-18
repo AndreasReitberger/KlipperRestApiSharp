@@ -8,7 +8,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("enable_force_move")]
         bool enableForceMove;
-    
+
         #endregion
 
         #region Overrides

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperFileListRespone :ObservableObject
+    public partial class KlipperFileListRespone : ObservableObject
     {
         #region Properties
         [ObservableProperty, JsonIgnore]

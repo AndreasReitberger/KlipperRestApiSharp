@@ -1121,7 +1121,7 @@ namespace AndreasReitberger.API.Moonraker
             await Task.WhenAll(tasks).ConfigureAwait(false);
         }), commandsOnConnect: commandsOnConnect
         );
-        
+
         public new async Task RefreshAllAsync()
         {
             try
@@ -1222,7 +1222,7 @@ namespace AndreasReitberger.API.Moonraker
         public Task CheckOnlineAsync(CancellationTokenSource cts) => CheckOnlineAsync($"{MoonrakerCommands.Base}", AuthHeaders, "version", cts);
 
         public Task<bool> CheckIfApiIsValidAsync(int timeout = 10000) => CheckIfApiIsValidAsync($"{MoonrakerCommands.Base}", AuthHeaders, "version", timeout);
-        
+
         public Task CheckServerIfApiIsValidAsync(int timeout = 10000) => CheckIfApiIsValidAsync(timeout);
         #endregion
 
@@ -1989,7 +1989,7 @@ namespace AndreasReitberger.API.Moonraker
             }
         }
         public Task<bool> RestartSystemServiceAsync(KlipperServices service) => RestartSystemServiceAsync(service.ToString());
-        
+
         public async Task<bool> StopSystemServiceAsync(string service)
         {
             try
@@ -2024,7 +2024,7 @@ namespace AndreasReitberger.API.Moonraker
             }
         }
         public Task<bool> StopSystemServiceAsync(KlipperServices service) => StopSystemServiceAsync(service.ToString());
-        
+
         public async Task<bool> StartSystemServiceAsync(string service)
         {
             try
@@ -2059,7 +2059,7 @@ namespace AndreasReitberger.API.Moonraker
             }
         }
         public Task<bool> StartSystemServiceAsync(KlipperServices service) => StartSystemServiceAsync(service.ToString());
-        
+
         public async Task<KlipperMoonrakerProcessStatsResult?> GetMoonrakerProcessStatsAsync()
         {
             IRestApiRequestRespone? result = null;
@@ -2099,7 +2099,7 @@ namespace AndreasReitberger.API.Moonraker
             }
         }
         #endregion
-      
+
         #region Authorization
 
         // Doc: https://moonraker.readthedocs.io/en/latest/web_api/#login-user
@@ -2525,7 +2525,7 @@ namespace AndreasReitberger.API.Moonraker
             }
         }
         #endregion
-   
+
         #region Job Queue APIs
 
         public async Task<KlipperJobQueueResult?> GetJobQueueStatusAsync()
@@ -2598,7 +2598,7 @@ namespace AndreasReitberger.API.Moonraker
             }
         }
 
-        public Task<KlipperJobQueueResult?> EnqueueJobAsync(string job) => EnqueueJobsAsync([job]);        
+        public Task<KlipperJobQueueResult?> EnqueueJobAsync(string job) => EnqueueJobsAsync([job]);
 
         public async Task<KlipperJobQueueResult?> EnqueueJobsAsync(string[] jobs)
         {
@@ -2740,7 +2740,7 @@ namespace AndreasReitberger.API.Moonraker
             }
         }
         public Task<KlipperJobQueueResult?> RemoveJobAsync(string jobId) => RemoveJobsAsync(new string[] { jobId });
-        
+
         public async Task<KlipperJobQueueResult?> PauseJobQueueAsync()
         {
             IRestApiRequestRespone? result = null;
@@ -3667,7 +3667,7 @@ namespace AndreasReitberger.API.Moonraker
         }
 
         public Task<bool> SendOctoPrintApiGcodeCommandAsync(string command) => SendOctoPrintApiGcodeCommandAsync(new string[] { command });
-        
+
         public async Task<Dictionary<string, OctoprintApiPrinter>> GetOctoPrintApiPrinterProfilesAsync()
         {
             IRestApiRequestRespone? result = null;
@@ -3911,7 +3911,7 @@ namespace AndreasReitberger.API.Moonraker
         }
 
         public Task<List<string>> DeleteHistoryJobAsync(KlipperJobItem item) => DeleteHistoryJobAsync(item?.JobId?.ToString());
-        
+
         public async Task<List<string>> DeleteHistoryJobAsync(string? uid)
         {
             IRestApiRequestRespone? result = null;
@@ -3987,7 +3987,7 @@ namespace AndreasReitberger.API.Moonraker
             return Id.Equals(item.Id);
         }
         public override int GetHashCode() => Id.GetHashCode();
-        
+
         #endregion
 
     }
