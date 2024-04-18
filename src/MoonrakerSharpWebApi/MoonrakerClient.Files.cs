@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -76,7 +77,7 @@ namespace AndreasReitberger.API.Moonraker
                 Dictionary<string, string> urlSegments = [];
                 if (!string.IsNullOrEmpty(rootPath))
                 {
-                    urlSegments.Add("root", rootPath);
+                    urlSegments.Add("rquestTargetUri", rootPath);
                 }
 
                 string targetUri = $"{MoonrakerCommands.Server}";
@@ -604,16 +605,29 @@ namespace AndreasReitberger.API.Moonraker
             }
         }
 
-        public async Task<KlipperFileActionResult?> UploadFileAsync(string file, string root = "gcodes", string path = "", int timeout = 100000)
+        public async Task<KlipperFileActionResult?> UploadFileAsync(string localFilePath, string root = "gcodes", string path = "", int timeout = 100000)
         {
             IRestApiRequestRespone? result = null;
             KlipperFileActionResult? resultObject = null;
             try
             {
-                result = await SendMultipartFormDataFileRestApiRequestAsync(file, root, path, timeout).ConfigureAwait(false);
+                string targetFilePath = $"/server/files/upload";
+                FileInfo info = new(localFilePath);
+                Dictionary<string, string>? parameters = new()
+                {
+                    { "rquestTargetUri", root },
+                    { "path", "" }
+                };
+
+                result = await SendMultipartFormDataFileRestApiRequestAsync(
+                    fileName: info.Name, file: null, localFilePath: localFilePath, rquestTargetUri: targetFilePath, 
+                    parameters: parameters,
+                    authHeaders: AuthHeaders, timeout: timeout
+                    )
+                    .ConfigureAwait(false);
+                
                 KlipperFileActionResult? queryResult = GetObjectFromJson<KlipperFileActionResult>(result?.Result, NewtonsoftJsonSerializerSettings);
                 return queryResult;
-                //return result?.Result;
             }
             catch (JsonException jecx)
             {
@@ -633,16 +647,23 @@ namespace AndreasReitberger.API.Moonraker
             }
         }
 
-        public async Task<KlipperFileActionResult?> UploadFileAsync(string fileName, byte[] file, string root = "gcodes", string path = "", int timeout = 10000)
+        public async Task<KlipperFileActionResult?> UploadFileAsync(string fileName, byte[] file, string root = "gcodes", string path = "", int timeout = 100000)
         {
             IRestApiRequestRespone? result = null;
             KlipperFileActionResult? resultObject = null;
             try
             {
-                result = await SendMultipartFormDataFileRestApiRequestAsync(fileName, file, root, path, timeout).ConfigureAwait(false);
+                string targetFilePath = $"/server/files/upload";
+                Dictionary<string, string>? parameters = new()
+                {
+                    { "root", root },
+                    { "path", "" }
+                };
+                result = await SendMultipartFormDataFileRestApiRequestAsync(
+                    fileName: fileName, file: file, rquestTargetUri: targetFilePath, authHeaders: AuthHeaders, timeout: timeout, parameters: parameters)
+                    .ConfigureAwait(false);
                 KlipperFileActionResult? queryResult = GetObjectFromJson<KlipperFileActionResult>(result?.Result, NewtonsoftJsonSerializerSettings);
                 return queryResult;
-                //return result?.Result;
             }
             catch (JsonException jecx)
             {
@@ -681,7 +702,7 @@ namespace AndreasReitberger.API.Moonraker
                     .ConfigureAwait(false);
                 /*
                 result =
-                    await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Delete, $"files/{root}/{filePath}")
+                    await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Delete, $"files/{rquestTargetUri}/{filePath}")
                     .ConfigureAwait(false);
                 */
                 KlipperDirectoryActionRespone? queryResult = GetObjectFromJson<KlipperDirectoryActionRespone>(result?.Result, NewtonsoftJsonSerializerSettings);

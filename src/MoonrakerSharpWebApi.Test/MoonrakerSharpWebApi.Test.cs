@@ -951,10 +951,13 @@ namespace MoonrakerSharpWebApi.Test
 
                     byte[]? file = await File.ReadAllBytesAsync(testFile);
 
-                    KlipperFileActionResult msg = await _server.UploadFileAsync(fullPath);
+                    KlipperFileActionResult? msg = await _server.UploadFileAsync(localFilePath: fullPath, timeout: 100000);
+                    KlipperDirectoryActionResult? deleted = await _server.DeleteFileAsync("gcodes", info.Name);
+
+                    msg = await _server.UploadFileAsync(fileName: info.Name, file: file, timeout: 100000);
                     Assert.That(msg is not null);
 
-                    KlipperGcodeMetaResult? meta = await _server.GetGcodeMetadataAsync(msg.Item.Path);
+                    KlipperGcodeMetaResult? meta = await _server.GetGcodeMetadataAsync(msg?.Item?.Path);
                     Assert.That(meta is not null);
 
                     string? thumbnail = meta?.GcodeImages.FirstOrDefault()?.Path;
@@ -963,7 +966,7 @@ namespace MoonrakerSharpWebApi.Test
                     // Get big image (400x300)
                     byte[] image2 = await _server.GetGcodeThumbnailImageAsync(meta, 1);
 
-                    KlipperDirectoryActionResult deleted = await _server.DeleteFileAsync("gcodes", info.Name);
+                    deleted = await _server.DeleteFileAsync("gcodes", info.Name);
                     Assert.That(deleted is not null);
                 }
                 else
