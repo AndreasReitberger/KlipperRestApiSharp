@@ -1,6 +1,7 @@
 ﻿using AndreasReitberger.API.Moonraker.Models;
 using AndreasReitberger.API.Print3dServer.Core.Enums;
 using AndreasReitberger.API.Print3dServer.Core.Events;
+using AndreasReitberger.API.Print3dServer.Core.Interfaces;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -71,7 +72,8 @@ namespace AndreasReitberger.API.Moonraker
                     string jsonBody = string.Empty;
                     try
                     {
-                        ConcurrentDictionary<int, KlipperStatusExtruder> extruderStats = new();
+                        //ConcurrentDictionary<int, KlipperStatusExtruder> extruderStats = new();
+                        ConcurrentDictionary<int, IToolhead> extruderStats = new();
                         KlipperWebSocketMessage? method = JsonConvert.DeserializeObject<KlipperWebSocketMessage>(text);
                         for (int i = 0; i < method?.Parameters?.Count; i++)
                         {
@@ -244,10 +246,11 @@ namespace AndreasReitberger.API.Moonraker
                                             JsonConvert.DeserializeObject<KlipperStatusExtruder>(jsonBody);
                                         if (extruder is not null)
                                         {
-                                            if (Extruders.ContainsKey(index))
+                                            if (Toolheads.ContainsKey(index))
                                             {
                                                 // This property is only sent once if changed, so store it
-                                                KlipperStatusExtruder previousExtruderState = Extruders[index];
+                                                IToolhead previousExtruderState = Toolheads[index];
+                                                //KlipperStatusExtruder previousExtruderState = Toolheads[index];
                                                 if (!jsonBody.Contains("target"))
                                                 {
                                                     extruder.TempSet = previousExtruderState.TempSet;
@@ -449,7 +452,8 @@ namespace AndreasReitberger.API.Moonraker
                         // Update extruder states if changed
                         if (extruderStats.Count > 0)
                         {
-                            Extruders = extruderStats;
+                            //Extruders = extruderStats;
+                            Toolheads = extruderStats;
                         }
                     }
                     catch (JsonException jecx)
@@ -591,7 +595,8 @@ namespace AndreasReitberger.API.Moonraker
                     string jsonBody = string.Empty;
                     try
                     {
-                        ConcurrentDictionary<int, KlipperStatusExtruder> extruderStats = new();
+                        //ConcurrentDictionary<int, KlipperStatusExtruder> extruderStats = new();
+                        ConcurrentDictionary<int, IToolhead> extruderStats = new();
                         KlipperWebSocketMessage? method = JsonConvert.DeserializeObject<KlipperWebSocketMessage>(text);
                         for (int i = 0; i < method?.Parameters?.Count; i++)
                         {
@@ -763,10 +768,11 @@ namespace AndreasReitberger.API.Moonraker
                                             JsonConvert.DeserializeObject<KlipperStatusExtruder>(jsonBody);
                                         if (extruder is not null)
                                         {
-                                            if (Extruders.ContainsKey(index))
+                                            if (Toolheads.ContainsKey(index))
                                             {
                                                 // This property is only sent once if changed, so store it
-                                                KlipperStatusExtruder previousExtruderState = Extruders[index];
+                                                IToolhead previousExtruderState = Toolheads[index];
+                                                //KlipperStatusExtruder previousExtruderState = Toolheads[index];
                                                 if (!jsonBody.Contains("target"))
                                                 {
                                                     extruder.TempSet = previousExtruderState.TempSet;
@@ -967,7 +973,7 @@ namespace AndreasReitberger.API.Moonraker
                         // Update extruder states if changed
                         if (extruderStats?.Count > 0)
                         {
-                            Extruders = extruderStats;
+                            Toolheads = extruderStats;
                         }
                     }
                     catch (JsonException jecx)

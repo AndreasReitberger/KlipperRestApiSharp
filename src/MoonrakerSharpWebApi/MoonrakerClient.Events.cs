@@ -84,26 +84,10 @@ namespace AndreasReitberger.API.Moonraker
             KlipperVirtualSdCardStateChanged?.Invoke(this, e);
         }
 
-        [Obsolete("Use ToolheadsChangedEvent instead")]
-        public event EventHandler<KlipperExtruderStatesChangedEventArgs>? KlipperExtruderStatesChanged;
-        [Obsolete("Use ToolheadsChangedEvent instead")]
-        protected virtual void OnKlipperExtruderStatesChanged(KlipperExtruderStatesChangedEventArgs e)
-        {
-            KlipperExtruderStatesChanged?.Invoke(this, e);
-        }
-
         public event EventHandler<KlipperTemperatureSensorStatesChangedEventArgs>? KlipperTemperatureSensorStatesChanged;
         protected virtual void OnKlipperTemperatureSensorStatesChanged(KlipperTemperatureSensorStatesChangedEventArgs e)
         {
             KlipperTemperatureSensorStatesChanged?.Invoke(this, e);
-        }
-
-        [Obsolete("Use HeaterChangedEvent instead")]
-        public event EventHandler<KlipperHeaterBedStateChangedEventArgs>? KlipperHeaterBedStateChanged;
-        [Obsolete("Use HeaterChangedEvent instead")]
-        protected virtual void OnKlipperHeaterBedStateChanged(KlipperHeaterBedStateChangedEventArgs e)
-        {
-            KlipperHeaterBedStateChanged?.Invoke(this, e);
         }
 
         public event EventHandler<KlipperPrintStateChangedEventArgs>? KlipperPrintStateChanged;
@@ -164,14 +148,6 @@ namespace AndreasReitberger.API.Moonraker
         protected virtual void OnKlipperFSensorChanged(KlipperFSensorStateChangedEventArgs e)
         {
             KlipperFSensorChanged?.Invoke(this, e);
-        }
-
-        [Obsolete("Use OnWebCamConfigChanged instead")]
-        public event EventHandler<KlipperWebCamConfigChangedEventArgs>? KlipperWebCamConfigChanged;
-        [Obsolete("Use OnWebCamConfigChanged instead")]
-        protected virtual void OnKlipperWebCamConfigChanged(KlipperWebCamConfigChangedEventArgs e)
-        {
-            KlipperWebCamConfigChanged?.Invoke(this, e);
         }
 
         public event EventHandler<KlipperPresetsChangedEventArgs>? KlipperPresetsChanged;

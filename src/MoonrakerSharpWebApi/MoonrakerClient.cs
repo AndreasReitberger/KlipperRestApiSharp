@@ -329,74 +329,6 @@ namespace AndreasReitberger.API.Moonraker
             }
         }
 
-        [ObservableProperty, Obsolete("Use Toolheads instead")]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        ConcurrentDictionary<int, KlipperStatusExtruder> extruders = new();
-        partial void OnExtrudersChanged(ConcurrentDictionary<int, KlipperStatusExtruder> value)
-        {
-            // WebSocket is updating this property in a high frequency, so a cooldown can be enabled
-            if (_enableCooldown && !RefreshHeatersDirectly)
-            {
-                if (_cooldownExtruder > 0)
-                    _cooldownExtruder--;
-                else
-                {
-                    _cooldownExtruder = _cooldownFallback;
-                    OnKlipperExtruderStatesChanged(new KlipperExtruderStatesChangedEventArgs()
-                    {
-                        ExtruderStates = value,
-                        SessionId = SessionId,
-                        CallbackId = -1,
-                    });
-                }
-            }
-            else
-            {
-                OnKlipperExtruderStatesChanged(new KlipperExtruderStatesChangedEventArgs()
-                {
-                    ExtruderStates = value,
-                    SessionId = SessionId,
-                    CallbackId = -1,
-                });
-            }
-            NumberOfToolHeads = value?.Count ?? 0;
-        }
-
-        /*
-        [ObservableProperty, Obsolete("Use ActiveHeatedBed instead")]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        KlipperStatusHeaterBed heaterBed;
-        partial void OnHeaterBedChanged(KlipperStatusHeaterBed value)
-        {
-            // WebSocket is updating this property in a high frequency, so a cooldown can be enabled
-            if (_enableCooldown && !RefreshHeatersDirectly)
-            {
-                if (_cooldownHeaterBed > 0)
-                    _cooldownHeaterBed--;
-                else
-                {
-                    _cooldownHeaterBed = _cooldownFallback;
-                    OnKlipperHeaterBedStateChanged(new KlipperHeaterBedStateChangedEventArgs()
-                    {
-                        NewHeaterBedState = value,
-                        SessionId = SessionId,
-                        CallbackId = -1,
-                    });
-                }
-            }
-            else
-            {
-                OnKlipperHeaterBedStateChanged(new KlipperHeaterBedStateChangedEventArgs()
-                {
-                    NewHeaterBedState = value,
-                    SessionId = SessionId,
-                    CallbackId = -1,
-                });
-            }
-            HasHeatedBed = value is not null;
-        }
-        */
-
         [ObservableProperty]
         [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
         ConcurrentDictionary<string, KlipperStatusDriver> drivers = new();
@@ -510,20 +442,6 @@ namespace AndreasReitberger.API.Moonraker
                 RemainingPrintTime = Convert.ToDouble(TotalPrintTime - value?.PrintDuration ?? 0);
                 Progress = Math.Round(MathHelper.Clamp((Convert.ToDouble(value?.PrintDuration ?? 0)) / (TotalPrintTime / 100), 0, 100), 2);
             }
-        }
-
-        [ObservableProperty, Obsolete("Use ActiveFan instead")]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        KlipperStatusFan? fan;
-        partial void OnFanChanged(KlipperStatusFan? value)
-        {
-            OnKlipperFanStateChanged(new KlipperFanStateChangedEventArgs()
-            {
-                NewFanState = value,
-                SessionId = SessionId,
-                CallbackId = -1,
-            });
-            HasFan = value is not null;
         }
 
         [ObservableProperty]
@@ -981,38 +899,6 @@ namespace AndreasReitberger.API.Moonraker
                 OnError(new UnhandledExceptionEventArgs(exc, false));
             }
             IsRefreshing = false;
-        }
-        #endregion
-
-        #region Login
-        [Obsolete("Not needed anymore, will be removed")]
-        internal string EncryptPassword(string UserName, SecureString Password, string SessionId)
-        {
-            // Password is MD5(sessionId + MD5(login + password))
-            // Source: https://www.godo.dev/tutorials/csharp-md5/
-            using MD5 md5 = MD5.Create();
-            string credentials = $"{UserName}{SecureStringHelper.ConvertToString(Password)}";
-            // Hash credentials first
-            md5.ComputeHash(Encoding.UTF8.GetBytes(credentials));
-            List<byte> inputBuffer = Encoding.UTF8.GetBytes(SessionId).ToList();
-
-            string hexHash = BitConverter.ToString(md5?.Hash).Replace("-", string.Empty).ToLowerInvariant();
-            inputBuffer.AddRange(Encoding.UTF8.GetBytes(hexHash));
-
-            md5.ComputeHash(inputBuffer.ToArray());
-
-            // Get hash result after compute it  
-            byte[] hashedCredentials = md5
-                .Hash;
-
-            StringBuilder strBuilder = new();
-            for (int i = 0; i < hashedCredentials.Length; i++)
-            {
-                //change it into 2 hexadecimal digits  
-                //for each byte  
-                strBuilder.Append(hashedCredentials[i].ToString("x2"));
-            }
-            return strBuilder.ToString();
         }
         #endregion
 
