@@ -6,7 +6,7 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperServerTempDataRespone : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("result")]
         Dictionary<string, KlipperTemperatureSensorHistory> result = [];
         //public KlipperServerTempData Result { get; set; }

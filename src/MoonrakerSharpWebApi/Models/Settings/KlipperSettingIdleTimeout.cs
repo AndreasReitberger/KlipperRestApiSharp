@@ -5,11 +5,11 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperSettingIdleTimeout : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("gcode")]
         string gcode = string.Empty;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("timeout")]
         long timeout;
         #endregion

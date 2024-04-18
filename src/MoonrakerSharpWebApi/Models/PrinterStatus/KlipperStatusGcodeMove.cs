@@ -6,35 +6,35 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperStatusGcodeMove : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("homing_origin")]
-        List<double> homingOrigin = new();
+        List<double> homingOrigin = [];
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("speed_factor")]
         double? speedFactor;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("gcode_position")]
-        List<double> gcodePosition = new();
+        List<double> gcodePosition = [];
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("absolute_extrude")]
         bool absoluteExtrude;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("absolute_coordinates")]
         bool absoluteCoordinates;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("position")]
-        List<double> position = new();
+        List<double> position = [];
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("speed")]
         double? speed;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("extrude_factor")]
         double? extrudeFactor;
         #endregion

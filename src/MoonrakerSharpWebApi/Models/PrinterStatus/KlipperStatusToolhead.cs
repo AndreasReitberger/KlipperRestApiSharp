@@ -6,51 +6,51 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperStatusToolhead : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("square_corner_velocity")]
         double? squareCornerVelocity;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("max_accel")]
         double? maxAccel;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("homed_axes")]
         string homedAxes = string.Empty;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("estimated_print_time")]
         double? estimatedPrintTime;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("max_velocity")]
         double? maxVelocity;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("print_time")]
         double? printTime;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("max_accel_to_decel")]
         double? maxAccelToDecel;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("axis_minimum")]
-        List<double> axisMinimum = new();
+        List<double> axisMinimum = [];
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("stalls")]
         double? stalls;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("axis_maximum")]
-        List<double> axisMaximum = new();
+        List<double> axisMaximum = [];
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("position")]
-        List<double> position = new();
+        List<double> position = [];
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("extruder")]
         string extruder = string.Empty;
         #endregion

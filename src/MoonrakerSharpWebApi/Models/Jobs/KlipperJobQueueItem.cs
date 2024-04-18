@@ -13,11 +13,11 @@ namespace AndreasReitberger.API.Moonraker.Models
         [property: JsonIgnore]
         Guid id;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("filename")]
         string fileName = string.Empty;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("job_id")]
         string jobId = string.Empty;
 

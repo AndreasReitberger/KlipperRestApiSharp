@@ -5,35 +5,35 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperServerConfig : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("server")]
         KlipperServer? server;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("authorization")]
         KlipperAuthorization? authorization;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("octoprint_compat")]
         object? octoprintCompat;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("history")]
         object? history;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("update_manager")]
         KlipperUpdateManager? updateManager;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("update_manager moonraker")]
         KlipperUpdateManagerKlipperClass? updateManagerMoonraker;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("update_manager klipper")]
         KlipperUpdateManagerKlipperClass? updateManagerKlipper;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("update_manager mainsail")]
         KlipperUpdateManagerMainsail? updateManagerMainsail;
         #endregion

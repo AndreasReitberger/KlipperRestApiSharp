@@ -5,47 +5,47 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperConfigPrinter : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("max_velocity")]
         long maxVelocity;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("max_z_velocity")]
         long maxZVelocity;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("kinematics")]
         string kinematics = string.Empty;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("max_accel")]
         long maxAccel;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("max_z_accel")]
         long maxZAccel;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("square_corner_velocity")]
         long squareCornerVelocity;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("move_flush_time")]
         double moveFlushTime;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("buffer_time_start")]
         double bufferTimeStart;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("buffer_time_low")]
         long bufferTimeLow;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("buffer_time_high")]
         long bufferTimeHigh;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("max_accel_to_decel")]
         long maxAccelToDecel;
         #endregion

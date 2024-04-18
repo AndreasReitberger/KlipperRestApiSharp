@@ -5,19 +5,19 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class OctoprintApiPrinterStateHistory : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("bed", NullValueHandling = NullValueHandling.Ignore)]
         OctoprintApiPrinterStateTemperatureInfo? bed;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("time", NullValueHandling = NullValueHandling.Ignore)]
         long? time;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("tool0", NullValueHandling = NullValueHandling.Ignore)]
         OctoprintApiPrinterStateTemperatureInfo? tool0;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("tool1", NullValueHandling = NullValueHandling.Ignore)]
         OctoprintApiPrinterStateTemperatureInfo? tool1;
         #endregion

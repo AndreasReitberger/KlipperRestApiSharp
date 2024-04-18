@@ -5,59 +5,59 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperSettings : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("virtual_sdcard")]
         KlipperConfigVirtualSdcard? virtualSdcard;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("printer")]
         KlipperConfigPrinter? printer;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("verify_heater extruder")]
         KlipperSettingVerifyHeaterExtruder? verifyHeaterExtruder;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("force_move")]
         KlipperSettingForceMove? forceMove;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("pause_resume")]
         KlipperSettingPauseResume? pauseResume;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("stepper_z")]
         KlipperConfigStepper? stepperZ;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("stepper_y")]
         KlipperConfigStepper? stepperY;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("stepper_x")]
         KlipperConfigStepper? stepperX;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("idle_timeout")]
         KlipperSettingIdleTimeout? idleTimeout;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("fan")]
         KlipperConfigFan? fan;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("mcu")]
         KlipperConfigMcu? mcu;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("display")]
         KlipperSettingsDisplay? display;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("extruder")]
         KlipperConfigExtruder? extruder;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("heater_bed")]
         KlipperConfigHeaterBed? heaterBed;
         #endregion

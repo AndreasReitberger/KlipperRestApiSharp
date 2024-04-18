@@ -5,15 +5,15 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperIpAddress : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("family")]
         string family = string.Empty;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("address")]
         string address = string.Empty;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("is_link_local")]
         bool isLinkLocal;
         #endregion

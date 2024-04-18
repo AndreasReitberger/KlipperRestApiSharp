@@ -6,36 +6,36 @@ namespace AndreasReitberger.API.Moonraker.Models.WebSocket
     public partial class KlipperWebSocketStateRespone : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
-        [property: JsonProperty("klippy_connected", Required = Required.Always)]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("klippy_connected")]
         bool klippyConnected;
 
-        [ObservableProperty]
-        [property: JsonProperty("klippy_state", Required = Required.Always)]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("klippy_state")]
         string klippyState = string.Empty;
 
-        [ObservableProperty]
-        [property: JsonProperty("components", Required = Required.Always)]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("components")]
         List<string> components = [];
 
-        [ObservableProperty]
-        [property: JsonProperty("failed_components", Required = Required.Always)]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("failed_components")]
         List<object> failedComponents = [];
 
-        [ObservableProperty]
-        [property: JsonProperty("registered_directories", Required = Required.Always)]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("registered_directories")]
         List<string> registeredDirectories = [];
 
-        [ObservableProperty]
-        [property: JsonProperty("warnings", Required = Required.Always)]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("warnings")]
         List<string> warnings = [];
 
-        [ObservableProperty]
-        [property: JsonProperty("websocket_count", Required = Required.Always)]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("websocket_count")]
         long websocketCount;
 
-        [ObservableProperty]
-        [property: JsonProperty("moonraker_version", Required = Required.Always)]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("moonraker_version")]
         string moonrakerVersion = string.Empty;
         #endregion
 

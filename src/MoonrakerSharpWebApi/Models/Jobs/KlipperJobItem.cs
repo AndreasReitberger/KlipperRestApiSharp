@@ -8,46 +8,46 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperJobItem : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("end_time")]
         double? endTime;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("filament_used")]
         double filamentUsed;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("filename")]
         string filename = string.Empty;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("metadata")]
         IGcodeMeta? metadata;
         //public KlipperGcodeMetaResult Metadata;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("print_duration")]
         double printDuration;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("status")]
         [JsonConverter(typeof(StringEnumConverter), true)]
         KlipperJobStates status;
         //public string Status;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("start_time")]
         double? startTime;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("total_duration")]
         double totalDuration;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("job_id")]
         string jobId = string.Empty;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("exists")]
         bool exists;
 

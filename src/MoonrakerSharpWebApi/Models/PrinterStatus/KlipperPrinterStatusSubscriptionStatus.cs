@@ -6,7 +6,7 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperPrinterStatusSubscriptionStatus : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("objects")]
         Dictionary<string, string> objects = [];
 

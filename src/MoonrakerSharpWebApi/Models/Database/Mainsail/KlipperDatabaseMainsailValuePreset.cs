@@ -6,15 +6,15 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperDatabaseMainsailValuePreset : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("name")]
         string name = string.Empty;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("gcode")]
         string gcode = string.Empty;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("values")]
         Dictionary<string, KlipperDatabaseMainsailHeaterElement> values = [];
         //public KlipperDatabaseMainsailValuePresetValues Values { get; set; }

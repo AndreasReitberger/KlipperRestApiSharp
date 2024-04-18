@@ -15,71 +15,71 @@ namespace AndreasReitberger.API.Moonraker.Models
         [property: JsonIgnore]
         Guid id;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("temperature")]
         double? tempRead;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("target")]
         double? tempSet;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("power")]
         double? power;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("pressure_advance")]
         double? pressureAdvance;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("smooth_time")]
         double? smoothTime;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("square_corner_velocity")]
         double? squareCornerVelocity;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("max_accel")]
         double? maxAccel;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("homed_axes")]
         string homedAxes = string.Empty;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("estimated_print_time")]
         double? estimatedPrintTime;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("max_velocity")]
         double? maxVelocity;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("print_time")]
         double? printTime;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("max_accel_to_decel")]
         double? maxAccelToDecel;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("axis_minimum")]
-        List<double> axisMinimum = new();
+        List<double> axisMinimum = [];
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("stalls")]
         double? stalls;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("axis_maximum")]
-        List<double> axisMaximum = new();
+        List<double> axisMaximum = [];
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("position")]
-        List<double> position = new();
+        List<double> position = [];
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("extruder")]
         string name = string.Empty;
 
@@ -89,7 +89,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         [JsonIgnore]
         public KlipperToolState State { get => GetCurrentState(); }
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         Printer3dHeaterType type = Printer3dHeaterType.Other;
 
         #region Interface, unused

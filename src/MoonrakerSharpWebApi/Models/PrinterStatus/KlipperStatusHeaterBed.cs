@@ -11,18 +11,17 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore]
         Guid id;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("temperature")]
         public double? tempRead;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("target")]
         public double? tempSet;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("power")]
         public double? power;
 
@@ -41,7 +40,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         [property: JsonIgnore]
         long error;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         Printer3dHeaterType type = Printer3dHeaterType.HeatedBed;
         #endregion
 

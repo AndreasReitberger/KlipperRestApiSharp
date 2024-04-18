@@ -6,23 +6,23 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperMoonrakerProcessStatsResult : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("moonraker_stats")]
         List<MoonrakerStatInfo> moonrakerStats = [];
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("throttled_state")]
         MoonrakerThrottledState? throttledState;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("cpu_temp")]
         double cpuTemp;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("network")]
         Dictionary<string, KlipperNetworkInterface> network = [];
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("websocket_connections")]
         long websocketConnections;
         #endregion

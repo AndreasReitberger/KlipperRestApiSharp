@@ -5,19 +5,19 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperSettingVerifyHeaterExtruder : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("max_error")]
         long maxError;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("check_gain_time")]
         long checkGainTime;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("heating_gain")]
         long heatingGain;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("hysteresis")]
         long hysteresis;
         #endregion

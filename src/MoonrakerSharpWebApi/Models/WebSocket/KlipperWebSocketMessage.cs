@@ -6,19 +6,19 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperWebSocketMessage : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("jsonrpc")]
         string jsonrpc = string.Empty;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("method")]
         string method = string.Empty;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("params")]
         List<object> parameters = [];
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("id")]
         long? id;
         #endregion

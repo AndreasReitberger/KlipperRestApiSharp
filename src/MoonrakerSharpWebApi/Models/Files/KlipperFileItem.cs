@@ -5,11 +5,11 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperFileItem : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("path")]
         string path = string.Empty;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("root")]
         string root = string.Empty;
         #endregion

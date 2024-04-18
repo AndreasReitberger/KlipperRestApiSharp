@@ -6,19 +6,19 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class MoonrakerStatInfo : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("time")]
         double? time;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("cpu_usage")]
         double? cpuUsage;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("memory")]
         long? memory;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("mem_units", NullValueHandling = NullValueHandling.Ignore)]
         MoonrakerMemUnits? memUnits;
         #endregion

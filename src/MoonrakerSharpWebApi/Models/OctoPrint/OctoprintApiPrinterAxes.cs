@@ -5,19 +5,19 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class OctoprintApiPrinterAxes : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("e")]
         OctoprintApiPrinterAxesAttribute? e;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("x")]
         OctoprintApiPrinterAxesAttribute? x;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("y")]
         OctoprintApiPrinterAxesAttribute? y;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("z")]
         OctoprintApiPrinterAxesAttribute? z;
         #endregion

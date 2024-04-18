@@ -5,23 +5,23 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class OctoprintApiPrinterVolume : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("depth")]
         long depth;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("formFactor")]
         string formFactor = string.Empty;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("height")]
         long height;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("origin")]
         string origin = string.Empty;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("width")]
         long width;
         #endregion

@@ -6,7 +6,7 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperWebcamConfigResult : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("webcams")]
         List<KlipperDatabaseWebcamConfig> webcams = [];
         #endregion

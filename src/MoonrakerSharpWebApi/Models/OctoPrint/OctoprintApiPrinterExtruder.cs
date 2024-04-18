@@ -5,19 +5,19 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class OctoprintApiPrinterExtruder : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("count")]
         long count;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("nozzleDiameter")]
         double nozzleDiameter;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("offsets")]
         long[][] offsets = [];
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("sharedNozzle")]
         bool sharedNozzle;
         #endregion

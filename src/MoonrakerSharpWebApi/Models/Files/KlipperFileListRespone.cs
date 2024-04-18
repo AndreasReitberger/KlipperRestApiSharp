@@ -6,7 +6,7 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperFileListRespone :ObservableObject
     {
         #region Properties
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("result")]
         List<KlipperFile> result = [];
         #endregion

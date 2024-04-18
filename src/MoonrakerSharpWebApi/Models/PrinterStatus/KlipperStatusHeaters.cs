@@ -6,13 +6,13 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperStatusHeaters : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("available_sensors")]
-        List<string> availableSensors = new();
+        List<string> availableSensors = [];
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("available_heaters")]
-        List<string> availableHeaters = new();
+        List<string> availableHeaters = [];
         #endregion
 
         #region Overrides

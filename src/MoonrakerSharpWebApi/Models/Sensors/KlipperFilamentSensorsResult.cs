@@ -6,11 +6,11 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperFilamentSensorsResult : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("status")]
         Dictionary<string, KlipperStatusFilamentSensor> status = [];
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("eventtime")]
         double? eventtime;
         #endregion

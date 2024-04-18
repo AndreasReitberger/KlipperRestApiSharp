@@ -7,26 +7,26 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperDatabaseWebcamConfig : ObservableObject, IWebCamConfig
     {
         #region Properties
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         public Guid id = Guid.Empty;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         public bool enabled;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("name")]
         public string alias = string.Empty;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         public string icon = string.Empty;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         public string service = string.Empty;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         public long targetFps;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         public string url = string.Empty;
         partial void OnUrlChanged(string value)
         {
@@ -34,10 +34,10 @@ namespace AndreasReitberger.API.Moonraker.Models
                 WebCamUrlDynamic = result;
         }
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         public Uri? webCamUrlDynamic;
         
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         public string urlSnapshot = string.Empty;
         partial void OnUrlSnapshotChanged(string value)
         {
@@ -45,20 +45,20 @@ namespace AndreasReitberger.API.Moonraker.Models
                 WebCamUrlStatic = result;
         }
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         public Uri? webCamUrlStatic;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         public bool flipX;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         public bool flipY;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("rotation")]
         public long orientation;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         public long position;
 
         #endregion

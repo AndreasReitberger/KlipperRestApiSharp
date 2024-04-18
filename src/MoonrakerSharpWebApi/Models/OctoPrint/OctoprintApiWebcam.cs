@@ -5,23 +5,23 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class OctoprintApiWebcam : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("flipH")]
         bool flipH;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("flipV")]
         bool flipV;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("rotate90")]
         bool rotate90;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("streamUrl")]
         string streamUrl = string.Empty;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("webcamEnabled")]
         bool webcamEnabled;
         #endregion

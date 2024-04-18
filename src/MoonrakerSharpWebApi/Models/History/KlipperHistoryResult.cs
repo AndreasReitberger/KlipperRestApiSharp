@@ -6,11 +6,11 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperHistoryResult : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("count")]
         long count = 0;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("jobs")]
         List<KlipperJobItem> jobs = [];
         #endregion

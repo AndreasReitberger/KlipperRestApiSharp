@@ -6,11 +6,11 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class OctoprintApiPrinterState : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("text", NullValueHandling = NullValueHandling.Ignore)]
         string text = string.Empty;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("flags", NullValueHandling = NullValueHandling.Ignore)]
         Dictionary<string, bool> flags = [];
         #endregion

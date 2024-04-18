@@ -6,87 +6,87 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperPrinterStatus : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("virtual_sdcard")]
         KlipperStatusVirtualSdcard? virtualSdcard;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("heaters")]
         KlipperStatusHeaters? heaters;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("pause_resume")]
         KlipperStatusPauseResume? pauseResume;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("display_status")]
         KlipperStatusDisplay? displayStatus;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("idle_timeout")]
         KlipperStatusIdleTimeout? idleTimeout;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("system_stats")]
         KlipperStatusSystemStats? systemStats;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("print_stats")]
         KlipperStatusPrintStats? printStats;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("query_endstops")]
         KlipperStatusQueryEndstops? queryEndstops;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("fan")]
         KlipperStatusFan? fan;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("motion_report")]
         KlipperStatusMotionReport? motionReport;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("configfile")]
         KlipperStatusConfigfile? configfile;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("menu")]
         KlipperStatusMenu? menu;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("mcu")]
         KlipperStatusMcu? mcu;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("webhooks")]
         KlipperStatusWebhooks? webhooks;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("gcode_move")]
         KlipperStatusGcodeMove? gcodeMove;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("toolhead")]
         KlipperStatusToolhead? toolhead;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("extruder")]
         KlipperStatusExtruder? extruder;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("extruder1")]
         KlipperStatusExtruder? extruder1;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("extruder2")]
         KlipperStatusExtruder? extruder2;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("extruder3")]
         KlipperStatusExtruder? extruder3;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("heater_bed")]
         KlipperStatusHeaterBed? heaterBed;
         #endregion 

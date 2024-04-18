@@ -7,23 +7,23 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("mesh_max")]
         List<double> meshMax = [];
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("mesh_matrix")]
         List<List<double>> meshMatrix = [];
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("profile_name")]
         string profileName = string.Empty;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("mesh_min")]
         List<double> meshMin = [];
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("probed_matrix")]
         List<List<double>> probedMatrix = [];
         #endregion

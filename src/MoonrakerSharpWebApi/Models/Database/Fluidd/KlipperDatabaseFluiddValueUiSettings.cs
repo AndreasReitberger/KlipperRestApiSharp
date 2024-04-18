@@ -5,11 +5,11 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperDatabaseFluiddValueUiSettings : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("general")]
         KlipperDatabaseFluiddValueUiSettingsGeneral? general;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("dashboard")]
         KlipperDatabaseFluiddValueUiSettingsDashboard? dashboard;
 

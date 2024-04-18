@@ -6,7 +6,7 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class OctoprintApiPrinterProfilesResult : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("profiles")]
         Dictionary<string, OctoprintApiPrinter> profiles = [];
         #endregion

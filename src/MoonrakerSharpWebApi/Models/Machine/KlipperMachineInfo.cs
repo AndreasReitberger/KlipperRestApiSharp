@@ -6,31 +6,31 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperMachineInfo : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("cpu_info")]
         KlipperCpuInfo? cpuInfo;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("sd_info")]
         KlipperSdInfo? sdInfo;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("distribution")]
         KlipperDistribution? distribution;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("virtualization")]
         KlipperVirtualization? virtualization;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("available_services")]
         List<string> availableServices = [];
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("service_state")]
         Dictionary<string, KlipperState> serviceState = [];
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("network")]
         Dictionary<string, KlipperNetworkInterface> network = [];
         #endregion

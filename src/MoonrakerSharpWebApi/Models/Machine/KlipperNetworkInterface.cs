@@ -6,23 +6,23 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperNetworkInterface : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("mac_address")]
         string macAddress = string.Empty;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("ip_addresses")]
         List<KlipperIpAddress> ipAddresses = [];
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("rx_bytes")]
         long rxBytes;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("tx_bytes")]
         long txBytes;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("bandwidth")]
         double bandwidth;
         #endregion

@@ -7,7 +7,7 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperDirectory : ObservableObject, IGcodeGroup
     {
         #region Properties
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("dirname")]
         string directoryName = string.Empty;
         partial void OnDirectoryNameChanged(string value)
@@ -16,31 +16,31 @@ namespace AndreasReitberger.API.Moonraker.Models
                 Name = value;
         }
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("path")]
         string path = string.Empty;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("root")]
         string root = string.Empty;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("modified")]
         double modified;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("size")]
         long size;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("permissions")]
         string permissions = string.Empty;
 
         #region JsonIgnore
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         Guid id;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         string name = string.Empty;
         #endregion
 

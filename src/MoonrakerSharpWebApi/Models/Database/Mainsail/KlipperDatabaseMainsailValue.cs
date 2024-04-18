@@ -6,35 +6,35 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperDatabaseMainsailValue : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("dashboard")]
         KlipperDatabaseMainsailValueDashboard? dashboard;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("general")]
         KlipperDatabaseMainsailValueGeneral? general;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("heightmap")]
         KlipperDatabaseMainsailValueHeightmapSettings? heightmap;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("init")]
         bool init;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("presets")]
         List<KlipperDatabaseMainsailValuePreset> presets = [];
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("remote_printers")]
         List<object> pemotePrinters = [];
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("settings")]
         KlipperDatabaseMainsailValueSettings? settings;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("webcam")]
         KlipperDatabaseMainsailValueWebcam? webcam;
         #endregion

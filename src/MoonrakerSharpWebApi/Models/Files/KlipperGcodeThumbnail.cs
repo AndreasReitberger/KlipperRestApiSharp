@@ -1,5 +1,4 @@
 ﻿using AndreasReitberger.API.Print3dServer.Core.Interfaces;
-using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json;
 using System;
 
@@ -12,19 +11,19 @@ namespace AndreasReitberger.API.Moonraker.Models
         [property: JsonIgnore]
         Guid id;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("width")]
         long width;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("height")]
         long height;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("size")]
         long size;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("relative_path")]
         string path = string.Empty;
         partial void OnPathChanged(string value)
@@ -32,7 +31,7 @@ namespace AndreasReitberger.API.Moonraker.Models
             IsPathRelative = value is not null;
         }
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonIgnore]
         bool isPathRelative = true;
         #endregion

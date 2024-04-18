@@ -6,19 +6,19 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperAuthorization : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("login_timeout")]
         long loginTimeout;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("force_logins")]
         bool forceLogins;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("cors_domains")]
         List<string> corsDomains = [];
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("trusted_clients")]
         List<string> trustedClients = [];
         #endregion

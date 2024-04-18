@@ -7,33 +7,32 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperStatusPrintStats : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("print_duration")]
         double? printDuration;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("total_duration")]
         double? totalDuration;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("filament_used")]
         double? filamentUsed;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("filename")]
         string filename = string.Empty;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("state")]
         [JsonConverter(typeof(StringEnumConverter), true)]
         KlipperPrintStates state;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("message")]
         string message = string.Empty;
 
-        [JsonIgnore]
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         bool validPrintState = false;
         #endregion
 

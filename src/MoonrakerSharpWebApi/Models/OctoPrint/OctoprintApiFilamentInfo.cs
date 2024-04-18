@@ -5,11 +5,11 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class OctoprintApiFilamentInfo : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("length", NullValueHandling = NullValueHandling.Ignore)]
         double length;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("volume", NullValueHandling = NullValueHandling.Ignore)]
         double volume;
         #endregion

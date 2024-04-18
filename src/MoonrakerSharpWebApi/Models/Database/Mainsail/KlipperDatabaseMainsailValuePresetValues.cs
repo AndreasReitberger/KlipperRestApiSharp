@@ -5,15 +5,15 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperDatabaseMainsailValuePresetValues : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("extruder")]
         KlipperDatabaseMainsailHeaterElement? extruder;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("extruder1")]
         KlipperDatabaseMainsailHeaterElement? extruder1;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("heater_bed")]
         KlipperDatabaseMainsailHeaterElement? heaterBed;
         #endregion

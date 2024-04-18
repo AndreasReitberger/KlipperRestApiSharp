@@ -6,84 +6,84 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class OctoprintApiPrinter : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         bool isOnline = true;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         double? extruder1 = 0;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         double? extruder2 = 0;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         double? heatedBed = 0;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         double? chamber = 0;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         double progress = 0;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         double remainingPrintTime = 0;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         string job = string.Empty;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         bool isPrinting = false;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         bool isPaused = false;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         bool isSelected = false;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("axes")]
         OctoprintApiPrinterAxes? axes;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("color")]
         string color = string.Empty;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("current")]
         bool current;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("default")]
         bool defaultDefault;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("extruder")]
         OctoprintApiPrinterExtruder? extruder;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("heatedBed")]
         bool hasHeatedBed;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("heatedChamber")]
         bool hasHeatedChamber;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("id")]
         string id = string.Empty;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("model")]
         string model = string.Empty;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("name")]
         string name = string.Empty;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("resource")]
         Uri? resource;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("volume")]
         OctoprintApiPrinterVolume? vVolume;
         #endregion

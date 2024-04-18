@@ -13,47 +13,47 @@ namespace AndreasReitberger.API.Moonraker.Models
         [property: JsonIgnore]
         Guid id;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("print_start_time")]
         double? printStartTime;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonIgnore]
         double estimatedPrintTime;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("size")]
         long fileSize;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("modified")]
         double modified;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("slicer")]
         string slicer = string.Empty;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("slicer_version")]
         string slicerVersion = string.Empty;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("layer_height")]
         double layerHeight = 0;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("first_layer_height")]
         double firstLayerHeight = 0;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("object_height")]
         double objectHeight = 0;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("filament_total")]
         double filamentTotal = 0;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("filament_weight_total")]
         double filamentWeightTotal = 0;
 
@@ -66,31 +66,31 @@ namespace AndreasReitberger.API.Moonraker.Models
             EstimatedPrintTime = value;
         }
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("first_layer_extr_temp")]
         double firstLayerExtrTemp = 0;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("first_layer_bed_temp")]
         double firstLayerBedTemp = 0;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("gcode_start_byte")]
         long gcodeStartByte;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("gcode_end_byte")]
         long gcodeEndByte;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("job_id")]
         string jobId = string.Empty;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("filename")]
         string fileName = string.Empty;    
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("thumbnails")]
         ObservableCollection<IGcodeImage> gcodeImages = [];
 

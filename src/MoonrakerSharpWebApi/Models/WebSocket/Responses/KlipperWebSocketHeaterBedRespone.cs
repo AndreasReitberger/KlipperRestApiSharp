@@ -5,12 +5,12 @@ namespace AndreasReitberger.API.Moonraker.Models.WebSocket
     public partial class KlipperWebSocketHeaterBedRespone : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
-        [property: JsonProperty("heater_bed", Required = Required.Always)]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("heater_bed")]
         KlipperStatusHeaterBed? heaterBed;
 
-        [ObservableProperty]
-        [property: JsonProperty("toolhead", Required = Required.Always)]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("toolhead")]
         KlipperStatusToolhead? toolHead;
         #endregion
 

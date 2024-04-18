@@ -5,27 +5,27 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperHistoryJobTotalsResult : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("total_jobs")]
         long totalJobs;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("total_time")]
         double totalTime;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("total_print_time")]
         double totalPrintTime;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("total_filament_used")]
         double totalFilamentUsed;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("longest_job")]
         double longestJob;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("longest_print")]
         double longestPrint;
         #endregion

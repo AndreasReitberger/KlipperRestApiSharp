@@ -6,35 +6,35 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperWebSocketKlipperStatusResult : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("klippy_connected")]
         bool klippyConnected;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("klippy_state")]
         string klippyState = string.Empty;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("components")]
         List<string> components = [];
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("failed_components")]
         List<object> failedComponents = [];
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("registered_directories")]
         List<string> registeredDirectories = [];
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("warnings")]
         List<object> warnings = [];
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("websocket_count")]
         long websocketCount;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("moonraker_version")]
         string moonrakerVersion = string.Empty;
         #endregion

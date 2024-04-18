@@ -6,19 +6,19 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperDirectoryInfoResult : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("dirs")]
         public List<KlipperDirectory> dirs = [];
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("files")]
         public List<KlipperFile> files = [];
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("disk_usage")]
         public KlipperDiskUsage? diskUsage;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("root_info")]
         public KlipperRootInfo? rootInfo;
         #endregion

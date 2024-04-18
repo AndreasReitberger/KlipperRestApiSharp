@@ -5,31 +5,31 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperUpdateManager : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("enable_auto_refresh")]
         bool enableAutoRefresh;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("channel")]
         string channel = string.Empty;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("enable_repo_debug")]
         bool enableRepoDebug;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("enable_system_updates")]
         bool enableSystemUpdates;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("type")]
         string type = string.Empty;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("client_repo")]
         object? clientRepo;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("client_path")]
         object? clientPath;
         #endregion

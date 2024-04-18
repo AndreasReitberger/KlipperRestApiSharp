@@ -5,19 +5,19 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class OctoprintApiJobResult : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("file", NullValueHandling = NullValueHandling.Ignore)]
         OctoprintAbiJobInfoFile? file;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("estimatedPrintTime", NullValueHandling = NullValueHandling.Ignore)]
         long estimatedPrintTime;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("filament", NullValueHandling = NullValueHandling.Ignore)]
         OctoprintApiFilamentInfo? filament;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("user", NullValueHandling = NullValueHandling.Ignore)]
         object? user;
         #endregion

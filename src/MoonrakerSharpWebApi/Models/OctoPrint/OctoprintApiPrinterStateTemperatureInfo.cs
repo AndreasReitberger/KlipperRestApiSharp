@@ -8,15 +8,15 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("actual", NullValueHandling = NullValueHandling.Ignore)]
         double actual;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("target")]
         long target;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("offset", NullValueHandling = NullValueHandling.Ignore)]
         long offset;
 

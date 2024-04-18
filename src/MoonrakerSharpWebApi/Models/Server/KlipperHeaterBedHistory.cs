@@ -6,17 +6,17 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperHeaterBedHistory : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("temperatures")]
-        List<double> temperatures = new();
+        List<double> temperatures = [];
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("targets")]
-        List<long> targets = new();
+        List<long> targets = [];
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("powers")]
-        List<long> powers = new();
+        List<long> powers = [];
         #endregion
 
         #region Overrides

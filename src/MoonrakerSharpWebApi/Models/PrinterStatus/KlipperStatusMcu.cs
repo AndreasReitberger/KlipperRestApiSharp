@@ -6,19 +6,19 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperStatusMcu : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("mcu_build_versions")]
         string mcuBuildVersions = string.Empty;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("mcu_version")]
         string mcuVersion = string.Empty;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("last_stats")]
         Dictionary<string, double> lastStats = [];
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("mcu_constants")]
         Dictionary<string, object> mcuConstants = [];
         #endregion

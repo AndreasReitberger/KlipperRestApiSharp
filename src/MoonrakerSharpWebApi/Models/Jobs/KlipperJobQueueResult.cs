@@ -7,11 +7,11 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperJobQueueResult : ObservableObject
     {
         #region Properties
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("queued_jobs")]
         List<IPrint3dJob> queuedJobs = [];
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("queue_state")]
         string queueState = string.Empty;
         #endregion

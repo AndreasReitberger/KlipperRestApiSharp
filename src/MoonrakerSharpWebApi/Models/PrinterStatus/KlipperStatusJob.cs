@@ -29,15 +29,15 @@ namespace AndreasReitberger.API.Moonraker.Models
         [property: JsonIgnore]
         DateTime? endTimeGeneralized;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("filament_used")]
         double? filamentUsed;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("filename")]
         string fileName = string.Empty;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("metadata")]
         IGcodeMeta? meta;
 
@@ -55,7 +55,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         [property: JsonIgnore]
         TimeSpan? printDurationGeneralized;
         /*
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("status")]
         [JsonConverter(typeof(StringEnumConverter), true)]
         KlipperJobStates status;
@@ -65,7 +65,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         }
         */
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("status")]
         [JsonConverter(typeof(StringEnumConverter), true)]
         Print3dJobState state;
@@ -85,7 +85,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         [property: JsonIgnore]
         DateTime? startTimeGeneralized;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonIgnore]
         double? done;
 
@@ -104,11 +104,11 @@ namespace AndreasReitberger.API.Moonraker.Models
         [property: JsonIgnore]
         TimeSpan? totalPrintDurationGeneralized;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("job_id")]
         string jobId = string.Empty;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("exists")]
         bool fileExists;
 

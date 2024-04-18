@@ -9,24 +9,24 @@ namespace AndreasReitberger.API.Moonraker.Models
         [JsonIgnore]
         public int PercentageProgress => GetPercentageProgress();
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [NotifyPropertyChangedFor(nameof(PercentageProgress))]
         [property: JsonProperty("progress")]
         double? progress;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("file_position")]
         long? filePosition;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("is_active")]
         bool isActive;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("file_path")]
         string filePath = string.Empty;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonProperty("file_size")]
         long? fileSize;
         #endregion
