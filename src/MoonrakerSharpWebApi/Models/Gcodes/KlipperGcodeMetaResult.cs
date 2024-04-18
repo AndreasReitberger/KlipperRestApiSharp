@@ -1,8 +1,7 @@
 ﻿using AndreasReitberger.API.Print3dServer.Core.Interfaces;
-using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json;
 using System;
-using System.Collections.ObjectModel;
+using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
@@ -92,7 +91,7 @@ namespace AndreasReitberger.API.Moonraker.Models
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("thumbnails")]
-        ObservableCollection<IGcodeImage> gcodeImages = [];
+        List<IGcodeImage> gcodeImages = [];
 
         [JsonIgnore]
         public long Layers => GetLayersCount();

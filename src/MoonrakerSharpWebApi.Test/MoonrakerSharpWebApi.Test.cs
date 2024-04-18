@@ -3,14 +3,12 @@ using AndreasReitberger.API.Moonraker.Enum;
 using AndreasReitberger.API.Moonraker.Models;
 using AndreasReitberger.API.Moonraker.Models.WebSocket;
 using AndreasReitberger.API.Print3dServer.Core.Interfaces;
-using AndreasReitberger.API.Print3dServer.Core.JSON.System;
 using AndreasReitberger.Core.Utilities;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Reflection;
-using System.Security.AccessControl;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml.Serialization;
@@ -360,11 +358,11 @@ namespace MoonrakerSharpWebApi.Test
                     await _server.RefreshAllAsync();
                     Assert.That(_server.InitialDataFetched);
 
-                    ObservableCollection<IWebCamConfig> webcamConfigs = await _server.GetWebCamSettingsFromDatabaseAsync();
-                    Assert.That(webcamConfigs.Count > 0);
+                    List<IWebCamConfig>? webcamConfigs = await _server.GetWebCamSettingsFromDatabaseAsync();
+                    Assert.That(webcamConfigs?.Count > 0);
 
                     webcamConfigs = await _server.GetWebCamSettingsAsync();
-                    Assert.That(webcamConfigs.Count > 0);
+                    Assert.That(webcamConfigs?.Count > 0);
 
                     string webcamUri = await _server.GetWebCamUriAsync(0, false);
                     Assert.That(_server.WebCams?.Count > 0);
@@ -513,7 +511,7 @@ namespace MoonrakerSharpWebApi.Test
                         Assert.Fail(args.Message);
                     };
 
-                    ObservableCollection<IGcode> models = await _server.GetAvailableFilesAsync("gcodes", true);
+                    List<IGcode> models = await _server.GetAvailableFilesAsync("gcodes", true);
                     //var childItems = models?.Where(model => model.Path.Contains("/")).ToList();
                     Assert.That(models?.Count > 0);
                     foreach (KlipperFile? gcodeFile in models?.Cast<KlipperFile>()?.Where(g => g?.Meta?.GcodeImages?.Count > 0))
@@ -888,7 +886,7 @@ namespace MoonrakerSharpWebApi.Test
                     await _server.RefreshAllAsync();
                     Assert.That(_server.InitialDataFetched);
 
-                    ObservableCollection<IGcode> files = await _server.GetAvailableFilesAsync();
+                    List<IGcode> files = await _server.GetAvailableFilesAsync();
                     Assert.That(files?.Count > 0);
 
                     string? fileName = files[0]?.FilePath;
@@ -1131,7 +1129,7 @@ namespace MoonrakerSharpWebApi.Test
                         _server.OperatingSystem == MoonrakerOperatingSystems.MainsailOS ? "webcam" : "cameras");
                     Assert.That(webcams?.Count > 0);
 
-                    ObservableCollection<IWebCamConfig> webcamConfig = await _server.GetWebCamSettingsAsync();
+                    List<IWebCamConfig>? webcamConfig = await _server.GetWebCamSettingsAsync();
                     Assert.That(webcamConfig?.Count > 0);
                     if (webcamConfig.Count > 0)
                         Assert.That(!string.IsNullOrEmpty(webcamConfig.FirstOrDefault()?.WebCamUrlDynamic?.ToString()));
@@ -1141,7 +1139,7 @@ namespace MoonrakerSharpWebApi.Test
 
                     if (_server.OperatingSystem == MoonrakerOperatingSystems.MainsailOS)
                     {
-                        KlipperDatabaseMainsailValueHeightmapSettings heightmap = await _server.GetMeshHeightMapSettingsAsync();
+                        KlipperDatabaseMainsailValueHeightmapSettings? heightmap = await _server.GetMeshHeightMapSettingsAsync();
                         Assert.That(heightmap is not null);
                     }
 
@@ -1246,25 +1244,25 @@ namespace MoonrakerSharpWebApi.Test
                     await _server.RefreshAllAsync();
                     Assert.That(_server.InitialDataFetched);
 
-                    KlipperJobQueueResult jobstatus = await _server.GetJobQueueStatusAsync();
+                    KlipperJobQueueResult? jobstatus = await _server.GetJobQueueStatusAsync();
                     Assert.That(jobstatus is not null);
 
-                    ObservableCollection<IGcode> files = await _server.GetAvailableFilesAsync();
+                    List<IGcode> files = await _server.GetAvailableFilesAsync();
                     Assert.That(files?.Count > 0);
 
                     string? fileName = files[0]?.FilePath;
-                    KlipperJobQueueResult queued = await _server.EnqueueJobsAsync(new string[] { fileName });
+                    KlipperJobQueueResult? queued = await _server.EnqueueJobsAsync(new string[] { fileName });
 
                     jobstatus = await _server.GetJobQueueStatusAsync();
                     Assert.That(jobstatus is not null);
 
-                    KlipperJobQueueResult start = await _server.StartJobQueueAsync();
+                    KlipperJobQueueResult? start = await _server.StartJobQueueAsync();
                     Assert.That(start is not null);
 
-                    KlipperJobQueueResult pause = await _server.PauseJobQueueAsync();
+                    KlipperJobQueueResult? pause = await _server.PauseJobQueueAsync();
                     Assert.That(pause is not null);
 
-                    KlipperJobQueueResult removedAll = await _server.RemoveAllJobAsync();
+                    KlipperJobQueueResult? removedAll = await _server.RemoveAllJobAsync();
                     Assert.That(removedAll is not null);
                 }
                 else
@@ -1455,19 +1453,19 @@ namespace MoonrakerSharpWebApi.Test
                     await _server.RefreshAllAsync();
                     Assert.That(_server.InitialDataFetched);
 
-                    ObservableCollection<IPrinter3d> printers = await _server.GetPrintersAsync();
+                    List<IPrinter3d> printers = await _server.GetPrintersAsync();
                     Assert.That(printers?.Count > 0);
 
-                    ObservableCollection<IGcode> gcodes = await _server.GetFilesAsync();
+                    List<IGcode> gcodes = await _server.GetFilesAsync();
                     Assert.That(gcodes?.Count > 0);
 
-                    IToolhead toolheads = await _server.GetExtruderStatusAsync();
+                    IToolhead? toolheads = await _server.GetExtruderStatusAsync();
                     Assert.That(toolheads is not null);
 
-                    IPrint3dFan fan = await _server.GetFanStatusAsync();
+                    IPrint3dFan? fan = await _server.GetFanStatusAsync();
                     Assert.That(fan is not null);
 
-                    IHeaterComponent heaterBed = await _server.GetHeaterBedStatusAsync();
+                    IHeaterComponent? heaterBed = await _server.GetHeaterBedStatusAsync();
                     Assert.That(heaterBed is not null);
                 }
                 else
