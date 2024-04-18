@@ -60,7 +60,7 @@ namespace AndreasReitberger.API.Moonraker
 
         #region Printer Administration
 
-        public override async Task<ObservableCollection<IPrinter3d>> GetPrintersAsync()
+        public override async Task<List<IPrinter3d>> GetPrintersAsync()
         {
             await Task.Delay(1);
             return [];

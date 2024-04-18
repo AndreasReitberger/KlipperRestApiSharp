@@ -33,13 +33,13 @@ namespace AndreasReitberger.API.Moonraker
 
         #region Methods
 
-        public override Task<ObservableCollection<IWebCamConfig>> GetWebCamConfigsAsync() => GetWebCamSettingsAsync();
+        public override Task<List<IWebCamConfig>?> GetWebCamConfigsAsync() => GetWebCamSettingsAsync();
 
-        public async Task<ObservableCollection<IWebCamConfig>> GetWebCamSettingsAsync()
+        public async Task<List<IWebCamConfig>?> GetWebCamSettingsAsync()
         {
             string resultString = string.Empty;
             IRestApiRequestRespone? result = null;
-            ObservableCollection<IWebCamConfig> resultObject = new();
+            List<IWebCamConfig> resultObject = [];
             try
             {
                 string targetUri = $"{MoonrakerCommands.Server}";
@@ -78,10 +78,10 @@ namespace AndreasReitberger.API.Moonraker
             }
         }
 
-        public async Task<ObservableCollection<IWebCamConfig>> GetWebCamSettingsFromDatabaseAsync()
+        public async Task<List<IWebCamConfig>> GetWebCamSettingsFromDatabaseAsync()
         {
             string? resultString = string.Empty;
-            ObservableCollection<IWebCamConfig> resultObject = new();
+            List<IWebCamConfig> resultObject = [];
             try
             {
                 // Both operating systems handles their datababase namespaces and keys differently....
@@ -151,7 +151,7 @@ namespace AndreasReitberger.API.Moonraker
         {
             try
             {
-                ObservableCollection<IWebCamConfig> result = await GetWebCamSettingsAsync().ConfigureAwait(false);
+                List<IWebCamConfig>? result = await GetWebCamSettingsAsync().ConfigureAwait(false);
                 WebCams = [.. result];
             }
             catch (Exception exc)

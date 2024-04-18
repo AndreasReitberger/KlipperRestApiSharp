@@ -57,7 +57,8 @@ namespace AndreasReitberger.API.Moonraker
         {
             try
             {
-                Files = await GetAvailableFilesAsync(rootPath, includeGcodeMeta).ConfigureAwait(false);
+                List<IGcode> files = await GetAvailableFilesAsync(rootPath, includeGcodeMeta).ConfigureAwait(false);
+                Files = [.. files];
             }
             catch (Exception exc)
             {
@@ -66,13 +67,13 @@ namespace AndreasReitberger.API.Moonraker
             }
         }
 
-        public async Task<ObservableCollection<IGcode>> GetAvailableFilesAsync(string rootPath = "", bool includeGcodeMeta = true)
+        public async Task<List<IGcode>> GetAvailableFilesAsync(string rootPath = "", bool includeGcodeMeta = true)
         {
             IRestApiRequestRespone? result = null;
-            ObservableCollection<IGcode> resultObject = new();
+            List<IGcode> resultObject = [];
             try
             {
-                Dictionary<string, string> urlSegments = new();
+                Dictionary<string, string> urlSegments = [];
                 if (!string.IsNullOrEmpty(rootPath))
                 {
                     urlSegments.Add("root", rootPath);
@@ -127,21 +128,10 @@ namespace AndreasReitberger.API.Moonraker
                 return resultObject;
             }
         }
-        public async Task<List<IGcode>> GetAvailableFilesAsListAsync(string rootPath = "")
-        {
-            List<IGcode> resultObject = [];
-            try
-            {
-                ObservableCollection<IGcode> result = await GetAvailableFilesAsync(rootPath).ConfigureAwait(false);
-                return [.. result];
-            }
-            catch (Exception exc)
-            {
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-                return resultObject;
-            }
-        }
-        public override Task<ObservableCollection<IGcode>> GetFilesAsync() => GetAvailableFilesAsync();
+        public Task<List<IGcode>> GetAvailableFilesAsListAsync(string rootPath = "") 
+            => GetAvailableFilesAsync(rootPath);
+
+        public override Task<List<IGcode>> GetFilesAsync() => GetAvailableFilesAsync();
 
         public async Task<KlipperGcodeMetaResult?> GetGcodeMetadataAsync(string fileName)
         {

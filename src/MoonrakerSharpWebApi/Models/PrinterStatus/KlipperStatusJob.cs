@@ -68,7 +68,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("status")]
         [JsonConverter(typeof(StringEnumConverter), true)]
-        Print3dJobState state;
+        Print3dJobState? state;
 
         [ObservableProperty, JsonIgnore]
         [NotifyPropertyChangedFor(nameof(Done))]
