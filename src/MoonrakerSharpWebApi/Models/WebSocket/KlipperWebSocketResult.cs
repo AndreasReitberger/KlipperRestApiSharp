@@ -16,7 +16,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("id")]
         long id;
-    
+
         #endregion
 
         #region Overrides

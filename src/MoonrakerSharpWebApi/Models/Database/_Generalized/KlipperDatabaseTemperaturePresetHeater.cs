@@ -6,7 +6,7 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-        string name= string.Empty;
+        string name = string.Empty;
 
         [ObservableProperty]
         bool active;

@@ -8,7 +8,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("result")]
         public KlipperHistoryJobDeletedResult? result;
-    
+
         #endregion
 
         #region Overrides

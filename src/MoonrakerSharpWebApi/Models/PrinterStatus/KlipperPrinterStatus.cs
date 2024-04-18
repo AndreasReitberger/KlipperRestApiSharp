@@ -93,7 +93,7 @@ namespace AndreasReitberger.API.Moonraker.Models
 
         #region Overrides
         public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
-        
+
         #endregion
     }
 }

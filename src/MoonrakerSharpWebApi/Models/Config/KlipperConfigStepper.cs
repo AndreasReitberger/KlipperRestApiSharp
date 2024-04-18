@@ -68,7 +68,7 @@ namespace AndreasReitberger.API.Moonraker.Models
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("enable_pin")]
-        string enablePin= string.Empty;
+        string enablePin = string.Empty;
         #endregion
 
         #region Overrides

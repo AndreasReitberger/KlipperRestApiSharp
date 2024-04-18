@@ -27,7 +27,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         double? timeAdded;
         partial void OnTimeAddedChanged(double? value)
         {
-            if(value is not null)
+            if (value is not null)
                 TimeAddedGeneralized = TimeBaseConvertHelper.FromUnixDate(value);
         }
 

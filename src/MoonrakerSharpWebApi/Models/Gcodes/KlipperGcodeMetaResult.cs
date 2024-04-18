@@ -88,7 +88,7 @@ namespace AndreasReitberger.API.Moonraker.Models
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("filename")]
-        string fileName = string.Empty;    
+        string fileName = string.Empty;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("thumbnails")]

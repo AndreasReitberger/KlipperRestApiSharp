@@ -78,7 +78,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         double printTime;
         partial void OnPrintTimeChanged(double value)
         {
-            PrintTimeGeneralized = TimeBaseConvertHelper.FromUnixDoubleHours(value);          
+            PrintTimeGeneralized = TimeBaseConvertHelper.FromUnixDoubleHours(value);
         }
 
         [ObservableProperty, JsonIgnore]

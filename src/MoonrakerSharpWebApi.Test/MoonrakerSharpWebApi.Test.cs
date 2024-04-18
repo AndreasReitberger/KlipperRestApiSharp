@@ -122,7 +122,7 @@ namespace MoonrakerSharpWebApi.Test
                 //Regex r = new(@"(?<=\"")[A-Z]*[A-Z][a-zA-Z]*(?=\"")");
                 Regex r = new(@"^[A-Z][A-Za-z0-9]*$");
                 Regex extract = new(@"(?<=\"").+?(?=\"")");
-                foreach(Type t in types)
+                foreach (Type t in types)
                 {
                     if (t == typeof(KlipperWebSocketStateRespone))
                     {
@@ -139,7 +139,7 @@ namespace MoonrakerSharpWebApi.Test
                         Debug.WriteLine($"Exception while creating object from type `{t}`: {exc.Message}");
                     }
                     if (obj is null) continue;
-                    string serializedString = 
+                    string serializedString =
                         JsonConvert.SerializeObject(obj, Formatting.Indented, settings: MoonrakerClient.DefaultNewtonsoftJsonSerializerSettings);
                     if (serializedString == "{}") continue;
 
@@ -149,13 +149,13 @@ namespace MoonrakerSharpWebApi.Test
                         .Where(prop => prop.GetCustomAttribute<JsonPropertyAttribute>(true) is not null)
                         .ToList()
                         ;
-        
+
                     // Get the property names from the json text
                     var splitString = serializedString.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
                     bool skip = false;
                     StringBuilder sb = new();
                     // Cleanup from child nodes, those will be checked individually
-                    foreach(var line in splitString)
+                    foreach (var line in splitString)
                     {
                         if (line.Contains(": {") && !line.Contains("{}"))
                         {
@@ -183,7 +183,7 @@ namespace MoonrakerSharpWebApi.Test
                         .ToList()
                         ;
                     */
-                    foreach(string property in properties)
+                    foreach (string property in properties)
                     {
                         bool valid = r.IsMatch(property);
                         //string trimmed = extract.Match(property).Value;
@@ -198,7 +198,7 @@ namespace MoonrakerSharpWebApi.Test
                             if (jsonAttribute is not null)
                             {
                                 CustomAttributeData? ca = jsonAttribute.CustomAttributes.FirstOrDefault(a => a.AttributeType == typeof(JsonPropertyAttribute));
-                                if(ca is not null)
+                                if (ca is not null)
                                 {
                                     CustomAttributeTypedArgument cap = ca.ConstructorArguments.FirstOrDefault();
                                     string propertyName = cap.Value?.ToString() ?? string.Empty;
