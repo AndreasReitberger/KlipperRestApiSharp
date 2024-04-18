@@ -1,6 +1,7 @@
 ﻿using AndreasReitberger.API.Moonraker;
 using AndreasReitberger.API.Moonraker.Enum;
 using AndreasReitberger.API.Moonraker.Models;
+using AndreasReitberger.API.Moonraker.Models.WebSocket;
 using AndreasReitberger.API.Print3dServer.Core.Interfaces;
 using AndreasReitberger.API.Print3dServer.Core.JSON.System;
 using AndreasReitberger.Core.Utilities;
@@ -107,7 +108,6 @@ namespace MoonrakerSharpWebApi.Test
         [Test]
         public void SerializeAllTypesWithJsonNewtonsoftTest()
         {
-
             var dir = @"TestResults\Serialization\";
             Directory.CreateDirectory(dir);
             string serverConfig = Path.Combine(dir, "server.xml");
@@ -119,23 +119,101 @@ namespace MoonrakerSharpWebApi.Test
                        .Where(t => t.IsClass && !t.Name.StartsWith("<") && t.Namespace?.StartsWith("AndreasReitberger.API.Moonraker") is true)
                        .ToList()
                        ;
-                Regex r = new(@"(?<=\"")[A-Z]*[A-Z][a-zA-Z]*(?=\"")");
+                //Regex r = new(@"(?<=\"")[A-Z]*[A-Z][a-zA-Z]*(?=\"")");
+                Regex r = new(@"^[A-Z][A-Za-z0-9]*$");
+                Regex extract = new(@"(?<=\"").+?(?=\"")");
                 foreach(Type t in types)
                 {
-                    object? obj = Activator.CreateInstance(t);
+                    if (t == typeof(KlipperWebSocketStateRespone))
+                    {
+
+                    }
+                    object? obj = null;
+                    try
+                    {
+                        // Not possible for extensions classes, so catch this
+                        obj = Activator.CreateInstance(t);
+                    }
+                    catch (Exception exc)
+                    {
+                        Debug.WriteLine($"Exception while creating object from type `{t}`: {exc.Message}");
+                    }
                     if (obj is null) continue;
                     string serializedString = 
                         JsonConvert.SerializeObject(obj, Formatting.Indented, settings: MoonrakerClient.DefaultNewtonsoftJsonSerializerSettings);
                     if (serializedString == "{}") continue;
 
-                    var properties = serializedString.Split(",", StringSplitOptions.RemoveEmptyEntries)
+                    // Get all property infos
+                    List<PropertyInfo> p = t
+                        .GetProperties()
+                        .Where(prop => prop.GetCustomAttribute<JsonPropertyAttribute>(true) is not null)
+                        .ToList()
+                        ;
+        
+                    // Get the property names from the json text
+                    var splitString = serializedString.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+                    bool skip = false;
+                    StringBuilder sb = new();
+                    // Cleanup from child nodes, those will be checked individually
+                    foreach(var line in splitString)
+                    {
+                        if (line.Contains(": {") && !line.Contains("{}"))
+                        {
+                            skip = true;
+                            sb.AppendLine(line.Replace(": {", ": null,"));
+                        }
+                        else if (line.StartsWith("},"))
+                        {
+                            skip = false;
+                        }
+                        else if (!skip)
+                            sb.AppendLine(line.Trim());
+                    }
+                    // set to cleanuped string
+                    serializedString = sb.ToString();
+                    var splitted = serializedString.Split(",", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+                    List<string> properties = splitted
+                        .Select(row => extract.Match(row ?? "")?.Value ?? string.Empty)
+                        .ToList()
+                        ;
+                    /*
+                    serializedString = string.Join(Environment.NewLine, splitString);
+                    List<string> properties = serializedString.Split(",", StringSplitOptions.RemoveEmptyEntries)
                         .Select(p => p.Trim())
                         .ToList()
                         ;
-                    foreach(var property in properties)
+                    */
+                    foreach(string property in properties)
                     {
                         bool valid = r.IsMatch(property);
-                        Assert.That(valid, message: $"Type: {t} => {property}");
+                        //string trimmed = extract.Match(property).Value;
+                        if (!valid)
+                        {
+                            PropertyInfo? jsonAttribute = p.Where(prop =>
+                                prop.CustomAttributes.Any(attr => attr.ConstructorArguments.Where(arg => arg.Value is string str && str == property).Count() == 1))
+                                .ToList()
+                                .FirstOrDefault()
+                                ;
+
+                            if (jsonAttribute is not null)
+                            {
+                                CustomAttributeData? ca = jsonAttribute.CustomAttributes.FirstOrDefault(a => a.AttributeType == typeof(JsonPropertyAttribute));
+                                if(ca is not null)
+                                {
+                                    CustomAttributeTypedArgument cap = ca.ConstructorArguments.FirstOrDefault();
+                                    string propertyName = cap.Value?.ToString() ?? string.Empty;
+                                    // If the property name is adjusted with the json attribute, it is ok to start with a lower case.
+                                    valid = property == propertyName;
+                                }
+                            }
+                        }
+                        if (!valid)
+                        {
+
+                        }
+                        string msg = $"Type: {t} => {property} is {(valid ? "valid" : "invalid")}";
+                        Debug.WriteLine(msg);
+                        Assert.That(valid, message: msg);
                     }
                 }
             }
