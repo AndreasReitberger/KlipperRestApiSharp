@@ -10,122 +10,108 @@ namespace AndreasReitberger.API.Moonraker.Models
         #region Properties
 
         [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore]
+        //[property: JsonIgnore]
         Guid id;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         string hostname = string.Empty;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         long port;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         long webPort;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         object? settings;
 
         #region Interface
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonIgnore]
         string activeJobId = string.Empty;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonIgnore]
         bool isActive;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonIgnore]
         bool isOnline = false;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonIgnore]
         long? lineSent;
 
-        [ObservableProperty]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
         string name = string.Empty;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonIgnore]
         long? layers;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonIgnore]
         int? analysed;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonIgnore]
         double? done;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonIgnore]
         string activeJobName = string.Empty;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonIgnore]
-        [JsonIgnore]
         double? extruder1Temperature = 0;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonIgnore]
-        [JsonIgnore]
         double? extruder2Temperature = 0;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonIgnore]
-        [JsonIgnore]
         double? extruder3Temperature = 0;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonIgnore]
-        [JsonIgnore]
         double? extruder4Temperature = 0;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonIgnore]
-        [JsonIgnore]
         double? extruder5Temperature = 0;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonIgnore]
-        [JsonIgnore]
         double? heatedBedTemperature = 0;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonIgnore]
-        [JsonIgnore]
         double? heatedChamberTemperature = 0;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonIgnore]
-        [JsonIgnore]
         double? printProgress = 0;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonIgnore]
-        [JsonIgnore]
         double? remainingPrintDuration = 0;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonIgnore]
-        [JsonIgnore]
         bool isPrinting = false;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonIgnore]
-        [JsonIgnore]
         bool isPaused = false;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonIgnore]
-        [JsonIgnore]
         bool isSelected = false;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonIgnore]
-        [JsonIgnore]
         byte[] currentPrintImage = [];
 
         [ObservableProperty, JsonIgnore]
@@ -136,30 +122,30 @@ namespace AndreasReitberger.API.Moonraker.Models
         [property: JsonIgnore]
         double? printDuration = 0;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonIgnore]
         double? printDurationEstimated = 0;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonIgnore]
         int? repeat;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonIgnore]
         string slug = string.Empty;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         long? start;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonIgnore]
         long? totalLines;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonIgnore]
         string? activeJobState = string.Empty;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonIgnore]
         long? pauseState;
 

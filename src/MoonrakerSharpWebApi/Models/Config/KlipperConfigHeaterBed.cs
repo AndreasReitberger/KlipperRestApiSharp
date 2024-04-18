@@ -1,55 +1,69 @@
 ﻿using Newtonsoft.Json;
-using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperConfigHeaterBed
+    public partial class KlipperConfigHeaterBed : ObservableObject
     {
         #region Properties
-        [JsonProperty("control")]
-        public string Control { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("control")]
+        string control= string.Empty;
 
-        [JsonProperty("pid_kp")]
-        public double PidKp { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("pid_kp")]
+        double pidKp;
 
-        [JsonProperty("pullup_resistor")]
-        public long PullupResistor { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("pullup_resistor")]
+        long pullupResistor;
 
-        [JsonProperty("sensor_pin")]
-        public string SensorPin { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("sensor_pin")]
+        string sensorPin= string.Empty;
 
-        [JsonProperty("heater_pin")]
-        public string HeaterPin { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("heater_pin")]
+        string heaterPin= string.Empty;
 
-        [JsonProperty("max_power")]
-        public long MaxPower { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("max_power")]
+        long maxPower;
 
-        [JsonProperty("min_extrude_temp")]
-        public long MinExtrudeTemp { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("min_extrude_temp")]
+        long minExtrudeTemp;
 
-        [JsonProperty("sensor_type")]
-        public string SensorType { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("sensor_type")]
+        string sensorType= string.Empty;
 
-        [JsonProperty("inline_resistor")]
-        public long InlineResistor { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("inline_resistor")]
+        long inlineResistor;
 
-        [JsonProperty("pid_kd")]
-        public double PidKd { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("pid_kd")]
+        double pidKd;
 
-        [JsonProperty("pwm_cycle_time")]
-        public double PwmCycleTime { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("pwm_cycle_time")]
+        double pwmCycleTime;
 
-        [JsonProperty("pid_ki")]
-        public double PidKi { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("pid_ki")]
+        double pidKi;
 
-        [JsonProperty("min_temp")]
-        public long MinTemp { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("min_temp")]
+        long minTemp;
 
-        [JsonProperty("max_temp")]
-        public long MaxTemp { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("max_temp")]
+        long maxTemp;
 
-        [JsonProperty("smooth_time")]
-        public long SmoothTime { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("smooth_time")]
+        long smoothTime;
 
         #endregion
 

@@ -29,16 +29,16 @@ namespace AndreasReitberger.API.Moonraker.Models
         [property: JsonIgnore]
         DateTime? endTimeGeneralized;
 
-        [ObservableProperty]
-        [JsonProperty("filament_used")]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("filament_used")]
         double? filamentUsed;
 
-        [ObservableProperty]
-        [JsonProperty("filename")]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("filename")]
         string fileName = string.Empty;
 
-        [ObservableProperty]
-        [JsonProperty("metadata")]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("metadata")]
         IGcodeMeta? meta;
 
         [ObservableProperty, JsonIgnore]
@@ -55,8 +55,8 @@ namespace AndreasReitberger.API.Moonraker.Models
         [property: JsonIgnore]
         TimeSpan? printDurationGeneralized;
         /*
-        [ObservableProperty]
-        [JsonProperty("status")]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("status")]
         [JsonConverter(typeof(StringEnumConverter), true)]
         KlipperJobStates status;
         partial void OnStatusChanged(KlipperJobStates value)
@@ -65,8 +65,8 @@ namespace AndreasReitberger.API.Moonraker.Models
         }
         */
 
-        [ObservableProperty]
-        [JsonProperty("status")]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("status")]
         [JsonConverter(typeof(StringEnumConverter), true)]
         Print3dJobState state;
 
@@ -85,7 +85,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         [property: JsonIgnore]
         DateTime? startTimeGeneralized;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonIgnore]
         double? done;
 
@@ -104,12 +104,12 @@ namespace AndreasReitberger.API.Moonraker.Models
         [property: JsonIgnore]
         TimeSpan? totalPrintDurationGeneralized;
 
-        [ObservableProperty]
-        [JsonProperty("job_id")]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("job_id")]
         string jobId = string.Empty;
 
-        [ObservableProperty]
-        [JsonProperty("exists")]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("exists")]
         bool fileExists;
 
         #endregion

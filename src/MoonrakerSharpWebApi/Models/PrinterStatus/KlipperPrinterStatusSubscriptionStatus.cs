@@ -3,11 +3,12 @@ using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperPrinterStatusSubscriptionStatus
+    public partial class KlipperPrinterStatusSubscriptionStatus : ObservableObject
     {
         #region Properties
-        [JsonProperty("objects")]
-        public Dictionary<string, string> Objects { get; set; } = new();
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("objects")]
+        Dictionary<string, string> objects = [];
 
         #endregion
 

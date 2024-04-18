@@ -2,35 +2,44 @@
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperCpuInfo
+    public partial class KlipperCpuInfo : ObservableObject
     {
         #region Properties
-        [JsonProperty("cpu_count")]
-        public long CpuCount { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("cpu_count")]
+        long cpuCount;
 
-        [JsonProperty("bits")]
-        public string Bits { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("bits")]
+        string bits = string.Empty;
 
-        [JsonProperty("processor")]
-        public string Processor { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("processor")]
+        string processor = string.Empty;
 
-        [JsonProperty("cpu_desc")]
-        public string CpuDesc { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("cpu_desc")]
+        string cpuDesc = string.Empty;
 
-        [JsonProperty("serial_number")]
-        public string SerialNumber { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("serial_number")]
+        string serialNumber = string.Empty;
 
-        [JsonProperty("hardware_desc")]
-        public string HardwareDesc { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("hardware_desc")]
+        string hardwareDesc = string.Empty;
 
-        [JsonProperty("model")]
-        public string Model { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("model")]
+        string model = string.Empty;
 
-        [JsonProperty("total_memory")]
-        public long TotalMemory { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("total_memory")]
+        long totalMemory;
 
-        [JsonProperty("memory_units")]
-        public string MemoryUnits { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("memory_units")]
+        string memoryUnits = string.Empty;
         #endregion
 
         #region Overrides

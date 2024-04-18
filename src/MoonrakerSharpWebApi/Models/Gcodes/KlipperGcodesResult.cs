@@ -3,11 +3,12 @@ using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperGcodesResult
+    public partial class KlipperGcodesResult : ObservableObject
     {
         #region Properties
-        [JsonProperty("gcode_store")]
-        public List<KlipperGcode> Gcodes { get; set; } = new();
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("gcode_store")]
+        List<KlipperGcode> gcodes = [];
         #endregion
 
         #region Overrides

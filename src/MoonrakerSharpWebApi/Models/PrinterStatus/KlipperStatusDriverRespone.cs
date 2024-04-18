@@ -2,11 +2,12 @@
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperStatusDriverRespone
+    public partial class KlipperStatusDriverRespone : ObservableObject
     {
         #region Properties
-        [JsonProperty("drv_status")]
-        public KlipperStatusDriver? DrvStatus { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("drv_status")]
+        KlipperStatusDriver? drvStatus;
         #endregion
 
         #region Overrides

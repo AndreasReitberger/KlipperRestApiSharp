@@ -3,32 +3,40 @@ using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperStatusGcodeMove
+    public partial class KlipperStatusGcodeMove : ObservableObject
     {
         #region Properties
-        [JsonProperty("homing_origin")]
-        public List<double> HomingOrigin { get; set; } = new();
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("homing_origin")]
+        List<double> homingOrigin = [];
 
-        [JsonProperty("speed_factor")]
-        public double? SpeedFactor { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("speed_factor")]
+        double? speedFactor;
 
-        [JsonProperty("gcode_position")]
-        public List<double> GcodePosition { get; set; } = new();
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("gcode_position")]
+        List<double> gcodePosition = [];
 
-        [JsonProperty("absolute_extrude")]
-        public bool AbsoluteExtrude { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("absolute_extrude")]
+        bool absoluteExtrude;
 
-        [JsonProperty("absolute_coordinates")]
-        public bool AbsoluteCoordinates { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("absolute_coordinates")]
+        bool absoluteCoordinates;
 
-        [JsonProperty("position")]
-        public List<double> Position { get; set; } = new();
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("position")]
+        List<double> position = [];
 
-        [JsonProperty("speed")]
-        public double? Speed { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("speed")]
+        double? speed;
 
-        [JsonProperty("extrude_factor")]
-        public double? ExtrudeFactor { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("extrude_factor")]
+        double? extrudeFactor;
         #endregion
 
         #region Overrides

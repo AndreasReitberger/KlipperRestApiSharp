@@ -3,32 +3,40 @@ using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Moonraker.Models.WebSocket
 {
-    public partial class KlipperWebSocketStateRespone
+    public partial class KlipperWebSocketStateRespone : ObservableObject
     {
         #region Properties
-        [JsonProperty("klippy_connected", Required = Required.Always)]
-        public bool KlippyConnected { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("klippy_connected")]
+        bool klippyConnected;
 
-        [JsonProperty("klippy_state", Required = Required.Always)]
-        public string KlippyState { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("klippy_state")]
+        string klippyState = string.Empty;
 
-        [JsonProperty("components", Required = Required.Always)]
-        public List<string> Components { get; set; } = [];
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("components")]
+        List<string> components = [];
 
-        [JsonProperty("failed_components", Required = Required.Always)]
-        public List<object> FailedComponents { get; set; } = [];
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("failed_components")]
+        List<object> failedComponents = [];
 
-        [JsonProperty("registered_directories", Required = Required.Always)]
-        public List<string> RegisteredDirectories { get; set; } = [];
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("registered_directories")]
+        List<string> registeredDirectories = [];
 
-        [JsonProperty("warnings", Required = Required.Always)]
-        public List<string> Warnings { get; set; } = [];
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("warnings")]
+        List<string> warnings = [];
 
-        [JsonProperty("websocket_count", Required = Required.Always)]
-        public long WebsocketCount { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("websocket_count")]
+        long websocketCount;
 
-        [JsonProperty("moonraker_version", Required = Required.Always)]
-        public string MoonrakerVersion { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("moonraker_version")]
+        string moonrakerVersion = string.Empty;
         #endregion
 
         #region Overrides

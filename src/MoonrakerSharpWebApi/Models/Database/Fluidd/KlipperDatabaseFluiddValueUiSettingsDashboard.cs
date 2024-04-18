@@ -3,11 +3,12 @@ using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperDatabaseFluiddValueUiSettingsDashboard
+    public partial class KlipperDatabaseFluiddValueUiSettingsDashboard : ObservableObject
     {
         #region Properties
-        [JsonProperty("tempPresets")]
-        public List<KlipperDatabaseFluiddValuePreset> TempPresets { get; set; } = [];
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("tempPresets")]
+        List<KlipperDatabaseFluiddValuePreset> tempPresets = [];
 
         #endregion
 

@@ -3,26 +3,32 @@ using System;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperStatusVirtualSdcard
+    public partial class KlipperStatusVirtualSdcard : ObservableObject
     {
         #region Properties
         [JsonIgnore]
         public int PercentageProgress => GetPercentageProgress();
 
-        [JsonProperty("progress")]
-        public double? Progress { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [NotifyPropertyChangedFor(nameof(PercentageProgress))]
+        [property: JsonProperty("progress")]
+        double? progress;
 
-        [JsonProperty("file_position")]
-        public long? FilePosition { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("file_position")]
+        long? filePosition;
 
-        [JsonProperty("is_active")]
-        public bool IsActive { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("is_active")]
+        bool isActive;
 
-        [JsonProperty("file_path")]
-        public string FilePath { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("file_path")]
+        string filePath = string.Empty;
 
-        [JsonProperty("file_size")]
-        public long? FileSize { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("file_size")]
+        long? fileSize;
         #endregion
 
         #region Methods

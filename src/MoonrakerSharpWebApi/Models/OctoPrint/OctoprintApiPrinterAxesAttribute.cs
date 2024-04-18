@@ -2,14 +2,16 @@
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class OctoprintApiPrinterAxesAttribute
+    public partial class OctoprintApiPrinterAxesAttribute : ObservableObject
     {
         #region Properties
-        [JsonProperty("inverted")]
-        public bool Inverted { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("inverted")]
+        bool inverted;
 
-        [JsonProperty("speed")]
-        public long Speed { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("speed")]
+        long speed;
         #endregion
 
         #region Overrides

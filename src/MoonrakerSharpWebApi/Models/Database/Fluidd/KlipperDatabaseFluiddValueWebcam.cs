@@ -3,11 +3,12 @@ using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperDatabaseFluiddValueWebcam
+    public partial class KlipperDatabaseFluiddValueWebcam : ObservableObject
     {
         #region Properties
-        [JsonProperty("cameras")]
-        public List<KlipperDatabaseFluiddValueWebcamConfig> Cameras { get; set; } = [];
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("cameras")]
+        List<KlipperDatabaseFluiddValueWebcamConfig> cameras = [];
 
         #endregion
 

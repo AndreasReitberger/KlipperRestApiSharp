@@ -2,11 +2,13 @@
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperHistoryTotalRespone
+    public partial class KlipperHistoryTotalRespone : ObservableObject
     {
         #region Properties
-        [JsonProperty("result")]
-        public KlipperHistoryTotalResult? Result { get; set; }
+
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("result")]
+        KlipperHistoryTotalResult? result;
         #endregion
 
         #region Overrides

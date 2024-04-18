@@ -2,11 +2,12 @@
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperDatabaseMainsailValueSettingsConfigfiles
+    public partial class KlipperDatabaseMainsailValueSettingsConfigfiles : ObservableObject
     {
         #region Properties
-        [JsonProperty("countPerPage")]
-        public long CountPerPage { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("countPerPage")]
+        long countPerPage;
         #endregion
 
         #region Overrides

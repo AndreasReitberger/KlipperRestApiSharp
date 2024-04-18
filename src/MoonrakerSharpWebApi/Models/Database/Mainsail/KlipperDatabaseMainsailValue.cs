@@ -3,32 +3,40 @@ using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperDatabaseMainsailValue
+    public partial class KlipperDatabaseMainsailValue : ObservableObject
     {
         #region Properties
-        [JsonProperty("dashboard")]
-        public KlipperDatabaseMainsailValueDashboard? Dashboard { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("dashboard")]
+        KlipperDatabaseMainsailValueDashboard? dashboard;
 
-        [JsonProperty("general")]
-        public KlipperDatabaseMainsailValueGeneral? General { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("general")]
+        KlipperDatabaseMainsailValueGeneral? general;
 
-        [JsonProperty("heightmap")]
-        public KlipperDatabaseMainsailValueHeightmapSettings? Heightmap { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("heightmap")]
+        KlipperDatabaseMainsailValueHeightmapSettings? heightmap;
 
-        [JsonProperty("init")]
-        public bool Init { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("init")]
+        bool init;
 
-        [JsonProperty("presets")]
-        public List<KlipperDatabaseMainsailValuePreset> Presets { get; set; } = [];
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("presets")]
+        List<KlipperDatabaseMainsailValuePreset> presets = [];
 
-        [JsonProperty("remote_printers")]
-        public List<object> RemotePrinters { get; set; } = [];
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("remote_printers")]
+        List<object> pemotePrinters = [];
 
-        [JsonProperty("settings")]
-        public KlipperDatabaseMainsailValueSettings? Settings { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("settings")]
+        KlipperDatabaseMainsailValueSettings? settings;
 
-        [JsonProperty("webcam")]
-        public KlipperDatabaseMainsailValueWebcam? Webcam { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("webcam")]
+        KlipperDatabaseMainsailValueWebcam? webcam;
         #endregion
 
         #region Overrides

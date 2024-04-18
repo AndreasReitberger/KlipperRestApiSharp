@@ -5,41 +5,51 @@ using Newtonsoft.Json.Converters;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperJobItem
+    public partial class KlipperJobItem : ObservableObject
     {
         #region Properties
-        [JsonProperty("end_time")]
-        public double? EndTime { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("end_time")]
+        double? endTime;
 
-        [JsonProperty("filament_used")]
-        public double FilamentUsed { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("filament_used")]
+        double filamentUsed;
 
-        [JsonProperty("filename")]
-        public string Filename { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("filename")]
+        string filename = string.Empty;
 
-        [JsonProperty("metadata")]
-        public IGcodeMeta? Metadata { get; set; }
-        //public KlipperGcodeMetaResult Metadata { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("metadata")]
+        IGcodeMeta? metadata;
+        //public KlipperGcodeMetaResult Metadata;
 
-        [JsonProperty("print_duration")]
-        public double PrintDuration { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("print_duration")]
+        double printDuration;
 
-        [JsonProperty("status")]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("status")]
         [JsonConverter(typeof(StringEnumConverter), true)]
-        public KlipperJobStates Status { get; set; }
-        //public string Status { get; set; }
+        KlipperJobStates status;
+        //public string Status;
 
-        [JsonProperty("start_time")]
-        public double? StartTime { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("start_time")]
+        double? startTime;
 
-        [JsonProperty("total_duration")]
-        public double TotalDuration { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("total_duration")]
+        double totalDuration;
 
-        [JsonProperty("job_id")]
-        public string JobId { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("job_id")]
+        string jobId = string.Empty;
 
-        [JsonProperty("exists")]
-        public bool Exists { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("exists")]
+        bool exists;
 
         #endregion
 

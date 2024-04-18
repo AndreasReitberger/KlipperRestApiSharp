@@ -1,143 +1,91 @@
-﻿using AndreasReitberger.Core.Utilities;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class OctoprintApiPrinter : BaseModel
+    public partial class OctoprintApiPrinter : ObservableObject
     {
         #region Properties
-        [JsonIgnore]
-        bool _isOnline = true;
-        [JsonIgnore]
-        public bool IsOnline
-        {
-            get { return _isOnline; }
-            set { SetProperty(ref _isOnline, value); }
-        }
-        [JsonIgnore]
-        double? _extruder1 = 0;
-        [JsonIgnore]
-        public double? Extruder1
-        {
-            get { return _extruder1; }
-            set { SetProperty(ref _extruder1, value); }
-        }
+        [ObservableProperty, JsonIgnore]
+        bool isOnline = true;
 
-        [JsonIgnore]
-        double? _extruder2 = 0;
-        [JsonIgnore]
-        public double? Extruder2
-        {
-            get { return _extruder2; }
-            set { SetProperty(ref _extruder2, value); }
-        }
+        [ObservableProperty, JsonIgnore]
+        double? extruder1 = 0;
 
-        [JsonIgnore]
-        double? _heatedBed = 0;
-        [JsonIgnore]
-        public double? HeatedBed
-        {
-            get { return _heatedBed; }
-            set { SetProperty(ref _heatedBed, value); }
-        }
+        [ObservableProperty, JsonIgnore]
+        double? extruder2 = 0;
 
-        [JsonIgnore]
-        double? _chamber = 0;
-        [JsonIgnore]
-        public double? Chamber
-        {
-            get { return _chamber; }
-            set { SetProperty(ref _chamber, value); }
-        }
+        [ObservableProperty, JsonIgnore]
+        double? heatedBed = 0;
 
-        [JsonIgnore]
-        double _progress = 0;
-        [JsonIgnore]
-        public double Progress
-        {
-            get { return _progress; }
-            set { SetProperty(ref _progress, value); }
-        }
+        [ObservableProperty, JsonIgnore]
+        double? chamber = 0;
 
-        [JsonIgnore]
-        double _remainingPrintTime = 0;
-        [JsonIgnore]
-        public double RemainingPrintTime
-        {
-            get { return _remainingPrintTime; }
-            set { SetProperty(ref _remainingPrintTime, value); }
-        }
+        [ObservableProperty, JsonIgnore]
+        double progress = 0;
 
-        [JsonIgnore]
-        string _job = string.Empty;
-        [JsonIgnore]
-        public string Job
-        {
-            get { return _job; }
-            set { SetProperty(ref _job, value); }
-        }
+        [ObservableProperty, JsonIgnore]
+        double remainingPrintTime = 0;
 
-        [JsonIgnore]
-        bool _isPrinting = false;
-        [JsonIgnore]
-        public bool IsPrinting
-        {
-            get { return _isPrinting; }
-            set { SetProperty(ref _isPrinting, value); }
-        }
-        [JsonIgnore]
-        bool _isPaused = false;
-        [JsonIgnore]
-        public bool IsPaused
-        {
-            get { return _isPaused; }
-            set { SetProperty(ref _isPaused, value); }
-        }
-        [JsonIgnore]
-        bool _isSelected = false;
-        [JsonIgnore]
-        public bool IsSelected
-        {
-            get { return _isSelected; }
-            set { SetProperty(ref _isSelected, value); }
-        }
+        [ObservableProperty, JsonIgnore]
+        string job = string.Empty;
 
-        [JsonProperty("axes")]
-        public OctoprintApiPrinterAxes? Axes { get; set; }
+        [ObservableProperty, JsonIgnore]
+        bool isPrinting = false;
 
-        [JsonProperty("color")]
-        public string Color { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        bool isPaused = false;
 
-        [JsonProperty("current")]
-        public bool Current { get; set; }
+        [ObservableProperty, JsonIgnore]
+        bool isSelected = false;
 
-        [JsonProperty("default")]
-        public bool DefaultDefault { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("axes")]
+        OctoprintApiPrinterAxes? axes;
 
-        [JsonProperty("extruder")]
-        public OctoprintApiPrinterExtruder? Extruder { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("color")]
+        string color = string.Empty;
 
-        [JsonProperty("heatedBed")]
-        public bool HasHeatedBed { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("current")]
+        bool current;
 
-        [JsonProperty("heatedChamber")]
-        public bool HasHeatedChamber { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("default")]
+        bool defaultDefault;
 
-        [JsonProperty("id")]
-        public string Id { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("extruder")]
+        OctoprintApiPrinterExtruder? extruder;
 
-        [JsonProperty("model")]
-        public string Model { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("heatedBed")]
+        bool hasHeatedBed;
 
-        [JsonProperty("name")]
-        public string Name { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("heatedChamber")]
+        bool hasHeatedChamber;
 
-        [JsonProperty("resource")]
-        public Uri? Resource { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("id")]
+        string id = string.Empty;
 
-        [JsonProperty("volume")]
-        public OctoprintApiPrinterVolume? Volume { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("model")]
+        string model = string.Empty;
+
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("name")]
+        string name = string.Empty;
+
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("resource")]
+        Uri? resource;
+
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("volume")]
+        OctoprintApiPrinterVolume? vVolume;
         #endregion
 
         #region Overrides

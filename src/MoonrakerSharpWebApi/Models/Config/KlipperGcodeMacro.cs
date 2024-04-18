@@ -2,23 +2,28 @@
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperGcodeMacro
+    public partial class KlipperGcodeMacro : ObservableObject
     {
         #region Properties
-        [JsonIgnore]
-        public string Name { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonIgnore]
+        string name = string.Empty;
 
-        [JsonProperty("rename_existing")]
-        public string RenameExisting { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("rename_existing")]
+        string renameExisting = string.Empty;
 
-        [JsonProperty("description")]
-        public string Description { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("description")]
+        string description = string.Empty;
 
-        [JsonProperty("gcode")]
-        public string Gcode { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("gcode")]
+        string gcode = string.Empty;
 
-        [JsonProperty("variable_extrude", NullValueHandling = NullValueHandling.Ignore)]
-        public string VariableExtrude { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("variable_extrude", NullValueHandling = NullValueHandling.Ignore)]
+        string variableExtrude = string.Empty;
         #endregion
 
         #region Overrides

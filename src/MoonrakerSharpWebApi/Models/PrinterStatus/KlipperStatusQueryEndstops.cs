@@ -2,11 +2,12 @@
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperStatusQueryEndstops
+    public partial class KlipperStatusQueryEndstops : ObservableObject
     {
         #region Properties
-        [JsonProperty("last_query")]
-        public KlipperEndstopQueryResult? LastQuery { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("last_query")]
+        KlipperEndstopQueryResult? lastQuery;
         #endregion
 
         #region Overrides

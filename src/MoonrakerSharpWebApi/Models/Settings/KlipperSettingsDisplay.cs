@@ -3,80 +3,104 @@ using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperSettingsDisplay
+    public partial class KlipperSettingsDisplay : ObservableObject
     {
         #region Properties
-        [JsonProperty("down_pin")]
-        public string DownPin { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("down_pin")]
+        string downPin = string.Empty;
 
-        [JsonProperty("click_pin")]
-        public string ClickPin { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("click_pin")]
+        string clickPin = string.Empty;
 
-        [JsonProperty("d6_pin")]
-        public string D6Pin { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("d6_pin")]
+        string d6Pin = string.Empty;
 
-        [JsonProperty("d4_pin")]
-        public string D4Pin { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("d4_pin")]
+        string d4Pin = string.Empty;
 
-        [JsonProperty("lcd_type")]
-        public string LcdType { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("lcd_type")]
+        string lcdType = string.Empty;
 
-        [JsonProperty("hd44780_protocol_init")]
-        public bool Hd44780ProtocolInit { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("hd44780_protocol_init")]
+        bool hd44780ProtocolInit;
 
-        [JsonProperty("analog_range_up_pin")]
-        public List<long> AnalogRangeUpPin { get; set; } = [];
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("analog_range_up_pin")]
+        List<long> analogRangeUpPin = [];
 
-        [JsonProperty("analog_range_click_pin")]
-        public List<long> AnalogRangeClickPin { get; set; } = [];
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("analog_range_click_pin")]
+        List<long> analogRangeClickPin = [];
 
-        [JsonProperty("rs_pin")]
-        public string RsPin { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("rs_pin")]
+        string rsPin = string.Empty;
 
-        [JsonProperty("menu_root")]
-        public string MenuRoot { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("menu_root")]
+        string menuRoot = string.Empty;
 
-        [JsonProperty("menu_reverse_navigation")]
-        public bool MenuReverseNavigation { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("menu_reverse_navigation")]
+        bool menuReverseNavigation;
 
-        [JsonProperty("analog_range_back_pin")]
-        public List<long> AnalogRangeBackPin { get; set; } = [];
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("analog_range_back_pin")]
+        List<long> analogRangeBackPin = [];
 
-        [JsonProperty("d5_pin")]
-        public string D5Pin { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("d5_pin")]
+        string d5Pin = string.Empty;
 
-        [JsonProperty("encoder_steps_per_detent")]
-        public long EncoderStepsPerDetent { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("encoder_steps_per_detent")]
+        long encoderStepsPerDetent;
 
-        [JsonProperty("encoder_fast_rate")]
-        public double EncoderFastRate { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("encoder_fast_rate")]
+        double encoderFastRate;
 
-        [JsonProperty("up_pin")]
-        public string UpPin { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("up_pin")]
+        string upPin = string.Empty;
 
-        [JsonProperty("d7_pin")]
-        public string D7Pin { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("d7_pin")]
+        string d7Pin = string.Empty;
 
-        [JsonProperty("analog_pullup_resistor")]
-        public long AnalogPullupResistor { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("analog_pullup_resistor")]
+        long analogPullupResistor;
 
-        [JsonProperty("menu_timeout")]
-        public long MenuTimeout { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("menu_timeout")]
+        long menuTimeout;
 
-        [JsonProperty("e_pin")]
-        public string EPin { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("e_pin")]
+        string ePin = string.Empty;
 
-        [JsonProperty("back_pin")]
-        public string BackPin { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("back_pin")]
+        string backPin = string.Empty;
 
-        [JsonProperty("display_group")]
-        public string DisplayGroup { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("display_group")]
+        string displayGroup = string.Empty;
 
-        [JsonProperty("analog_range_down_pin")]
-        public List<long> AnalogRangeDownPin { get; set; } = [];
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("analog_range_down_pin")]
+        List<long> analogRangeDownPin = [];
 
-        [JsonProperty("line_length")]
-        public long LineLength { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("line_length")]
+        long lineLength;
         #endregion
 
         #region Overrides

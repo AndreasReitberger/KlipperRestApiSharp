@@ -3,20 +3,24 @@ using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperDirectoryInfoResult
+    public partial class KlipperDirectoryInfoResult : ObservableObject
     {
         #region Properties
-        [JsonProperty("dirs")]
-        public List<KlipperDirectory> Dirs { get; set; } = [];
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("dirs")]
+        public List<KlipperDirectory> dirs = [];
 
-        [JsonProperty("files")]
-        public List<KlipperFile> Files { get; set; } = [];
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("files")]
+        public List<KlipperFile> files = [];
 
-        [JsonProperty("disk_usage")]
-        public KlipperDiskUsage? DiskUsage { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("disk_usage")]
+        public KlipperDiskUsage? diskUsage;
 
-        [JsonProperty("root_info")]
-        public KlipperRootInfo? RootInfo { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("root_info")]
+        public KlipperRootInfo? rootInfo;
         #endregion
 
         #region Overrides

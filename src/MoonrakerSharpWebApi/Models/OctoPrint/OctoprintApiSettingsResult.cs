@@ -3,17 +3,20 @@ using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class OctoprintApiSettingsResult
+    public partial class OctoprintApiSettingsResult : ObservableObject
     {
         #region Properties
-        [JsonProperty("plugins")]
-        public Dictionary<string, OctoprintApiPlugin> Plugins { get; set; } = [];
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("plugins")]
+        Dictionary<string, OctoprintApiPlugin> plugins = [];
 
-        [JsonProperty("feature")]
-        public OctoprintApiFeature? Feature { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("feature")]
+        OctoprintApiFeature? feature;
 
-        [JsonProperty("webcam")]
-        public OctoprintApiWebcam? Webcam { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("webcam")]
+        OctoprintApiWebcam? webcam;
         #endregion
 
         #region Overrides

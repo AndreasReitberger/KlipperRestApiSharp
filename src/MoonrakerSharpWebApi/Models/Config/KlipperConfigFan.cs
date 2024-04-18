@@ -2,29 +2,36 @@
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperConfigFan
+    public partial class KlipperConfigFan : ObservableObject
     {
         #region Properties
-        [JsonProperty("pin")]
-        public string Pin { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("pin")]
+        string pin = string.Empty;
 
-        [JsonProperty("cycle_time")]
-        public double CycleTime { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("cycle_time")]
+        double cycleTime;
 
-        [JsonProperty("off_below")]
-        public long OffBelow { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("off_below")]
+        long offBelow;
 
-        [JsonProperty("shutdown_speed")]
-        public long ShutdownSpeed { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("shutdown_speed")]
+        long shutdownSpeed;
 
-        [JsonProperty("max_power")]
-        public long MaxPower { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("max_power")]
+        long maxPower;
 
-        [JsonProperty("kick_start_time")]
-        public double KickStartTime { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("kick_start_time")]
+        double kickStartTime;
 
-        [JsonProperty("hardware_pwm")]
-        public bool HardwarePwm { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("hardware_pwm")]
+        bool hardwarePwm;
         #endregion
 
         #region Overrides

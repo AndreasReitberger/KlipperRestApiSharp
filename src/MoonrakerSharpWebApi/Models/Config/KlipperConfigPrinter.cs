@@ -2,40 +2,52 @@
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperConfigPrinter
+    public partial class KlipperConfigPrinter : ObservableObject
     {
         #region Properties
-        [JsonProperty("max_velocity")]
-        public long MaxVelocity { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("max_velocity")]
+        long maxVelocity;
 
-        [JsonProperty("max_z_velocity")]
-        public long MaxZVelocity { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("max_z_velocity")]
+        long maxZVelocity;
 
-        [JsonProperty("kinematics")]
-        public string Kinematics { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("kinematics")]
+        string kinematics = string.Empty;
 
-        [JsonProperty("max_accel")]
-        public long MaxAccel { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("max_accel")]
+        long maxAccel;
 
-        [JsonProperty("max_z_accel")]
-        public long MaxZAccel { get; set; }
-        [JsonProperty("square_corner_velocity")]
-        public long SquareCornerVelocity { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("max_z_accel")]
+        long maxZAccel;
 
-        [JsonProperty("move_flush_time")]
-        public double MoveFlushTime { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("square_corner_velocity")]
+        long squareCornerVelocity;
 
-        [JsonProperty("buffer_time_start")]
-        public double BufferTimeStart { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("move_flush_time")]
+        double moveFlushTime;
 
-        [JsonProperty("buffer_time_low")]
-        public long BufferTimeLow { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("buffer_time_start")]
+        double bufferTimeStart;
 
-        [JsonProperty("buffer_time_high")]
-        public long BufferTimeHigh { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("buffer_time_low")]
+        long bufferTimeLow;
 
-        [JsonProperty("max_accel_to_decel")]
-        public long MaxAccelToDecel { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("buffer_time_high")]
+        long bufferTimeHigh;
+
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("max_accel_to_decel")]
+        long maxAccelToDecel;
         #endregion
 
         #region Overrides

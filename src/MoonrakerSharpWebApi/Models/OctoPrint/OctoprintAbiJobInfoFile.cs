@@ -2,23 +2,28 @@
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class OctoprintAbiJobInfoFile
+    public partial class OctoprintAbiJobInfoFile : ObservableObject
     {
         #region Properties
-        [JsonProperty("name")]
-        public string Name { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("name")]
+        string name = string.Empty;
 
-        [JsonProperty("origin")]
-        public string Origin { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("origin")]
+        string origin = string.Empty;
 
-        [JsonProperty("size", NullValueHandling = NullValueHandling.Ignore)]
-        public long Size { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("size", NullValueHandling = NullValueHandling.Ignore)]
+        long size;
 
-        [JsonProperty("date", NullValueHandling = NullValueHandling.Ignore)]
-        public long Date { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("date", NullValueHandling = NullValueHandling.Ignore)]
+        long date;
 
-        [JsonProperty("path", NullValueHandling = NullValueHandling.Ignore)]
-        public string Path { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("path", NullValueHandling = NullValueHandling.Ignore)]
+        string path = string.Empty;
         #endregion
 
         #region Overrides

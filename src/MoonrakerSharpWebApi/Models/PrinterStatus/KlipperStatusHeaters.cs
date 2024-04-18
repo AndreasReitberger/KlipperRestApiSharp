@@ -3,14 +3,16 @@ using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperStatusHeaters
+    public partial class KlipperStatusHeaters : ObservableObject
     {
         #region Properties
-        [JsonProperty("available_sensors")]
-        public List<string> AvailableSensors { get; set; } = new();
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("available_sensors")]
+        List<string> availableSensors = [];
 
-        [JsonProperty("available_heaters")]
-        public List<string> AvailableHeaters { get; set; } = new();
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("available_heaters")]
+        List<string> availableHeaters = [];
         #endregion
 
         #region Overrides

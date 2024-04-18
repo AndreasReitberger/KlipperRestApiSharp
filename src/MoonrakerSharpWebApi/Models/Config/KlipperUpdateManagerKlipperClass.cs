@@ -3,35 +3,44 @@ using System;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperUpdateManagerKlipperClass
+    public partial class KlipperUpdateManagerKlipperClass : ObservableObject
     {
         #region Properties
-        [JsonProperty("type")]
-        public string Type { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("type")]
+        string type = string.Empty;
 
-        [JsonProperty("venv_args")]
-        public string VenvArgs { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("venv_args")]
+        string venvArgs = string.Empty;
 
-        [JsonProperty("is_system_service")]
-        public bool IsSystemService { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("is_system_service")]
+        bool isSystemService;
 
-        [JsonProperty("moved_origin")]
-        public Uri? MovedOrigin { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("moved_origin")]
+        Uri? movedOrigin;
 
-        [JsonProperty("origin")]
-        public Uri? Origin { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("origin")]
+        Uri? origin;
 
-        [JsonProperty("primary_branch")]
-        public string PrimaryBranch { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("primary_branch")]
+        string primaryBranch = string.Empty;
 
-        [JsonProperty("enable_node_updates")]
-        public bool EnableNodeUpdates { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("enable_node_updates")]
+        bool enableNodeUpdates;
 
-        [JsonProperty("requirements")]
-        public string Requirements { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("requirements")]
+        string requirements = string.Empty;
 
-        [JsonProperty("install_script")]
-        public string InstallScript { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("install_script")]
+        string installScript = string.Empty;
         #endregion
 
         #region Overrides

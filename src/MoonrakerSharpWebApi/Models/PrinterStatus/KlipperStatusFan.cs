@@ -8,13 +8,13 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperStatusFan : ObservableObject, IPrint3dFan
     {
         #region Properties
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         bool on; 
         
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         long? voltage;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [NotifyPropertyChangedFor(nameof(Speed))]
         [property: JsonProperty("speed")]
         double? fanSpeed = 0;
@@ -28,7 +28,7 @@ namespace AndreasReitberger.API.Moonraker.Models
 
         public int? Speed => Convert.ToInt32(Percent * 2.55f);
         /*
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
         [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
         public int? speed = 0;
@@ -41,12 +41,11 @@ namespace AndreasReitberger.API.Moonraker.Models
         }
         */
 
-        [ObservableProperty]
-        [JsonProperty("rpm")]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        [ObservableProperty, JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        [property: JsonProperty("rpm")]
         long? rpm = 0;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
         int? percent = 0;
         partial void OnPercentChanged(int? value)

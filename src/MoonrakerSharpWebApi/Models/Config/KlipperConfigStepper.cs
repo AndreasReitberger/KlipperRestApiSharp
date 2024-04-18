@@ -3,56 +3,72 @@ using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperConfigStepper
+    public partial class KlipperConfigStepper : ObservableObject
     {
         #region Properties
-        [JsonProperty("homing_positive_dir")]
-        public bool HomingPositiveDir { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("homing_positive_dir")]
+        bool homingPositiveDir;
 
-        [JsonProperty("homing_retract_dist")]
-        public long HomingRetractDist { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("homing_retract_dist")]
+        long homingRetractDist;
 
-        [JsonProperty("position_endstop")]
-        public double PositionEndstop { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("position_endstop")]
+        double positionEndstop;
 
-        [JsonProperty("full_steps_per_rotation")]
-        public long FullStepsPerRotation { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("full_steps_per_rotation")]
+        long fullStepsPerRotation;
 
-        [JsonProperty("endstop_pin")]
-        public string EndstopPin { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("endstop_pin")]
+        string endstopPin = string.Empty;
 
-        [JsonProperty("rotation_distance")]
-        public long RotationDistance { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("rotation_distance")]
+        long rotationDistance;
 
-        [JsonProperty("gear_ratio")]
-        public List<object> GearRatio { get; set; } = [];
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("gear_ratio")]
+        List<object> gearRatio = [];
 
-        [JsonProperty("second_homing_speed")]
-        public double SecondHomingSpeed { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("second_homing_speed")]
+        double secondHomingSpeed;
 
-        [JsonProperty("step_pin")]
-        public string StepPin { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("step_pin")]
+        string stepPin = string.Empty;
 
-        [JsonProperty("position_min")]
-        public long PositionMin { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("position_min")]
+        long positionMin;
 
-        [JsonProperty("microsteps")]
-        public long Microsteps { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("microsteps")]
+        long microsteps;
 
-        [JsonProperty("homing_speed")]
-        public double HomingSpeed { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("homing_speed")]
+        double homingSpeed;
 
-        [JsonProperty("position_max")]
-        public long PositionMax { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("position_max")]
+        long positionMax;
 
-        [JsonProperty("dir_pin")]
-        public string DirPin { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("dir_pin")]
+        string dirPin = string.Empty;
 
-        [JsonProperty("homing_retract_speed")]
-        public long HomingRetractSpeed { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("homing_retract_speed")]
+        long homingRetractSpeed;
 
-        [JsonProperty("enable_pin")]
-        public string EnablePin { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("enable_pin")]
+        string enablePin= string.Empty;
         #endregion
 
         #region Overrides

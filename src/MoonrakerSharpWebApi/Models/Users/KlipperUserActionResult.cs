@@ -2,21 +2,25 @@
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperUserActionResult
+    public partial class KlipperUserActionResult : ObservableObject
 
     {
         #region Properties
-        [JsonProperty("username")]
-        public string Username { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("username")]
+        string username = string.Empty;
 
-        [JsonProperty("token")]
-        public string Token { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("token")]
+        string token = string.Empty;
 
-        [JsonProperty("refresh_token")]
-        public string RefreshToken { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("refresh_token")]
+        string refreshToken = string.Empty;
 
-        [JsonProperty("action")]
-        public string Action { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("action")]
+        string action = string.Empty;
         #endregion
 
         #region Overrides

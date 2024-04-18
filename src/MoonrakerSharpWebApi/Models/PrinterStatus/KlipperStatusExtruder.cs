@@ -15,64 +15,81 @@ namespace AndreasReitberger.API.Moonraker.Models
         [property: JsonIgnore]
         Guid id;
 
-        [JsonProperty("temperature")]
-        public double? TempRead { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("temperature")]
+        double? tempRead;
 
-        [JsonProperty("target")]
-        public double? TempSet { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("target")]
+        double? tempSet;
 
-        [JsonProperty("power")]
-        public double? Power { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("power")]
+        double? power;
 
-        [JsonProperty("pressure_advance")]
-        public double? PressureAdvance { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("pressure_advance")]
+        double? pressureAdvance;
 
-        [JsonProperty("smooth_time")]
-        public double? SmoothTime { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("smooth_time")]
+        double? smoothTime;
 
-        [JsonProperty("square_corner_velocity")]
-        public double? SquareCornerVelocity { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("square_corner_velocity")]
+        double? squareCornerVelocity;
 
-        [JsonProperty("max_accel")]
-        public double? MaxAccel { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("max_accel")]
+        double? maxAccel;
 
-        [JsonProperty("homed_axes")]
-        public string HomedAxes { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("homed_axes")]
+        string homedAxes = string.Empty;
 
-        [JsonProperty("estimated_print_time")]
-        public double? EstimatedPrintTime { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("estimated_print_time")]
+        double? estimatedPrintTime;
 
-        [JsonProperty("max_velocity")]
-        public double? MaxVelocity { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("max_velocity")]
+        double? maxVelocity;
 
-        [JsonProperty("print_time")]
-        public double? PrintTime { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("print_time")]
+        double? printTime;
 
-        [JsonProperty("max_accel_to_decel")]
-        public double? MaxAccelToDecel { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("max_accel_to_decel")]
+        double? maxAccelToDecel;
 
-        [JsonProperty("axis_minimum")]
-        public List<double> AxisMinimum { get; set; } = new();
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("axis_minimum")]
+        List<double> axisMinimum = [];
 
-        [JsonProperty("stalls")]
-        public double? Stalls { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("stalls")]
+        double? stalls;
 
-        [JsonProperty("axis_maximum")]
-        public List<double> AxisMaximum { get; set; } = new();
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("axis_maximum")]
+        List<double> axisMaximum = [];
 
-        [JsonProperty("position")]
-        public List<double> Position { get; set; } = new();
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("position")]
+        List<double> position = [];
 
-        [JsonProperty("extruder")]
-        public string Name { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("extruder")]
+        string name = string.Empty;
 
         [JsonIgnore]
-        public bool CanUpdateTarget { get; set; } = false;
+        public bool CanUpdateTarget = false;
 
         [JsonIgnore]
         public KlipperToolState State { get => GetCurrentState(); }
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         Printer3dHeaterType type = Printer3dHeaterType.Other;
 
         #region Interface, unused

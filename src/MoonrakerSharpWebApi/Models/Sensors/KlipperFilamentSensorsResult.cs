@@ -3,14 +3,16 @@ using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperFilamentSensorsResult
+    public partial class KlipperFilamentSensorsResult : ObservableObject
     {
         #region Properties
-        [JsonProperty("status")]
-        public Dictionary<string, KlipperStatusFilamentSensor> Status { get; set; } = [];
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("status")]
+        Dictionary<string, KlipperStatusFilamentSensor> status = [];
 
-        [JsonProperty("eventtime")]
-        public double? Eventtime { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("eventtime")]
+        double? eventtime;
         #endregion
 
         #region Overrides

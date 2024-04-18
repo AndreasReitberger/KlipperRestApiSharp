@@ -3,14 +3,16 @@ using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperHistoryResult
+    public partial class KlipperHistoryResult : ObservableObject
     {
         #region Properties
-        [JsonProperty("count")]
-        public long Count { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("count")]
+        long count = 0;
 
-        [JsonProperty("jobs")]
-        public List<KlipperJobItem> Jobs { get; set; } = [];
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("jobs")]
+        List<KlipperJobItem> jobs = [];
         #endregion
 
         #region Overrides

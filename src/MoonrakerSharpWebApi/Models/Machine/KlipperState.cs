@@ -2,14 +2,16 @@
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperState
+    public partial class KlipperState : ObservableObject
     {
         #region Properties
-        [JsonProperty("active_state")]
-        public string ActiveState { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("active_state")]
+        string activeState = string.Empty;
 
-        [JsonProperty("sub_state")]
-        public string SubState { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("sub_state")]
+        string subState = string.Empty;
         #endregion
 
         #region Overrides

@@ -3,23 +3,28 @@ using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperUpdateStatusResult
+    public partial class KlipperUpdateStatusResult : ObservableObject
     {
         #region Properties
-        [JsonProperty("github_rate_limit")]
-        public long? GithubRateLimit { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("github_rate_limit")]
+        public long? githubRateLimit;
 
-        [JsonProperty("github_requests_remaining")]
-        public long? GithubRequestsRemaining { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("github_requests_remaining")]
+        public long? githubRequestsRemaining;
 
-        [JsonProperty("github_limit_reset_time")]
-        public long? GithubLimitResetTime { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("github_limit_reset_time")]
+        public long? githubLimitResetTime;
 
-        [JsonProperty("version_info")]
-        public Dictionary<string, KlipperUpdateVersionInfo> VersionInfo { get; set; } = [];
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("version_info")]
+        public Dictionary<string, KlipperUpdateVersionInfo> versionInfo = [];
 
-        [JsonProperty("busy")]
-        public bool Busy { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("busy")]
+        public bool busy;
         #endregion
 
         #region Overrides

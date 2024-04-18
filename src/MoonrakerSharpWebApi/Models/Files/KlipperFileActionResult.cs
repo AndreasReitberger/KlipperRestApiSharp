@@ -2,20 +2,24 @@
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperFileActionResult
+    public partial class KlipperFileActionResult : ObservableObject
     {
         #region Properties
-        [JsonProperty("item")]
-        public KlipperFileItem? Item { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("item")]
+        public KlipperFileItem? item;
 
-        [JsonProperty("print_started")]
-        public bool PrintStarted { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("print_started")]
+        public bool printStarted;
 
-        [JsonProperty("print_queued")]
-        public bool PrintQueued { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("print_queued")]
+        public bool printQueued;
 
-        [JsonProperty("action")]
-        public string Action { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("action")]
+        public string action = string.Empty;
         #endregion
 
         #region Overrides

@@ -1,23 +1,26 @@
 ﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperWebSocketMessage
+    public partial class KlipperWebSocketMessage : ObservableObject
     {
         #region Properties
-        [JsonProperty("jsonrpc")]
-        public string Jsonrpc { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("jsonrpc")]
+        string jsonrpc = string.Empty;
 
-        [JsonProperty("method")]
-        public string Method { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("method")]
+        string method = string.Empty;
 
-        [JsonProperty("params")]
-        public List<object> Params { get; set; } = [];
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("params")]
+        List<object> parameters = [];
 
-        [JsonProperty("id")]
-        public long? Id { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("id")]
+        long? id;
         #endregion
 
         #region Overrides

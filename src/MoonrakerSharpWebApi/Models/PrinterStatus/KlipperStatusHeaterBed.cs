@@ -11,20 +11,22 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore]
         Guid id;
 
-        [JsonProperty("temperature")]
-        public double? TempRead { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("temperature")]
+        public double? tempRead;
 
-        [JsonProperty("target")]
-        public double? TempSet { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("target")]
+        public double? tempSet;
 
-        [JsonProperty("power")]
-        public double? Power { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("power")]
+        public double? power;
 
         [JsonIgnore]
-        public bool CanUpdateTarget { get; set; } = false;
+        public bool CanUpdateTarget = false;
 
         [JsonIgnore]
         public KlipperToolState State { get => GetCurrentState(); }
@@ -38,7 +40,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         [property: JsonIgnore]
         long error;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         Printer3dHeaterType type = Printer3dHeaterType.HeatedBed;
         #endregion
 

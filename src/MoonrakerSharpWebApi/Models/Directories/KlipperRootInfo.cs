@@ -2,14 +2,16 @@
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperRootInfo
+    public partial class KlipperRootInfo : ObservableObject
     {
         #region Properties
-        [JsonProperty("name")]
-        public string Name { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("name")]
+        string name = string.Empty;
 
-        [JsonProperty("permissions")]
-        public string Permissions { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("permissions")]
+        string permissions = string.Empty;
         #endregion
 
         #region Overrides

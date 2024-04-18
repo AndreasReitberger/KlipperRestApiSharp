@@ -2,32 +2,40 @@
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class OctoprintApiPlugin
+    public partial class OctoprintApiPlugin : ObservableObject
     {
         #region Properties
-        [JsonProperty("align_inline_thumbnail")]
-        public bool AlignInlineThumbnail { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("align_inline_thumbnail")]
+        bool alignInlineThumbnail;
 
-        [JsonProperty("inline_thumbnail")]
-        public bool InlineThumbnail { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("inline_thumbnail")]
+        bool inlineThumbnail;
 
-        [JsonProperty("inline_thumbnail_align_value")]
-        public string InlineThumbnailAlignValue { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("inline_thumbnail_align_value")]
+        string inlineThumbnailAlignValue = string.Empty;
 
-        [JsonProperty("inline_thumbnail_scale_value")]
-        public long InlineThumbnailScaleValue { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("inline_thumbnail_scale_value")]
+        long inlineThumbnailScaleValue;
 
-        [JsonProperty("installed")]
-        public bool Installed { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("installed")]
+        bool installed;
 
-        [JsonProperty("installed_version")]
-        public string InstalledVersion { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("installed_version")]
+        string installedVersion = string.Empty;
 
-        [JsonProperty("scale_inline_thumbnail")]
-        public bool ScaleInlineThumbnail { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("scale_inline_thumbnail")]
+        bool scaleInlineThumbnail;
 
-        [JsonProperty("state_panel_thumbnail")]
-        public bool StatePanelThumbnail { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("state_panel_thumbnail")]
+        bool statePanelThumbnail;
         #endregion
 
         #region Overrides

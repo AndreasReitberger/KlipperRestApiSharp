@@ -19,34 +19,28 @@ namespace AndreasReitberger.API.Moonraker.Models
         [property: JsonIgnore]
         GcodeTimeBaseTarget timeBaseTarget = GcodeTimeBaseTarget.DoubleHoursUnix;
 
-        [ObservableProperty]
-        [JsonProperty("filename")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("filename")]
         string fileName = string.Empty;
 
-        [ObservableProperty]
-        [JsonProperty("path")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("path")]
         string filePath = string.Empty;
 
-        [ObservableProperty]
-        [JsonProperty("modified")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("modified")]
         double modified;
 
-        [ObservableProperty]
-        [JsonProperty("size")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("size")]
         long size;
 
-        [ObservableProperty]
-        [JsonProperty("permissions")]
-        [property: JsonIgnore]
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("permissions")]
         string permissions = string.Empty;
 
         #region JsonIgnore
-        [ObservableProperty]
-        [JsonIgnore]
+        [ObservableProperty, JsonIgnore]
         IGcodeMeta? meta;
         partial void OnMetaChanged(IGcodeMeta? value)
         {
@@ -56,46 +50,38 @@ namespace AndreasReitberger.API.Moonraker.Models
             }
         }
 
-        [ObservableProperty]
-        [JsonIgnore]
+        [ObservableProperty, JsonIgnore]
         byte[]? thumbnail = [];
 
-        [ObservableProperty]
-        [JsonIgnore]
+        [ObservableProperty, JsonIgnore]
         byte[]? image = [];
 
-        [ObservableProperty]
-        [JsonIgnore]
+        [ObservableProperty, JsonIgnore]
         double filament;
 
-        [ObservableProperty]
-        [JsonIgnore]
+        [ObservableProperty, JsonIgnore]
         GcodeImageType imageType = GcodeImageType.Thumbnail;
 
-        [ObservableProperty]
-        [JsonIgnore]
+        [ObservableProperty, JsonIgnore]
         string printerName = string.Empty;
 
-        [ObservableProperty]
-        [JsonIgnore]
+        [ObservableProperty, JsonIgnore]
         string group = string.Empty;
 
-        [ObservableProperty]
-        [JsonIgnore]
+        [ObservableProperty, JsonIgnore]
         long identifier;
 
-        [ObservableProperty]
-        [JsonIgnore]
+        [ObservableProperty, JsonIgnore]
         double volume;
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         double printTime;
         partial void OnPrintTimeChanged(double value)
         {
             PrintTimeGeneralized = TimeBaseConvertHelper.FromUnixDoubleHours(value);          
         }
 
-        [ObservableProperty]
+        [ObservableProperty, JsonIgnore]
         TimeSpan? printTimeGeneralized;
         #endregion
 

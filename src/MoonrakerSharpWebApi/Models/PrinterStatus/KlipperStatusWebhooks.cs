@@ -2,14 +2,16 @@
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperStatusWebhooks
+    public partial class KlipperStatusWebhooks : ObservableObject
     {
         #region Properties
-        [JsonProperty("state")]
-        public string State { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("state")]
+        string state = string.Empty;
 
-        [JsonProperty("state_message")]
-        public string StateMessage { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("state_message")]
+        string stateMessage = string.Empty;
         #endregion
 
         #region Overrides

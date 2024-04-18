@@ -4,80 +4,26 @@ using System;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public class KlipperGcodeCommandInfo : BaseModel
+    public partial class KlipperGcodeCommandInfo : ObservableObject
     {
-        #region Id
-        [JsonProperty(nameof(Id))]
-        Guid _id;
-        [JsonIgnore]
-        public Guid Id
-        {
-            get => _id;
-            set
-            {
-                if (_id == value) return;
-                _id = value;
-                OnPropertyChanged();
-            }
-        }
-        #endregion
-
         #region Properties
-        [JsonProperty(nameof(Command))]
-        string _command = string.Empty;
-        [JsonIgnore]
-        public string Command
-        {
-            get => _command;
-            set
-            {
-                if (_command == value) return;
-                _command = value;
-                OnPropertyChanged();
-            }
-        }
 
-        [JsonProperty(nameof(Sent))]
-        bool _sent = false;
-        [JsonIgnore]
-        public bool Sent
-        {
-            get => _sent;
-            set
-            {
-                if (_sent == value) return;
-                _sent = value;
-                OnPropertyChanged();
-            }
-        }
+        [ObservableProperty]
+        Guid id;
 
-        [JsonProperty(nameof(Succeeded))]
-        bool _succeeded = false;
-        [JsonIgnore]
-        public bool Succeeded
-        {
-            get => _succeeded;
-            set
-            {
-                if (_succeeded == value) return;
-                _succeeded = value;
-                OnPropertyChanged();
-            }
-        }
+        [ObservableProperty]
+        string command = string.Empty;
 
-        [JsonProperty(nameof(TimeStamp))]
-        DateTime _timeStamp = DateTime.Now;
+        [ObservableProperty]
+        bool sent = false;
         [JsonIgnore]
-        public DateTime TimeStamp
-        {
-            get => _timeStamp;
-            set
-            {
-                if (_timeStamp == value) return;
-                _timeStamp = value;
-                OnPropertyChanged();
-            }
-        }
+
+        [ObservableProperty]
+        bool succeeded = false;
+
+        [ObservableProperty]
+        DateTime timeStamp = DateTime.Now;
+
         #endregion
 
         #region Overrides

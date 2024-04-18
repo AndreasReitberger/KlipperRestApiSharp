@@ -4,17 +4,21 @@ using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public class KlipperDatabaseTemperaturePreset
+    public partial class KlipperDatabaseTemperaturePreset : ObservableObject
     {
         #region Properties
-        public Guid Id { get; set; } = Guid.Empty;
+        [ObservableProperty]
+        Guid id = Guid.Empty;
 
-        public string Name { get; set; } = string.Empty;
+        [ObservableProperty]
+        string name = string.Empty;
 
-        public string Gcode { get; set; } = string.Empty;
+        [ObservableProperty]
+        string gcode = string.Empty;
 
-        public Dictionary<string, KlipperDatabaseTemperaturePresetHeater> Values { get; set; } = [];
-        //public List<KlipperDatabaseTemperaturePresetHeater> Values { get; set; } = new();
+        [ObservableProperty]
+        Dictionary<string, KlipperDatabaseTemperaturePresetHeater> values = [];
+        //public List<KlipperDatabaseTemperaturePresetHeater> Values  = new();
         #endregion
 
         #region Overrides

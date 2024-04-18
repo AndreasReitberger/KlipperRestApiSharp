@@ -3,24 +3,29 @@ using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Moonraker.Models.WebSocket
 {
-    public partial class KlipperWebSocketNotifyProcStatUpdateRespone
+    public partial class KlipperWebSocketNotifyProcStatUpdateRespone : ObservableObject
     {
         #region Properties
 
-        [JsonProperty("moonraker_stats", Required = Required.Always)]
-        public MoonrakerStatInfo? MoonrakerStats { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("moonraker_stats")]
+        MoonrakerStatInfo? moonrakerStats;
 
-        [JsonProperty("throttled_state")]
-        public MoonrakerThrottledState? ThrottledState { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("throttled_state")]
+        MoonrakerThrottledState? throttledState;
 
-        [JsonProperty("cpu_temp", Required = Required.Always)]
-        public double CpuTemp { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("cpu_temp")]
+        double cpuTemp;
 
-        [JsonProperty("network", Required = Required.Always)]
-        public Dictionary<string, KlipperNetworkInterface> Network { get; set; } = [];
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("network")]
+        Dictionary<string, KlipperNetworkInterface> network = [];
 
-        [JsonProperty("websocket_connections", Required = Required.Always)]
-        public long WebsocketConnections { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("websocket_connections")]
+        long websocketConnections;
         #endregion
 
         #region Overrides

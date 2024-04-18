@@ -2,32 +2,40 @@
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperServerConfig
+    public partial class KlipperServerConfig : ObservableObject
     {
         #region Properties
-        [JsonProperty("server")]
-        public KlipperServer? Server { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("server")]
+        KlipperServer? server;
 
-        [JsonProperty("authorization")]
-        public KlipperAuthorization? Authorization { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("authorization")]
+        KlipperAuthorization? authorization;
 
-        [JsonProperty("octoprint_compat")]
-        public object? OctoprintCompat { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("octoprint_compat")]
+        object? octoprintCompat;
 
-        [JsonProperty("history")]
-        public object? History { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("history")]
+        object? history;
 
-        [JsonProperty("update_manager")]
-        public KlipperUpdateManager? UpdateManager { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("update_manager")]
+        KlipperUpdateManager? updateManager;
 
-        [JsonProperty("update_manager moonraker")]
-        public KlipperUpdateManagerKlipperClass? UpdateManagerMoonraker { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("update_manager moonraker")]
+        KlipperUpdateManagerKlipperClass? updateManagerMoonraker;
 
-        [JsonProperty("update_manager klipper")]
-        public KlipperUpdateManagerKlipperClass? UpdateManagerKlipper { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("update_manager klipper")]
+        KlipperUpdateManagerKlipperClass? updateManagerKlipper;
 
-        [JsonProperty("update_manager mainsail")]
-        public KlipperUpdateManagerMainsail? UpdateManagerMainsail { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("update_manager mainsail")]
+        KlipperUpdateManagerMainsail? updateManagerMainsail;
         #endregion
 
         #region Overrides

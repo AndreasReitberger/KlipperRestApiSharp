@@ -3,71 +3,92 @@ using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperPrinterStatus
+    public partial class KlipperPrinterStatus : ObservableObject
     {
         #region Properties
-        [JsonProperty("virtual_sdcard")]
-        public KlipperStatusVirtualSdcard? VirtualSdcard { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("virtual_sdcard")]
+        KlipperStatusVirtualSdcard? virtualSdcard;
 
-        [JsonProperty("heaters")]
-        public KlipperStatusHeaters? Heaters { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("heaters")]
+        KlipperStatusHeaters? heaters;
 
-        [JsonProperty("pause_resume")]
-        public KlipperStatusPauseResume? PauseResume { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("pause_resume")]
+        KlipperStatusPauseResume? pauseResume;
 
-        [JsonProperty("display_status")]
-        public KlipperStatusDisplay? DisplayStatus { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("display_status")]
+        KlipperStatusDisplay? displayStatus;
 
-        [JsonProperty("idle_timeout")]
-        public KlipperStatusIdleTimeout? IdleTimeout { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("idle_timeout")]
+        KlipperStatusIdleTimeout? idleTimeout;
 
-        [JsonProperty("system_stats")]
-        public KlipperStatusSystemStats? SystemStats { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("system_stats")]
+        KlipperStatusSystemStats? systemStats;
 
-        [JsonProperty("print_stats")]
-        public KlipperStatusPrintStats? PrintStats { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("print_stats")]
+        KlipperStatusPrintStats? printStats;
 
-        [JsonProperty("query_endstops")]
-        public KlipperStatusQueryEndstops? QueryEndstops { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("query_endstops")]
+        KlipperStatusQueryEndstops? queryEndstops;
 
-        [JsonProperty("fan")]
-        public KlipperStatusFan? Fan { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("fan")]
+        KlipperStatusFan? fan;
 
-        [JsonProperty("motion_report")]
-        public KlipperStatusMotionReport? MotionReport { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("motion_report")]
+        KlipperStatusMotionReport? motionReport;
 
-        [JsonProperty("configfile")]
-        public KlipperStatusConfigfile? Configfile { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("configfile")]
+        KlipperStatusConfigfile? configfile;
 
-        [JsonProperty("menu")]
-        public KlipperStatusMenu? Menu { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("menu")]
+        KlipperStatusMenu? menu;
 
-        [JsonProperty("mcu")]
-        public KlipperStatusMcu? Mcu { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("mcu")]
+        KlipperStatusMcu? mcu;
 
-        [JsonProperty("webhooks")]
-        public KlipperStatusWebhooks? Webhooks { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("webhooks")]
+        KlipperStatusWebhooks? webhooks;
 
-        [JsonProperty("gcode_move")]
-        public KlipperStatusGcodeMove? GcodeMove { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("gcode_move")]
+        KlipperStatusGcodeMove? gcodeMove;
 
-        [JsonProperty("toolhead")]
-        public KlipperStatusToolhead? Toolhead { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("toolhead")]
+        KlipperStatusToolhead? toolhead;
 
-        [JsonProperty("extruder")]
-        public KlipperStatusExtruder? Extruder { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("extruder")]
+        KlipperStatusExtruder? extruder;
 
-        [JsonProperty("extruder1")]
-        public KlipperStatusExtruder? Extruder1 { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("extruder1")]
+        KlipperStatusExtruder? extruder1;
 
-        [JsonProperty("extruder2")]
-        public KlipperStatusExtruder? Extruder2 { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("extruder2")]
+        KlipperStatusExtruder? extruder2;
 
-        [JsonProperty("extruder3")]
-        public KlipperStatusExtruder? Extruder3 { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("extruder3")]
+        KlipperStatusExtruder? extruder3;
 
-        [JsonProperty("heater_bed")]
-        public KlipperStatusHeaterBed? HeaterBed { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("heater_bed")]
+        KlipperStatusHeaterBed? heaterBed;
         #endregion 
 
         #region Overrides

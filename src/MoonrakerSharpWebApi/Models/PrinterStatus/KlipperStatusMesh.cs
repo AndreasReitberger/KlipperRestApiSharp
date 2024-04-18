@@ -3,23 +3,29 @@ using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperStatusMesh
+    public partial class KlipperStatusMesh : ObservableObject
     {
         #region Properties
-        [JsonProperty("mesh_max")]
-        public List<double> MeshMax { get; set; } = [];
 
-        [JsonProperty("mesh_matrix")]
-        public List<List<double>> MeshMatrix { get; set; } = [];
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("mesh_max")]
+        List<double> meshMax = [];
 
-        [JsonProperty("profile_name")]
-        public string ProfileName { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("mesh_matrix")]
+        List<List<double>> meshMatrix = [];
 
-        [JsonProperty("mesh_min")]
-        public List<double> MeshMin { get; set; } = [];
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("profile_name")]
+        string profileName = string.Empty;
 
-        [JsonProperty("probed_matrix")]
-        public List<List<double>> ProbedMatrix { get; set; } = [];
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("mesh_min")]
+        List<double> meshMin = [];
+
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("probed_matrix")]
+        List<List<double>> probedMatrix = [];
         #endregion
 
         #region Overrides

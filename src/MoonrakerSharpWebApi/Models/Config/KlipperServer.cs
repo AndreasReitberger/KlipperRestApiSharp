@@ -2,65 +2,84 @@
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperServer
+    public partial class KlipperServer : ObservableObject
     {
         #region Properties
-        [JsonProperty("host")]
-        public string Host { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("host")]
+        string host = string.Empty;
 
-        [JsonProperty("port")]
-        public long Port { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("port")]
+        long port;
 
-        [JsonProperty("ssl_port")]
-        public long SslPort { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("ssl_port")]
+        long sslPort;
 
-        [JsonProperty("klippy_uds_address")]
-        public string KlippyUdsAddress { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("klippy_uds_address")]
+        string klippyUdsAddress = string.Empty;
 
-        [JsonProperty("max_upload_size")]
-        public long MaxUploadSize { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("max_upload_size")]
+        long maxUploadSize;
 
-        [JsonProperty("ssl_certificate_path")]
-        public object? SslCertificatePath { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("ssl_certificate_path")]
+        object? sslCertificatePath;
 
-        [JsonProperty("ssl_key_path")]
-        public object? SslKeyPath { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("ssl_key_path")]
+        object? sslKeyPath;
 
-        [JsonProperty("enable_debug_logging")]
-        public bool EnableDebugLogging { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("enable_debug_logging")]
+        bool enableDebugLogging;
 
-        [JsonProperty("enable_database_debug")]
-        public bool EnableDatabaseDebug { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("enable_database_debug")]
+        bool enableDatabaseDebug;
 
-        [JsonProperty("database_path")]
-        public string DatabasePath { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("database_path")]
+        string databasePath = string.Empty;
 
-        [JsonProperty("queue_gcode_uploads")]
-        public bool QueueGcodeUploads { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("queue_gcode_uploads")]
+        bool queueGcodeUploads;
 
-        [JsonProperty("config_path")]
-        public string ConfigPath { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("config_path")]
+        string configPath = string.Empty;
 
-        [JsonProperty("log_path")]
-        public string LogPath { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("log_path")]
+        string logPath = string.Empty;
 
-        [JsonProperty("temperature_store_size")]
-        public long TemperatureStoreSize { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("temperature_store_size")]
+        long temperatureStoreSize;
 
-        [JsonProperty("gcode_store_size")]
-        public long GcodeStoreSize { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("gcode_store_size")]
+        long gcodeStoreSize;
 
-        [JsonProperty("load_on_startup")]
-        public bool LoadOnStartup { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("load_on_startup")]
+        bool loadOnStartup;
 
-        [JsonProperty("automatic_transition")]
-        public bool AutomaticTransition { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("automatic_transition")]
+        bool automaticTransition;
 
-        [JsonProperty("job_transition_delay")]
-        public double JobTransitionDelay { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("job_transition_delay")]
+        double jobTransitionDelay;
 
-        [JsonProperty("job_transition_gcode")]
-        public string JobTransitionGcode { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("job_transition_gcode")]
+        string jobTransitionGcode = string.Empty;
         #endregion
 
         #region Overrides

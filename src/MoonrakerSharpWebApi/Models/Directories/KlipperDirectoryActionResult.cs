@@ -2,17 +2,20 @@
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
-    public partial class KlipperDirectoryActionResult
+    public partial class KlipperDirectoryActionResult : ObservableObject
     {
         #region Properties
-        [JsonProperty("item")]
-        public KlipperDirectory? Item { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("item")]
+        public KlipperDirectory? item;
 
-        [JsonProperty("source_item")]
-        public KlipperDirectory? SourceItem { get; set; }
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("source_item")]
+        public KlipperDirectory? sourceItem;
 
-        [JsonProperty("action")]
-        public string Action { get; set; } = string.Empty;
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("action")]
+        public string action = string.Empty;
         #endregion
 
         #region Overrides
