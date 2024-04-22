@@ -620,7 +620,7 @@ namespace AndreasReitberger.API.Moonraker
                 };
 
                 result = await SendMultipartFormDataFileRestApiRequestAsync(
-                    fileName: info.Name, file: null, localFilePath: localFilePath, rquestTargetUri: targetFilePath, 
+                    fileName: info.Name, file: null, localFilePath: localFilePath, requestTargetUri: targetFilePath, 
                     parameters: parameters,
                     authHeaders: AuthHeaders, timeout: timeout
                     )
@@ -660,7 +660,7 @@ namespace AndreasReitberger.API.Moonraker
                     { "path", "" }
                 };
                 result = await SendMultipartFormDataFileRestApiRequestAsync(
-                    fileName: fileName, file: file, rquestTargetUri: targetFilePath, authHeaders: AuthHeaders, timeout: timeout, parameters: parameters)
+                    fileName: fileName, file: file, requestTargetUri: targetFilePath, authHeaders: AuthHeaders, timeout: timeout, parameters: parameters)
                     .ConfigureAwait(false);
                 KlipperFileActionResult? queryResult = GetObjectFromJson<KlipperFileActionResult>(result?.Result, NewtonsoftJsonSerializerSettings);
                 return queryResult;
