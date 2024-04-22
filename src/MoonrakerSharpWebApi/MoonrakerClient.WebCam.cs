@@ -6,7 +6,6 @@ using AndreasReitberger.API.Print3dServer.Core.Interfaces;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -14,22 +13,6 @@ namespace AndreasReitberger.API.Moonraker
 {
     public partial class MoonrakerClient
     {
-
-        #region Properties
-
-        /*
-        [ObservableProperty, Obsolete("Replaced by the base collection WebCams")]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        List<KlipperDatabaseWebcamConfig> webCamConfigs = new();
-        partial void OnWebCamConfigsChanged(List<KlipperDatabaseWebcamConfig> value)
-        {
-            OnKlipperWebCamConfigChanged(new KlipperWebCamConfigChangedEventArgs()
-            {
-                NewConfig = value,
-            });
-        }
-        */
-        #endregion
 
         #region Methods
 
