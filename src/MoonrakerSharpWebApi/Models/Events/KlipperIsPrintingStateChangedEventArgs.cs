@@ -1,8 +1,10 @@
 ﻿using AndreasReitberger.API.Print3dServer.Core.Events;
 using Newtonsoft.Json;
+using System;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
+    [Obsolete("Use IsPrintingStateChangedEventArgs instead")]
     public class KlipperIsPrintingStateChangedEventArgs : Print3dBaseEventArgs
     {
         #region Properties

@@ -1,14 +1,16 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.Generic;
+using System;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
+    [Obsolete("Seems to be unused")]
     public partial class KlipperWebSocketKlipperStatusResult : ObservableObject
     {
         #region Properties
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("klippy_connected")]
-        bool klippyConnected;
+        bool? klippyConnected;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("klippy_state")]

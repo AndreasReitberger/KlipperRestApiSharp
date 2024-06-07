@@ -96,6 +96,7 @@ namespace AndreasReitberger.API.Moonraker
             KlipperPrintStateChanged?.Invoke(this, e);
         }
 
+        [Obsolete("Use IsPrintingStateChanged instead")]
         public event EventHandler<KlipperIsPrintingStateChangedEventArgs>? KlipperIsPrintingStateChanged;
         protected virtual void OnKlipperIsPrintingStateChanged(KlipperIsPrintingStateChangedEventArgs e)
         {

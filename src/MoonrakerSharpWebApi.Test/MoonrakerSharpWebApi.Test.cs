@@ -6,7 +6,6 @@ using AndreasReitberger.API.Print3dServer.Core.Interfaces;
 using AndreasReitberger.Core.Utilities;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Reflection;
 using System.Text;
@@ -312,6 +311,7 @@ namespace MoonrakerSharpWebApi.Test
                     Assert.That(_server.IdleState is not null);
                     Assert.That(_server.DisplayStatus is not null);
                     Assert.That(_server.GcodeMove is not null);
+                    Assert.That(_server.GcodeMeta is not null);
                     Assert.That(_server.VirtualSdCard is not null);
 
                     Assert.That(_server.HeatedBeds?.Count > 0);
@@ -330,6 +330,10 @@ namespace MoonrakerSharpWebApi.Test
                     Assert.That(_server.Fans is not null);
                     Assert.That(_server.Fans?.Count > 0);
                     Assert.That(_server.ActiveFan?.Speed > 0);
+                    if (_server.IsPrinting)
+                    {
+                        //Assert.That(_server.ActiveJob is not null);
+                    }
                 }
                 else
                     Assert.Fail($"Server {_server.FullWebAddress} is offline.");
@@ -1736,6 +1740,13 @@ namespace MoonrakerSharpWebApi.Test
                     await Task.Delay(10000);
                     await _server.CheckOnlineAsync();
                     Debug.WriteLine($"Online: {_server.IsOnline}");
+                    if (_server.IsPrinting)
+                    {
+                        if(_server.ActiveJob is not null)
+                        {
+
+                        }
+                    }
                 } while (_server.IsOnline && !cts.IsCancellationRequested);
                 await _server.StopListeningAsync();
 

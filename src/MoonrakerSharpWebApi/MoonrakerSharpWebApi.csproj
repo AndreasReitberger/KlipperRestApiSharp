@@ -21,7 +21,7 @@
     <PackageReference Update="Microsoft.SourceLink.GitHub" Version="8.0.0" />
 	<PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="Print3dServer.Core" Version="1.0.0-preview" />
+    <!--<PackageReference Include="Print3dServer.Core" Version="1.0.0-preview" />-->
     <PackageReference Include="RCoreSharp" Version="1.0.9" />
     <PackageReference Include="RestSharp" Version="111.2.0" />
     <PackageReference Include="System.Net.Http" Version="4.3.4" />

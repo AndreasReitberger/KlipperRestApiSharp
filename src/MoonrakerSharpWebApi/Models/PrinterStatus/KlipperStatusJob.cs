@@ -121,6 +121,9 @@ namespace AndreasReitberger.API.Moonraker.Models
         [property: JsonProperty("exists")]
         bool fileExists;
 
+        [ObservableProperty, JsonIgnore]
+        double? remainingPrintTime;
+
         #endregion
 
         #region Overrides
