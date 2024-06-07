@@ -15,6 +15,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <DefineConstants>$(DefineConstants);ConcurrentDictionary</DefineConstants>
+    <UserSecretsId>eb8c2cd6-0985-465b-b814-46f37a615f63</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
