@@ -356,6 +356,12 @@ namespace AndreasReitberger.API.Moonraker
             }
         }
 
+        public override async Task<List<IGcodeGroup>> GetModelGroupsAsync(string path = "")
+        {
+            List<KlipperDirectory> directories = await GetAvailableDirectoriesAsync(path);
+            return [.. directories];
+        }
+
         public async Task<List<KlipperDirectory>> GetAvailableDirectoriesAsync(string path = "")
         {
             List<KlipperDirectory> resultObject = [];
