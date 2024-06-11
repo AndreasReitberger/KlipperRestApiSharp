@@ -32,7 +32,7 @@ namespace AndreasReitberger.API.Moonraker
         readonly bool _enableCooldown = true;
         readonly int _cooldownFallback = 4;
 
-        int _cooldownExtruder = 4;
+        //int _cooldownExtruder = 4;
         int _cooldownTemperatureSensor = 4;
         int _cooldownCpuUsage = 4;
         int _cooldownSystemMemory = 4;
