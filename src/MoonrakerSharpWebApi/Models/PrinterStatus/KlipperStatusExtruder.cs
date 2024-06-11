@@ -87,7 +87,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         public bool CanUpdateTarget = false;
 
         [JsonIgnore]
-        public KlipperToolState State { get => GetCurrentState(); }
+        public Printer3dToolHeadState State { get => GetCurrentState(); }
 
         [ObservableProperty, JsonIgnore]
         Printer3dHeaterType type = Printer3dHeaterType.Other;
@@ -114,19 +114,19 @@ namespace AndreasReitberger.API.Moonraker.Models
         #endregion
 
         #region Methods
-        KlipperToolState GetCurrentState()
+        public Printer3dToolHeadState GetCurrentState()
         {
             try
             {
                 if (TempSet == null || TempRead == null)
-                    return KlipperToolState.Idle;
+                    return Printer3dToolHeadState.Idle;
                 return TempSet <= 0
-                    ? KlipperToolState.Idle
-                    : TempSet > TempRead && Math.Abs(Convert.ToDouble(TempSet - TempRead)) > 2 ? KlipperToolState.Heating : KlipperToolState.Ready;
+                    ? Printer3dToolHeadState.Idle
+                    : TempSet > TempRead && Math.Abs(Convert.ToDouble(TempSet - TempRead)) > 2 ? Printer3dToolHeadState.Heating : Printer3dToolHeadState.Ready;
             }
             catch (Exception)
             {
-                return KlipperToolState.Error;
+                return Printer3dToolHeadState.Error;
             }
 
         }

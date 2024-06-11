@@ -1,8 +1,10 @@
 ﻿using AndreasReitberger.API.Print3dServer.Core.Events;
 using Newtonsoft.Json;
+using System;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
+    [Obsolete("Use WebsocketEventArgs instead")]
     public class KlipperWebSocketDataEventArgs : Print3dBaseEventArgs
     {
         #region Properties
