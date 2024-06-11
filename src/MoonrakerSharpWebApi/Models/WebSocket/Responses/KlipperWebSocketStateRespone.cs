@@ -8,7 +8,7 @@ namespace AndreasReitberger.API.Moonraker.Models.WebSocket
         #region Properties
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("klippy_connected")]
-        bool klippyConnected;
+        bool? klippyConnected;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("klippy_state")]

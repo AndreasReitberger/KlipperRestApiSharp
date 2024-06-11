@@ -54,16 +54,10 @@ namespace AndreasReitberger.API.Moonraker.Models
         [ObservableProperty, JsonIgnore]
         [property: JsonIgnore]
         TimeSpan? printDurationGeneralized;
-        /*
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("status")]
-        [JsonConverter(typeof(StringEnumConverter), true)]
-        KlipperJobStates status;
-        partial void OnStatusChanged(KlipperJobStates value)
+        partial void OnPrintDurationGeneralizedChanged(TimeSpan? value)
         {
-            State = (int)value;
+            Done = CalculateProgress(totalPrintDuration: TotalPrintDurationGeneralized, currentPrintDuration: value);
         }
-        */
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("status")]
@@ -88,6 +82,17 @@ namespace AndreasReitberger.API.Moonraker.Models
         [ObservableProperty, JsonIgnore]
         [property: JsonIgnore]
         double? done;
+        partial void OnDoneChanged(double? value)
+        {
+            if (value is not null)
+                DonePercentage = value / 100;
+            else
+                DonePercentage = 0;
+        }
+
+        [ObservableProperty, JsonIgnore]
+        [property: JsonIgnore]
+        double? donePercentage;
 
         [ObservableProperty, JsonIgnore]
         [NotifyPropertyChangedFor(nameof(Done))]
@@ -103,6 +108,10 @@ namespace AndreasReitberger.API.Moonraker.Models
         [ObservableProperty, JsonIgnore]
         [property: JsonIgnore]
         TimeSpan? totalPrintDurationGeneralized;
+        partial void OnTotalPrintDurationGeneralizedChanged(TimeSpan? value)
+        {
+            Done = CalculateProgress(totalPrintDuration: value, currentPrintDuration: PrintDurationGeneralized);
+        }
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("job_id")]
@@ -112,10 +121,38 @@ namespace AndreasReitberger.API.Moonraker.Models
         [property: JsonProperty("exists")]
         bool fileExists;
 
+        [ObservableProperty, JsonIgnore]
+        double? remainingPrintTime;
+
         #endregion
 
         #region Overrides
         public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
+
+        #endregion
+
+        #region Methods
+
+        double? CalculateProgress(DateTime? startTime, DateTime? endTime, TimeSpan? currentPrintDuration)
+        {
+            TimeSpan? overallDuration = endTime - startTime;
+            if (overallDuration?.Ticks > 0 && currentPrintDuration?.Ticks > 0)
+            {
+                double? progressDone = currentPrintDuration?.Ticks / (overallDuration?.Ticks / 100d);
+                return progressDone;
+            }
+            else return 0d;
+        }
+
+        double? CalculateProgress(TimeSpan? totalPrintDuration, TimeSpan? currentPrintDuration)
+        {
+            if (totalPrintDuration?.Ticks > 0 && currentPrintDuration?.Ticks > 0)
+            {
+                double? progressDone = currentPrintDuration?.Ticks / (totalPrintDuration?.Ticks / 100d);
+                return progressDone;
+            }
+            else return 0d;
+        }
 
         #endregion
 

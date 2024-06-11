@@ -364,6 +364,7 @@ namespace AndreasReitberger.API.Moonraker
             */
         }
 
+        /*
         [ObservableProperty]
         [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
         bool isPrinting = false;
@@ -392,6 +393,7 @@ namespace AndreasReitberger.API.Moonraker
                 CallbackId = -1,
             });
         }
+        */
 
         [ObservableProperty]
         [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
@@ -435,6 +437,14 @@ namespace AndreasReitberger.API.Moonraker
             {
                 IsPrinting = value?.State == KlipperPrintStates.Printing;
                 ActiveJobName = value?.Filename ?? string.Empty;
+                ActiveJob = new KlipperStatusJob()
+                {
+                    FileName = ActiveJobName,
+                    PrintDuration = value?.PrintDuration,
+                    TotalPrintDuration = GcodeMeta?.EstimatedTime,
+                    RemainingPrintTime = Convert.ToDouble(TotalPrintTime - value?.PrintDuration ?? 0),
+                    Done = Math.Round(MathHelper.Clamp((Convert.ToDouble(value?.PrintDuration ?? 0)) / (TotalPrintTime / 100), 0, 100), 2),
+                };
 
                 // Update progress
                 PrintTime = value?.PrintDuration ?? 0;
