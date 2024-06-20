@@ -1535,13 +1535,13 @@ namespace AndreasReitberger.API.Moonraker
             try
             {
                 //string gcode = $"G1 X+10 F{Speed}";
-                var axes = new[] { x, y, z };
+                double[] axes = [x, y, z];
                 StringBuilder gcodeCommand = new();
-                var anyAxesMoves = axes.Any(a => a != double.PositiveInfinity);
+                bool anyAxesMoves = axes.Any(a => a != double.PositiveInfinity);
                 if (anyAxesMoves) gcodeCommand.Append($"G1 F{speed}");
-                if (x != double.PositiveInfinity) gcodeCommand.Append($" X{(relative ? "" : "+")}{x}");
-                if (y != double.PositiveInfinity) gcodeCommand.Append($" Y{(relative ? "" : "+")}{y}");
-                if (z != double.PositiveInfinity) gcodeCommand.Append($" Z{(relative ? "" : "+")}{z}");
+                if (x != double.PositiveInfinity) gcodeCommand.Append($" X{(relative ? "+" : string.Empty)}{x}");
+                if (y != double.PositiveInfinity) gcodeCommand.Append($" Y{(relative ? "+" : string.Empty)}{y}");
+                if (z != double.PositiveInfinity) gcodeCommand.Append($" Z{(relative ? "+" : string.Empty)}{z}");
                 if (anyAxesMoves) gcodeCommand.Append("\n"); // add new line to end command string
                 if (e != double.PositiveInfinity) gcodeCommand.Append($"M83\nG1 E{e} F{speed};");
 
