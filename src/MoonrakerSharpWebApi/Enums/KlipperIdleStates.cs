@@ -11,6 +11,6 @@ namespace AndreasReitberger.API.Moonraker.Enum
         [EnumMember(Value = "Printing")]
         Printing = 2,
         [EnumMember(Value = "Shutdown")]
-        Shutdown = 2,
+        Shutdown = 3,
     }
 }

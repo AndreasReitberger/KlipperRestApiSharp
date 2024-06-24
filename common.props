@@ -9,7 +9,7 @@
         <PackageReleaseNotes>Check GitHub releases for changelog.</PackageReleaseNotes>
         <Authors>Andreas Reitberger</Authors>
         <Copyright>Andreas Reitberger</Copyright>
-        <LangVersion>12</LangVersion>
+		<LangVersion>preview</LangVersion>
         <PublishReadyToRun>false</PublishReadyToRun>
 		<Nullable>enable</Nullable>
 
