@@ -24,9 +24,9 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Print3dServer.Core" Version="1.0.2-preview2" />
     <PackageReference Include="RCoreSharp" Version="1.0.9" />
-    <PackageReference Include="RestSharp" Version="111.2.0" />
+    <PackageReference Include="RestSharp" Version="111.4.0" />
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
-    <PackageReference Include="System.Text.Json" Version="8.0.3" />
+    <PackageReference Include="System.Text.Json" Version="8.0.4" />
     <None Include="..\..\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 </Project>
