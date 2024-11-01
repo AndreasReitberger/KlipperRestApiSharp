@@ -8,6 +8,13 @@ namespace AndreasReitberger.API.Moonraker
     public partial class MoonrakerClient
     {
         #region Auth
+        /*
+        [ObservableProperty]
+        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        new string apiKey = string.Empty;
+        partial void OnApiKeyChanged(string value) => AddOrUpdateAuthHeader("usertoken", value);
+        */
+        
 
         [ObservableProperty]
         [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]

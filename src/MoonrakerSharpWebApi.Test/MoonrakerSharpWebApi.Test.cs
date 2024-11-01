@@ -49,6 +49,66 @@ namespace MoonrakerSharpWebApi.Test
         }
 
         [Test]
+        public async Task BuildWitOneShotTokenAsync()
+        {
+            try
+            {
+                var client = new MoonrakerClient.MoonrakerConnectionBuilder()
+                    .WithName("Test")
+                    .WithServerAddress(_host, _port, _ssl)
+                    .Build();
+                KlipperAccessTokenResult? token = await client.GetOneshotTokenAsync();
+
+                client.OneShotToken = token?.Result ?? string.Empty;
+                Assert.That(!string.IsNullOrEmpty(client.OneShotToken));
+
+                KlipperMachineInfo? info = await client.GetMachineSystemInfoAsync();
+                Assert.That(info is not null);
+            }
+            catch (Exception ex)
+            {
+                Assert.Fail(ex.Message);
+            }
+        }
+
+        [Test]
+        public async Task BuildWitUserTokenAsync()
+        {
+            try
+            {
+                var client = new MoonrakerClient.MoonrakerConnectionBuilder()
+                    .WithName("Test")
+                    .WithServerAddress(_host, _port, _ssl)
+                    .Build();
+                string? apiKey = await client.LoginUserForApiKeyAsync("user", "pwd");
+
+                /*
+                 * Set by the LoginUserAsync() method
+                 * UserToken = queryResult?.Result?.Token ?? string.Empty;
+                 * RefreshToken = queryResult?.Result?.RefreshToken ?? string.Empty;
+                 */
+                Assert.That(!string.IsNullOrEmpty(client.UserToken));
+                Assert.That(!string.IsNullOrEmpty(client.RefreshToken));
+
+                // This should be enough to authenticate.
+                KlipperMachineInfo? info = await client.GetMachineSystemInfoAsync();
+                Assert.That(info is not null);
+
+                client.AuthHeaders.Clear();
+                // Also try with the api key to verify
+                client.ApiKey = apiKey ?? string.Empty;
+                Assert.That(!string.IsNullOrEmpty(client.ApiKey));
+
+                info = await client.GetMachineSystemInfoAsync();
+                Assert.That(info is not null);
+            }
+            catch (Exception ex)
+            {
+                Assert.Fail(ex.Message);
+            }
+        }
+
+        [Test]
         public void SerializeJsonTest()
         {
             var dir = @"TestResults\Serialization\";

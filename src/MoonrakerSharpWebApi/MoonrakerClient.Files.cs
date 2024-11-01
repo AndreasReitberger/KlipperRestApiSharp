@@ -35,7 +35,7 @@ namespace AndreasReitberger.API.Moonraker
 
         [ObservableProperty]
         [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        ObservableCollection<KlipperDirectory> availableDirectories = new();
+        ObservableCollection<KlipperDirectory> availableDirectories = [];
         partial void OnAvailableDirectoriesChanged(ObservableCollection<KlipperDirectory> value)
         {
             /*
