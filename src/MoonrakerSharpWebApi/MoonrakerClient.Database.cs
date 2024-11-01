@@ -35,7 +35,6 @@ namespace AndreasReitberger.API.Moonraker
                        command: "database/list",
                        jsonObject: null,
                        authHeaders: AuthHeaders,
-                       //urlSegments: urlSegments,
                        cts: default
                        )
                     .ConfigureAwait(false);
@@ -105,7 +104,6 @@ namespace AndreasReitberger.API.Moonraker
                     // If namespace is missing, just return an empty resultObject now
                     else return resultObject;
                 }
-
                 Dictionary<string, string> urlSegments = new()
                 {
                     { "namespace", namespaceName }
