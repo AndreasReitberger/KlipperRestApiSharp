@@ -86,8 +86,6 @@ namespace AndreasReitberger.API.Moonraker
             KlipperPrinterStateMessageResult? resultObject = null;
             try
             {
-                //object cmd = new { name = ScriptName };
-
                 string targetUri = $"{MoonrakerCommands.Printer}";
                 result = await SendRestApiRequestAsync(
                        requestTargetUri: targetUri,
@@ -95,7 +93,6 @@ namespace AndreasReitberger.API.Moonraker
                        command: "info",
                        jsonObject: null,
                        authHeaders: AuthHeaders,
-                       //urlSegments: urlSegements,
                        cts: default
                        )
                     .ConfigureAwait(false);
@@ -128,8 +125,6 @@ namespace AndreasReitberger.API.Moonraker
         {
             try
             {
-                //object cmd = new { name = ScriptName };
-
                 string targetUri = $"{MoonrakerCommands.Printer}";
                 IRestApiRequestRespone? result = await SendRestApiRequestAsync(
                        requestTargetUri: targetUri,
@@ -137,7 +132,6 @@ namespace AndreasReitberger.API.Moonraker
                        command: "emergency_stop",
                        jsonObject: null,
                        authHeaders: AuthHeaders,
-                       //urlSegments: urlSegements,
                        cts: default
                        )
                     .ConfigureAwait(false);
@@ -159,7 +153,6 @@ namespace AndreasReitberger.API.Moonraker
         {
             try
             {
-                //object cmd = new { name = ScriptName };
                 string targetUri = $"{MoonrakerCommands.Printer}";
                 IRestApiRequestRespone? result = await SendRestApiRequestAsync(
                        requestTargetUri: targetUri,
@@ -167,7 +160,6 @@ namespace AndreasReitberger.API.Moonraker
                        command: "restart",
                        jsonObject: null,
                        authHeaders: AuthHeaders,
-                       //urlSegments: urlSegements,
                        cts: default
                        )
                     .ConfigureAwait(false);
@@ -189,7 +181,6 @@ namespace AndreasReitberger.API.Moonraker
         {
             try
             {
-                //object cmd = new { name = ScriptName };
                 string targetUri = $"{MoonrakerCommands.Printer}";
                 IRestApiRequestRespone? result = await SendRestApiRequestAsync(
                        requestTargetUri: targetUri,
@@ -197,7 +188,6 @@ namespace AndreasReitberger.API.Moonraker
                        command: "firmware_restart",
                        jsonObject: null,
                        authHeaders: AuthHeaders,
-                       //urlSegments: urlSegements,
                        cts: default
                        )
                     .ConfigureAwait(false);
@@ -319,7 +309,6 @@ namespace AndreasReitberger.API.Moonraker
             List<string> resultObject = [];
             try
             {
-                //object cmd = new { name = ScriptName };
                 string targetUri = $"{MoonrakerCommands.Printer}";
                 result = await SendRestApiRequestAsync(
                        requestTargetUri: targetUri,
@@ -327,7 +316,6 @@ namespace AndreasReitberger.API.Moonraker
                        command: "objects/list",
                        jsonObject: null,
                        authHeaders: AuthHeaders,
-                       //urlSegments: urlSegements,
                        cts: default
                        )
                     .ConfigureAwait(false);
@@ -1268,7 +1256,6 @@ namespace AndreasReitberger.API.Moonraker
                        command: "query_endstops/status",
                        jsonObject: null,
                        authHeaders: AuthHeaders,
-                       //urlSegments: urlSegements,
                        cts: default
                        )
                     .ConfigureAwait(false);
