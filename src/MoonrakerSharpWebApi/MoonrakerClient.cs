@@ -8,15 +8,12 @@ using AndreasReitberger.API.Print3dServer.Core.Events;
 using AndreasReitberger.API.Print3dServer.Core.Interfaces;
 using AndreasReitberger.Core.Utilities;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Net.Http;
 using System.Security;
-using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -961,7 +958,6 @@ namespace AndreasReitberger.API.Moonraker
             KlipperAccessTokenResult? resultObject = null;
             try
             {
-                //object cmd = new { name = ScriptName };
                 string targetUri = $"{MoonrakerCommands.Access}";
                 result = await SendRestApiRequestAsync(
                        requestTargetUri: targetUri,
@@ -969,7 +965,6 @@ namespace AndreasReitberger.API.Moonraker
                        command: "oneshot_token",
                        jsonObject: null,
                        authHeaders: AuthHeaders,
-                       //urlSegments: urlSegements,
                        cts: default
                        )
                     .ConfigureAwait(false);
@@ -1827,7 +1822,6 @@ namespace AndreasReitberger.API.Moonraker
                        command: "login",
                        jsonObject: cmd,
                        authHeaders: AuthHeaders,
-                       //urlSegments: urlSegments,
                        cts: default
                        )
                     .ConfigureAwait(false);

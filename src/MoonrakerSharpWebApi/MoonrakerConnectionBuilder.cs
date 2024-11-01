@@ -1,6 +1,8 @@
-﻿using System;
+﻿using AndreasReitberger.API.Moonraker.Models;
+using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace AndreasReitberger.API.Moonraker
 {
@@ -34,6 +36,27 @@ namespace AndreasReitberger.API.Moonraker
                 _client.ApiKey = apiKey;
                 return this;
             }
+
+            /*
+            public async Task<MoonrakerConnectionBuilder> WithUserTokenAsync(string? userToken = null)
+            {
+                if (userToken is null)
+                {
+                    KlipperAccessTokenResult? tokenResult = await _client.GetOneshotTokenAsync();
+                    userToken = tokenResult?.Result;
+                }
+                _client.OneShotToken = userToken ?? string.Empty;
+                return this;
+            }
+
+            public async Task<MoonrakerConnectionBuilder> WitLoginAsync(string username, string password)
+            {
+                string apiToken = await _client.LoginUserForApiKeyAsync(username, password);
+                _client.ApiKey = apiToken;
+                await _client.LogoutCurrentUserAsync();
+                return this;
+            }
+            */
 
             public MoonrakerConnectionBuilder WithName(string name)
             {
