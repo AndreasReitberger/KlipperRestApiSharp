@@ -12,6 +12,8 @@ namespace AndreasReitberger.API.Moonraker.Enum
         InProgress = 2,
         [EnumMember(Value = "cancelled")]
         Cancelled = 3,
+        [EnumMember(Value = "interrupted")]
+        Interrupted = 4,
         [EnumMember(Value = "error")]
         Error = 99,
     }
