@@ -96,11 +96,26 @@ namespace MoonrakerSharpWebApi.Test
                 // This should be enough to authenticate.
                 KlipperMachineInfo? info = await client.GetMachineSystemInfoAsync();
                 Assert.That(info is not null);
+                info = null;
+
+                // Remove the api key to test if the UserToken works as well
+                var lastHeader = client.AuthHeaders.Last();
+                client.AuthHeaders.Remove(lastHeader.Key);
+
+                info = await client.GetMachineSystemInfoAsync();
+                Assert.That(info is not null);
 
                 client.AuthHeaders.Clear();
+                client.ApiKey = "";
+
                 // Also try with the api key to verify
                 client.ApiKey = apiKey ?? string.Empty;
                 Assert.That(!string.IsNullOrEmpty(client.ApiKey));
+
+                info = await client.GetMachineSystemInfoAsync();
+                Assert.That(info is not null);
+
+                await client.LogoutCurrentUserAsync();
 
                 info = await client.GetMachineSystemInfoAsync();
                 Assert.That(info is not null);

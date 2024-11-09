@@ -13,6 +13,7 @@
 	  <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
 	  <PackageReadmeFile>README.md</PackageReadmeFile>
 	  <Title>MoonrakerSharpWebApi.SQLite</Title>
+	  <UserSecretsId>2fcb2e15-a623-46ce-91ea-5913ca527be9</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
