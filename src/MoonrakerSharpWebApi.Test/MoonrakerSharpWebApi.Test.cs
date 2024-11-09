@@ -19,6 +19,8 @@ namespace MoonrakerSharpWebApi.Test
         private readonly string _host = SecretAppSettingReader.ReadSection<SecretAppSetting>("TestSetup").Ip ?? "";
         private readonly int _port = 80;
         private readonly string _api = SecretAppSettingReader.ReadSection<SecretAppSetting>("TestSetup").ApiKey ?? "";
+        private readonly string _user = SecretAppSettingReader.ReadSection<SecretAppSetting>("TestSetup").Username ?? "";
+        private readonly string _pwd = SecretAppSettingReader.ReadSection<SecretAppSetting>("TestSetup").Password ?? "";
         private readonly bool _ssl = false;
 
         private readonly bool _skipOnlineTests = true;
@@ -46,6 +48,82 @@ namespace MoonrakerSharpWebApi.Test
         public void TearDown()
         {
             client?.Dispose();
+        }
+
+        [Test]
+        public async Task BuildWitOneShotTokenAsync()
+        {
+            try
+            {
+                var client = new MoonrakerClient.MoonrakerConnectionBuilder()
+                    .WithName("Test")
+                    .WithServerAddress(_host, _port, _ssl)
+                    .Build();
+                KlipperAccessTokenResult? token = await client.GetOneshotTokenAsync();
+
+                client.OneShotToken = token?.Result ?? string.Empty;
+                Assert.That(!string.IsNullOrEmpty(client.OneShotToken));
+
+                KlipperMachineInfo? info = await client.GetMachineSystemInfoAsync();
+                Assert.That(info is not null);
+            }
+            catch (Exception ex)
+            {
+                Assert.Fail(ex.Message);
+            }
+        }
+
+        [Test]
+        public async Task BuildWitUserTokenAsync()
+        {
+            try
+            {
+                Assert.That(!string.IsNullOrEmpty(_user) && !string.IsNullOrEmpty(_pwd), "Provide a user and password in your secrets.json file first!");
+                var client = new MoonrakerClient.MoonrakerConnectionBuilder()
+                    .WithName("Test")
+                    .WithServerAddress(_host, _port, _ssl)
+                    .Build();
+                string? apiKey = await client.LoginUserForApiKeyAsync(_user, _pwd);
+
+                /*
+                 * Set by the LoginUserAsync() method
+                 * UserToken = queryResult?.Result?.Token ?? string.Empty;
+                 * RefreshToken = queryResult?.Result?.RefreshToken ?? string.Empty;
+                 */
+                Assert.That(!string.IsNullOrEmpty(client.UserToken));
+                Assert.That(!string.IsNullOrEmpty(client.RefreshToken));
+
+                // This should be enough to authenticate.
+                KlipperMachineInfo? info = await client.GetMachineSystemInfoAsync();
+                Assert.That(info is not null);
+                info = null;
+
+                // Remove the api key to test if the UserToken works as well
+                var lastHeader = client.AuthHeaders.Last();
+                client.AuthHeaders.Remove(lastHeader.Key);
+
+                info = await client.GetMachineSystemInfoAsync();
+                Assert.That(info is not null);
+
+                client.AuthHeaders.Clear();
+                client.ApiKey = "";
+
+                // Also try with the api key to verify
+                client.ApiKey = apiKey ?? string.Empty;
+                Assert.That(!string.IsNullOrEmpty(client.ApiKey));
+
+                info = await client.GetMachineSystemInfoAsync();
+                Assert.That(info is not null);
+
+                await client.LogoutCurrentUserAsync();
+
+                info = await client.GetMachineSystemInfoAsync();
+                Assert.That(info is not null);
+            }
+            catch (Exception ex)
+            {
+                Assert.Fail(ex.Message);
+            }
         }
 
         [Test]
