@@ -1345,7 +1345,7 @@ namespace AndreasReitberger.API.Moonraker
                 string targetUri = $"{MoonrakerCommands.Printer}";
                 result = await SendRestApiRequestAsync(
                        requestTargetUri: targetUri,
-                       method: Method.Post,
+                       method: Method.Get,
                        command: "gcode/help",
                        jsonObject: null,
                        authHeaders: AuthHeaders,
@@ -1563,7 +1563,7 @@ namespace AndreasReitberger.API.Moonraker
                 string targetUri = $"{MoonrakerCommands.Machine}";
                 result = await SendRestApiRequestAsync(
                        requestTargetUri: targetUri,
-                       method: Method.Post,
+                       method: Method.Get,
                        command: "system_info",
                        jsonObject: null,
                        authHeaders: AuthHeaders,
@@ -2867,7 +2867,7 @@ namespace AndreasReitberger.API.Moonraker
         public async Task<Dictionary<string, string>> SetDeviceStateAsync(string device, KlipperDeviceActions action)
         {
             IRestApiRequestRespone? result = null;
-            Dictionary<string, string> resultObject = new();
+            Dictionary<string, string> resultObject = [];
             try
             {
                 Dictionary<string, string> urlSegments = new()
@@ -2969,7 +2969,7 @@ namespace AndreasReitberger.API.Moonraker
         public async Task<Dictionary<string, string>> SetBatchDeviceOnAsync(string[] devices)
         {
             IRestApiRequestRespone? result = null;
-            Dictionary<string, string> resultObject = new();
+            Dictionary<string, string> resultObject = [];
             try
             {
                 StringBuilder deviceList = new();
@@ -3361,7 +3361,7 @@ namespace AndreasReitberger.API.Moonraker
             }
         }
 
-        public Task<bool> SendOctoPrintApiGcodeCommandAsync(string command) => SendOctoPrintApiGcodeCommandAsync(new string[] { command });
+        public Task<bool> SendOctoPrintApiGcodeCommandAsync(string command) => SendOctoPrintApiGcodeCommandAsync([command]);
 
         public async Task<Dictionary<string, OctoprintApiPrinter>> GetOctoPrintApiPrinterProfilesAsync()
         {
@@ -3486,7 +3486,6 @@ namespace AndreasReitberger.API.Moonraker
                        command: $"history/totals",
                        jsonObject: null,
                        authHeaders: AuthHeaders,
-                       //urlSegments: urlSegments,
                        cts: default
                        )
                     .ConfigureAwait(false);

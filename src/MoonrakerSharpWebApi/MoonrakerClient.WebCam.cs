@@ -32,7 +32,6 @@ namespace AndreasReitberger.API.Moonraker
                        command: "webcams/list",
                        jsonObject: null,
                        authHeaders: AuthHeaders,
-                       //urlSegments: urlSegments,
                        cts: default
                        )
                     .ConfigureAwait(false);
