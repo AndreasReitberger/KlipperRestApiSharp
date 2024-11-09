@@ -19,6 +19,8 @@ namespace MoonrakerSharpWebApi.Test
         private readonly string _host = SecretAppSettingReader.ReadSection<SecretAppSetting>("TestSetup").Ip ?? "";
         private readonly int _port = 80;
         private readonly string _api = SecretAppSettingReader.ReadSection<SecretAppSetting>("TestSetup").ApiKey ?? "";
+        private readonly string _user = SecretAppSettingReader.ReadSection<SecretAppSetting>("TestSetup").Username ?? "";
+        private readonly string _pwd = SecretAppSettingReader.ReadSection<SecretAppSetting>("TestSetup").Password ?? "";
         private readonly bool _ssl = false;
 
         private readonly bool _skipOnlineTests = true;
@@ -76,11 +78,12 @@ namespace MoonrakerSharpWebApi.Test
         {
             try
             {
+                Assert.That(!string.IsNullOrEmpty(_user) && !string.IsNullOrEmpty(_pwd), "Provide a user and password in your secrets.json file first!");
                 var client = new MoonrakerClient.MoonrakerConnectionBuilder()
                     .WithName("Test")
                     .WithServerAddress(_host, _port, _ssl)
                     .Build();
-                string? apiKey = await client.LoginUserForApiKeyAsync("user", "pwd");
+                string? apiKey = await client.LoginUserForApiKeyAsync(_user, _pwd);
 
                 /*
                  * Set by the LoginUserAsync() method
