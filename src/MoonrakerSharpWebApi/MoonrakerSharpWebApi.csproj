@@ -29,4 +29,8 @@
     <PackageReference Include="System.Text.Json" Version="8.0.5" />
     <None Include="..\..\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Print3dServer.Core\src\Print3dServer.Core\Print3dServer.Core.csproj" />
+  </ItemGroup>
 </Project>

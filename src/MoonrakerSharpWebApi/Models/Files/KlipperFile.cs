@@ -29,7 +29,11 @@ namespace AndreasReitberger.API.Moonraker.Models
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("modified")]
-        double modified;
+        double? modified;
+        partial void OnModifiedChanged(double? value)
+        {
+            Created = value;
+        }
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("size")]
@@ -40,6 +44,20 @@ namespace AndreasReitberger.API.Moonraker.Models
         string permissions = string.Empty;
 
         #region JsonIgnore
+
+        [ObservableProperty, JsonIgnore]
+        [property: JsonProperty("created")]
+        [NotifyPropertyChangedFor(nameof(CreatedGeneralized))]
+        double? created = 0;
+        partial void OnCreatedChanged(double? value)
+        {
+            if (value is not null)
+                CreatedGeneralized = TimeBaseConvertHelper.FromUnixDoubleMiliseconds(value);
+        }
+
+        [ObservableProperty, JsonIgnore]
+        DateTime? createdGeneralized;
+
         [ObservableProperty, JsonIgnore]
         IGcodeMeta? meta;
         partial void OnMetaChanged(IGcodeMeta? value)

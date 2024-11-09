@@ -1,4 +1,5 @@
 ﻿using AndreasReitberger.API.Print3dServer.Core.Interfaces;
+using AndreasReitberger.API.Print3dServer.Core.Utilities;
 using Newtonsoft.Json;
 using System;
 using System.Threading.Tasks;
@@ -93,10 +94,24 @@ namespace AndreasReitberger.API.Moonraker.Models
         [ObservableProperty, JsonIgnore]
         [property: JsonIgnore]
         double? printProgress = 0;
+        partial void OnPrintProgressChanged(double? value)
+        {
+            if (value > 0)
+                RemainingPrintDuration = value * PrintDuration;
+        }
 
         [ObservableProperty, JsonIgnore]
+        [NotifyPropertyChangedFor(nameof(RemainingPrintDurationGeneralized))]
         [property: JsonIgnore]
         double? remainingPrintDuration = 0;
+        partial void OnRemainingPrintDurationChanged(double? value)
+        {
+            if (value is not null)
+                RemainingPrintDurationGeneralized = TimeBaseConvertHelper.FromDoubleSeconds(value);
+        }
+
+        [ObservableProperty]
+        TimeSpan? remainingPrintDurationGeneralized;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonIgnore]
@@ -115,16 +130,45 @@ namespace AndreasReitberger.API.Moonraker.Models
         byte[] currentPrintImage = [];
 
         [ObservableProperty, JsonIgnore]
+        [NotifyPropertyChangedFor(nameof(PrintStartedGeneralized))]
         [property: JsonIgnore]
         double? printStarted = 0;
+        partial void OnPrintStartedChanged(double? value)
+        {
+            if (value is not null)
+                PrintStartedGeneralized = TimeBaseConvertHelper.FromUnixDate(value);
+        }
+
+        [ObservableProperty]
+        DateTime? printStartedGeneralized;
 
         [ObservableProperty, JsonIgnore]
+        [NotifyPropertyChangedFor(nameof(PrintDurationGeneralized))]
         [property: JsonIgnore]
         double? printDuration = 0;
+        partial void OnPrintDurationChanged(double? value)
+        {
+            if (value is not null)
+                PrintDurationGeneralized = TimeBaseConvertHelper.FromDoubleHours(value);
+            if (value > 0)
+                RemainingPrintDuration = value * PrintProgress;
+        }
+
+        [ObservableProperty]
+        TimeSpan? printDurationGeneralized;
 
         [ObservableProperty, JsonIgnore]
+        [NotifyPropertyChangedFor(nameof(PrintDurationEstimatedGeneralized))]
         [property: JsonIgnore]
         double? printDurationEstimated = 0;
+        partial void OnPrintDurationEstimatedChanged(double? value)
+        {
+            if (value is not null)
+                PrintDurationEstimatedGeneralized = TimeBaseConvertHelper.FromDoubleHours(value);
+        }
+
+        [ObservableProperty]
+        TimeSpan? printDurationEstimatedGeneralized;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonIgnore]

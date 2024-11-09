@@ -48,6 +48,19 @@ namespace AndreasReitberger.API.Moonraker.Models
         [ObservableProperty, JsonIgnore]
         [property: JsonIgnore]
         DateTime? timeInQueueGeneralized;
+
+
+        [ObservableProperty, JsonIgnore]
+        [NotifyPropertyChangedFor(nameof(PrintTimeGeneralized))]
+        double? printTime;
+        partial void OnPrintTimeChanged(double? value)
+        {
+            if (value is not null)
+                PrintTimeGeneralized = TimeBaseConvertHelper.FromDoubleHours(value);
+        }
+
+        [ObservableProperty, JsonIgnore]
+        TimeSpan? printTimeGeneralized;
         #endregion
 
         #region Methods

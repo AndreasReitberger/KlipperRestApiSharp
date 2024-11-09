@@ -122,8 +122,19 @@ namespace AndreasReitberger.API.Moonraker.Models
         bool fileExists;
 
         [ObservableProperty, JsonIgnore]
+        [NotifyPropertyChangedFor(nameof(RemainingPrintTimeGeneralized))]
         double? remainingPrintTime;
+        partial void OnRemainingPrintTimeChanged(double? value)
+        {
+            if (value is not null)
+                RemainingPrintTimeGeneralized = TimeBaseConvertHelper.FromDoubleSeconds(value);
+        }
 
+        [ObservableProperty, JsonIgnore]
+        TimeSpan? remainingPrintTimeGeneralized;
+
+        [ObservableProperty, JsonIgnore]
+        long? repeat;
         #endregion
 
         #region Overrides
