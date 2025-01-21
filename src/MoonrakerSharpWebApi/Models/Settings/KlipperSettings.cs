@@ -5,61 +5,75 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperSettings : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("virtual_sdcard")]
-        KlipperConfigVirtualSdcard? virtualSdcard;
+        [ObservableProperty]
+        
+        [JsonProperty("virtual_sdcard")]
+        public partial KlipperConfigVirtualSdcard? VirtualSdcard { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("printer")]
-        KlipperConfigPrinter? printer;
+        [ObservableProperty]
+        
+        [JsonProperty("printer")]
+        public partial KlipperConfigPrinter? Printer { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("verify_heater extruder")]
-        KlipperSettingVerifyHeaterExtruder? verifyHeaterExtruder;
+        [ObservableProperty]
+        
+        [JsonProperty("verify_heater extruder")]
+        public partial KlipperSettingVerifyHeaterExtruder? VerifyHeaterExtruder { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("force_move")]
-        KlipperSettingForceMove? forceMove;
+        [ObservableProperty]
+        
+        [JsonProperty("force_move")]
+        public partial KlipperSettingForceMove? ForceMove { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("pause_resume")]
-        KlipperSettingPauseResume? pauseResume;
+        [ObservableProperty]
+        
+        [JsonProperty("pause_resume")]
+        public partial KlipperSettingPauseResume? PauseResume { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("stepper_z")]
-        KlipperConfigStepper? stepperZ;
+        [ObservableProperty]
+        
+        [JsonProperty("stepper_z")]
+        public partial KlipperConfigStepper? StepperZ { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("stepper_y")]
-        KlipperConfigStepper? stepperY;
+        [ObservableProperty]
+        
+        [JsonProperty("stepper_y")]
+        public partial KlipperConfigStepper? StepperY { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("stepper_x")]
-        KlipperConfigStepper? stepperX;
+        [ObservableProperty]
+        
+        [JsonProperty("stepper_x")]
+        public partial KlipperConfigStepper? StepperX { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("idle_timeout")]
-        KlipperSettingIdleTimeout? idleTimeout;
+        [ObservableProperty]
+        
+        [JsonProperty("idle_timeout")]
+        public partial KlipperSettingIdleTimeout? IdleTimeout { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("fan")]
-        KlipperConfigFan? fan;
+        [ObservableProperty]
+        
+        [JsonProperty("fan")]
+        public partial KlipperConfigFan? Fan { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("mcu")]
-        KlipperConfigMcu? mcu;
+        [ObservableProperty]
+        
+        [JsonProperty("mcu")]
+        public partial KlipperConfigMcu? Mcu { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("display")]
-        KlipperSettingsDisplay? display;
+        [ObservableProperty]
+        
+        [JsonProperty("display")]
+        public partial KlipperSettingsDisplay? Display { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("extruder")]
-        KlipperConfigExtruder? extruder;
+        [ObservableProperty]
+        
+        [JsonProperty("extruder")]
+        public partial KlipperConfigExtruder? Extruder { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("heater_bed")]
-        KlipperConfigHeaterBed? heaterBed;
+        [ObservableProperty]
+        
+        [JsonProperty("heater_bed")]
+        public partial KlipperConfigHeaterBed? HeaterBed { get; set; }
         #endregion
 
         #region Overrides

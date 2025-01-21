@@ -6,13 +6,15 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperGcodeMacroResult : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("status")]
-        Dictionary<string, KlipperGcodeMacro> status = [];
+        [ObservableProperty]
+        
+        [JsonProperty("status")]
+        public partial Dictionary<string, KlipperGcodeMacro> Status { get; set; } = [];
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("eventtime")]
-        double eventtime;
+        [ObservableProperty]
+        
+        [JsonProperty("eventtime")]
+        public partial double Eventtime { get; set; }
         #endregion
 
         #region Overrides

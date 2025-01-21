@@ -10,78 +10,95 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperStatusJob : ObservableObject, IPrint3dJobStatus
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore]
-        Guid id;
+        [ObservableProperty]
+        
+        [JsonIgnore]
+        public partial Guid Id { get; set; }
 
-        [ObservableProperty, JsonIgnore]
+        [ObservableProperty]
+        
         [NotifyPropertyChangedFor(nameof(Done))]
         [NotifyPropertyChangedFor(nameof(EndTimeGeneralized))]
-        [property: JsonProperty("end_time")]
-        double? endTime;
+        [JsonProperty("end_time")]
+        public partial double? EndTime { get; set; }
+
         partial void OnEndTimeChanged(double? value)
         {
             if (value is not null)
                 EndTimeGeneralized = TimeBaseConvertHelper.FromUnixDate(value);
         }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore]
-        DateTime? endTimeGeneralized;
+        [ObservableProperty]
+        
+        [JsonIgnore]
+        public partial DateTime? EndTimeGeneralized { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("filament_used")]
-        double? filamentUsed;
+        [ObservableProperty]
+        
+        [JsonProperty("filament_used")]
+        public partial double? FilamentUsed { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("filename")]
-        string fileName = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("filename")]
+        public partial string FileName { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("metadata")]
-        IGcodeMeta? meta;
+        [ObservableProperty]
+        
+        [JsonProperty("metadata")]
+        public partial IGcodeMeta? Meta { get; set; }
 
-        [ObservableProperty, JsonIgnore]
+        [ObservableProperty]
+        
         [NotifyPropertyChangedFor(nameof(PrintDurationGeneralized))]
-        [property: JsonProperty("print_duration")]
-        double? printDuration;
+        [JsonProperty("print_duration")]
+        public partial double? PrintDuration { get; set; }
+
         partial void OnPrintDurationChanged(double? value)
         {
             if (value is not null)
                 PrintDurationGeneralized = TimeBaseConvertHelper.FromUnixDoubleHours(value);
         }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore]
-        TimeSpan? printDurationGeneralized;
+        [ObservableProperty]
+        
+        [JsonIgnore]
+        public partial TimeSpan? PrintDurationGeneralized { get; set; }
+
         partial void OnPrintDurationGeneralizedChanged(TimeSpan? value)
         {
             Done = CalculateProgress(totalPrintDuration: TotalPrintDurationGeneralized, currentPrintDuration: value);
         }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("status")]
-        [JsonConverter(typeof(StringEnumConverter), true)]
-        Print3dJobState? state;
+        [ObservableProperty]
+        
+        [JsonProperty("status")]
+        [field: JsonConverter(typeof(StringEnumConverter), true)]
+        public partial Print3dJobState? State { get; set; }
 
-        [ObservableProperty, JsonIgnore]
+        [ObservableProperty]
+        
         [NotifyPropertyChangedFor(nameof(Done))]
         [NotifyPropertyChangedFor(nameof(StartTimeGeneralized))]
-        [property: JsonProperty("start_time")]
-        double? startTime;
+        [JsonProperty("start_time")]
+        public partial double? StartTime { get; set; }
+
         partial void OnStartTimeChanged(double? value)
         {
             if (value is not null)
                 StartTimeGeneralized = TimeBaseConvertHelper.FromUnixDate(value);
         }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore]
-        DateTime? startTimeGeneralized;
+        [ObservableProperty]
+        
+        [JsonIgnore]
+        public partial DateTime? StartTimeGeneralized { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore]
-        double? done;
+        [ObservableProperty]
+        
+        [JsonIgnore]
+        public partial double? Done { get; set; }
+
         partial void OnDoneChanged(double? value)
         {
             if (value is not null)
@@ -90,51 +107,62 @@ namespace AndreasReitberger.API.Moonraker.Models
                 DonePercentage = 0;
         }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore]
-        double? donePercentage;
+        [ObservableProperty]
+        
+        [JsonIgnore]
+        public partial double? DonePercentage { get; set; }
 
-        [ObservableProperty, JsonIgnore]
+        [ObservableProperty]
+        
         [NotifyPropertyChangedFor(nameof(Done))]
         [NotifyPropertyChangedFor(nameof(TotalPrintDurationGeneralized))]
-        [property: JsonProperty("total_duration")]
-        double? totalPrintDuration;
+        [JsonProperty("total_duration")]
+        public partial double? TotalPrintDuration { get; set; }
+
         partial void OnTotalPrintDurationChanged(double? value)
         {
             if (value is not null)
                 TotalPrintDurationGeneralized = TimeBaseConvertHelper.FromUnixDoubleHours(value);
         }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore]
-        TimeSpan? totalPrintDurationGeneralized;
+        [ObservableProperty]
+        
+        [JsonIgnore]
+        public partial TimeSpan? TotalPrintDurationGeneralized { get; set; }
+
         partial void OnTotalPrintDurationGeneralizedChanged(TimeSpan? value)
         {
             Done = CalculateProgress(totalPrintDuration: value, currentPrintDuration: PrintDurationGeneralized);
         }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("job_id")]
-        string jobId = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("job_id")]
+        public partial string JobId { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("exists")]
-        bool fileExists;
+        [ObservableProperty]
+        
+        [JsonProperty("exists")]
+        public partial bool FileExists { get; set; }
 
-        [ObservableProperty, JsonIgnore]
+        [ObservableProperty]
+        
         [NotifyPropertyChangedFor(nameof(RemainingPrintTimeGeneralized))]
-        double? remainingPrintTime;
+        public partial double? RemainingPrintTime { get; set; }
+
         partial void OnRemainingPrintTimeChanged(double? value)
         {
             if (value is not null)
                 RemainingPrintTimeGeneralized = TimeBaseConvertHelper.FromDoubleSeconds(value);
         }
 
-        [ObservableProperty, JsonIgnore]
-        TimeSpan? remainingPrintTimeGeneralized;
+        [ObservableProperty]
+        
+        public partial TimeSpan? RemainingPrintTimeGeneralized { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        long? repeat;
+        [ObservableProperty]
+        
+        public partial long? Repeat { get; set; }
         #endregion
 
         #region Overrides

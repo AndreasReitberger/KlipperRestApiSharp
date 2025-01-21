@@ -5,17 +5,20 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class OctoprintApiJobStatusResult : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("job")]
-        OctoprintApiJobResult? job;
+        [ObservableProperty]
+        
+        [JsonProperty("job")]
+        public partial OctoprintApiJobResult? Job { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("progress")]
-        OctoprintApiJobInfoProgress? progress;
+        [ObservableProperty]
+        
+        [JsonProperty("progress")]
+        public partial OctoprintApiJobInfoProgress? Progress { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("state")]
-        string state = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("state")]
+        public partial string State { get; set; } = string.Empty;
         #endregion
 
         #region Overrides

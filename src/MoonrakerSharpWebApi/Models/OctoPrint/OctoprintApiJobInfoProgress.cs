@@ -5,21 +5,25 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class OctoprintApiJobInfoProgress : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("completion", NullValueHandling = NullValueHandling.Ignore)]
-        double completion;
+        [ObservableProperty]
+        
+        [JsonProperty("completion", NullValueHandling = NullValueHandling.Ignore)]
+        public partial double Completion { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("filepos", NullValueHandling = NullValueHandling.Ignore)]
-        long filepos;
+        [ObservableProperty]
+        
+        [JsonProperty("filepos", NullValueHandling = NullValueHandling.Ignore)]
+        public partial long Filepos { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("printTime", NullValueHandling = NullValueHandling.Ignore)]
-        long printTime;
+        [ObservableProperty]
+        
+        [JsonProperty("printTime", NullValueHandling = NullValueHandling.Ignore)]
+        public partial long PrintTime { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("printTimeLeft", NullValueHandling = NullValueHandling.Ignore)]
-        long printTimeLeft;
+        [ObservableProperty]
+        
+        [JsonProperty("printTimeLeft", NullValueHandling = NullValueHandling.Ignore)]
+        public partial long PrintTimeLeft { get; set; }
         #endregion
 
         #region Overrides

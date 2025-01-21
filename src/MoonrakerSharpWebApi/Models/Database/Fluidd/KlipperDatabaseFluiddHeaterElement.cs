@@ -5,17 +5,20 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperDatabaseFluiddHeaterElement : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("active")]
-        bool active;
+        [ObservableProperty]
+        
+        [JsonProperty("active")]
+        public partial bool Active { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("value")]
-        long? value;
+        [ObservableProperty]
+        
+        [JsonProperty("value")]
+        public partial long? Value { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("type")]
-        string type = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("type")]
+        public partial string Type { get; set; } = string.Empty;
         #endregion
 
         #region Overrides

@@ -5,17 +5,17 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperWebSocketResult : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("jsonrpc")]
-        string jsonrpc = string.Empty;
+        [ObservableProperty]
+        [JsonProperty("jsonrpc")]
+        public partial string Jsonrpc { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("result")]
-        object? result = string.Empty;
+        [ObservableProperty]
+        [JsonProperty("result")]
+        public partial object? Result { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("id")]
-        long id;
+        [ObservableProperty]
+        [JsonProperty("id")]
+        public partial long Id { get; set; }
 
         #endregion
 

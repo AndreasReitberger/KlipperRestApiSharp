@@ -5,29 +5,35 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperHistoryJobTotalsResult : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("total_jobs")]
-        long totalJobs;
+        [ObservableProperty]
+        
+        [JsonProperty("total_jobs")]
+        public partial long TotalJobs { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("total_time")]
-        double totalTime;
+        [ObservableProperty]
+        
+        [JsonProperty("total_time")]
+        public partial double TotalTime { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("total_print_time")]
-        double totalPrintTime;
+        [ObservableProperty]
+        
+        [JsonProperty("total_print_time")]
+        public partial double TotalPrintTime { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("total_filament_used")]
-        double totalFilamentUsed;
+        [ObservableProperty]
+        
+        [JsonProperty("total_filament_used")]
+        public partial double TotalFilamentUsed { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("longest_job")]
-        double longestJob;
+        [ObservableProperty]
+        
+        [JsonProperty("longest_job")]
+        public partial double LongestJob { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("longest_print")]
-        double longestPrint;
+        [ObservableProperty]
+        
+        [JsonProperty("longest_print")]
+        public partial double LongestPrint { get; set; }
         #endregion
 
         #region Overrides

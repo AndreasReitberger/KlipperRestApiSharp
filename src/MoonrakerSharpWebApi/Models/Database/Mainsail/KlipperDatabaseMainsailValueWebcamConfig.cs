@@ -5,33 +5,40 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperDatabaseMainsailValueWebcamConfig : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("name")]
-        public string name = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("name")]
+        public partial string Name { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("icon")]
-        public string icon = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("icon")]
+        public partial string Icon { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("service")]
-        public string service = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("service")]
+        public partial string Service { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("targetFps")]
-        public long targetFps;
+        [ObservableProperty]
+        
+        [JsonProperty("targetFps")]
+        public partial long TargetFps { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("url")]
-        public string url = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("url")]
+        public partial string Url { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("flipX")]
-        public bool flipX;
+        [ObservableProperty]
+        
+        [JsonProperty("flipX")]
+        public partial bool FlipX { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("flipY")]
-        public bool flipY;
+        [ObservableProperty]
+        
+        [JsonProperty("flipY")]
+        public partial bool FlipY { get; set; }
         #endregion
 
         #region Overrides

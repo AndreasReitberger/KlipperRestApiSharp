@@ -8,90 +8,111 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperGcodeMetaResult : ObservableObject, IGcodeMeta
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore]
-        Guid id;
+        [ObservableProperty]
+        
+        [JsonIgnore]
+        public partial Guid Id { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("print_start_time")]
-        double? printStartTime;
+        [ObservableProperty]
+        
+        [JsonProperty("print_start_time")]
+        public partial double? PrintStartTime { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore]
-        double estimatedPrintTime;
+        [ObservableProperty]
+        
+        [JsonIgnore]
+        public partial double EstimatedPrintTime { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("size")]
-        long fileSize;
+        [ObservableProperty]
+        
+        [JsonProperty("size")]
+        public partial long FileSize { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("modified")]
-        double modified;
+        [ObservableProperty]
+        
+        [JsonProperty("modified")]
+        public partial double Modified { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("slicer")]
-        string slicer = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("slicer")]
+        public partial string Slicer { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("slicer_version")]
-        string slicerVersion = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("slicer_version")]
+        public partial string SlicerVersion { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("layer_height")]
-        double layerHeight = 0;
+        [ObservableProperty]
+        
+        [JsonProperty("layer_height")]
+        public partial double LayerHeight { get; set; } = 0;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("first_layer_height")]
-        double firstLayerHeight = 0;
+        [ObservableProperty]
+        
+        [JsonProperty("first_layer_height")]
+        public partial double FirstLayerHeight { get; set; } = 0;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("object_height")]
-        double objectHeight = 0;
+        [ObservableProperty]
+        
+        [JsonProperty("object_height")]
+        public partial double ObjectHeight { get; set; } = 0;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("filament_total")]
-        double filamentTotal = 0;
+        [ObservableProperty]
+        
+        [JsonProperty("filament_total")]
+        public partial double FilamentTotal { get; set; } = 0;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("filament_weight_total")]
-        double filamentWeightTotal = 0;
+        [ObservableProperty]
+        
+        [JsonProperty("filament_weight_total")]
+        public partial double FilamentWeightTotal { get; set; } = 0;
 
-        [ObservableProperty, JsonIgnore]
+        [ObservableProperty]
+        
         [NotifyPropertyChangedFor(nameof(EstimatedPrintTime))]
-        [property: JsonProperty("estimated_time")]
-        double estimatedTime = 0;
+        [JsonProperty("estimated_time")]
+        public partial double EstimatedTime { get; set; } = 0;
+
         partial void OnEstimatedTimeChanged(double value)
         {
             EstimatedPrintTime = value;
         }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("first_layer_extr_temp")]
-        double firstLayerExtrTemp = 0;
+        [ObservableProperty]
+        
+        [JsonProperty("first_layer_extr_temp")]
+        public partial double FirstLayerExtrTemp { get; set; } = 0;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("first_layer_bed_temp")]
-        double firstLayerBedTemp = 0;
+        [ObservableProperty]
+        
+        [JsonProperty("first_layer_bed_temp")]
+        public partial double FirstLayerBedTemp { get; set; } = 0;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("gcode_start_byte")]
-        long gcodeStartByte;
+        [ObservableProperty]
+        
+        [JsonProperty("gcode_start_byte")]
+        public partial long GcodeStartByte { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("gcode_end_byte")]
-        long gcodeEndByte;
+        [ObservableProperty]
+        
+        [JsonProperty("gcode_end_byte")]
+        public partial long GcodeEndByte { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("job_id")]
-        string jobId = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("job_id")]
+        public partial string JobId { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("filename")]
-        string fileName = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("filename")]
+        public partial string FileName { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("thumbnails")]
-        List<IGcodeImage> gcodeImages = [];
+        [ObservableProperty]
+        
+        [JsonProperty("thumbnails")]
+        public partial List<IGcodeImage> GcodeImages { get; set; } = [];
 
         [JsonIgnore]
         public long Layers => GetLayersCount();

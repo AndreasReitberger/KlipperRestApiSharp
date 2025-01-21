@@ -8,18 +8,20 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("actual", NullValueHandling = NullValueHandling.Ignore)]
-        double actual;
+        [ObservableProperty]
+        
+        [JsonProperty("actual", NullValueHandling = NullValueHandling.Ignore)]
+        public partial double Actual { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("target")]
-        long target;
+        [ObservableProperty]
+        
+        [JsonProperty("target")]
+        public partial long Target { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("offset", NullValueHandling = NullValueHandling.Ignore)]
-        long offset;
-
+        [ObservableProperty]
+        
+        [JsonProperty("offset", NullValueHandling = NullValueHandling.Ignore)]
+        public partial long Offset { get; set; }
         [JsonIgnore]
         public OctoprintApiCurrentToolState State { get => GetCurrentState(); }
 

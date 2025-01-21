@@ -11,55 +11,68 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore]
-        Guid id;
+        [ObservableProperty]
+        
+        [JsonIgnore]
+        public partial Guid Id { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore]
-        GcodeTimeBaseTarget timeBaseTarget = GcodeTimeBaseTarget.DoubleHoursUnix;
+        [ObservableProperty]
+        
+        [JsonIgnore]
+        public partial GcodeTimeBaseTarget TimeBaseTarget { get; set; } = GcodeTimeBaseTarget.DoubleHoursUnix;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("filename")]
-        string fileName = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("filename")]
+        public partial string FileName { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("path")]
-        string filePath = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("path")]
+        public partial string FilePath { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("modified")]
-        double? modified;
+        [ObservableProperty]
+        
+        [JsonProperty("modified")]
+        public partial double? Modified { get; set; }
+
         partial void OnModifiedChanged(double? value)
         {
             Created = value;
         }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("size")]
-        long size;
+        [ObservableProperty]
+        
+        [JsonProperty("size")]
+        public partial long Size { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("permissions")]
-        string permissions = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("permissions")]
+        public partial string Permissions { get; set; } = string.Empty;
 
         #region JsonIgnore
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("created")]
+        [ObservableProperty]
+        
+        [JsonProperty("created")]
         [NotifyPropertyChangedFor(nameof(CreatedGeneralized))]
-        double? created = 0;
+        public partial double? Created { get; set; } = 0;
+
         partial void OnCreatedChanged(double? value)
         {
             if (value is not null)
                 CreatedGeneralized = TimeBaseConvertHelper.FromUnixDoubleMiliseconds(value);
         }
 
-        [ObservableProperty, JsonIgnore]
-        DateTime? createdGeneralized;
+        [ObservableProperty]
+        
+        public partial DateTime? CreatedGeneralized { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        IGcodeMeta? meta;
+        [ObservableProperty]
+        
+        public partial IGcodeMeta? Meta { get; set; }
+
         partial void OnMetaChanged(IGcodeMeta? value)
         {
             if (value is not null)
@@ -68,39 +81,50 @@ namespace AndreasReitberger.API.Moonraker.Models
             }
         }
 
-        [ObservableProperty, JsonIgnore]
-        byte[]? thumbnail = [];
+        [ObservableProperty]
+        
+        public partial byte[]? Thumbnail { get; set; } = [];
 
-        [ObservableProperty, JsonIgnore]
-        byte[]? image = [];
+        [ObservableProperty]
+        
+        public partial byte[]? Image { get; set; } = [];
 
-        [ObservableProperty, JsonIgnore]
-        double filament;
+        [ObservableProperty]
+        
+        public partial double Filament { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        GcodeImageType imageType = GcodeImageType.Thumbnail;
+        [ObservableProperty]
+        
+        public partial GcodeImageType ImageType { get; set; } = GcodeImageType.Thumbnail;
 
-        [ObservableProperty, JsonIgnore]
-        string printerName = string.Empty;
+        [ObservableProperty]
+        
+        public partial string PrinterName { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        string group = string.Empty;
+        [ObservableProperty]
+        
+        public partial string Group { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        long identifier;
+        [ObservableProperty]
+        
+        public partial long Identifier { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        double volume;
+        [ObservableProperty]
+        
+        public partial double Volume { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        double printTime;
+        [ObservableProperty]
+        
+        public partial double PrintTime { get; set; }
+
         partial void OnPrintTimeChanged(double value)
         {
             PrintTimeGeneralized = TimeBaseConvertHelper.FromUnixDoubleHours(value);
         }
 
-        [ObservableProperty, JsonIgnore]
-        TimeSpan? printTimeGeneralized;
+        [ObservableProperty]
+        
+        public partial TimeSpan? PrintTimeGeneralized { get; set; }
         #endregion
 
         #endregion

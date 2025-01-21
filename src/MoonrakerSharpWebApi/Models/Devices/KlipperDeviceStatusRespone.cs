@@ -6,9 +6,10 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperDeviceStatusRespone : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("result")]
-        Dictionary<string, string> deviceStates = [];
+        [ObservableProperty]
+        
+        [JsonProperty("result")]
+        public partial Dictionary<string, string> DeviceStates { get; set; } = [];
         #endregion
 
         #region Overrides

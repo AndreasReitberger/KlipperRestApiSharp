@@ -5,21 +5,25 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class OctoprintApiJobResult : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("file", NullValueHandling = NullValueHandling.Ignore)]
-        OctoprintAbiJobInfoFile? file;
+        [ObservableProperty]
+        
+        [JsonProperty("file", NullValueHandling = NullValueHandling.Ignore)]
+        public partial OctoprintAbiJobInfoFile? File { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("estimatedPrintTime", NullValueHandling = NullValueHandling.Ignore)]
-        long estimatedPrintTime;
+        [ObservableProperty]
+        
+        [JsonProperty("estimatedPrintTime", NullValueHandling = NullValueHandling.Ignore)]
+        public partial long EstimatedPrintTime { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("filament", NullValueHandling = NullValueHandling.Ignore)]
-        OctoprintApiFilamentInfo? filament;
+        [ObservableProperty]
+        
+        [JsonProperty("filament", NullValueHandling = NullValueHandling.Ignore)]
+        public partial OctoprintApiFilamentInfo? Filament { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("user", NullValueHandling = NullValueHandling.Ignore)]
-        object? user;
+        [ObservableProperty]
+        
+        [JsonProperty("user", NullValueHandling = NullValueHandling.Ignore)]
+        public partial object? User { get; set; }
         #endregion
 
         #region Overrides

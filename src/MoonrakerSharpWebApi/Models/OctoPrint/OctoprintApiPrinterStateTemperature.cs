@@ -6,25 +6,30 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class OctoprintApiPrinterStateTemperature : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("bed", NullValueHandling = NullValueHandling.Ignore)]
-        OctoprintApiPrinterStateTemperatureInfo? bBed;
+        [ObservableProperty]
+        
+        [JsonProperty("bed", NullValueHandling = NullValueHandling.Ignore)]
+        public partial OctoprintApiPrinterStateTemperatureInfo? BBed { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("chamber", NullValueHandling = NullValueHandling.Ignore)]
-        OctoprintApiPrinterStateTemperatureInfo? chamber;
+        [ObservableProperty]
+        
+        [JsonProperty("chamber", NullValueHandling = NullValueHandling.Ignore)]
+        public partial OctoprintApiPrinterStateTemperatureInfo? Chamber { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("history", NullValueHandling = NullValueHandling.Ignore)]
-        List<OctoprintApiPrinterStateHistory> history = [];
+        [ObservableProperty]
+        
+        [JsonProperty("history", NullValueHandling = NullValueHandling.Ignore)]
+        public partial List<OctoprintApiPrinterStateHistory> History { get; set; } = [];
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("tool0", NullValueHandling = NullValueHandling.Ignore)]
-        OctoprintApiPrinterStateTemperatureInfo? tool0;
+        [ObservableProperty]
+        
+        [JsonProperty("tool0", NullValueHandling = NullValueHandling.Ignore)]
+        public partial OctoprintApiPrinterStateTemperatureInfo? Tool0 { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("tool1", NullValueHandling = NullValueHandling.Ignore)]
-        OctoprintApiPrinterStateTemperatureInfo? tool1;
+        [ObservableProperty]
+        
+        [JsonProperty("tool1", NullValueHandling = NullValueHandling.Ignore)]
+        public partial OctoprintApiPrinterStateTemperatureInfo? Tool1 { get; set; }
         #endregion
 
         #region Overrides

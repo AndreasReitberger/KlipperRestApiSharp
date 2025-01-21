@@ -5,9 +5,10 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperStatusPauseResume : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("is_paused")]
-        bool isPaused;
+        [ObservableProperty]
+        
+        [JsonProperty("is_paused")]
+        public partial bool IsPaused { get; set; }
         #endregion
 
         #region Overrides

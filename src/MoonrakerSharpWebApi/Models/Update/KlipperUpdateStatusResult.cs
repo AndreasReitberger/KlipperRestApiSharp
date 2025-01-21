@@ -6,25 +6,30 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperUpdateStatusResult : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("github_rate_limit")]
-        public long? githubRateLimit;
+        [ObservableProperty]
+        
+        [JsonProperty("github_rate_limit")]
+        public partial long? GithubRateLimit { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("github_requests_remaining")]
-        public long? githubRequestsRemaining;
+        [ObservableProperty]
+        
+        [JsonProperty("github_requests_remaining")]
+        public partial long? GithubRequestsRemaining { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("github_limit_reset_time")]
-        public long? githubLimitResetTime;
+        [ObservableProperty]
+        
+        [JsonProperty("github_limit_reset_time")]
+        public partial long? GithubLimitResetTime { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("version_info")]
-        public Dictionary<string, KlipperUpdateVersionInfo> versionInfo = [];
+        [ObservableProperty]
+        
+        [JsonProperty("version_info")]
+        public partial Dictionary<string, KlipperUpdateVersionInfo> VersionInfo { get; set; } = [];
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("busy")]
-        public bool busy;
+        [ObservableProperty]
+        
+        [JsonProperty("busy")]
+        public partial bool Busy { get; set; }
         #endregion
 
         #region Overrides

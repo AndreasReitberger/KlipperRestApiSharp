@@ -8,27 +8,33 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperDirectory : ObservableObject, IGcodeGroup
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("dirname")]
-        string directoryName = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("dirname")]
+        public partial string DirectoryName { get; set; } = string.Empty;
+
         partial void OnDirectoryNameChanged(string value)
         {
             if (string.IsNullOrEmpty(Name))
                 Name = value;
         }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("path")]
-        string path = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("path")]
+        public partial string Path { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("root")]
-        string root = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("root")]
+        public partial string Root { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
+        [ObservableProperty]
+        
         [NotifyPropertyChangedFor(nameof(ModifiedGeneralized))]
-        [property: JsonProperty("modified")]
-        double? modified;
+        [JsonProperty("modified")]
+        public partial double? Modified { get; set; }
+
         partial void OnModifiedChanged(double? value)
         {
             if (value is not null)
@@ -36,22 +42,26 @@ namespace AndreasReitberger.API.Moonraker.Models
         }
 
         [ObservableProperty]
-        DateTime? modifiedGeneralized;
+        public partial DateTime? ModifiedGeneralized { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("size")]
-        long size;
+        [ObservableProperty]
+        
+        [JsonProperty("size")]
+        public partial long Size { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("permissions")]
-        string permissions = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("permissions")]
+        public partial string Permissions { get; set; } = string.Empty;
 
         #region JsonIgnore
-        [ObservableProperty, JsonIgnore]
-        Guid id;
+        [ObservableProperty]
+        
+        public partial Guid Id { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        string name = string.Empty;
+        [ObservableProperty]
+        
+        public partial string Name { get; set; } = string.Empty;
 
         #endregion
 

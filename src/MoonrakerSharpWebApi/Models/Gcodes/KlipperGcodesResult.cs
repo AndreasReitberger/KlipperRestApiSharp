@@ -6,9 +6,10 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperGcodesResult : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("gcode_store")]
-        List<KlipperGcode> gcodes = [];
+        [ObservableProperty]
+        
+        [JsonProperty("gcode_store")]
+        public partial List<KlipperGcode> Gcodes { get; set; } = [];
         #endregion
 
         #region Overrides

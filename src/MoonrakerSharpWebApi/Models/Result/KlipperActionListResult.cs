@@ -6,9 +6,10 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperActionListResult : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("objects")]
-        List<string> objects = [];
+        [ObservableProperty]
+        
+        [JsonProperty("objects")]
+        public partial List<string> Objects { get; set; } = [];
         #endregion
 
         #region Overrides

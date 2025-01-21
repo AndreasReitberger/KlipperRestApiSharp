@@ -10,20 +10,24 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperStatusHeaterBed : ObservableObject, IHeaterComponent
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        Guid id;
+        [ObservableProperty]
+        
+        public partial Guid Id { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("temperature")]
-        public double? tempRead;
+        [ObservableProperty]
+        
+        [JsonProperty("temperature")]
+        public partial double? TempRead { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("target")]
-        public double? tempSet;
+        [ObservableProperty]
+        
+        [JsonProperty("target")]
+        public partial double? TempSet { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("power")]
-        public double? power;
+        [ObservableProperty]
+        
+        [JsonProperty("power")]
+        public partial double? Power { get; set; }
 
         [JsonIgnore]
         public bool CanUpdateTarget = false;
@@ -32,16 +36,19 @@ namespace AndreasReitberger.API.Moonraker.Models
         public Printer3dToolHeadState State { get => GetCurrentState(); }
 
         #region JsonIgnore
-        [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore]
-        string name = string.Empty;
+        [ObservableProperty]
+        
+        [JsonIgnore]
+        public partial string Name { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore]
-        long error;
+        [ObservableProperty]
+        
+        [JsonIgnore]
+        public partial long Error { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        Printer3dHeaterType type = Printer3dHeaterType.HeatedBed;
+        [ObservableProperty]
+        
+        public partial Printer3dHeaterType Type { get; set; } = Printer3dHeaterType.HeatedBed;
         #endregion
 
         #endregion

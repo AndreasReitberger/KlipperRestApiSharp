@@ -5,41 +5,50 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperSdInfo : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("manufacturer_id")]
-        string manufacturerId = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("manufacturer_id")]
+        public partial string ManufacturerId { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("manufacturer")]
-        string manufacturer = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("manufacturer")]
+        public partial string Manufacturer { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("oem_id")]
-        long oemId;
+        [ObservableProperty]
+        
+        [JsonProperty("oem_id")]
+        public partial long OemId { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("product_name")]
-        string productName = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("product_name")]
+        public partial string ProductName { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("product_revision")]
-        string productRevision = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("product_revision")]
+        public partial string ProductRevision { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("serial_number")]
-        string serialNumber = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("serial_number")]
+        public partial string SerialNumber { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("manufacturer_date")]
-        string manufacturerDate = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("manufacturer_date")]
+        public partial string ManufacturerDate { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("capacity")]
-        string capacity = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("capacity")]
+        public partial string Capacity { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("total_bytes")]
-        long totalBytes;
+        [ObservableProperty]
+        
+        [JsonProperty("total_bytes")]
+        public partial long TotalBytes { get; set; }
         #endregion
 
         #region Overrides

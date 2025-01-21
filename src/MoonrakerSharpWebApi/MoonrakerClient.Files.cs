@@ -1,7 +1,6 @@
 ﻿using AndreasReitberger.API.Moonraker.Enum;
 using AndreasReitberger.API.Moonraker.Models;
 using AndreasReitberger.API.Moonraker.Structs;
-using AndreasReitberger.API.Print3dServer.Core.Events;
 using AndreasReitberger.API.Print3dServer.Core.Interfaces;
 using AndreasReitberger.API.REST.Events;
 using AndreasReitberger.API.REST.Interfaces;
@@ -19,25 +18,9 @@ namespace AndreasReitberger.API.Moonraker
     {
         #region Properties
 
-        /*
         [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        ObservableCollection<KlipperFile> files = new();
-        partial void OnFilesChanged(ObservableCollection<KlipperFile> value)
-        {
-            OnKlipperFilesChanged(new KlipperFilesChangedEventArgs()
-            {
-                NewFiles = value,
-                SessonId = SessionId,
-                CallbackId = -1,
-                Token = !string.IsNullOrEmpty(UserToken) ? UserToken : ApiKey,
-            });
-        }
-        */
-
-        [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        ObservableCollection<KlipperDirectory> availableDirectories = [];
+        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        public partial ObservableCollection<KlipperDirectory> AvailableDirectories { get; set; } = [];
         partial void OnAvailableDirectoriesChanged(ObservableCollection<KlipperDirectory> value)
         {
             /*

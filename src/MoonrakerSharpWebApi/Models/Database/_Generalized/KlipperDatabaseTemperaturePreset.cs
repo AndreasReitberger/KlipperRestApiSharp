@@ -8,16 +8,17 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-        Guid id = Guid.Empty;
+        public partial Guid Id { get; set; } = Guid.Empty;
 
         [ObservableProperty]
-        string name = string.Empty;
+        public partial string Name { get; set; } = string.Empty;
 
         [ObservableProperty]
-        string gcode = string.Empty;
+        public partial string Gcode { get; set; } = string.Empty;
 
         [ObservableProperty]
-        Dictionary<string, KlipperDatabaseTemperaturePresetHeater> values = [];
+        public partial Dictionary<string, KlipperDatabaseTemperaturePresetHeater> Values { get; set; } = [];
+
         //public List<KlipperDatabaseTemperaturePresetHeater> Values  = new();
         #endregion
 

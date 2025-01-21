@@ -6,99 +6,122 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperUpdateVersionInfo : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("name")]
-        string name = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("name")]
+        public partial string Name { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("channel")]
-        string channel = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("channel")]
+        public partial string Channel { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("debug_enabled")]
-        bool debugEnabled;
+        [ObservableProperty]
+        
+        [JsonProperty("debug_enabled")]
+        public partial bool DebugEnabled { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("need_channel_update")]
-        bool needChannelUpdate;
+        [ObservableProperty]
+        
+        [JsonProperty("need_channel_update")]
+        public partial bool NeedChannelUpdate { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("is_valid")]
-        bool isValid;
+        [ObservableProperty]
+        
+        [JsonProperty("is_valid")]
+        public partial bool IsValid { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("configured_type")]
-        string configuredType = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("configured_type")]
+        public partial string ConfiguredType { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("detected_type")]
-        string detectedType = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("detected_type")]
+        public partial string DetectedType { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("remote_alias")]
-        string remoteAlias = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("remote_alias")]
+        public partial string RemoteAlias { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("branch")]
-        string branch = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("branch")]
+        public partial string Branch { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("owner")]
-        string owner = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("owner")]
+        public partial string Owner { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("repo_name")]
-        string repoName = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("repo_name")]
+        public partial string RepoName { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
+        [ObservableProperty]
+        
         [NotifyPropertyChangedFor(nameof(UpdateAvailable))]
-        [property: JsonProperty("version")]
-        string version = string.Empty;
+        [JsonProperty("version")]
+        public partial string Version { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
+        [ObservableProperty]
+        
         [NotifyPropertyChangedFor(nameof(UpdateAvailable))]
-        [property: JsonProperty("remote_version")]
-        string remoteVersion = string.Empty;
+        [JsonProperty("remote_version")]
+        public partial string RemoteVersion { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("current_hash")]
-        string currentHash = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("current_hash")]
+        public partial string CurrentHash { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("remote_hash")]
-        string remoteHash = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("remote_hash")]
+        public partial string RemoteHash { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("is_dirty")]
-        bool isDirty;
+        [ObservableProperty]
+        
+        [JsonProperty("is_dirty")]
+        public partial bool IsDirty { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("detached")]
-        bool detached;
+        [ObservableProperty]
+        
+        [JsonProperty("detached")]
+        public partial bool Detached { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("commits_behind")]
-        List<KlipperUpdateCommitsBehind> commitsBehind = [];
+        [ObservableProperty]
+        
+        [JsonProperty("commits_behind")]
+        public partial List<KlipperUpdateCommitsBehind> CommitsBehind { get; set; } = [];
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("git_messages")]
-        List<object> gitMessages = [];
+        [ObservableProperty]
+        
+        [JsonProperty("git_messages")]
+        public partial List<object> GitMessages { get; set; } = [];
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("full_version_string")]
-        string fullVersionString = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("full_version_string")]
+        public partial string FullVersionString { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("pristine")]
-        bool pristine;
+        [ObservableProperty]
+        
+        [JsonProperty("pristine")]
+        public partial bool Pristine { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("package_count")]
-        long packageCount;
+        [ObservableProperty]
+        
+        [JsonProperty("package_count")]
+        public partial long PackageCount { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("package_list")]
-        List<object> packageList = [];
+        [ObservableProperty]
+        
+        [JsonProperty("package_list")]
+        public partial List<object> PackageList { get; set; } = [];
 
         bool UpdateAvailable => Version != RemoteVersion;
         #endregion

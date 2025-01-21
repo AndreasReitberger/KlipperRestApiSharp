@@ -6,9 +6,10 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperDatabaseFluiddValueUiSettingsDashboard : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("tempPresets")]
-        List<KlipperDatabaseFluiddValuePreset> tempPresets = [];
+        [ObservableProperty]
+        
+        [JsonProperty("tempPresets")]
+        public partial List<KlipperDatabaseFluiddValuePreset> TempPresets { get; set; } = [];
 
         #endregion
 

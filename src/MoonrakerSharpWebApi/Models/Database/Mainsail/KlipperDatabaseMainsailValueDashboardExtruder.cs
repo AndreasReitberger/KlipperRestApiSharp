@@ -5,9 +5,10 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperDatabaseMainsailValueDashboardExtruder : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("feedamount")]
-        long feedamount;
+        [ObservableProperty]
+        
+        [JsonProperty("feedamount")]
+        public partial long Feedamount { get; set; }
         #endregion
 
         #region Overrides

@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using AndreasReitberger.API.Print3dServer.Core.Interfaces;
 
 namespace AndreasReitberger.API.Moonraker.Interfaces
 {
-    public interface IMoonrakerClient
+    public interface IMoonrakerClient : IPrint3dServerClient
     {
-        Guid Id { get; set; }
+
     }
 }

@@ -5,17 +5,20 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperStatusTemperatureSensor : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("temperature")]
-        double? temperature;
+        [ObservableProperty]
+        
+        [JsonProperty("temperature")]
+        public partial double? Temperature { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("measured_max_temp")]
-        double? measuredMaxTemperature;
+        [ObservableProperty]
+        
+        [JsonProperty("measured_max_temp")]
+        public partial double? MeasuredMaxTemperature { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("measured_min_temp")]
-        double? measuredMinTemperature;
+        [ObservableProperty]
+        
+        [JsonProperty("measured_min_temp")]
+        public partial double? MeasuredMinTemperature { get; set; }
         #endregion
 
         #region Overrides

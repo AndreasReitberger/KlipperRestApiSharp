@@ -6,13 +6,15 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperHistoryResult : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("count")]
-        long count = 0;
+        [ObservableProperty]
+        
+        [JsonProperty("count")]
+        public partial long Count { get; set; } = 0;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("jobs")]
-        List<KlipperJobItem> jobs = [];
+        [ObservableProperty]
+        
+        [JsonProperty("jobs")]
+        public partial List<KlipperJobItem> Jobs { get; set; } = [];
         #endregion
 
         #region Overrides

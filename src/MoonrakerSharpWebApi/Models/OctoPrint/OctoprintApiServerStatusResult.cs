@@ -5,13 +5,15 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class OctoprintApiServerStatusResult : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("server")]
-        string server = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("server")]
+        public partial string Server { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("safemode")]
-        object? safemode;
+        [ObservableProperty]
+        
+        [JsonProperty("safemode")]
+        public partial object? Safemode { get; set; }
         #endregion
 
         #region Overrides

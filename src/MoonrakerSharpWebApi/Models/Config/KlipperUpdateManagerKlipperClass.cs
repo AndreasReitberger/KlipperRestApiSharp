@@ -6,41 +6,50 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperUpdateManagerKlipperClass : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("type")]
-        string type = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("type")]
+        public partial string Type { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("venv_args")]
-        string venvArgs = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("venv_args")]
+        public partial string VenvArgs { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("is_system_service")]
-        bool isSystemService;
+        [ObservableProperty]
+        
+        [JsonProperty("is_system_service")]
+        public partial bool IsSystemService { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("moved_origin")]
-        Uri? movedOrigin;
+        [ObservableProperty]
+        
+        [JsonProperty("moved_origin")]
+        public partial Uri? MovedOrigin { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("origin")]
-        Uri? origin;
+        [ObservableProperty]
+        
+        [JsonProperty("origin")]
+        public partial Uri? Origin { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("primary_branch")]
-        string primaryBranch = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("primary_branch")]
+        public partial string PrimaryBranch { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("enable_node_updates")]
-        bool enableNodeUpdates;
+        [ObservableProperty]
+        
+        [JsonProperty("enable_node_updates")]
+        public partial bool EnableNodeUpdates { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("requirements")]
-        string requirements = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("requirements")]
+        public partial string Requirements { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("install_script")]
-        string installScript = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("install_script")]
+        public partial string InstallScript { get; set; } = string.Empty;
         #endregion
 
         #region Overrides

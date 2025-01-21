@@ -6,9 +6,10 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperGcodeHelpRespone : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("result")]
-        Dictionary<string, string> result = [];
+        [ObservableProperty]
+        
+        [JsonProperty("result")]
+        public partial Dictionary<string, string> Result { get; set; } = [];
         #endregion
 
         #region Overrides

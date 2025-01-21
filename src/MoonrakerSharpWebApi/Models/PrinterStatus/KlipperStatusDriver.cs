@@ -5,13 +5,15 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperStatusDriver : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("cs_actual")]
-        long? csActual;
+        [ObservableProperty]
+        
+        [JsonProperty("cs_actual")]
+        public partial long? CsActual { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("sg_result")]
-        long? sgResult;
+        [ObservableProperty]
+        
+        [JsonProperty("sg_result")]
+        public partial long? SgResult { get; set; }
         #endregion
 
         #region Overrides

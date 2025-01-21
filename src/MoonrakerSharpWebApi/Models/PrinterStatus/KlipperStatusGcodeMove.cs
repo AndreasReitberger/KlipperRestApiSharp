@@ -6,37 +6,45 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperStatusGcodeMove : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("homing_origin")]
-        List<double> homingOrigin = [];
+        [ObservableProperty]
+        
+        [JsonProperty("homing_origin")]
+        public partial List<double> HomingOrigin { get; set; } = [];
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("speed_factor")]
-        double? speedFactor;
+        [ObservableProperty]
+        
+        [JsonProperty("speed_factor")]
+        public partial double? SpeedFactor { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("gcode_position")]
-        List<double> gcodePosition = [];
+        [ObservableProperty]
+        
+        [JsonProperty("gcode_position")]
+        public partial List<double> GcodePosition { get; set; } = [];
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("absolute_extrude")]
-        bool absoluteExtrude;
+        [ObservableProperty]
+        
+        [JsonProperty("absolute_extrude")]
+        public partial bool AbsoluteExtrude { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("absolute_coordinates")]
-        bool absoluteCoordinates;
+        [ObservableProperty]
+        
+        [JsonProperty("absolute_coordinates")]
+        public partial bool AbsoluteCoordinates { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("position")]
-        List<double> position = [];
+        [ObservableProperty]
+        
+        [JsonProperty("position")]
+        public partial List<double> Position { get; set; } = [];
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("speed")]
-        double? speed;
+        [ObservableProperty]
+        
+        [JsonProperty("speed")]
+        public partial double? Speed { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("extrude_factor")]
-        double? extrudeFactor;
+        [ObservableProperty]
+        
+        [JsonProperty("extrude_factor")]
+        public partial double? ExtrudeFactor { get; set; }
         #endregion
 
         #region Overrides

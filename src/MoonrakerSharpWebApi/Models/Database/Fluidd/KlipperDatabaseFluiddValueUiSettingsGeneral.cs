@@ -5,13 +5,15 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperDatabaseFluiddValueUiSettingsGeneral : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("locale")]
-        string locale = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("locale")]
+        public partial string Locale { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("instanceName")]
-        string instanceName = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("instanceName")]
+        public partial string InstanceName { get; set; } = string.Empty;
 
         #endregion
 

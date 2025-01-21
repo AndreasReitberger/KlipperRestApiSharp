@@ -7,33 +7,40 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperGcodeThumbnail : ObservableObject, IGcodeImage
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore]
-        Guid id;
+        [ObservableProperty]
+        
+        [JsonIgnore]
+        public partial Guid Id { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("width")]
-        long width;
+        [ObservableProperty]
+        
+        [JsonProperty("width")]
+        public partial long Width { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("height")]
-        long height;
+        [ObservableProperty]
+        
+        [JsonProperty("height")]
+        public partial long Height { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("size")]
-        long size;
+        [ObservableProperty]
+        
+        [JsonProperty("size")]
+        public partial long Size { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("relative_path")]
-        string path = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("relative_path")]
+        public partial string Path { get; set; } = string.Empty;
+
         partial void OnPathChanged(string value)
         {
             IsPathRelative = value is not null;
         }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore]
-        bool isPathRelative = true;
+        [ObservableProperty]
+        
+        [JsonIgnore]
+        public partial bool IsPathRelative { get; set; } = true;
         #endregion
 
         #region Overrides

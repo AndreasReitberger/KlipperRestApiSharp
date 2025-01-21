@@ -6,86 +6,109 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class OctoprintApiPrinter : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        bool isOnline = true;
+        [ObservableProperty]
+        
+        public partial bool IsOnline { get; set; } = true;
 
-        [ObservableProperty, JsonIgnore]
-        double? extruder1 = 0;
+        [ObservableProperty]
+        
+        public partial double? Extruder1 { get; set; } = 0;
 
-        [ObservableProperty, JsonIgnore]
-        double? extruder2 = 0;
+        [ObservableProperty]
+        
+        public partial double? Extruder2 { get; set; } = 0;
 
-        [ObservableProperty, JsonIgnore]
-        double? heatedBed = 0;
+        [ObservableProperty]
+        
+        public partial double? HeatedBed { get; set; } = 0;
 
-        [ObservableProperty, JsonIgnore]
-        double? chamber = 0;
+        [ObservableProperty]
+        
+        public partial double? Chamber { get; set; } = 0;
 
-        [ObservableProperty, JsonIgnore]
-        double progress = 0;
+        [ObservableProperty]
+        
+        public partial double Progress { get; set; } = 0;
 
-        [ObservableProperty, JsonIgnore]
-        double remainingPrintTime = 0;
+        [ObservableProperty]
+        
+        public partial double RemainingPrintTime { get; set; } = 0;
 
-        [ObservableProperty, JsonIgnore]
-        string job = string.Empty;
+        [ObservableProperty]
+        
+        public partial string Job { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        bool isPrinting = false;
+        [ObservableProperty]
+        
+        public partial bool IsPrinting { get; set; } = false;
 
-        [ObservableProperty, JsonIgnore]
-        bool isPaused = false;
+        [ObservableProperty]
+        
+        public partial bool IsPaused { get; set; } = false;
 
-        [ObservableProperty, JsonIgnore]
-        bool isSelected = false;
+        [ObservableProperty]
+        
+        public partial bool IsSelected { get; set; } = false;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("axes")]
-        OctoprintApiPrinterAxes? axes;
+        [ObservableProperty]
+        
+        [JsonProperty("axes")]
+        public partial OctoprintApiPrinterAxes? Axes { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("color")]
-        string color = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("color")]
+        public partial string Color { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("current")]
-        bool current;
+        [ObservableProperty]
+        
+        [JsonProperty("current")]
+        public partial bool Current { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("default")]
-        bool defaultDefault;
+        [ObservableProperty]
+        
+        [JsonProperty("default")]
+        public partial bool DefaultDefault { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("extruder")]
-        OctoprintApiPrinterExtruder? extruder;
+        [ObservableProperty]
+        
+        [JsonProperty("extruder")]
+        public partial OctoprintApiPrinterExtruder? Extruder { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("heatedBed")]
-        bool hasHeatedBed;
+        [ObservableProperty]
+        
+        [JsonProperty("heatedBed")]
+        public partial bool HasHeatedBed { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("heatedChamber")]
-        bool hasHeatedChamber;
+        [ObservableProperty]
+        
+        [JsonProperty("heatedChamber")]
+        public partial bool HasHeatedChamber { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("id")]
-        string id = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("id")]
+        public partial string Id { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("model")]
-        string model = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("model")]
+        public partial string Model { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("name")]
-        string name = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("name")]
+        public partial string Name { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("resource")]
-        Uri? resource;
+        [ObservableProperty]
+        
+        [JsonProperty("resource")]
+        public partial Uri? Resource { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("volume")]
-        OctoprintApiPrinterVolume? vVolume;
+        [ObservableProperty]
+        
+        [JsonProperty("volume")]
+        public partial OctoprintApiPrinterVolume? VVolume { get; set; }
         #endregion
 
         #region Overrides

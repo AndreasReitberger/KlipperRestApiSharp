@@ -5,65 +5,80 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperConfigDisplay : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("down_pin")]
-        string downPin = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("down_pin")]
+        public partial string DownPin { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("analog_range_back_pin")]
-        string analogRangeBackPin = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("analog_range_back_pin")]
+        public partial string AnalogRangeBackPin { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("click_pin")]
-        string clickPin = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("click_pin")]
+        public partial string ClickPin { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("d6_pin")]
-        string d6Pin = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("d6_pin")]
+        public partial string D6Pin { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("d4_pin")]
-        string d4Pin = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("d4_pin")]
+        public partial string D4Pin { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("lcd_type")]
-        string lcdType = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("lcd_type")]
+        public partial string LcdType { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("d5_pin")]
-        string d5Pin = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("d5_pin")]
+        public partial string D5Pin { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("e_pin")]
-        string ePin = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("e_pin")]
+        public partial string EPin { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("back_pin")]
-        string backPin = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("back_pin")]
+        public partial string BackPin { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("rs_pin")]
-        string rsPin = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("rs_pin")]
+        public partial string RsPin { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("analog_range_down_pin")]
-        string analogRangeDownPin = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("analog_range_down_pin")]
+        public partial string AnalogRangeDownPin { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("analog_range_up_pin")]
-        string analogRangeUpPin = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("analog_range_up_pin")]
+        public partial string AnalogRangeUpPin { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("up_pin")]
-        string upPin = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("up_pin")]
+        public partial string UpPin { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("d7_pin")]
-        string d7Pin = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("d7_pin")]
+        public partial string D7Pin { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("analog_range_click_pin")]
-        string analogRangeClickPin = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("analog_range_click_pin")]
+        public partial string AnalogRangeClickPin { get; set; } = string.Empty;
         #endregion
 
         #region Overrides

@@ -5,17 +5,20 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class MoonrakerThrottledState : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("rx_bytes")]
-        long rxBytes;
+        [ObservableProperty]
+        
+        [JsonProperty("rx_bytes")]
+        public partial long RxBytes { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("tx_bytes")]
-        long txBytes;
+        [ObservableProperty]
+        
+        [JsonProperty("tx_bytes")]
+        public partial long TxBytes { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("bandwidth")]
-        double bandwidth;
+        [ObservableProperty]
+        
+        [JsonProperty("bandwidth")]
+        public partial double Bandwidth { get; set; }
         #endregion
 
         #region Overrides

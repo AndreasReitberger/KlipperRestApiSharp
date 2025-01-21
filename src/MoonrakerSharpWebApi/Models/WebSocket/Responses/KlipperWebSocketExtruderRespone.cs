@@ -5,25 +5,25 @@ namespace AndreasReitberger.API.Moonraker.Models.WebSocket
     public partial class KlipperWebSocketExtruderRespone : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("extruder")]
-        KlipperStatusExtruder? extruder;
+        [ObservableProperty]
+        [JsonProperty("extruder")]
+        public partial KlipperStatusExtruder? Extruder { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("toolhead")]
-        KlipperStatusToolhead? toolHead;
+        [ObservableProperty]
+        [JsonProperty("toolhead")]
+        public partial KlipperStatusToolhead? ToolHead { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("extruder1")]
-        KlipperStatusExtruder? extruder1;
+        [ObservableProperty]
+        [JsonProperty("extruder1")]
+        public partial KlipperStatusExtruder? Extruder1 { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("extruder2")]
-        KlipperStatusExtruder? extruder2;
+        [ObservableProperty]
+        [JsonProperty("extruder2")]
+        public partial KlipperStatusExtruder? Extruder2 { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("extruder3")]
-        KlipperStatusExtruder? extruder3;
+        [ObservableProperty]
+        [JsonProperty("extruder3")]
+        public partial KlipperStatusExtruder? Extruder3 { get; set; }
         #endregion
 
         #region Overrides

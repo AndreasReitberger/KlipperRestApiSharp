@@ -5,9 +5,10 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperDirectoryActionRespone : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("result")]
-        public KlipperDirectoryActionResult? result;
+        [ObservableProperty]
+        
+        [JsonProperty("result")]
+        public partial KlipperDirectoryActionResult? Result { get; set; }
         #endregion
 
         #region Overrides
