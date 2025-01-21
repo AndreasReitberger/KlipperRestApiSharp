@@ -3,7 +3,6 @@ using AndreasReitberger.API.Moonraker.Enum;
 using AndreasReitberger.API.Moonraker.Models;
 using AndreasReitberger.API.Moonraker.Models.WebSocket;
 using AndreasReitberger.API.Print3dServer.Core.Interfaces;
-using AndreasReitberger.Core.Utilities;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Diagnostics;
@@ -141,7 +140,7 @@ namespace MoonrakerSharpWebApi.Test
                     TotalDiskSpace = 65621361616161,
                     ServerName = "My moonraker server",
                 };
-                MoonrakerClient.Instance.SetProxy(true, "https://testproxy.de", 447, "User", SecureStringHelper.ConvertToSecureString("my_awesome_pwd"), true);
+                MoonrakerClient.Instance.SetProxy(true, "https://testproxy.de", 447, "User", "my_awesome_pwd", true);
 
                 string serializedString = System.Text.Json.JsonSerializer.Serialize(MoonrakerClient.Instance, options: MoonrakerClient.DefaultJsonSerializerSettings);
                 MoonrakerClient? serializedObject = System.Text.Json.JsonSerializer.Deserialize<MoonrakerClient>(serializedString, options: MoonrakerClient.DefaultJsonSerializerSettings);
@@ -169,7 +168,7 @@ namespace MoonrakerSharpWebApi.Test
                     TotalDiskSpace = 65621361616161,
                     ServerName = "My moonraker server",
                 };
-                MoonrakerClient.Instance.SetProxy(true, "https://testproxy.de", 447, "User", SecureStringHelper.ConvertToSecureString("my_awesome_pwd"), true);
+                MoonrakerClient.Instance.SetProxy(true, "https://testproxy.de", 447, "User", "my_awesome_pwd", true);
                 string serializedString = JsonConvert.SerializeObject(MoonrakerClient.Instance, Formatting.Indented, settings: MoonrakerClient.DefaultNewtonsoftJsonSerializerSettings);
                 MoonrakerClient? serializedObject = JsonConvert.DeserializeObject<MoonrakerClient>(serializedString, settings: MoonrakerClient.DefaultNewtonsoftJsonSerializerSettings);
                 Assert.That(serializedObject is MoonrakerClient server && server != null);
@@ -318,7 +317,7 @@ namespace MoonrakerSharpWebApi.Test
                         TotalDiskSpace = 65621361616161,
                         ServerName = "My moonraker server",
                     };
-                    MoonrakerClient.Instance.SetProxy(true, "https://testproxy.de", 447, "User", SecureStringHelper.ConvertToSecureString("my_awesome_pwd"), true);
+                    MoonrakerClient.Instance.SetProxy(true, "https://testproxy.de", 447, "User", "my_awesome_pwd", true);
 
                     xmlSerializer.Serialize(fileStream, MoonrakerClient.Instance);
                     Assert.That(File.Exists(Path.Combine(dir, "server.xml")));
@@ -349,8 +348,8 @@ namespace MoonrakerSharpWebApi.Test
                     await _server.RefreshAllAsync();
                     Assert.That(_server.InitialDataFetched);
 
-                    KlipperAccessTokenResult token2 = await _server.GetApiKeyAsync();
-                    Assert.That(!string.IsNullOrEmpty(token2.Result));
+                    KlipperAccessTokenResult? token2 = await _server.GetApiKeyAsync();
+                    Assert.That(!string.IsNullOrEmpty(token2?.Result));
 
                     Dictionary<string, object> objectList = await _server.QueryPrinterObjectStatusAsync(new() { { "gcode_move", "" } });
                     Assert.That(objectList?.Count > 0);

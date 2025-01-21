@@ -1,7 +1,8 @@
 ﻿using AndreasReitberger.API.Moonraker.Models;
-using AndreasReitberger.API.Print3dServer.Core;
 using AndreasReitberger.API.Print3dServer.Core.Interfaces;
 using AndreasReitberger.API.Print3dServer.Core.JSON.System;
+using AndreasReitberger.API.REST;
+using AndreasReitberger.API.REST.Interfaces;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 

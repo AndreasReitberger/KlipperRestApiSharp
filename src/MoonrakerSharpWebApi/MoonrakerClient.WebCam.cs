@@ -3,6 +3,8 @@ using AndreasReitberger.API.Moonraker.Models;
 using AndreasReitberger.API.Moonraker.Structs;
 using AndreasReitberger.API.Print3dServer.Core.Events;
 using AndreasReitberger.API.Print3dServer.Core.Interfaces;
+using AndreasReitberger.API.REST.Events;
+using AndreasReitberger.API.REST.Interfaces;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -41,17 +43,6 @@ namespace AndreasReitberger.API.Moonraker
                 else
                     // If nothing is returned, try to get it from the database directly.
                     return await GetWebCamSettingsFromDatabaseAsync().ConfigureAwait(false);
-            }
-            catch (JsonException jecx)
-            {
-                OnError(new JsonConvertEventArgs()
-                {
-                    Exception = jecx,
-                    OriginalString = result?.Result,
-                    TargetType = nameof(KlipperDatabaseItemRespone),
-                    Message = jecx.Message,
-                });
-                return resultObject;
             }
             catch (Exception exc)
             {
