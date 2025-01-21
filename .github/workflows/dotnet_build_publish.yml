@@ -1,0 +1,69 @@
+# based on: https://github.com/Redth/Maui.ContentButton/blob/main/.github/workflows/build-publish.yml
+name: Build and Publish
+
+on:
+  pull_request:
+  push:
+    branches: [ main ]
+  release:
+    types: [published]
+
+jobs:
+  build:
+    name: Build
+    env:
+      NUPKG_MAJOR: 0.999
+    runs-on: windows-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 9.0.x
+    - name: Install .NET MAUI
+      shell: pwsh
+      run: |
+        & dotnet nuget locals all --clear
+#        & dotnet workload install maui --source https://api.nuget.org/v3/index.json
+#        & dotnet workload install android ios maccatalyst tvos macos maui wasm-tools maui-maccatalyst --source https://api.nuget.org/v3/index.json
+    - name: Build
+      run: dotnet build --configuration Release ./src 
+    - name: Package NuGets
+      shell: pwsh
+      run: |
+        $VERSION="$env:NUPKG_MAJOR-ci$env:GITHUB_RUN_ID"
+        if ($env:GITHUB_EVENT_NAME -eq "release") {
+          $VERSION = $env:GITHUB_REF.Substring($env:GITHUB_REF.LastIndexOf('/') + 1)
+        }
+        echo "pkgverci=$VERSION" >> $GITHUB_OUTPUT
+        echo "PACKAGE VERSION: $VERSION"
+        
+        New-Item -ItemType Directory -Force -Path .\artifacts
+        dotnet pack --output ./artifacts --configuration Release ./src/MoonrakerSharpWebApi/MoonrakerSharpWebApi.csproj
+#        dotnet pack --output ./artifacts --configuration Release -p:PackageVersion=$VERSION ./src/Print3dServer.Core/Print3dServer.Core.csproj
+#        echo "::set-output name=pkgverci::$VERSION"
+        
+    - name: Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: NuGet
+        path: ./artifacts
+
+#  publish:
+#    name: Publish
+#    needs: build
+#    runs-on: windows-latest
+#    if: github.event_name == 'release'
+#    steps:
+#      - name: Download Artifacts
+#        uses: actions/download-artifact@v4
+#        with:
+#          name: NuGet
+#      - name: Setup .NET
+#        uses: actions/setup-dotnet@v3
+#        with:
+#          dotnet-version: '9.0.x'
+#      - name: Push NuGet
+#        run: |
+#          dotnet nuget push *.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_ORG_API_KEY }}
