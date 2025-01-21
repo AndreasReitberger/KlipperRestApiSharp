@@ -4,8 +4,9 @@ using AndreasReitberger.API.Moonraker.Models;
 using AndreasReitberger.API.Moonraker.Structs;
 using AndreasReitberger.API.Print3dServer.Core;
 using AndreasReitberger.API.Print3dServer.Core.Enums;
-using AndreasReitberger.API.Print3dServer.Core.Events;
 using AndreasReitberger.API.Print3dServer.Core.Interfaces;
+using AndreasReitberger.API.REST.Events;
+using AndreasReitberger.API.REST.Interfaces;
 using AndreasReitberger.Core.Utilities;
 using Newtonsoft.Json;
 using System;
@@ -360,37 +361,6 @@ namespace AndreasReitberger.API.Moonraker
             }
             */
         }
-
-        /*
-        [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        bool isPrinting = false;
-        partial void OnIsPrintingChanged(bool value)
-        {
-            UpdateCurrentPrintDependencies(value);
-            OnKlipperIsPrintingStateChanged(new KlipperIsPrintingStateChangedEventArgs()
-            {
-                IsPrinting = value,
-                IsPaused = IsPaused,
-                SessionId = SessionId,
-                CallbackId = -1,
-            });
-        }
-
-        [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        bool isPaused = false;
-        partial void OnIsPausedChanged(bool value)
-        {
-            OnKlipperIsPrintingStateChanged(new KlipperIsPrintingStateChangedEventArgs()
-            {
-                IsPrinting = IsPrinting,
-                IsPaused = value,
-                SessionId = SessionId,
-                CallbackId = -1,
-            });
-        }
-        */
 
         [ObservableProperty]
         [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]

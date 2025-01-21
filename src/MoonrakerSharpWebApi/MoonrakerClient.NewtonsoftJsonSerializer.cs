@@ -2,6 +2,8 @@
 using AndreasReitberger.API.Print3dServer.Core;
 using AndreasReitberger.API.Print3dServer.Core.Interfaces;
 using AndreasReitberger.API.Print3dServer.Core.JSON.Newtonsoft;
+using AndreasReitberger.API.REST;
+using AndreasReitberger.API.REST.Interfaces;
 using Newtonsoft.Json;
 
 namespace AndreasReitberger.API.Moonraker

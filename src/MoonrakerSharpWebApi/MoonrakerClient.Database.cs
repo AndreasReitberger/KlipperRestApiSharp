@@ -1,8 +1,8 @@
 ﻿using AndreasReitberger.API.Moonraker.Enum;
 using AndreasReitberger.API.Moonraker.Models;
 using AndreasReitberger.API.Moonraker.Structs;
-using AndreasReitberger.API.Print3dServer.Core.Events;
-using AndreasReitberger.API.Print3dServer.Core.Interfaces;
+using AndreasReitberger.API.REST.Events;
+using AndreasReitberger.API.REST.Interfaces;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -25,7 +25,7 @@ namespace AndreasReitberger.API.Moonraker
         public async Task<List<string>> ListDatabaseNamespacesAsync()
         {
             IRestApiRequestRespone? result = null;
-            List<string> resultObject = new();
+            List<string> resultObject = [];
             try
             {
                 string targetUri = $"{MoonrakerCommands.Server}";
@@ -44,7 +44,7 @@ namespace AndreasReitberger.API.Moonraker
                     .ConfigureAwait(false);
                 */
                 KlipperDatabaseNamespaceListRespone? queryResult = GetObjectFromJson<KlipperDatabaseNamespaceListRespone>(result?.Result, NewtonsoftJsonSerializerSettings);
-                return queryResult?.Result?.Namespaces ?? new();
+                return queryResult?.Result?.Namespaces ?? [];
             }
             catch (JsonException jecx)
             {
@@ -68,7 +68,7 @@ namespace AndreasReitberger.API.Moonraker
             try
             {
                 List<string> result = await ListDatabaseNamespacesAsync().ConfigureAwait(false);
-                AvailableNamespaces = result ?? new();
+                AvailableNamespaces = result ?? [];
                 if (AvailableNamespaces?.Count > 0)
                 {
                     // Try to detect the current operating system

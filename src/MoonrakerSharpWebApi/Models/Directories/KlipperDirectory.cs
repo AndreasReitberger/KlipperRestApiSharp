@@ -1,4 +1,5 @@
 ﻿using AndreasReitberger.API.Print3dServer.Core.Interfaces;
+using AndreasReitberger.API.Print3dServer.Core.Utilities;
 using Newtonsoft.Json;
 using System;
 
@@ -25,8 +26,17 @@ namespace AndreasReitberger.API.Moonraker.Models
         string root = string.Empty;
 
         [ObservableProperty, JsonIgnore]
+        [NotifyPropertyChangedFor(nameof(ModifiedGeneralized))]
         [property: JsonProperty("modified")]
-        double modified;
+        double? modified;
+        partial void OnModifiedChanged(double? value)
+        {
+            if (value is not null)
+                ModifiedGeneralized = TimeBaseConvertHelper.FromUnixDate(value);
+        }
+
+        [ObservableProperty]
+        DateTime? modifiedGeneralized;
 
         [ObservableProperty, JsonIgnore]
         [property: JsonProperty("size")]
@@ -42,6 +52,7 @@ namespace AndreasReitberger.API.Moonraker.Models
 
         [ObservableProperty, JsonIgnore]
         string name = string.Empty;
+
         #endregion
 
         #endregion

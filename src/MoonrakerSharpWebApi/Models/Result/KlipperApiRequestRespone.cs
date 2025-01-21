@@ -1,13 +1,18 @@
-﻿using AndreasReitberger.API.Print3dServer.Core.Interfaces;
+﻿using AndreasReitberger.API.REST.Interfaces;
 using Newtonsoft.Json;
+using System;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
+    [Obsolete("Use RestApiRequestRespone instead")]
     public partial class KlipperApiRequestRespone : ObservableObject, IRestApiRequestRespone
     {
         #region Properties
         [ObservableProperty]
         string? result;
+
+        [ObservableProperty]
+        byte[]? rawBytes;
 
         [ObservableProperty]
         bool isOnline = false;
