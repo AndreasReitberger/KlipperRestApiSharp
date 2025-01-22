@@ -8,48 +8,60 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperJobItem : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("end_time")]
-        double? endTime;
+        [ObservableProperty]
+        
+        [JsonProperty("end_time")]
+        public partial double? EndTime { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("filament_used")]
-        double filamentUsed;
+        [ObservableProperty]
+        
+        [JsonProperty("filament_used")]
+        public partial double FilamentUsed { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("filename")]
-        string filename = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("filename")]
+        public partial string Filename { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("metadata")]
-        IGcodeMeta? metadata;
+        [ObservableProperty]
+        
+        [JsonProperty("metadata")]
+        public partial IGcodeMeta? Metadata { get; set; }
+
         //public KlipperGcodeMetaResult Metadata;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("print_duration")]
-        double printDuration;
+        [ObservableProperty]
+        
+        [JsonProperty("print_duration")]
+        public partial double PrintDuration { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("status")]
-        [JsonConverter(typeof(StringEnumConverter), true)]
-        KlipperJobStates status;
+        [ObservableProperty]
+        
+        [JsonProperty("status")]
+        [field: JsonConverter(typeof(StringEnumConverter), true)]
+        public partial KlipperJobStates Status { get; set; }
+
         //public string Status;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("start_time")]
-        double? startTime;
+        [ObservableProperty]
+        
+        [JsonProperty("start_time")]
+        public partial double? StartTime { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("total_duration")]
-        double totalDuration;
+        [ObservableProperty]
+        
+        [JsonProperty("total_duration")]
+        public partial double TotalDuration { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("job_id")]
-        string jobId = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("job_id")]
+        public partial string JobId { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("exists")]
-        bool exists;
+        [ObservableProperty]
+        
+        [JsonProperty("exists")]
+        public partial bool Exists { get; set; }
 
         #endregion
 

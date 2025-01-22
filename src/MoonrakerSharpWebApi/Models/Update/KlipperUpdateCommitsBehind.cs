@@ -5,29 +5,35 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperUpdateCommitsBehind : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("sha")]
-        string sha = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("sha")]
+        public partial string Sha { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("author")]
-        string author = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("author")]
+        public partial string Author { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("date")]
-        long date;
+        [ObservableProperty]
+        
+        [JsonProperty("date")]
+        public partial long Date { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("subject")]
-        string subject = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("subject")]
+        public partial string Subject { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("message")]
-        string message = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("message")]
+        public partial string Message { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("tag")]
-        object? tag;
+        [ObservableProperty]
+        
+        [JsonProperty("tag")]
+        public partial object? Tag { get; set; }
         #endregion
 
         #region Overrides

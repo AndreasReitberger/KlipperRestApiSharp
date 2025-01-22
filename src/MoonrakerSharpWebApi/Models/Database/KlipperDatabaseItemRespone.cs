@@ -5,9 +5,10 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperDatabaseItemRespone : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("result")]
-        KlipperDatabaseItemResult? result;
+        [ObservableProperty]
+        
+        [JsonProperty("result")]
+        public partial KlipperDatabaseItemResult? Result { get; set; }
         #endregion
 
         #region Overrides

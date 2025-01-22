@@ -11,18 +11,21 @@ namespace AndreasReitberger.API.Moonraker
         #region Auth
 
         [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        string userToken = string.Empty;
+        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        public partial string UserToken { get; set; } = string.Empty;
+
         partial void OnUserTokenChanged(string value) => AddOrUpdateAuthHeader("Authorization", $"Bearer {value}", AuthenticationHeaderTarget.Header, 0);
 
         [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        string refreshToken = string.Empty;
+        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        public partial string RefreshToken { get; set; } = string.Empty;
+
         partial void OnRefreshTokenChanged(string value) => AddOrUpdateAuthHeader("Authorization", $"Bearer {value}", AuthenticationHeaderTarget.Header, 1);
 
         [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        string oneShotToken = string.Empty;
+        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        public partial string OneShotToken { get; set; } = string.Empty;
+
         partial void OnOneShotTokenChanged(string value) => AddOrUpdateAuthHeader("Authorization", $"Bearer {value}", AuthenticationHeaderTarget.Header, 2);
 
         #endregion

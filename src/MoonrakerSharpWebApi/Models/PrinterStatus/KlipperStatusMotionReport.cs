@@ -6,25 +6,30 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperStatusMotionReport : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("live_position")]
-        List<double> livePosition = [];
+        [ObservableProperty]
+        
+        [JsonProperty("live_position")]
+        public partial List<double> LivePosition { get; set; } = [];
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("steppers")]
-        List<string> steppers = [];
+        [ObservableProperty]
+        
+        [JsonProperty("steppers")]
+        public partial List<string> Steppers { get; set; } = [];
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("live_velocity")]
-        double? liveVelocity;
+        [ObservableProperty]
+        
+        [JsonProperty("live_velocity")]
+        public partial double? LiveVelocity { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("live_extruder_velocity")]
-        double? liveExtruderVelocity;
+        [ObservableProperty]
+        
+        [JsonProperty("live_extruder_velocity")]
+        public partial double? LiveExtruderVelocity { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("trapq")]
-        List<string> trapq = [];
+        [ObservableProperty]
+        
+        [JsonProperty("trapq")]
+        public partial List<string> Trapq { get; set; } = [];
         #endregion
 
         #region Overrides

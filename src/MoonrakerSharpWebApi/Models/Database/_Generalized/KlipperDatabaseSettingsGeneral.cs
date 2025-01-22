@@ -6,13 +6,13 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-        string printername = string.Empty;
+        public partial string Printername { get; set; } = string.Empty;
 
         [ObservableProperty]
-        bool displayCancelPrint;
+        public partial bool DisplayCancelPrint { get; set; }
 
         [ObservableProperty]
-        string locale = string.Empty;
+        public partial string Locale { get; set; } = string.Empty;
         #endregion
 
         #region Overrides

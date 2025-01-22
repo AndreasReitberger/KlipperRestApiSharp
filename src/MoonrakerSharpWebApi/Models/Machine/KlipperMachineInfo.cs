@@ -6,33 +6,40 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperMachineInfo : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("cpu_info")]
-        KlipperCpuInfo? cpuInfo;
+        [ObservableProperty]
+        
+        [JsonProperty("cpu_info")]
+        public partial KlipperCpuInfo? CpuInfo { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("sd_info")]
-        KlipperSdInfo? sdInfo;
+        [ObservableProperty]
+        
+        [JsonProperty("sd_info")]
+        public partial KlipperSdInfo? SdInfo { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("distribution")]
-        KlipperDistribution? distribution;
+        [ObservableProperty]
+        
+        [JsonProperty("distribution")]
+        public partial KlipperDistribution? Distribution { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("virtualization")]
-        KlipperVirtualization? virtualization;
+        [ObservableProperty]
+        
+        [JsonProperty("virtualization")]
+        public partial KlipperVirtualization? Virtualization { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("available_services")]
-        List<string> availableServices = [];
+        [ObservableProperty]
+        
+        [JsonProperty("available_services")]
+        public partial List<string> AvailableServices { get; set; } = [];
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("service_state")]
-        Dictionary<string, KlipperState> serviceState = [];
+        [ObservableProperty]
+        
+        [JsonProperty("service_state")]
+        public partial Dictionary<string, KlipperState> ServiceState { get; set; } = [];
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("network")]
-        Dictionary<string, KlipperNetworkInterface> network = [];
+        [ObservableProperty]
+        
+        [JsonProperty("network")]
+        public partial Dictionary<string, KlipperNetworkInterface> Network { get; set; } = [];
         #endregion
 
         #region Overrides

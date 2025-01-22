@@ -68,37 +68,37 @@ namespace AndreasReitberger.API.Moonraker
         #region Connection
 
         [ObservableProperty]
-        MoonrakerOperatingSystems operatingSystem = MoonrakerOperatingSystems.MainsailOS;
+        public partial MoonrakerOperatingSystems OperatingSystem { get; set; } = MoonrakerOperatingSystems.MainsailOS;
 
         [ObservableProperty]
-        string hostName = string.Empty;
+        public partial string HostName { get; set; } = string.Empty;
 
         #endregion
 
         #region General
 
         [ObservableProperty]
-        bool refreshHeatersDirectly = true;
+        public partial bool RefreshHeatersDirectly { get; set; } = true;
 
         #endregion
 
         #region Api & Version
 
         [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        string moonrakerVersion = string.Empty;
+        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        public partial string MoonrakerVersion { get; set; } = string.Empty;
 
         [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        List<string> registeredDirectories = new();
+        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        public partial List<string> RegisteredDirectories { get; set; } = [];
 
         #endregion
 
         #region Jobs
 
         [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        string jobListState = string.Empty;
+        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        public partial string JobListState { get; set; } = string.Empty;
         partial void OnJobListStateChanging(string value)
         {
             OnKlipperJobListStateChanged(new KlipperJobListStateChangedEventArgs()
@@ -115,8 +115,8 @@ namespace AndreasReitberger.API.Moonraker
 
         #region State & Config
         [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        string klipperState = string.Empty;
+        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        public partial string KlipperState { get; set; } = string.Empty;
         partial void OnKlipperStateChanging(string value)
         {
             OnKlipperStateChangedEvent(new KlipperStateChangedEventArgs()
@@ -127,8 +127,8 @@ namespace AndreasReitberger.API.Moonraker
         }
 
         [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        double cpuTemp = 0;
+        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        public partial double CpuTemp { get; set; } = 0;
         partial void OnCpuTempChanged(double value)
         {
             OnKlipperCpuTemperatureChanged(new KlipperCpuTemperatureChangedEventArgs()
@@ -138,8 +138,8 @@ namespace AndreasReitberger.API.Moonraker
         }
 
         [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        KlipperServerConfig? config;
+        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        public partial KlipperServerConfig? Config { get; set; }
         partial void OnConfigChanged(KlipperServerConfig? value)
         {
             OnKlipperServerConfigChanged(new KlipperServerConfigChangedEventArgs()
@@ -152,9 +152,10 @@ namespace AndreasReitberger.API.Moonraker
         }
 
         [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        public partial
 #if ConcurrentDictionary
-        ConcurrentDictionary<string, KlipperTemperatureSensorHistory> temperatureCache = new();
+        ConcurrentDictionary<string, KlipperTemperatureSensorHistory> TemperatureCache { get; set; } = new();
         partial void OnTemperatureCacheChanged(ConcurrentDictionary<string, KlipperTemperatureSensorHistory> value)
         {
             OnKlipperServerTemperatureCacheChanged(new KlipperTemperatureCacheChangedEventArgs()
@@ -165,7 +166,7 @@ namespace AndreasReitberger.API.Moonraker
             });
         }
 #else
-        Dictionary<string, KlipperTemperatureSensorHistory> temperatureCache = new();
+        Dictionary<string, KlipperTemperatureSensorHistory> TemperatureCache { get; set; } = new();
         partial void OnTemperatureCacheChanged(Dictionary<string, KlipperTemperatureSensorHistory> value)
         {
             OnKlipperServerTemperatureCacheChanged(new KlipperTemperatureCacheChangedEventArgs()
@@ -178,8 +179,8 @@ namespace AndreasReitberger.API.Moonraker
 #endif
 
         [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        List<KlipperGcode> gcodeCache = [];
+        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        public partial List<KlipperGcode> GcodeCache { get; set; } = [];
         partial void OnGcodeCacheChanged(List<KlipperGcode> value)
         {
             OnKlipperServerGcodeCacheChanged(new KlipperGcodeCacheChangedEventArgs()
@@ -191,8 +192,8 @@ namespace AndreasReitberger.API.Moonraker
         }
 
         [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        KlipperGcodeMetaResult? gcodeMeta;
+        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        public partial KlipperGcodeMetaResult? GcodeMeta { get; set; }
         partial void OnGcodeMetaChanged(KlipperGcodeMetaResult? value)
         {
             OnKlipperGcodeMetaResultChanged(new KlipperGcodeMetaResultChangedEventArgs()
@@ -205,8 +206,8 @@ namespace AndreasReitberger.API.Moonraker
         }
 
         [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        KlipperStatusGcodeMove? gcodeMove;
+        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        public partial KlipperStatusGcodeMove? GcodeMove { get; set; }
         partial void OnGcodeMoveChanged(KlipperStatusGcodeMove? value)
         {
             OnKlipperGcodeMoveStateChanged(new KlipperGcodeMoveStateChangedEventArgs()
@@ -220,8 +221,8 @@ namespace AndreasReitberger.API.Moonraker
         }
 
         [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        KlipperStatusVirtualSdcard? virtualSdCard;
+        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        public partial KlipperStatusVirtualSdcard? VirtualSdCard { get; set; }
         partial void OnVirtualSdCardChanged(KlipperStatusVirtualSdcard? value)
         {
             OnKlipperVirtualSdCardStateChanged(new KlipperVirtualSdCardStateChangedEventArgs()
@@ -233,8 +234,8 @@ namespace AndreasReitberger.API.Moonraker
         }
 
         [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        ConcurrentDictionary<string, KlipperStatusTemperatureSensor> temperatureSensors = new();
+        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        public partial ConcurrentDictionary<string, KlipperStatusTemperatureSensor> TemperatureSensors { get; set; } = new();
         partial void OnTemperatureSensorsChanged(ConcurrentDictionary<string, KlipperStatusTemperatureSensor> value)
         {
             if (_enableCooldown)
@@ -264,8 +265,8 @@ namespace AndreasReitberger.API.Moonraker
         }
 
         [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        ConcurrentDictionary<string, double?> cpuUsage = new();
+        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        public partial ConcurrentDictionary<string, double?> CpuUsage { get; set; } = new();
         partial void OnCpuUsageChanged(ConcurrentDictionary<string, double?> value)
         {
             // WebSocket is updating this property in a high frequency, so a cooldown can be enabled
@@ -296,8 +297,8 @@ namespace AndreasReitberger.API.Moonraker
         }
 
         [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        ConcurrentDictionary<string, long?> systemMemory = new();
+        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        public partial ConcurrentDictionary<string, long?> SystemMemory { get; set; } = new();
         partial void OnSystemMemoryChanged(ConcurrentDictionary<string, long?> value)
         {
             // WebSocket is updating this property in a high frequency, so a cooldown can be enabled
@@ -328,8 +329,8 @@ namespace AndreasReitberger.API.Moonraker
         }
 
         [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        ConcurrentDictionary<string, KlipperStatusDriver> drivers = new();
+        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        public partial ConcurrentDictionary<string, KlipperStatusDriver> Drivers { get; set; } = new();
         partial void OnDriversChanged(ConcurrentDictionary<string, KlipperStatusDriver> value)
         {
             // WebSocket is updating this property in a high frequency, so a cooldown can be enabled
@@ -363,8 +364,8 @@ namespace AndreasReitberger.API.Moonraker
         }
 
         [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        double progress = 0;
+        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        public partial double Progress { get; set; } = 0;
         partial void OnProgressChanging(double value)
         {
             OnKlipperIsPrintingProgressChanged(new KlipperIsPrintingProgressChangedEventArgs()
@@ -377,20 +378,20 @@ namespace AndreasReitberger.API.Moonraker
         }
 
         [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        double printTime = 0;
+        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        public partial double PrintTime { get; set; } = 0;
 
         [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        double totalPrintTime = 0;
+        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        public partial double TotalPrintTime { get; set; } = 0;
 
         [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        double remainingPrintTime = 0;
+        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        public partial double RemainingPrintTime { get; set; } = 0;
 
         [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        KlipperStatusPrintStats? printStats;
+        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        public partial KlipperStatusPrintStats? PrintStats { get; set; }
         partial void OnPrintStatsChanging(KlipperStatusPrintStats? value)
         {
             OnKlipperPrintStateChanged(new KlipperPrintStateChangedEventArgs()
@@ -422,8 +423,8 @@ namespace AndreasReitberger.API.Moonraker
         }
 
         [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        KlipperStatusMotionReport? motionReport;
+        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        public partial KlipperStatusMotionReport? MotionReport { get; set; }
         partial void OnMotionReportChanging(KlipperStatusMotionReport? value)
         {
             OnKlipperMotionReportChanged(new KlipperMotionReportChangedEventArgs()
@@ -440,8 +441,8 @@ namespace AndreasReitberger.API.Moonraker
         }
 
         [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        KlipperStatusIdleTimeout? idleState;
+        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        public partial KlipperStatusIdleTimeout? IdleState { get; set; }
         partial void OnIdleStateChanging(KlipperStatusIdleTimeout? value)
         {
             OnKlipperIdleStateChanged(new KlipperIdleStateChangedEventArgs()
@@ -454,8 +455,8 @@ namespace AndreasReitberger.API.Moonraker
         }
 
         [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        KlipperStatusToolhead? toolHeadStatus;
+        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        public partial KlipperStatusToolhead? ToolHeadStatus { get; set; }
         partial void OnToolHeadStatusChanged(KlipperStatusToolhead? value)
         {
             OnKlipperToolHeadStateChanged(new KlipperToolHeadStateChangedEventArgs()
@@ -467,8 +468,8 @@ namespace AndreasReitberger.API.Moonraker
         }
 
         [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        string activeJobName = string.Empty;
+        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        public partial string ActiveJobName { get; set; } = string.Empty;
         partial void OnActiveJobNameChanging(string value)
         {
             OnKlipperActiveJobStateChanged(new KlipperActiveJobStateChangedEventArgs()
@@ -481,8 +482,8 @@ namespace AndreasReitberger.API.Moonraker
         }
 
         [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        KlipperStatusDisplay? displayStatus;
+        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        public partial KlipperStatusDisplay? DisplayStatus { get; set; }
         partial void OnDisplayStatusChanging(KlipperStatusDisplay? value)
         {
             OnKlipperDisplayStatusChanged(new KlipperDisplayStatusChangedEventArgs()
@@ -495,8 +496,8 @@ namespace AndreasReitberger.API.Moonraker
         }
 
         [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        KlipperStatusFilamentSensor? filamentSensor = new() { FilamentDetected = false };
+        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        public partial KlipperStatusFilamentSensor? FilamentSensor { get; set; } = new() { FilamentDetected = false };
         partial void OnFilamentSensorChanging(KlipperStatusFilamentSensor? value)
         {
             OnKlipperFSensorChanged(new KlipperFSensorStateChangedEventArgs()
@@ -510,8 +511,8 @@ namespace AndreasReitberger.API.Moonraker
 
 
         [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        List<KlipperDatabaseTemperaturePreset> presets = [];
+        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        public partial List<KlipperDatabaseTemperaturePreset> Presets { get; set; } = [];
         partial void OnPresetsChanged(List<KlipperDatabaseTemperaturePreset> value)
         {
             OnKlipperPresetsChanged(new KlipperPresetsChangedEventArgs()

@@ -5,13 +5,13 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperWebSocketError : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("code")]
-        long code;
+        [ObservableProperty]
+        [JsonProperty("code")]
+        public partial long Code { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("message")]
-        string message = string.Empty;
+        [ObservableProperty]
+        [JsonProperty("message")]
+        public partial string Message { get; set; } = string.Empty;
         #endregion
 
         #region Overrides

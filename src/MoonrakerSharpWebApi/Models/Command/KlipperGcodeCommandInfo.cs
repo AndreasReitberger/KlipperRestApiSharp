@@ -9,20 +9,21 @@ namespace AndreasReitberger.API.Moonraker.Models
         #region Properties
 
         [ObservableProperty]
-        Guid id;
+        public partial Guid Id { get; set; }
 
         [ObservableProperty]
-        string command = string.Empty;
+        public partial string Command { get; set; } = string.Empty;
 
         [ObservableProperty]
-        bool sent = false;
-        [JsonIgnore]
+        public partial bool Sent { get; set; } = false;
+
+        
 
         [ObservableProperty]
-        bool succeeded = false;
+        public partial bool Succeeded { get; set; } = false;
 
         [ObservableProperty]
-        DateTime timeStamp = DateTime.Now;
+        public partial DateTime TimeStamp { get; set; } = DateTime.Now;
 
         #endregion
 

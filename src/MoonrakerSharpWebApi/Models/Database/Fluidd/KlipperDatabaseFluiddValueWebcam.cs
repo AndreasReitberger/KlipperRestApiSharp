@@ -6,9 +6,10 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperDatabaseFluiddValueWebcam : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("cameras")]
-        List<KlipperDatabaseFluiddValueWebcamConfig> cameras = [];
+        [ObservableProperty]
+        
+        [JsonProperty("cameras")]
+        public partial List<KlipperDatabaseFluiddValueWebcamConfig> Cameras { get; set; } = [];
 
         #endregion
 

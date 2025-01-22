@@ -6,37 +6,45 @@ namespace AndreasReitberger.API.Moonraker.Models.WebSocket
     public partial class KlipperWebSocketStateRespone : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("klippy_connected")]
-        bool? klippyConnected;
+        [ObservableProperty]
+        
+        [JsonProperty("klippy_connected")]
+        public partial bool? KlippyConnected { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("klippy_state")]
-        string klippyState = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("klippy_state")]
+        public partial string KlippyState { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("components")]
-        List<string> components = [];
+        [ObservableProperty]
+        
+        [JsonProperty("components")]
+        public partial List<string> Components { get; set; } = [];
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("failed_components")]
-        List<object> failedComponents = [];
+        [ObservableProperty]
+        
+        [JsonProperty("failed_components")]
+        public partial List<object> FailedComponents { get; set; } = [];
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("registered_directories")]
-        List<string> registeredDirectories = [];
+        [ObservableProperty]
+        
+        [JsonProperty("registered_directories")]
+        public partial List<string> RegisteredDirectories { get; set; } = [];
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("warnings")]
-        List<string> warnings = [];
+        [ObservableProperty]
+        
+        [JsonProperty("warnings")]
+        public partial List<string> Warnings { get; set; } = [];
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("websocket_count")]
-        long websocketCount;
+        [ObservableProperty]
+        
+        [JsonProperty("websocket_count")]
+        public partial long WebsocketCount { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("moonraker_version")]
-        string moonrakerVersion = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("moonraker_version")]
+        public partial string MoonrakerVersion { get; set; } = string.Empty;
         #endregion
 
         #region Overrides

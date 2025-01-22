@@ -9,22 +9,22 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-        string? result;
+        public partial string? Result { get; set; }
 
         [ObservableProperty]
-        byte[]? rawBytes;
+        public partial byte[]? RawBytes { get; set; }
 
         [ObservableProperty]
-        bool isOnline = false;
+        public partial bool IsOnline { get; set; } = false;
 
         [ObservableProperty]
-        bool succeeded = false;
+        public partial bool Succeeded { get; set; } = false;
 
         [ObservableProperty]
-        bool hasAuthenticationError = false;
+        public partial bool HasAuthenticationError { get; set; } = false;
 
         [ObservableProperty]
-        IRestEventArgs? eventArgs;
+        public partial IRestEventArgs? EventArgs { get; set; }
         #endregion
 
         #region Overrides

@@ -5,9 +5,10 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperConfigVirtualSdcard : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("path")]
-        string path = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("path")]
+        public partial string Path { get; set; } = string.Empty;
         #endregion
 
         #region Overrides

@@ -16,8 +16,8 @@ namespace AndreasReitberger.API.Moonraker
         #region Properties
 
         [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        List<string> availableNamespaces = new();
+        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        public partial List<string> AvailableNamespaces { get; set; } = [];
 
         #endregion
 
@@ -45,17 +45,6 @@ namespace AndreasReitberger.API.Moonraker
                 */
                 KlipperDatabaseNamespaceListRespone? queryResult = GetObjectFromJson<KlipperDatabaseNamespaceListRespone>(result?.Result, NewtonsoftJsonSerializerSettings);
                 return queryResult?.Result?.Namespaces ?? [];
-            }
-            catch (JsonException jecx)
-            {
-                OnError(new JsonConvertEventArgs()
-                {
-                    Exception = jecx,
-                    OriginalString = result?.Result,
-                    TargetType = nameof(KlipperDatabaseNamespaceListRespone),
-                    Message = jecx.Message,
-                });
-                return resultObject;
             }
             catch (Exception exc)
             {
@@ -133,17 +122,6 @@ namespace AndreasReitberger.API.Moonraker
                         { $"{namespaceName}{(!string.IsNullOrEmpty(key) ? $"|{key}" : "")}", queryResult.Result.Value }
                     };
                 }
-                return resultObject;
-            }
-            catch (JsonException jecx)
-            {
-                OnError(new JsonConvertEventArgs()
-                {
-                    Exception = jecx,
-                    OriginalString = result?.Result,
-                    TargetType = nameof(KlipperDatabaseItemRespone),
-                    Message = jecx.Message,
-                });
                 return resultObject;
             }
             catch (Exception exc)
@@ -237,11 +215,6 @@ namespace AndreasReitberger.API.Moonraker
             List<KlipperDatabaseRemotePrinter> resultObject = [];
             try
             {
-                /*
-                if (OperatingSystem != MoonrakerOperatingSystems.MainsailOS)
-                {
-                    throw new NotSupportedException($"The method '{nameof(GetRemotePrintersAsync)}() is only support on '{MoonrakerOperatingSystems.MainsailOS}!");
-                }*/
                 string currentNamespace = OperatingSystem == MoonrakerOperatingSystems.MainsailOS ? "mainsail" : "fluidd";
                 string currentKey = OperatingSystem == MoonrakerOperatingSystems.MainsailOS ? "remote_printers" : "uiSettings";
 
@@ -288,17 +261,6 @@ namespace AndreasReitberger.API.Moonraker
                         break;
                 }
 
-                return resultObject;
-            }
-            catch (JsonException jecx)
-            {
-                OnError(new JsonConvertEventArgs()
-                {
-                    Exception = jecx,
-                    OriginalString = resultString,
-                    TargetType = nameof(KlipperDatabaseMainsailValueRemotePrinter),
-                    Message = jecx.Message,
-                });
                 return resultObject;
             }
             catch (Exception exc)
@@ -389,17 +351,6 @@ namespace AndreasReitberger.API.Moonraker
                 }
                 return resultObject;
             }
-            catch (JsonException jecx)
-            {
-                OnError(new JsonConvertEventArgs()
-                {
-                    Exception = jecx,
-                    OriginalString = resultString,
-                    TargetType = nameof(KlipperDatabaseMainsailValuePreset),
-                    Message = jecx.Message,
-                });
-                return resultObject;
-            }
             catch (Exception exc)
             {
                 OnError(new UnhandledExceptionEventArgs(exc, false));
@@ -441,17 +392,6 @@ namespace AndreasReitberger.API.Moonraker
                 resultObject = GetObjectFromJson<KlipperDatabaseMainsailValueHeightmapSettings>(resultString);
                 return resultObject;
             }
-            catch (JsonException jecx)
-            {
-                OnError(new JsonConvertEventArgs()
-                {
-                    Exception = jecx,
-                    OriginalString = resultString,
-                    TargetType = nameof(KlipperDatabaseMainsailValueHeightmapSettings),
-                    Message = jecx.Message,
-                });
-                return resultObject;
-            }
             catch (Exception exc)
             {
                 OnError(new UnhandledExceptionEventArgs(exc, false));
@@ -491,17 +431,6 @@ namespace AndreasReitberger.API.Moonraker
                         { $"{namespaceName}{(!string.IsNullOrEmpty(key) ? $"|{key}" : "")}", queryResult.Result.Value }
                     };
                 }
-                return resultObject;
-            }
-            catch (JsonException jecx)
-            {
-                OnError(new JsonConvertEventArgs()
-                {
-                    Exception = jecx,
-                    OriginalString = result?.Result,
-                    TargetType = nameof(KlipperDatabaseItemRespone),
-                    Message = jecx.Message,
-                });
                 return resultObject;
             }
             catch (Exception exc)
@@ -547,17 +476,6 @@ namespace AndreasReitberger.API.Moonraker
                         { $"{namespaceName}{(!string.IsNullOrEmpty(key) ? $"|{key}" : "")}", queryResult.Result.Value }
                     };
                 }
-                return resultObject;
-            }
-            catch (JsonException jecx)
-            {
-                OnError(new JsonConvertEventArgs()
-                {
-                    Exception = jecx,
-                    OriginalString = result?.Result,
-                    TargetType = nameof(KlipperDatabaseItemRespone),
-                    Message = jecx.Message,
-                });
                 return resultObject;
             }
             catch (Exception exc)

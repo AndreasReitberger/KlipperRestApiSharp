@@ -5,9 +5,10 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperHistorySingleJobRespone : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("result")]
-        KlipperHistorySingleJobResult? result;
+        [ObservableProperty]
+        
+        [JsonProperty("result")]
+        public partial KlipperHistorySingleJobResult? Result { get; set; }
         #endregion
 
         #region Overrides

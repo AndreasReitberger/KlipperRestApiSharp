@@ -7,37 +7,37 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-        Guid id = Guid.Empty;
+        public partial Guid Id { get; set; } = Guid.Empty;
 
         [ObservableProperty]
-        bool isDefault = false;
+        public partial bool IsDefault { get; set; } = false;
 
         [ObservableProperty]
-        bool autostart = false;
+        public partial bool Autostart { get; set; } = false;
 
         [ObservableProperty]
-        string name = string.Empty;
+        public partial string Name { get; set; } = string.Empty;
 
         [ObservableProperty]
-        Guid serverId = Guid.Empty;
+        public partial Guid ServerId { get; set; } = Guid.Empty;
 
         [ObservableProperty]
-        int camIndex = -1;
+        public partial int CamIndex { get; set; } = -1;
 
         [ObservableProperty]
-        int rotationAngle = 0;
+        public partial int RotationAngle { get; set; } = 0;
 
         [ObservableProperty]
-        int networkBufferTime = 150;
+        public partial int NetworkBufferTime { get; set; } = 150;
 
         [ObservableProperty]
-        int fileCachingTime = 1000;
+        public partial int FileCachingTime { get; set; } = 1000;
 
         [ObservableProperty]
-        bool overwriteWebCamUri = false;
+        public partial bool OverwriteWebCamUri { get; set; } = false;
 
         [ObservableProperty]
-        string webcamUri = string.Empty;
+        public partial string WebcamUri { get; set; } = string.Empty;
 
         #endregion
 

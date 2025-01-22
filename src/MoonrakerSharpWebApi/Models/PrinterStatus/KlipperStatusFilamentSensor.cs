@@ -9,31 +9,33 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        Guid id;
+        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        public partial Guid Id { get; set; }
 
         [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        string name = string.Empty;
+        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        public partial string Name { get; set; } = string.Empty;
 
         [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        bool triggered = false;
+        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        public partial bool Triggered { get; set; } = false;
 
-        [ObservableProperty, JsonIgnore]
+        [ObservableProperty]
+        
         [NotifyPropertyChangedFor(nameof(Triggered))]
-        [property: JsonProperty("filament_detected")]
-        bool filamentDetected;
+        [JsonProperty("filament_detected")]
+        public partial bool FilamentDetected { get; set; }
+
         partial void OnFilamentDetectedChanged(bool value)
         {
             Triggered = value;
         }
 
         [ObservableProperty]
-        bool enabled;
+        public partial bool Enabled { get; set; }
 
         [ObservableProperty]
-        Printer3dSensorType type = Printer3dSensorType.Filament;
+        public partial Printer3dSensorType Type { get; set; } = Printer3dSensorType.Filament;
         #endregion
 
         #region Overrides

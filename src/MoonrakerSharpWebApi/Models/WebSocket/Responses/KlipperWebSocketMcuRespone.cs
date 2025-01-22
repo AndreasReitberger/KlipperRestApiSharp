@@ -5,17 +5,20 @@ namespace AndreasReitberger.API.Moonraker.Models.WebSocket
     public partial class KlipperWebSocketMcuRespone : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("mcu")]
-        KlipperStatusMcu? mcu;
+        [ObservableProperty]
+        
+        [JsonProperty("mcu")]
+        public partial KlipperStatusMcu? Mcu { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("system_stats")]
-        KlipperStatusSystemStats? systemStats;
+        [ObservableProperty]
+        
+        [JsonProperty("system_stats")]
+        public partial KlipperStatusSystemStats? SystemStats { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("toolhead")]
-        KlipperStatusToolhead? toolhead;
+        [ObservableProperty]
+        
+        [JsonProperty("toolhead")]
+        public partial KlipperStatusToolhead? Toolhead { get; set; }
         #endregion
 
         #region Overrides

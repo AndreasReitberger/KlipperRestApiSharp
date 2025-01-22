@@ -5,13 +5,15 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class OctoprintApiFeature : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("sdSupport")]
-        bool sdSupport;
+        [ObservableProperty]
+        
+        [JsonProperty("sdSupport")]
+        public partial bool SdSupport { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("temperatureGraph")]
-        bool temperatureGraph;
+        [ObservableProperty]
+        
+        [JsonProperty("temperatureGraph")]
+        public partial bool TemperatureGraph { get; set; }
         #endregion
 
         #region Overrides

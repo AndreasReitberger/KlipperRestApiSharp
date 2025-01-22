@@ -5,25 +5,30 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperDatabaseMainsailValueHeightmapSettings : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("mesh")]
-        bool mesh;
+        [ObservableProperty]
+        
+        [JsonProperty("mesh")]
+        public partial bool Mesh { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("scaleVisualMap")]
-        bool scaleVisualMap;
+        [ObservableProperty]
+        
+        [JsonProperty("scaleVisualMap")]
+        public partial bool ScaleVisualMap { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("probed")]
-        bool probed;
+        [ObservableProperty]
+        
+        [JsonProperty("probed")]
+        public partial bool Probed { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("flat")]
-        bool flat;
+        [ObservableProperty]
+        
+        [JsonProperty("flat")]
+        public partial bool Flat { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("wireframe")]
-        bool wireframe;
+        [ObservableProperty]
+        
+        [JsonProperty("wireframe")]
+        public partial bool Wireframe { get; set; }
         #endregion
 
         #region Overrides

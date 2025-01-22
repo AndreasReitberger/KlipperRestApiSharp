@@ -5,37 +5,45 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class OctoprintApiPlugin : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("align_inline_thumbnail")]
-        bool alignInlineThumbnail;
+        [ObservableProperty]
+        
+        [JsonProperty("align_inline_thumbnail")]
+        public partial bool AlignInlineThumbnail { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("inline_thumbnail")]
-        bool inlineThumbnail;
+        [ObservableProperty]
+        
+        [JsonProperty("inline_thumbnail")]
+        public partial bool InlineThumbnail { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("inline_thumbnail_align_value")]
-        string inlineThumbnailAlignValue = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("inline_thumbnail_align_value")]
+        public partial string InlineThumbnailAlignValue { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("inline_thumbnail_scale_value")]
-        long inlineThumbnailScaleValue;
+        [ObservableProperty]
+        
+        [JsonProperty("inline_thumbnail_scale_value")]
+        public partial long InlineThumbnailScaleValue { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("installed")]
-        bool installed;
+        [ObservableProperty]
+        
+        [JsonProperty("installed")]
+        public partial bool Installed { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("installed_version")]
-        string installedVersion = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("installed_version")]
+        public partial string InstalledVersion { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("scale_inline_thumbnail")]
-        bool scaleInlineThumbnail;
+        [ObservableProperty]
+        
+        [JsonProperty("scale_inline_thumbnail")]
+        public partial bool ScaleInlineThumbnail { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("state_panel_thumbnail")]
-        bool statePanelThumbnail;
+        [ObservableProperty]
+        
+        [JsonProperty("state_panel_thumbnail")]
+        public partial bool StatePanelThumbnail { get; set; }
         #endregion
 
         #region Overrides

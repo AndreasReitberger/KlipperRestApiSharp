@@ -5,13 +5,15 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperUser : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("username")]
-        string username = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("username")]
+        public partial string Username { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("created_on")]
-        double createdOn;
+        [ObservableProperty]
+        
+        [JsonProperty("created_on")]
+        public partial double CreatedOn { get; set; }
         #endregion
 
         #region Overrides

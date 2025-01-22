@@ -5,33 +5,40 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperUpdateManager : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("enable_auto_refresh")]
-        bool enableAutoRefresh;
+        [ObservableProperty]
+        
+        [JsonProperty("enable_auto_refresh")]
+        public partial bool EnableAutoRefresh { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("channel")]
-        string channel = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("channel")]
+        public partial string Channel { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("enable_repo_debug")]
-        bool enableRepoDebug;
+        [ObservableProperty]
+        
+        [JsonProperty("enable_repo_debug")]
+        public partial bool EnableRepoDebug { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("enable_system_updates")]
-        bool enableSystemUpdates;
+        [ObservableProperty]
+        
+        [JsonProperty("enable_system_updates")]
+        public partial bool EnableSystemUpdates { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("type")]
-        string type = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("type")]
+        public partial string Type { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("client_repo")]
-        object? clientRepo;
+        [ObservableProperty]
+        
+        [JsonProperty("client_repo")]
+        public partial object? ClientRepo { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("client_path")]
-        object? clientPath;
+        [ObservableProperty]
+        
+        [JsonProperty("client_path")]
+        public partial object? ClientPath { get; set; }
         #endregion
 
         #region Overrides

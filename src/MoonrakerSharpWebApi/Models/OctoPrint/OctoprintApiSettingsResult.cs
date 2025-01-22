@@ -6,17 +6,20 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class OctoprintApiSettingsResult : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("plugins")]
-        Dictionary<string, OctoprintApiPlugin> plugins = [];
+        [ObservableProperty]
+        
+        [JsonProperty("plugins")]
+        public partial Dictionary<string, OctoprintApiPlugin> Plugins { get; set; } = [];
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("feature")]
-        OctoprintApiFeature? feature;
+        [ObservableProperty]
+        
+        [JsonProperty("feature")]
+        public partial OctoprintApiFeature? Feature { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("webcam")]
-        OctoprintApiWebcam? webcam;
+        [ObservableProperty]
+        
+        [JsonProperty("webcam")]
+        public partial OctoprintApiWebcam? Webcam { get; set; }
         #endregion
 
         #region Overrides

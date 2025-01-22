@@ -6,21 +6,25 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperStatusConfigfile : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("warnings")]
-        List<object> warnings = [];
+        [ObservableProperty]
+        
+        [JsonProperty("warnings")]
+        public partial List<object> Warnings { get; set; } = [];
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("config")]
-        KlipperConfig? config;
+        [ObservableProperty]
+        
+        [JsonProperty("config")]
+        public partial KlipperConfig? Config { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("settings")]
-        KlipperSettings? settings;
+        [ObservableProperty]
+        
+        [JsonProperty("settings")]
+        public partial KlipperSettings? Settings { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("save_config_pending")]
-        bool saveConfigPending;
+        [ObservableProperty]
+        
+        [JsonProperty("save_config_pending")]
+        public partial bool SaveConfigPending { get; set; }
         #endregion
 
         #region Overrides

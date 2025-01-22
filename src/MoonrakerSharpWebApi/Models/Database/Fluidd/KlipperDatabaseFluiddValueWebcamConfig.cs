@@ -6,45 +6,55 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperDatabaseFluiddValueWebcamConfig : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("id")]
-        Guid id;
+        [ObservableProperty]
+        
+        [JsonProperty("id")]
+        public partial Guid Id { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("enabled")]
-        bool enabled;
+        [ObservableProperty]
+        
+        [JsonProperty("enabled")]
+        public partial bool Enabled { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("name")]
-        string name = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("name")]
+        public partial string Name { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("service")]
-        string service = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("service")]
+        public partial string Service { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("targetFps")]
-        long fpstarget;
+        [ObservableProperty]
+        
+        [JsonProperty("targetFps")]
+        public partial long Fpstarget { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("urlStream")]
-        string urlStream = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("urlStream")]
+        public partial string UrlStream { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("urlSnapshot")]
-        string urlSnapshot = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("urlSnapshot")]
+        public partial string UrlSnapshot { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("flipX")]
-        bool flipX;
+        [ObservableProperty]
+        
+        [JsonProperty("flipX")]
+        public partial bool FlipX { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("flipY")]
-        bool flipY;
+        [ObservableProperty]
+        
+        [JsonProperty("flipY")]
+        public partial bool FlipY { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("rotation")]
-        int? rotation = 0;
+        [ObservableProperty]
+        
+        [JsonProperty("rotation")]
+        public partial int? Rotation { get; set; } = 0;
         #endregion
 
         #region Overrides

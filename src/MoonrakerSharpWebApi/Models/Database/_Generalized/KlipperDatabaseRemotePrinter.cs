@@ -10,100 +10,126 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
 
-        [ObservableProperty, JsonIgnore]
+        [ObservableProperty]
+        
+        public partial
         //[property: JsonIgnore]
-        Guid id;
+        Guid Id { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        string hostname = string.Empty;
+        [ObservableProperty]
+        
+        public partial string Hostname { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        long port;
+        [ObservableProperty]
+        
+        public partial long Port { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        long webPort;
+        [ObservableProperty]
+        
+        public partial long WebPort { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        object? settings;
+        [ObservableProperty]
+        
+        public partial object? Settings { get; set; }
 
         #region Interface
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore]
-        string activeJobId = string.Empty;
+        [ObservableProperty]
+        
+        [JsonIgnore]
+        public partial string ActiveJobId { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore]
-        bool isActive;
+        [ObservableProperty]
+        
+        [JsonIgnore]
+        public partial bool IsActive { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore]
-        bool isOnline = false;
+        [ObservableProperty]
+        
+        [JsonIgnore]
+        public partial bool IsOnline { get; set; } = false;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore]
-        long? lineSent;
+        [ObservableProperty]
+        
+        [JsonIgnore]
+        public partial long? LineSent { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        string name = string.Empty;
+        [ObservableProperty]
+        
+        public partial string Name { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore]
-        long? layers;
+        [ObservableProperty]
+        
+        [JsonIgnore]
+        public partial long? Layers { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore]
-        int? analysed;
+        [ObservableProperty]
+        
+        [JsonIgnore]
+        public partial int? Analysed { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore]
-        double? done;
+        [ObservableProperty]
+        
+        [JsonIgnore]
+        public partial double? Done { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore]
-        string activeJobName = string.Empty;
+        [ObservableProperty]
+        
+        [JsonIgnore]
+        public partial string ActiveJobName { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore]
-        double? extruder1Temperature = 0;
+        [ObservableProperty]
+        
+        [JsonIgnore]
+        public partial double? Extruder1Temperature { get; set; } = 0;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore]
-        double? extruder2Temperature = 0;
+        [ObservableProperty]
+        
+        [JsonIgnore]
+        public partial double? Extruder2Temperature { get; set; } = 0;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore]
-        double? extruder3Temperature = 0;
+        [ObservableProperty]
+        
+        [JsonIgnore]
+        public partial double? Extruder3Temperature { get; set; } = 0;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore]
-        double? extruder4Temperature = 0;
+        [ObservableProperty]
+        
+        [JsonIgnore]
+        public partial double? Extruder4Temperature { get; set; } = 0;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore]
-        double? extruder5Temperature = 0;
+        [ObservableProperty]
+        
+        [JsonIgnore]
+        public partial double? Extruder5Temperature { get; set; } = 0;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore]
-        double? heatedBedTemperature = 0;
+        [ObservableProperty]
+        
+        [JsonIgnore]
+        public partial double? HeatedBedTemperature { get; set; } = 0;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore]
-        double? heatedChamberTemperature = 0;
+        [ObservableProperty]
+        
+        [JsonIgnore]
+        public partial double? HeatedChamberTemperature { get; set; } = 0;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore]
-        double? printProgress = 0;
+        [ObservableProperty]
+        
+        [JsonIgnore]
+        public partial double? PrintProgress { get; set; } = 0;
+
         partial void OnPrintProgressChanged(double? value)
         {
             if (value > 0)
                 RemainingPrintDuration = value * PrintDuration;
         }
 
-        [ObservableProperty, JsonIgnore]
+        [ObservableProperty]
+        
         [NotifyPropertyChangedFor(nameof(RemainingPrintDurationGeneralized))]
-        [property: JsonIgnore]
-        double? remainingPrintDuration = 0;
+        [JsonIgnore]
+        public partial double? RemainingPrintDuration { get; set; } = 0;
+
         partial void OnRemainingPrintDurationChanged(double? value)
         {
             if (value is not null)
@@ -111,28 +137,34 @@ namespace AndreasReitberger.API.Moonraker.Models
         }
 
         [ObservableProperty]
-        TimeSpan? remainingPrintDurationGeneralized;
+        public partial TimeSpan? RemainingPrintDurationGeneralized { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore]
-        bool isPrinting = false;
+        [ObservableProperty]
+        
+        [JsonIgnore]
+        public partial bool IsPrinting { get; set; } = false;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore]
-        bool isPaused = false;
+        [ObservableProperty]
+        
+        [JsonIgnore]
+        public partial bool IsPaused { get; set; } = false;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore]
-        bool isSelected = false;
+        [ObservableProperty]
+        
+        [JsonIgnore]
+        public partial bool IsSelected { get; set; } = false;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore]
-        byte[] currentPrintImage = [];
+        [ObservableProperty]
+        
+        [JsonIgnore]
+        public partial byte[] CurrentPrintImage { get; set; } = [];
 
-        [ObservableProperty, JsonIgnore]
+        [ObservableProperty]
+        
         [NotifyPropertyChangedFor(nameof(PrintStartedGeneralized))]
-        [property: JsonIgnore]
-        double? printStarted = 0;
+        [JsonIgnore]
+        public partial double? PrintStarted { get; set; } = 0;
+
         partial void OnPrintStartedChanged(double? value)
         {
             if (value is not null)
@@ -140,12 +172,14 @@ namespace AndreasReitberger.API.Moonraker.Models
         }
 
         [ObservableProperty]
-        DateTime? printStartedGeneralized;
+        public partial DateTime? PrintStartedGeneralized { get; set; }
 
-        [ObservableProperty, JsonIgnore]
+        [ObservableProperty]
+        
         [NotifyPropertyChangedFor(nameof(PrintDurationGeneralized))]
-        [property: JsonIgnore]
-        double? printDuration = 0;
+        [JsonIgnore]
+        public partial double? PrintDuration { get; set; } = 0;
+
         partial void OnPrintDurationChanged(double? value)
         {
             if (value is not null)
@@ -155,12 +189,14 @@ namespace AndreasReitberger.API.Moonraker.Models
         }
 
         [ObservableProperty]
-        TimeSpan? printDurationGeneralized;
+        public partial TimeSpan? PrintDurationGeneralized { get; set; }
 
-        [ObservableProperty, JsonIgnore]
+        [ObservableProperty]
+        
         [NotifyPropertyChangedFor(nameof(PrintDurationEstimatedGeneralized))]
-        [property: JsonIgnore]
-        double? printDurationEstimated = 0;
+        [JsonIgnore]
+        public partial double? PrintDurationEstimated { get; set; } = 0;
+
         partial void OnPrintDurationEstimatedChanged(double? value)
         {
             if (value is not null)
@@ -168,30 +204,36 @@ namespace AndreasReitberger.API.Moonraker.Models
         }
 
         [ObservableProperty]
-        TimeSpan? printDurationEstimatedGeneralized;
+        public partial TimeSpan? PrintDurationEstimatedGeneralized { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore]
-        int? repeat;
+        [ObservableProperty]
+        
+        [JsonIgnore]
+        public partial int? Repeat { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore]
-        string slug = string.Empty;
+        [ObservableProperty]
+        
+        [JsonIgnore]
+        public partial string Slug { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        long? start;
+        [ObservableProperty]
+        
+        public partial long? Start { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore]
-        long? totalLines;
+        [ObservableProperty]
+        
+        [JsonIgnore]
+        public partial long? TotalLines { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore]
-        string? activeJobState = string.Empty;
+        [ObservableProperty]
+        
+        [JsonIgnore]
+        public partial string? ActiveJobState { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore]
-        long? pauseState;
+        [ObservableProperty]
+        
+        [JsonIgnore]
+        public partial long? PauseState { get; set; }
 
         #endregion
 

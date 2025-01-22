@@ -5,17 +5,20 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperServerTempData : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("extruder")]
-        KlipperExtruderHistory? extruder;
+        [ObservableProperty]
+        
+        [JsonProperty("extruder")]
+        public partial KlipperExtruderHistory? Extruder { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("temperature_fan my_fan")]
-        KlipperFanHistory? temperatureFanMyFan;
+        [ObservableProperty]
+        
+        [JsonProperty("temperature_fan my_fan")]
+        public partial KlipperFanHistory? TemperatureFanMyFan { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("temperature_sensor my_sensor")]
-        KlipperTemperatureSensorHistory? temperatureSensorMySensor;
+        [ObservableProperty]
+        
+        [JsonProperty("temperature_sensor my_sensor")]
+        public partial KlipperTemperatureSensorHistory? TemperatureSensorMySensor { get; set; }
         #endregion
 
         #region Overrides

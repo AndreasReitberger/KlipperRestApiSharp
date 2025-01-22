@@ -7,33 +7,40 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperStatusPrintStats : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("print_duration")]
-        double? printDuration;
+        [ObservableProperty]
+        
+        [JsonProperty("print_duration")]
+        public partial double? PrintDuration { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("total_duration")]
-        double? totalDuration;
+        [ObservableProperty]
+        
+        [JsonProperty("total_duration")]
+        public partial double? TotalDuration { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("filament_used")]
-        double? filamentUsed;
+        [ObservableProperty]
+        
+        [JsonProperty("filament_used")]
+        public partial double? FilamentUsed { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("filename")]
-        string filename = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("filename")]
+        public partial string Filename { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("state")]
-        [JsonConverter(typeof(StringEnumConverter), true)]
-        KlipperPrintStates state;
+        [ObservableProperty]
+        
+        [JsonProperty("state")]
+        [field: JsonConverter(typeof(StringEnumConverter), true)]
+        public partial KlipperPrintStates State { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("message")]
-        string message = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("message")]
+        public partial string Message { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        bool validPrintState = false;
+        [ObservableProperty]
+        
+        public partial bool ValidPrintState { get; set; } = false;
         #endregion
 
         #region Overrides

@@ -5,21 +5,25 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperDatabaseMainsailValueRemotePrinter : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("hostname")]
-        public string hostname = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("hostname")]
+        public partial string Hostname { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("port")]
-        public long port;
+        [ObservableProperty]
+        
+        [JsonProperty("port")]
+        public partial long Port { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("webPort")]
-        public long webPort;
+        [ObservableProperty]
+        
+        [JsonProperty("webPort")]
+        public partial long WebPort { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("settings")]
-        public object? settings;
+        [ObservableProperty]
+        
+        [JsonProperty("settings")]
+        public partial object? Settings { get; set; }
         #endregion
 
         #region Overrides

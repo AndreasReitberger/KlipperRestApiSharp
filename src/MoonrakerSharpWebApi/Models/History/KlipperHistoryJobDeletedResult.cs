@@ -6,9 +6,10 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperHistoryJobDeletedResult : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("deleted_jobs")]
-        List<string> deletedJobs = [];
+        [ObservableProperty]
+        
+        [JsonProperty("deleted_jobs")]
+        public partial List<string> DeletedJobs { get; set; } = [];
         #endregion
 
         #region Overrides

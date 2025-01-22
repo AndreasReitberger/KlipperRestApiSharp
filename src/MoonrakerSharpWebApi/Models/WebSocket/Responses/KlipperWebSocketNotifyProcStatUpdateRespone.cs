@@ -7,25 +7,30 @@ namespace AndreasReitberger.API.Moonraker.Models.WebSocket
     {
         #region Properties
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("moonraker_stats")]
-        MoonrakerStatInfo? moonrakerStats;
+        [ObservableProperty]
+        
+        [JsonProperty("moonraker_stats")]
+        public partial MoonrakerStatInfo? MoonrakerStats { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("throttled_state")]
-        MoonrakerThrottledState? throttledState;
+        [ObservableProperty]
+        
+        [JsonProperty("throttled_state")]
+        public partial MoonrakerThrottledState? ThrottledState { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("cpu_temp")]
-        double cpuTemp;
+        [ObservableProperty]
+        
+        [JsonProperty("cpu_temp")]
+        public partial double CpuTemp { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("network")]
-        Dictionary<string, KlipperNetworkInterface> network = [];
+        [ObservableProperty]
+        
+        [JsonProperty("network")]
+        public partial Dictionary<string, KlipperNetworkInterface> Network { get; set; } = [];
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("websocket_connections")]
-        long websocketConnections;
+        [ObservableProperty]
+        
+        [JsonProperty("websocket_connections")]
+        public partial long WebsocketConnections { get; set; }
         #endregion
 
         #region Overrides

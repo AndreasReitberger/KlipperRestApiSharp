@@ -16,8 +16,8 @@ namespace AndreasReitberger.API.Moonraker
     {
         #region Properties
         [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        long? webSocketConnectionId;
+        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        public partial long? WebSocketConnectionId { get; set; }
         partial void OnWebSocketConnectionIdChanged(long? value)
         {
             OnWebSocketConnectionIdChanged(new KlipperWebSocketConnectionChangedEventArgs()

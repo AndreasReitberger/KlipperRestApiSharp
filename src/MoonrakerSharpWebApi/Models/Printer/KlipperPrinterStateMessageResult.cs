@@ -5,41 +5,50 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperPrinterStateMessageResult : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("state_message")]
-        string stateMessage = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("state_message")]
+        public partial string StateMessage { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("klipper_path")]
-        string klipperPath = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("klipper_path")]
+        public partial string KlipperPath { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("config_file")]
-        string configFile = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("config_file")]
+        public partial string ConfigFile { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("software_version")]
-        string softwareVersion = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("software_version")]
+        public partial string SoftwareVersion { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("hostname")]
-        string hostname = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("hostname")]
+        public partial string Hostname { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("cpu_info")]
-        string cpuInfo = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("cpu_info")]
+        public partial string CpuInfo { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("state")]
-        string state = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("state")]
+        public partial string State { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("python_path")]
-        string pythonPath = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("python_path")]
+        public partial string PythonPath { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("log_file")]
-        string logFile = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("log_file")]
+        public partial string LogFile { get; set; } = string.Empty;
         #endregion
 
         #region Overrides

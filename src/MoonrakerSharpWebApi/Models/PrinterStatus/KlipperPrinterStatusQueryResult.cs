@@ -6,13 +6,15 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         // Maybe delete later?
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("status")]
-        KlipperPrinterStatus? status;
+        [ObservableProperty]
+        
+        [JsonProperty("status")]
+        public partial KlipperPrinterStatus? Status { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("eventtime")]
-        double eventtime;
+        [ObservableProperty]
+        
+        [JsonProperty("eventtime")]
+        public partial double Eventtime { get; set; }
         #endregion
 
         #region Overrides

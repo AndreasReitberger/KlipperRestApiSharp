@@ -6,129 +6,160 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperConfigExtruder : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("control")]
-        string control = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("control")]
+        public partial string Control { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("pid_kp")]
-        string pidKp = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("pid_kp")]
+        public partial string PidKp { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("sensor_type")]
-        string sensorType = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("sensor_type")]
+        public partial string SensorType { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("sensor_pin")]
-        string sensorPin = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("sensor_pin")]
+        public partial string SensorPin { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("nozzle_diameter")]
-        string nozzleDiameter = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("nozzle_diameter")]
+        public partial string NozzleDiameter { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("rotation_distance")]
-        string rotationDistance = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("rotation_distance")]
+        public partial string RotationDistance { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("heater_pin")]
-        string heaterPin = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("heater_pin")]
+        public partial string HeaterPin { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("step_pin")]
-        string stepPin = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("step_pin")]
+        public partial string StepPin { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("min_temp")]
-        long minTemp;
+        [ObservableProperty]
+        
+        [JsonProperty("min_temp")]
+        public partial long MinTemp { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("pid_kd")]
-        string pidKd = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("pid_kd")]
+        public partial string PidKd { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("microsteps")]
-        long microsteps;
+        [ObservableProperty]
+        
+        [JsonProperty("microsteps")]
+        public partial long Microsteps { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("pid_ki")]
-        string pidKi = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("pid_ki")]
+        public partial string PidKi { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("filament_diameter")]
-        string filamentDiameter = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("filament_diameter")]
+        public partial string FilamentDiameter { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("dir_pin")]
-        string dirPin = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("dir_pin")]
+        public partial string DirPin { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("max_temp")]
-        long maxTemp;
+        [ObservableProperty]
+        
+        [JsonProperty("max_temp")]
+        public partial long MaxTemp { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("enable_pin")]
-        string enablePin = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("enable_pin")]
+        public partial string EnablePin { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("pullup_resistor")]
-        long pullupResistor;
+        [ObservableProperty]
+        
+        [JsonProperty("pullup_resistor")]
+        public partial long PullupResistor { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("max_extrude_only_velocity")]
-        double maxExtrudeOnlyVelocity;
+        [ObservableProperty]
+        
+        [JsonProperty("max_extrude_only_velocity")]
+        public partial double MaxExtrudeOnlyVelocity { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("gear_ratio")]
-        List<object> gearRatio = [];
+        [ObservableProperty]
+        
+        [JsonProperty("gear_ratio")]
+        public partial List<object> GearRatio { get; set; } = [];
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("max_extrude_only_distance")]
-        long maxExtrudeOnlyDistance;
+        [ObservableProperty]
+        
+        [JsonProperty("max_extrude_only_distance")]
+        public partial long MaxExtrudeOnlyDistance { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("pressure_advance")]
-        double pressureAdvance;
+        [ObservableProperty]
+        
+        [JsonProperty("pressure_advance")]
+        public partial double PressureAdvance { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("max_extrude_cross_section")]
-        double maxExtrudeCrossSection;
+        [ObservableProperty]
+        
+        [JsonProperty("max_extrude_cross_section")]
+        public partial double MaxExtrudeCrossSection { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("pwm_cycle_time")]
-        double pwmCycleTime;
+        [ObservableProperty]
+        
+        [JsonProperty("pwm_cycle_time")]
+        public partial double PwmCycleTime { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("instantaneous_corner_velocity")]
-        long instantaneousCornerVelocity;
+        [ObservableProperty]
+        
+        [JsonProperty("instantaneous_corner_velocity")]
+        public partial long InstantaneousCornerVelocity { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("full_steps_per_rotation")]
-        long fullStepsPerRotation;
+        [ObservableProperty]
+        
+        [JsonProperty("full_steps_per_rotation")]
+        public partial long FullStepsPerRotation { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("pressure_advance_smooth_time")]
-        double pressureAdvanceSmoothTime;
+        [ObservableProperty]
+        
+        [JsonProperty("pressure_advance_smooth_time")]
+        public partial double PressureAdvanceSmoothTime { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("smooth_time")]
-        long smoothTime;
+        [ObservableProperty]
+        
+        [JsonProperty("smooth_time")]
+        public partial long SmoothTime { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("inline_resistor")]
-        long inlineResistor;
+        [ObservableProperty]
+        
+        [JsonProperty("inline_resistor")]
+        public partial long InlineResistor { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("max_power")]
-        long maxPower;
+        [ObservableProperty]
+        
+        [JsonProperty("max_power")]
+        public partial long MaxPower { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("min_extrude_temp")]
-        long minExtrudeTemp;
+        [ObservableProperty]
+        
+        [JsonProperty("min_extrude_temp")]
+        public partial long MinExtrudeTemp { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("max_extrude_only_accel")]
-        double maxExtrudeOnlyAccel;
+        [ObservableProperty]
+        
+        [JsonProperty("max_extrude_only_accel")]
+        public partial double MaxExtrudeOnlyAccel { get; set; }
 
         #endregion
 

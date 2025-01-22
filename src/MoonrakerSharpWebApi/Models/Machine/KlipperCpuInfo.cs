@@ -5,41 +5,50 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperCpuInfo : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("cpu_count")]
-        long cpuCount;
+        [ObservableProperty]
+        
+        [JsonProperty("cpu_count")]
+        public partial long CpuCount { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("bits")]
-        string bits = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("bits")]
+        public partial string Bits { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("processor")]
-        string processor = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("processor")]
+        public partial string Processor { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("cpu_desc")]
-        string cpuDesc = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("cpu_desc")]
+        public partial string CpuDesc { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("serial_number")]
-        string serialNumber = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("serial_number")]
+        public partial string SerialNumber { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("hardware_desc")]
-        string hardwareDesc = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("hardware_desc")]
+        public partial string HardwareDesc { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("model")]
-        string model = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("model")]
+        public partial string Model { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("total_memory")]
-        long totalMemory;
+        [ObservableProperty]
+        
+        [JsonProperty("total_memory")]
+        public partial long TotalMemory { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("memory_units")]
-        string memoryUnits = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("memory_units")]
+        public partial string MemoryUnits { get; set; } = string.Empty;
         #endregion
 
         #region Overrides

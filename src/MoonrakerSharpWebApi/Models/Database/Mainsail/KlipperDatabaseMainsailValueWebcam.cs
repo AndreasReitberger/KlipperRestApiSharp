@@ -6,13 +6,15 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperDatabaseMainsailValueWebcam : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("configs")]
-        List<KlipperDatabaseMainsailValueWebcamConfig> configs = [];
+        [ObservableProperty]
+        
+        [JsonProperty("configs")]
+        public partial List<KlipperDatabaseMainsailValueWebcamConfig> Configs { get; set; } = [];
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("boolNavi")]
-        bool boolNavi;
+        [ObservableProperty]
+        
+        [JsonProperty("boolNavi")]
+        public partial bool BoolNavi { get; set; }
         #endregion
 
         #region Overrides

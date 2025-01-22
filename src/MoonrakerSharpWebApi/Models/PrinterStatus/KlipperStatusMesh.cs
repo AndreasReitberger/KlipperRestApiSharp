@@ -7,25 +7,30 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("mesh_max")]
-        List<double> meshMax = [];
+        [ObservableProperty]
+        
+        [JsonProperty("mesh_max")]
+        public partial List<double> MeshMax { get; set; } = [];
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("mesh_matrix")]
-        List<List<double>> meshMatrix = [];
+        [ObservableProperty]
+        
+        [JsonProperty("mesh_matrix")]
+        public partial List<List<double>> MeshMatrix { get; set; } = [];
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("profile_name")]
-        string profileName = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("profile_name")]
+        public partial string ProfileName { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("mesh_min")]
-        List<double> meshMin = [];
+        [ObservableProperty]
+        
+        [JsonProperty("mesh_min")]
+        public partial List<double> MeshMin { get; set; } = [];
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("probed_matrix")]
-        List<List<double>> probedMatrix = [];
+        [ObservableProperty]
+        
+        [JsonProperty("probed_matrix")]
+        public partial List<List<double>> ProbedMatrix { get; set; } = [];
         #endregion
 
         #region Overrides

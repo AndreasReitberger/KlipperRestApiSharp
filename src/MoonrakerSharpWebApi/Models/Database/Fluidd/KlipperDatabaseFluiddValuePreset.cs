@@ -7,21 +7,26 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperDatabaseFluiddValuePreset : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("id")]
-        Guid id = Guid.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("id")]
+        public partial Guid Id { get; set; } = Guid.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("name")]
-        string name = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("name")]
+        public partial string Name { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("gcode")]
-        string gcode = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("gcode")]
+        public partial string Gcode { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("values")]
-        Dictionary<string, KlipperDatabaseFluiddHeaterElement> values = [];
+        [ObservableProperty]
+        
+        [JsonProperty("values")]
+        public partial Dictionary<string, KlipperDatabaseFluiddHeaterElement> Values { get; set; } = [];
+
         //public KlipperDatabaseMainsailValuePresetValues Values { get; set; }
         #endregion
 

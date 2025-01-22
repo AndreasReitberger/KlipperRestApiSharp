@@ -6,9 +6,10 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperDatabaseNamespaceListResult : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("namespaces")]
-        List<string> namespaces = [];
+        [ObservableProperty]
+        
+        [JsonProperty("namespaces")]
+        public partial List<string> Namespaces { get; set; } = [];
         #endregion
 
         #region Overrides

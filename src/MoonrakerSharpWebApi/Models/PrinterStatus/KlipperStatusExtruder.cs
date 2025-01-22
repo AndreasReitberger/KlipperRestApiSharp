@@ -11,77 +11,95 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperStatusExtruder : ObservableObject, IToolhead
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore]
-        Guid id;
+        [ObservableProperty]
+        
+        [JsonIgnore]
+        public partial Guid Id { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("temperature")]
-        double? tempRead;
+        [ObservableProperty]
+        
+        [JsonProperty("temperature")]
+        public partial double? TempRead { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("target")]
-        double? tempSet;
+        [ObservableProperty]
+        
+        [JsonProperty("target")]
+        public partial double? TempSet { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("power")]
-        double? power;
+        [ObservableProperty]
+        
+        [JsonProperty("power")]
+        public partial double? Power { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("pressure_advance")]
-        double? pressureAdvance;
+        [ObservableProperty]
+        
+        [JsonProperty("pressure_advance")]
+        public partial double? PressureAdvance { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("smooth_time")]
-        double? smoothTime;
+        [ObservableProperty]
+        
+        [JsonProperty("smooth_time")]
+        public partial double? SmoothTime { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("square_corner_velocity")]
-        double? squareCornerVelocity;
+        [ObservableProperty]
+        
+        [JsonProperty("square_corner_velocity")]
+        public partial double? SquareCornerVelocity { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("max_accel")]
-        double? maxAccel;
+        [ObservableProperty]
+        
+        [JsonProperty("max_accel")]
+        public partial double? MaxAccel { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("homed_axes")]
-        string homedAxes = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("homed_axes")]
+        public partial string HomedAxes { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("estimated_print_time")]
-        double? estimatedPrintTime;
+        [ObservableProperty]
+        
+        [JsonProperty("estimated_print_time")]
+        public partial double? EstimatedPrintTime { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("max_velocity")]
-        double? maxVelocity;
+        [ObservableProperty]
+        
+        [JsonProperty("max_velocity")]
+        public partial double? MaxVelocity { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("print_time")]
-        double? printTime;
+        [ObservableProperty]
+        
+        [JsonProperty("print_time")]
+        public partial double? PrintTime { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("max_accel_to_decel")]
-        double? maxAccelToDecel;
+        [ObservableProperty]
+        
+        [JsonProperty("max_accel_to_decel")]
+        public partial double? MaxAccelToDecel { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("axis_minimum")]
-        List<double> axisMinimum = [];
+        [ObservableProperty]
+        
+        [JsonProperty("axis_minimum")]
+        public partial List<double> AxisMinimum { get; set; } = [];
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("stalls")]
-        double? stalls;
+        [ObservableProperty]
+        
+        [JsonProperty("stalls")]
+        public partial double? Stalls { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("axis_maximum")]
-        List<double> axisMaximum = [];
+        [ObservableProperty]
+        
+        [JsonProperty("axis_maximum")]
+        public partial List<double> AxisMaximum { get; set; } = [];
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("position")]
-        List<double> position = [];
+        [ObservableProperty]
+        
+        [JsonProperty("position")]
+        public partial List<double> Position { get; set; } = [];
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("extruder")]
-        string name = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("extruder")]
+        public partial string Name { get; set; } = string.Empty;
 
         [JsonIgnore]
         public bool CanUpdateTarget = false;
@@ -89,25 +107,30 @@ namespace AndreasReitberger.API.Moonraker.Models
         [JsonIgnore]
         public Printer3dToolHeadState State { get => GetCurrentState(); }
 
-        [ObservableProperty, JsonIgnore]
-        Printer3dHeaterType type = Printer3dHeaterType.Other;
+        [ObservableProperty]
+        
+        public partial Printer3dHeaterType Type { get; set; } = Printer3dHeaterType.Other;
 
         #region Interface, unused
-        [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore]
-        double x = 0;
+        [ObservableProperty]
+        
+        [JsonIgnore]
+        public partial double X { get; set; } = 0;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore]
-        double y = 0;
+        [ObservableProperty]
+        
+        [JsonIgnore]
+        public partial double Y { get; set; } = 0;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore]
-        double z = 0;
+        [ObservableProperty]
+        
+        [JsonIgnore]
+        public partial double Z { get; set; } = 0;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore]
-        long error;
+        [ObservableProperty]
+        
+        [JsonIgnore]
+        public partial long Error { get; set; }
 
         #endregion
 

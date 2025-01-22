@@ -7,59 +7,75 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperDatabaseWebcamConfig : ObservableObject, IWebCamConfig
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        public Guid id = Guid.Empty;
+        [ObservableProperty]
+        
+        public partial Guid Id { get; set; } = Guid.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        public bool enabled;
+        [ObservableProperty]
+        
+        public partial bool Enabled { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("name")]
-        public string alias = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("name")]
+        public partial string Alias { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        public string icon = string.Empty;
+        [ObservableProperty]
+        
+        public partial string Icon { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        public string service = string.Empty;
+        [ObservableProperty]
+        
+        public partial string Service { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        public long targetFps;
+        [ObservableProperty]
+        
+        public partial long TargetFps { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        public string url = string.Empty;
+        [ObservableProperty]
+        
+        public partial string Url { get; set; } = string.Empty;
+
         partial void OnUrlChanged(string value)
         {
             if (!string.IsNullOrEmpty(value) && Uri.TryCreate(value, UriKind.RelativeOrAbsolute, out Uri? result))
                 WebCamUrlDynamic = result;
         }
 
-        [ObservableProperty, JsonIgnore]
-        public Uri? webCamUrlDynamic;
+        [ObservableProperty]
+        
+        public partial Uri? WebCamUrlDynamic { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        public string urlSnapshot = string.Empty;
+        [ObservableProperty]
+        
+        public partial string UrlSnapshot { get; set; } = string.Empty;
+
         partial void OnUrlSnapshotChanged(string value)
         {
             if (!string.IsNullOrEmpty(value) && Uri.TryCreate(value, UriKind.RelativeOrAbsolute, out Uri? result))
                 WebCamUrlStatic = result;
         }
 
-        [ObservableProperty, JsonIgnore]
-        public Uri? webCamUrlStatic;
+        [ObservableProperty]
+        
+        public partial Uri? WebCamUrlStatic { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        public bool flipX;
+        [ObservableProperty]
+        
+        public partial bool FlipX { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        public bool flipY;
+        [ObservableProperty]
+        
+        public partial bool FlipY { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("rotation")]
-        public long orientation;
+        [ObservableProperty]
+        
+        [JsonProperty("rotation")]
+        public partial long Orientation { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        public long position;
+        [ObservableProperty]
+        
+        public partial long Position { get; set; }
 
         #endregion
 

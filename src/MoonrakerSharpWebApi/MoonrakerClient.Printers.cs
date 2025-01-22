@@ -1,6 +1,5 @@
 ﻿using AndreasReitberger.API.Moonraker.Models;
 using AndreasReitberger.API.Moonraker.Structs;
-using AndreasReitberger.API.Print3dServer.Core.Events;
 using AndreasReitberger.API.Print3dServer.Core.Interfaces;
 using AndreasReitberger.API.REST.Events;
 using AndreasReitberger.API.REST.Interfaces;
@@ -9,7 +8,6 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -20,16 +18,16 @@ namespace AndreasReitberger.API.Moonraker
         #region Properties
 
         [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        double liveVelocity = 0;
+        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        public partial double LiveVelocity { get; set; } = 0;
 
         [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        double liveExtruderVelocity = 0;
+        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        public partial double LiveExtruderVelocity { get; set; } = 0;
 
         [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        KlipperPrinterStateMessageResult? printerInfo;
+        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        public partial KlipperPrinterStateMessageResult? PrinterInfo { get; set; }
         partial void OnPrinterInfoChanged(KlipperPrinterStateMessageResult? value)
         {
             OnKlipperPrinterInfoChanged(new KlipperPrinterInfoChangedEventArgs()
@@ -40,22 +38,6 @@ namespace AndreasReitberger.API.Moonraker
             });
             UpdatePrinterInfo(value);
         }
-
-        /*
-        [ObservableProperty]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        ObservableCollection<KlipperDatabaseRemotePrinter> printers = new();
-        partial void OnPrintersChanged(ObservableCollection<KlipperDatabaseRemotePrinter> value)
-        {
-            OnKlipperRemotePrinterChanged(new KlipperRemotePrintersChangedEventArgs()
-            {
-                NewPrinters = value,
-                SessionId = SessionId,
-                CallbackId = -1,
-                Token = !string.IsNullOrEmpty(UserToken) ? UserToken : ApiKey,
-            });
-        }
-        */
         #endregion
 
         #region Methods
@@ -104,17 +86,6 @@ namespace AndreasReitberger.API.Moonraker
                 */
                 KlipperPrinterStateMessageRespone? state = GetObjectFromJson<KlipperPrinterStateMessageRespone>(result?.Result, NewtonsoftJsonSerializerSettings);
                 return state?.Result;
-            }
-            catch (JsonException jecx)
-            {
-                OnError(new JsonConvertEventArgs()
-                {
-                    Exception = jecx,
-                    OriginalString = result?.Result,
-                    TargetType = nameof(KlipperPrinterStateMessageRespone),
-                    Message = jecx.Message,
-                });
-                return resultObject;
             }
             catch (Exception exc)
             {
@@ -337,17 +308,6 @@ namespace AndreasReitberger.API.Moonraker
                     return resultObject ?? [];
                 }
                 return state?.Result?.Objects ?? resultObject;
-            }
-            catch (JsonException jecx)
-            {
-                OnError(new JsonConvertEventArgs()
-                {
-                    Exception = jecx,
-                    OriginalString = result?.Result,
-                    TargetType = nameof(KlipperActionListRespone),
-                    Message = jecx.Message,
-                });
-                return resultObject;
             }
             catch (Exception exc)
             {
@@ -661,16 +621,6 @@ namespace AndreasReitberger.API.Moonraker
                 }
                 return resultObject;
             }
-            catch (JsonException jecx)
-            {
-                OnError(new JsonConvertEventArgs()
-                {
-                    Exception = jecx,
-                    OriginalString = result?.Result,
-                    Message = jecx.Message,
-                });
-                return resultObject;
-            }
             catch (Exception exc)
             {
                 OnError(new UnhandledExceptionEventArgs(exc, false));
@@ -681,7 +631,7 @@ namespace AndreasReitberger.API.Moonraker
         public async Task<Dictionary<string, KlipperGcodeMacro>> GetGcodeMacrosAsync()
         {
             IRestApiRequestRespone? result = null;
-            Dictionary<string, KlipperGcodeMacro> resultObject = new();
+            Dictionary<string, KlipperGcodeMacro> resultObject = [];
             try
             {
                 Dictionary<string, string> objects = new()
@@ -761,17 +711,6 @@ namespace AndreasReitberger.API.Moonraker
                 */
                 KlipperFilamentSensorsRespone? queryResult = GetObjectFromJson<KlipperFilamentSensorsRespone>(result?.Result, NewtonsoftJsonSerializerSettings);
                 return queryResult?.Result?.Status ?? resultObject;
-            }
-            catch (JsonException jecx)
-            {
-                OnError(new JsonConvertEventArgs()
-                {
-                    Exception = jecx,
-                    OriginalString = result?.Result,
-                    TargetType = nameof(KlipperFilamentSensorsRespone),
-                    Message = jecx.Message,
-                });
-                return resultObject;
             }
             catch (Exception exc)
             {
@@ -1264,17 +1203,6 @@ namespace AndreasReitberger.API.Moonraker
                 //result = await SendRestApiRequestAsync(MoonrakerCommandBase.printer, Method.Get, "query_endstops/status").ConfigureAwait(false);
                 KlipperEndstopQueryRespone? queryResult = GetObjectFromJson<KlipperEndstopQueryRespone>(result?.Result, NewtonsoftJsonSerializerSettings);
                 return queryResult?.Result;
-            }
-            catch (JsonException jecx)
-            {
-                OnError(new JsonConvertEventArgs()
-                {
-                    Exception = jecx,
-                    OriginalString = result?.Result,
-                    TargetType = nameof(KlipperEndstopQueryRespone),
-                    Message = jecx.Message,
-                });
-                return resultObject;
             }
             catch (Exception exc)
             {

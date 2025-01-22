@@ -6,16 +6,16 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-        string name = string.Empty;
+        public partial string Name { get; set; } = string.Empty;
 
         [ObservableProperty]
-        bool active;
+        public partial bool Active { get; set; }
 
         [ObservableProperty]
-        long? value;
+        public partial long? Value { get; set; }
 
         [ObservableProperty]
-        string type = string.Empty;
+        public partial string Type { get; set; } = string.Empty;
         #endregion
 
         #region Overrides

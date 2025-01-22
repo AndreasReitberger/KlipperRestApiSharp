@@ -7,17 +7,20 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperStatusIdleTimeout : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("state")]
-        [JsonConverter(typeof(StringEnumConverter), true)]
-        KlipperIdleStates state;
+        [ObservableProperty]
+        
+        [JsonProperty("state")]
+        [field: JsonConverter(typeof(StringEnumConverter), true)]
+        public partial KlipperIdleStates State { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("printing_time")]
-        double? printingTime;
+        [ObservableProperty]
+        
+        [JsonProperty("printing_time")]
+        public partial double? PrintingTime { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        bool validState = false;
+        [ObservableProperty]
+        
+        public partial bool ValidState { get; set; } = false;
         #endregion
 
         #region Overrides

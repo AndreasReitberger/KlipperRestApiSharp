@@ -5,17 +5,20 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperStatusSystemStats : ObservableObject
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("sysload")]
-        double? sysload;
+        [ObservableProperty]
+        
+        [JsonProperty("sysload")]
+        public partial double? Sysload { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("memavail")]
-        long? memavail;
+        [ObservableProperty]
+        
+        [JsonProperty("memavail")]
+        public partial long? Memavail { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("cputime")]
-        double? cputime;
+        [ObservableProperty]
+        
+        [JsonProperty("cputime")]
+        public partial double? Cputime { get; set; }
         #endregion
 
         #region Overrides

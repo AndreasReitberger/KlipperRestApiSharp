@@ -9,58 +9,69 @@ namespace AndreasReitberger.API.Moonraker.Models
     public partial class KlipperJobQueueItem : ObservableObject, IPrint3dJob
     {
         #region Properties
-        [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore]
-        Guid id;
+        [ObservableProperty]
+        
+        [JsonIgnore]
+        public partial Guid Id { get; set; }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("filename")]
-        string fileName = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("filename")]
+        public partial string FileName { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonProperty("job_id")]
-        string jobId = string.Empty;
+        [ObservableProperty]
+        
+        [JsonProperty("job_id")]
+        public partial string JobId { get; set; } = string.Empty;
 
-        [ObservableProperty, JsonIgnore]
+        [ObservableProperty]
+        
         [NotifyPropertyChangedFor(nameof(TimeAddedGeneralized))]
-        [property: JsonProperty("time_added")]
-        double? timeAdded;
+        [JsonProperty("time_added")]
+        public partial double? TimeAdded { get; set; }
+
         partial void OnTimeAddedChanged(double? value)
         {
             if (value is not null)
                 TimeAddedGeneralized = TimeBaseConvertHelper.FromUnixDate(value);
         }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore]
-        DateTime? timeAddedGeneralized;
+        [ObservableProperty]
+        
+        [JsonIgnore]
+        public partial DateTime? TimeAddedGeneralized { get; set; }
 
-        [ObservableProperty, JsonIgnore]
+        [ObservableProperty]
+        
         [NotifyPropertyChangedFor(nameof(TimeInQueueGeneralized))]
-        [property: JsonProperty("time_in_queue")]
-        double? timeInQueue;
+        [JsonProperty("time_in_queue")]
+        public partial double? TimeInQueue { get; set; }
+
         partial void OnTimeInQueueChanged(double? value)
         {
             if (value is not null)
                 TimeInQueueGeneralized = TimeBaseConvertHelper.FromUnixDate(value);
         }
 
-        [ObservableProperty, JsonIgnore]
-        [property: JsonIgnore]
-        DateTime? timeInQueueGeneralized;
+        [ObservableProperty]
+        
+        [JsonIgnore]
+        public partial DateTime? TimeInQueueGeneralized { get; set; }
 
-
-        [ObservableProperty, JsonIgnore]
+        [ObservableProperty]
+        
         [NotifyPropertyChangedFor(nameof(PrintTimeGeneralized))]
-        double? printTime;
+        public partial double? PrintTime { get; set; }
+
         partial void OnPrintTimeChanged(double? value)
         {
             if (value is not null)
                 PrintTimeGeneralized = TimeBaseConvertHelper.FromDoubleHours(value);
         }
 
-        [ObservableProperty, JsonIgnore]
-        TimeSpan? printTimeGeneralized;
+        [ObservableProperty]
+        
+        public partial TimeSpan? PrintTimeGeneralized { get; set; }
         #endregion
 
         #region Methods
