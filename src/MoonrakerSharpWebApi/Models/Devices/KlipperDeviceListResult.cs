@@ -7,7 +7,7 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-        
+
         [JsonProperty("devices")]
         public partial List<KlipperDevice> Devices { get; set; } = [];
         #endregion

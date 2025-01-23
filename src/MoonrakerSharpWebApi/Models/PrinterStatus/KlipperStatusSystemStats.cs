@@ -6,17 +6,17 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-        
+
         [JsonProperty("sysload")]
         public partial double? Sysload { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("memavail")]
         public partial long? Memavail { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("cputime")]
         public partial double? Cputime { get; set; }
         #endregion

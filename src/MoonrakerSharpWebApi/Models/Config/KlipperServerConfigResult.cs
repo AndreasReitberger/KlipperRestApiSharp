@@ -6,7 +6,7 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-        
+
         [JsonProperty("config")]
         public partial KlipperServerConfig? Config { get; set; }
         #endregion

@@ -6,7 +6,7 @@ namespace AndreasReitberger.API.Moonraker.Models.WebSocket
     {
         #region Properties
         [ObservableProperty]
-        
+
         [JsonProperty("websocket_id")]
         public partial long WebsocketId { get; set; }
         #endregion

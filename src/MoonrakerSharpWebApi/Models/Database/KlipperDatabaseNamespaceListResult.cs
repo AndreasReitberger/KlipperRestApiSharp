@@ -7,7 +7,7 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-        
+
         [JsonProperty("namespaces")]
         public partial List<string> Namespaces { get; set; } = [];
         #endregion

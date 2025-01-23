@@ -7,7 +7,7 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-        
+
         [JsonProperty("gcode_store")]
         public partial List<KlipperGcode> Gcodes { get; set; } = [];
         #endregion

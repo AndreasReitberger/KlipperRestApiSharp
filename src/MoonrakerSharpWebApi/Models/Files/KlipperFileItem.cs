@@ -6,12 +6,12 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-        
+
         [JsonProperty("path")]
         public partial string Path { get; set; } = string.Empty;
 
         [ObservableProperty]
-        
+
         [JsonProperty("root")]
         public partial string Root { get; set; } = string.Empty;
         #endregion

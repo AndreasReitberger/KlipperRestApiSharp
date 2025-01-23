@@ -7,12 +7,12 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-        
+
         [JsonProperty("count")]
         public partial long Count { get; set; } = 0;
 
         [ObservableProperty]
-        
+
         [JsonProperty("jobs")]
         public partial List<KlipperJobItem> Jobs { get; set; } = [];
         #endregion

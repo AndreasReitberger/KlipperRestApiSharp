@@ -7,12 +7,12 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-        
+
         [JsonProperty("available_sensors")]
         public partial List<string> AvailableSensors { get; set; } = [];
 
         [ObservableProperty]
-        
+
         [JsonProperty("available_heaters")]
         public partial List<string> AvailableHeaters { get; set; } = [];
         #endregion

@@ -7,22 +7,22 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-        
+
         [JsonProperty("warnings")]
         public partial List<object> Warnings { get; set; } = [];
 
         [ObservableProperty]
-        
+
         [JsonProperty("config")]
         public partial KlipperConfig? Config { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("settings")]
         public partial KlipperSettings? Settings { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("save_config_pending")]
         public partial bool SaveConfigPending { get; set; }
         #endregion

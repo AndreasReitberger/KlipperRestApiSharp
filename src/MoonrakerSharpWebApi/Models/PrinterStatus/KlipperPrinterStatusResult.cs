@@ -6,12 +6,12 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-        
+
         [JsonProperty("status")]
         public partial object? Status { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("eventtime")]
         public partial double? Eventtime { get; set; }
         #endregion

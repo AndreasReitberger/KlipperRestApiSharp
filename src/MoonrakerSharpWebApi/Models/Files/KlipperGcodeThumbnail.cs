@@ -8,27 +8,27 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-        
+
         [JsonIgnore]
         public partial Guid Id { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("width")]
         public partial long Width { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("height")]
         public partial long Height { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("size")]
         public partial long Size { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("relative_path")]
         public partial string Path { get; set; } = string.Empty;
 
@@ -38,7 +38,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         }
 
         [ObservableProperty]
-        
+
         [JsonIgnore]
         public partial bool IsPathRelative { get; set; } = true;
         #endregion

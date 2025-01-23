@@ -6,7 +6,7 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-        
+
         [JsonProperty("recover_velocity")]
         public partial long RecoverVelocity { get; set; }
         #endregion

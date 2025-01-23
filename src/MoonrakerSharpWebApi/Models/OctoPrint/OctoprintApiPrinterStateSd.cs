@@ -6,7 +6,7 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-        
+
         [JsonProperty("ready", NullValueHandling = NullValueHandling.Ignore)]
         public partial bool? Ready { get; set; }
         #endregion

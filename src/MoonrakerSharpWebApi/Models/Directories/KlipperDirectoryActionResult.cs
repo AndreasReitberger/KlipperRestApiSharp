@@ -6,17 +6,17 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-        
+
         [JsonProperty("item")]
         public partial KlipperDirectory? Item { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("source_item")]
         public partial KlipperDirectory? SourceItem { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("action")]
         public partial string Action { get; set; } = string.Empty;
         #endregion

@@ -7,7 +7,7 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-        
+
         [JsonProperty("deleted_jobs")]
         public partial List<string> DeletedJobs { get; set; } = [];
         #endregion

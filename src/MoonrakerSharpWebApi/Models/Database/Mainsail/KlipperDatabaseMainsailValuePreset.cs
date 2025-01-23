@@ -7,17 +7,17 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-        
+
         [JsonProperty("name")]
         public partial string Name { get; set; } = string.Empty;
 
         [ObservableProperty]
-        
+
         [JsonProperty("gcode")]
         public partial string Gcode { get; set; } = string.Empty;
 
         [ObservableProperty]
-        
+
         [JsonProperty("values")]
         public partial Dictionary<string, KlipperDatabaseMainsailHeaterElement> Values { get; set; } = [];
 

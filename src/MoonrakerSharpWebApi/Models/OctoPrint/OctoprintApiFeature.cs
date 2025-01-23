@@ -6,12 +6,12 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-        
+
         [JsonProperty("sdSupport")]
         public partial bool SdSupport { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("temperatureGraph")]
         public partial bool TemperatureGraph { get; set; }
         #endregion

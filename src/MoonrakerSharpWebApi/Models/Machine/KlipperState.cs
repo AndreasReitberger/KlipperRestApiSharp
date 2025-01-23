@@ -6,12 +6,12 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-        
+
         [JsonProperty("active_state")]
         public partial string ActiveState { get; set; } = string.Empty;
 
         [ObservableProperty]
-        
+
         [JsonProperty("sub_state")]
         public partial string SubState { get; set; } = string.Empty;
         #endregion

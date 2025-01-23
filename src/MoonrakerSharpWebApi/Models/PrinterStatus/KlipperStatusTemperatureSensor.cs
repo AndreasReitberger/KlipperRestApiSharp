@@ -6,17 +6,17 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-        
+
         [JsonProperty("temperature")]
         public partial double? Temperature { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("measured_max_temp")]
         public partial double? MeasuredMaxTemperature { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("measured_min_temp")]
         public partial double? MeasuredMinTemperature { get; set; }
         #endregion

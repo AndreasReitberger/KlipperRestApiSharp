@@ -6,22 +6,22 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-        
+
         [JsonProperty("item")]
         public partial KlipperFileItem? Item { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("print_started")]
         public partial bool PrintStarted { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("print_queued")]
         public partial bool PrintQueued { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("action")]
         public partial string Action { get; set; } = string.Empty;
         #endregion

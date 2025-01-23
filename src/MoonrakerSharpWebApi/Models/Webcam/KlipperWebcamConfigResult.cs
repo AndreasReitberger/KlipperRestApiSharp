@@ -7,7 +7,7 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-        
+
         [JsonProperty("webcams")]
         public partial List<KlipperDatabaseWebcamConfig> Webcams { get; set; } = [];
         #endregion

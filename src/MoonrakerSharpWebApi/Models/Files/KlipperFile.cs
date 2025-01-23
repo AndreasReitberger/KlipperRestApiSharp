@@ -12,27 +12,27 @@ namespace AndreasReitberger.API.Moonraker.Models
         #region Properties
 
         [ObservableProperty]
-        
+
         [JsonIgnore]
         public partial Guid Id { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonIgnore]
         public partial GcodeTimeBaseTarget TimeBaseTarget { get; set; } = GcodeTimeBaseTarget.DoubleHoursUnix;
 
         [ObservableProperty]
-        
+
         [JsonProperty("filename")]
         public partial string FileName { get; set; } = string.Empty;
 
         [ObservableProperty]
-        
+
         [JsonProperty("path")]
         public partial string FilePath { get; set; } = string.Empty;
 
         [ObservableProperty]
-        
+
         [JsonProperty("modified")]
         public partial double? Modified { get; set; }
 
@@ -42,19 +42,19 @@ namespace AndreasReitberger.API.Moonraker.Models
         }
 
         [ObservableProperty]
-        
+
         [JsonProperty("size")]
         public partial long Size { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("permissions")]
         public partial string Permissions { get; set; } = string.Empty;
 
         #region JsonIgnore
 
         [ObservableProperty]
-        
+
         [JsonProperty("created")]
         [NotifyPropertyChangedFor(nameof(CreatedGeneralized))]
         public partial double? Created { get; set; } = 0;
@@ -66,11 +66,11 @@ namespace AndreasReitberger.API.Moonraker.Models
         }
 
         [ObservableProperty]
-        
+
         public partial DateTime? CreatedGeneralized { get; set; }
 
         [ObservableProperty]
-        
+
         public partial IGcodeMeta? Meta { get; set; }
 
         partial void OnMetaChanged(IGcodeMeta? value)
@@ -82,39 +82,39 @@ namespace AndreasReitberger.API.Moonraker.Models
         }
 
         [ObservableProperty]
-        
+
         public partial byte[]? Thumbnail { get; set; } = [];
 
         [ObservableProperty]
-        
+
         public partial byte[]? Image { get; set; } = [];
 
         [ObservableProperty]
-        
+
         public partial double Filament { get; set; }
 
         [ObservableProperty]
-        
+
         public partial GcodeImageType ImageType { get; set; } = GcodeImageType.Thumbnail;
 
         [ObservableProperty]
-        
+
         public partial string PrinterName { get; set; } = string.Empty;
 
         [ObservableProperty]
-        
+
         public partial string Group { get; set; } = string.Empty;
 
         [ObservableProperty]
-        
+
         public partial long Identifier { get; set; }
 
         [ObservableProperty]
-        
+
         public partial double Volume { get; set; }
 
         [ObservableProperty]
-        
+
         public partial double PrintTime { get; set; }
 
         partial void OnPrintTimeChanged(double value)
@@ -123,7 +123,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         }
 
         [ObservableProperty]
-        
+
         public partial TimeSpan? PrintTimeGeneralized { get; set; }
         #endregion
 

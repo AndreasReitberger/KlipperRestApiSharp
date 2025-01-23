@@ -10,13 +10,13 @@ namespace AndreasReitberger.API.Moonraker.Models
         public int PercentageProgress => GetPercentageProgress();
 
         [ObservableProperty]
-        
+
         [NotifyPropertyChangedFor(nameof(PercentageProgress))]
         [JsonProperty("progress")]
         public partial double? Progress { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("message")]
         public partial string Message { get; set; } = string.Empty;
         #endregion

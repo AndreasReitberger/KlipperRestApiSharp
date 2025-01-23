@@ -7,7 +7,7 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-        
+
         [JsonProperty("result")]
         public partial Dictionary<string, KlipperTemperatureSensorHistory> Result { get; set; } = [];
 

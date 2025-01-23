@@ -17,7 +17,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         [ObservableProperty]
         public partial bool Sent { get; set; } = false;
 
-        
+
 
         [ObservableProperty]
         public partial bool Succeeded { get; set; } = false;

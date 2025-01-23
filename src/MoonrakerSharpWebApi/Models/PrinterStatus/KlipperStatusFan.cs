@@ -9,15 +9,15 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-        
+
         public partial bool On { get; set; }
 
         [ObservableProperty]
-        
+
         public partial long? Voltage { get; set; }
 
         [ObservableProperty]
-        
+
         [NotifyPropertyChangedFor(nameof(Speed))]
         [JsonProperty("speed")]
         public partial double? FanSpeed { get; set; } = 0;
@@ -51,7 +51,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         public partial long? Rpm { get; set; } = 0;
 
         [ObservableProperty]
-        
+
         [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
         public partial int? Percent { get; set; } = 0;
 

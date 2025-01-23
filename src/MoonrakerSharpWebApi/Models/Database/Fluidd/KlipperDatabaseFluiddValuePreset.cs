@@ -8,22 +8,22 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-        
+
         [JsonProperty("id")]
         public partial Guid Id { get; set; } = Guid.Empty;
 
         [ObservableProperty]
-        
+
         [JsonProperty("name")]
         public partial string Name { get; set; } = string.Empty;
 
         [ObservableProperty]
-        
+
         [JsonProperty("gcode")]
         public partial string Gcode { get; set; } = string.Empty;
 
         [ObservableProperty]
-        
+
         [JsonProperty("values")]
         public partial Dictionary<string, KlipperDatabaseFluiddHeaterElement> Values { get; set; } = [];
 

@@ -166,7 +166,8 @@ namespace AndreasReitberger.API.Moonraker
             });
         }
 #else
-        Dictionary<string, KlipperTemperatureSensorHistory> TemperatureCache { get; set; } = new();
+        Dictionary<string, KlipperTemperatureSensorHistory> TemperatureCache
+        { get; set; } = new();
         partial void OnTemperatureCacheChanged(Dictionary<string, KlipperTemperatureSensorHistory> value)
         {
             OnKlipperServerTemperatureCacheChanged(new KlipperTemperatureCacheChangedEventArgs()

@@ -6,12 +6,12 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-        
+
         [JsonProperty("inverted")]
         public partial bool Inverted { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("speed")]
         public partial long Speed { get; set; }
         #endregion

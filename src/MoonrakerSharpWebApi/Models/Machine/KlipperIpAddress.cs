@@ -6,17 +6,17 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-        
+
         [JsonProperty("family")]
         public partial string Family { get; set; } = string.Empty;
 
         [ObservableProperty]
-        
+
         [JsonProperty("address")]
         public partial string Address { get; set; } = string.Empty;
 
         [ObservableProperty]
-        
+
         [JsonProperty("is_link_local")]
         public partial bool IsLinkLocal { get; set; }
         #endregion

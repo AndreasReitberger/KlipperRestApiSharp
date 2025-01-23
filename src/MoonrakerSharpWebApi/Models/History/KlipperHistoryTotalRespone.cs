@@ -7,7 +7,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         #region Properties
 
         [ObservableProperty]
-        
+
         [JsonProperty("result")]
         public partial KlipperHistoryTotalResult? Result { get; set; }
         #endregion

@@ -7,7 +7,7 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-        
+
         [JsonProperty("profiles")]
         public partial Dictionary<string, OctoprintApiPrinter> Profiles { get; set; } = [];
         #endregion

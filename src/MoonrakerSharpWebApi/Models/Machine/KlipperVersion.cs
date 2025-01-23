@@ -6,17 +6,17 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-        
+
         [JsonProperty("major")]
         public partial long Major { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("minor")]
         public partial string Minor { get; set; } = string.Empty;
 
         [ObservableProperty]
-        
+
         [JsonProperty("build_number")]
         public partial string BuildNumber { get; set; } = string.Empty;
         #endregion

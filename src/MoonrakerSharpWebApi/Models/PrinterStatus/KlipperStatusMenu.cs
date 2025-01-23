@@ -6,22 +6,22 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-        
+
         [JsonProperty("running")]
         public partial bool Running { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("rows")]
         public partial long? Rows { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("cols")]
         public partial long? Cols { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("timeout")]
         public partial long? Timeout { get; set; }
         #endregion

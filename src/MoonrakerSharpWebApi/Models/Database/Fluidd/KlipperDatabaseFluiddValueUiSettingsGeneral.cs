@@ -6,12 +6,12 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-        
+
         [JsonProperty("locale")]
         public partial string Locale { get; set; } = string.Empty;
 
         [ObservableProperty]
-        
+
         [JsonProperty("instanceName")]
         public partial string InstanceName { get; set; } = string.Empty;
 

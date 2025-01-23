@@ -7,62 +7,62 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-        
+
         [JsonProperty("square_corner_velocity")]
         public partial double? SquareCornerVelocity { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("max_accel")]
         public partial double? MaxAccel { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("homed_axes")]
         public partial string HomedAxes { get; set; } = string.Empty;
 
         [ObservableProperty]
-        
+
         [JsonProperty("estimated_print_time")]
         public partial double? EstimatedPrintTime { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("max_velocity")]
         public partial double? MaxVelocity { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("print_time")]
         public partial double? PrintTime { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("max_accel_to_decel")]
         public partial double? MaxAccelToDecel { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("axis_minimum")]
         public partial List<double> AxisMinimum { get; set; } = [];
 
         [ObservableProperty]
-        
+
         [JsonProperty("stalls")]
         public partial double? Stalls { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("axis_maximum")]
         public partial List<double> AxisMaximum { get; set; } = [];
 
         [ObservableProperty]
-        
+
         [JsonProperty("position")]
         public partial List<double> Position { get; set; } = [];
 
         [ObservableProperty]
-        
+
         [JsonProperty("extruder")]
         public partial string Extruder { get; set; } = string.Empty;
         #endregion
