@@ -6,7 +6,7 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-        
+
         [JsonProperty("last_query")]
         public partial KlipperEndstopQueryResult? LastQuery { get; set; }
         #endregion

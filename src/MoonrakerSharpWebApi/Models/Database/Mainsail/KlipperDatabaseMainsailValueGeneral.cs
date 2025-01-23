@@ -6,12 +6,12 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-        
+
         [JsonProperty("printername")]
         public partial string Printername { get; set; } = string.Empty;
 
         [ObservableProperty]
-        
+
         [JsonProperty("displayCancelPrint")]
         public partial bool DisplayCancelPrint { get; set; }
         #endregion

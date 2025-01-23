@@ -8,7 +8,7 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-        
+
         [JsonProperty("presets")]
         public partial Dictionary<Guid, KlipperDatabaseMainsailValuePreset> Presets { get; set; } = [];
         #endregion

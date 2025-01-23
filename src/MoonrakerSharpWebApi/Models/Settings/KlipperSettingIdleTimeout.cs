@@ -6,12 +6,12 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-        
+
         [JsonProperty("gcode")]
         public partial string Gcode { get; set; } = string.Empty;
 
         [ObservableProperty]
-        
+
         [JsonProperty("timeout")]
         public partial long Timeout { get; set; }
         #endregion

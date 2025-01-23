@@ -6,7 +6,7 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-        
+
         [JsonProperty("is_paused")]
         public partial bool IsPaused { get; set; }
         #endregion

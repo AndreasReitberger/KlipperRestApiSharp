@@ -6,7 +6,7 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-        
+
         [JsonProperty("result")]
         public partial KlipperFilamentSensorsResult? Result { get; set; }
         #endregion

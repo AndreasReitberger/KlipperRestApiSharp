@@ -21,7 +21,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         public partial bool Triggered { get; set; } = false;
 
         [ObservableProperty]
-        
+
         [NotifyPropertyChangedFor(nameof(Triggered))]
         [JsonProperty("filament_detected")]
         public partial bool FilamentDetected { get; set; }

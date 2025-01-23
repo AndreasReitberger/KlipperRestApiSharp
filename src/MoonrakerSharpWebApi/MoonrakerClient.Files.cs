@@ -114,7 +114,7 @@ namespace AndreasReitberger.API.Moonraker
                 return resultObject;
             }
         }
-        public Task<List<IGcode>> GetAvailableFilesAsListAsync(string rootPath = "") 
+        public Task<List<IGcode>> GetAvailableFilesAsListAsync(string rootPath = "")
             => GetAvailableFilesAsync(rootPath);
 
         public override Task<List<IGcode>> GetFilesAsync() => GetAvailableFilesAsync();
@@ -611,12 +611,12 @@ namespace AndreasReitberger.API.Moonraker
                 };
 
                 result = await SendMultipartFormDataFileRestApiRequestAsync(
-                    fileName: info.Name, file: null, localFilePath: localFilePath, requestTargetUri: targetFilePath, 
+                    fileName: info.Name, file: null, localFilePath: localFilePath, requestTargetUri: targetFilePath,
                     parameters: parameters,
                     authHeaders: AuthHeaders, timeout: timeout
                     )
                     .ConfigureAwait(false);
-                
+
                 KlipperFileActionResult? queryResult = GetObjectFromJson<KlipperFileActionResult>(result?.Result, NewtonsoftJsonSerializerSettings);
                 return queryResult;
             }

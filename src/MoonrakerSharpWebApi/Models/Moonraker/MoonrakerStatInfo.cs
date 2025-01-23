@@ -7,22 +7,22 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-        
+
         [JsonProperty("time")]
         public partial double? Time { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("cpu_usage")]
         public partial double? CpuUsage { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("memory")]
         public partial long? Memory { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("mem_units", NullValueHandling = NullValueHandling.Ignore)]
         public partial MoonrakerMemUnits? MemUnits { get; set; }
         #endregion

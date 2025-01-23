@@ -6,12 +6,12 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-        
+
         [JsonProperty("extruder")]
         public partial KlipperDatabaseMainsailValueDashboardExtruder? Extruder { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("control")]
         public partial KlipperDatabaseMainsailValueDashboardControl? Control { get; set; }
         #endregion

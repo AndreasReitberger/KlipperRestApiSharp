@@ -6,12 +6,12 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-        
+
         [JsonProperty("server")]
         public partial string Server { get; set; } = string.Empty;
 
         [ObservableProperty]
-        
+
         [JsonProperty("safemode")]
         public partial object? Safemode { get; set; }
         #endregion

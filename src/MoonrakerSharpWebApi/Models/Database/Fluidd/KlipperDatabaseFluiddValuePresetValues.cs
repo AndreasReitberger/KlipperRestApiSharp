@@ -6,17 +6,17 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-        
+
         [JsonProperty("extruder")]
         public partial KlipperDatabaseFluiddHeaterElement? Extruder { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("extruder1")]
         public partial KlipperDatabaseFluiddHeaterElement? Extruder1 { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("heater_bed")]
         public partial KlipperDatabaseFluiddHeaterElement? HeaterBed { get; set; }
         #endregion

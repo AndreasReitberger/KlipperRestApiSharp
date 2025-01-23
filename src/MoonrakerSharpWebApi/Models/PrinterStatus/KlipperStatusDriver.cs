@@ -6,12 +6,12 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-        
+
         [JsonProperty("cs_actual")]
         public partial long? CsActual { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("sg_result")]
         public partial long? SgResult { get; set; }
         #endregion

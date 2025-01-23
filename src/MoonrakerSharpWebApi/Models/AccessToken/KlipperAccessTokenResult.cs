@@ -8,7 +8,8 @@ namespace AndreasReitberger.API.Moonraker.Models
         [ObservableProperty]
         public partial
         //[JsonProperty("result")]
-        string Result { get; set; } = string.Empty;
+        string Result
+        { get; set; } = string.Empty;
         #endregion
 
         #region Overrides

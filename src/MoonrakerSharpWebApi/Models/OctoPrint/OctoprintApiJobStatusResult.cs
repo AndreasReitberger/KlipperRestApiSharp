@@ -6,17 +6,17 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-        
+
         [JsonProperty("job")]
         public partial OctoprintApiJobResult? Job { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("progress")]
         public partial OctoprintApiJobInfoProgress? Progress { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("state")]
         public partial string State { get; set; } = string.Empty;
         #endregion

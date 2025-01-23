@@ -10,22 +10,22 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-        
+
         [JsonIgnore]
         public partial Guid Id { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("filename")]
         public partial string FileName { get; set; } = string.Empty;
 
         [ObservableProperty]
-        
+
         [JsonProperty("job_id")]
         public partial string JobId { get; set; } = string.Empty;
 
         [ObservableProperty]
-        
+
         [NotifyPropertyChangedFor(nameof(TimeAddedGeneralized))]
         [JsonProperty("time_added")]
         public partial double? TimeAdded { get; set; }
@@ -37,12 +37,12 @@ namespace AndreasReitberger.API.Moonraker.Models
         }
 
         [ObservableProperty]
-        
+
         [JsonIgnore]
         public partial DateTime? TimeAddedGeneralized { get; set; }
 
         [ObservableProperty]
-        
+
         [NotifyPropertyChangedFor(nameof(TimeInQueueGeneralized))]
         [JsonProperty("time_in_queue")]
         public partial double? TimeInQueue { get; set; }
@@ -54,12 +54,12 @@ namespace AndreasReitberger.API.Moonraker.Models
         }
 
         [ObservableProperty]
-        
+
         [JsonIgnore]
         public partial DateTime? TimeInQueueGeneralized { get; set; }
 
         [ObservableProperty]
-        
+
         [NotifyPropertyChangedFor(nameof(PrintTimeGeneralized))]
         public partial double? PrintTime { get; set; }
 
@@ -70,7 +70,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         }
 
         [ObservableProperty]
-        
+
         public partial TimeSpan? PrintTimeGeneralized { get; set; }
         #endregion
 

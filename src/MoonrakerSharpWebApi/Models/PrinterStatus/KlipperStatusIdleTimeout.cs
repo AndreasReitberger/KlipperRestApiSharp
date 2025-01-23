@@ -8,18 +8,18 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-        
+
         [JsonProperty("state")]
         [field: JsonConverter(typeof(StringEnumConverter), true)]
         public partial KlipperIdleStates State { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("printing_time")]
         public partial double? PrintingTime { get; set; }
 
         [ObservableProperty]
-        
+
         public partial bool ValidState { get; set; } = false;
         #endregion
 

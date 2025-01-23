@@ -6,17 +6,17 @@ namespace AndreasReitberger.API.Moonraker.Models.WebSocket
     {
         #region Properties
         [ObservableProperty]
-        
+
         [JsonProperty("mcu")]
         public partial KlipperStatusMcu? Mcu { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("system_stats")]
         public partial KlipperStatusSystemStats? SystemStats { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("toolhead")]
         public partial KlipperStatusToolhead? Toolhead { get; set; }
         #endregion

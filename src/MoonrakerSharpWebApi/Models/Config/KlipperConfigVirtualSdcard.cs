@@ -6,7 +6,7 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-        
+
         [JsonProperty("path")]
         public partial string Path { get; set; } = string.Empty;
         #endregion

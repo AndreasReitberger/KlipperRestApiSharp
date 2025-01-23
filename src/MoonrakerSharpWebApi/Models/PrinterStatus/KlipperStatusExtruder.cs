@@ -12,92 +12,92 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-        
+
         [JsonIgnore]
         public partial Guid Id { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("temperature")]
         public partial double? TempRead { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("target")]
         public partial double? TempSet { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("power")]
         public partial double? Power { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("pressure_advance")]
         public partial double? PressureAdvance { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("smooth_time")]
         public partial double? SmoothTime { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("square_corner_velocity")]
         public partial double? SquareCornerVelocity { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("max_accel")]
         public partial double? MaxAccel { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("homed_axes")]
         public partial string HomedAxes { get; set; } = string.Empty;
 
         [ObservableProperty]
-        
+
         [JsonProperty("estimated_print_time")]
         public partial double? EstimatedPrintTime { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("max_velocity")]
         public partial double? MaxVelocity { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("print_time")]
         public partial double? PrintTime { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("max_accel_to_decel")]
         public partial double? MaxAccelToDecel { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("axis_minimum")]
         public partial List<double> AxisMinimum { get; set; } = [];
 
         [ObservableProperty]
-        
+
         [JsonProperty("stalls")]
         public partial double? Stalls { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("axis_maximum")]
         public partial List<double> AxisMaximum { get; set; } = [];
 
         [ObservableProperty]
-        
+
         [JsonProperty("position")]
         public partial List<double> Position { get; set; } = [];
 
         [ObservableProperty]
-        
+
         [JsonProperty("extruder")]
         public partial string Name { get; set; } = string.Empty;
 
@@ -108,27 +108,27 @@ namespace AndreasReitberger.API.Moonraker.Models
         public Printer3dToolHeadState State { get => GetCurrentState(); }
 
         [ObservableProperty]
-        
+
         public partial Printer3dHeaterType Type { get; set; } = Printer3dHeaterType.Other;
 
         #region Interface, unused
         [ObservableProperty]
-        
+
         [JsonIgnore]
         public partial double X { get; set; } = 0;
 
         [ObservableProperty]
-        
+
         [JsonIgnore]
         public partial double Y { get; set; } = 0;
 
         [ObservableProperty]
-        
+
         [JsonIgnore]
         public partial double Z { get; set; } = 0;
 
         [ObservableProperty]
-        
+
         [JsonIgnore]
         public partial long Error { get; set; }
 

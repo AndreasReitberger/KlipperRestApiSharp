@@ -9,7 +9,7 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-        
+
         [JsonProperty("dirname")]
         public partial string DirectoryName { get; set; } = string.Empty;
 
@@ -20,17 +20,17 @@ namespace AndreasReitberger.API.Moonraker.Models
         }
 
         [ObservableProperty]
-        
+
         [JsonProperty("path")]
         public partial string Path { get; set; } = string.Empty;
 
         [ObservableProperty]
-        
+
         [JsonProperty("root")]
         public partial string Root { get; set; } = string.Empty;
 
         [ObservableProperty]
-        
+
         [NotifyPropertyChangedFor(nameof(ModifiedGeneralized))]
         [JsonProperty("modified")]
         public partial double? Modified { get; set; }
@@ -45,22 +45,22 @@ namespace AndreasReitberger.API.Moonraker.Models
         public partial DateTime? ModifiedGeneralized { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("size")]
         public partial long Size { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("permissions")]
         public partial string Permissions { get; set; } = string.Empty;
 
         #region JsonIgnore
         [ObservableProperty]
-        
+
         public partial Guid Id { get; set; }
 
         [ObservableProperty]
-        
+
         public partial string Name { get; set; } = string.Empty;
 
         #endregion

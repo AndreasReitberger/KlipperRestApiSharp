@@ -1819,7 +1819,7 @@ namespace MoonrakerSharpWebApi.Test
                     Debug.WriteLine($"Online: {_server.IsOnline}");
                     if (_server.IsPrinting)
                     {
-                        if(_server.ActiveJob is not null)
+                        if (_server.ActiveJob is not null)
                         {
 
                         }

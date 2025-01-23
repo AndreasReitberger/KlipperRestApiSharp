@@ -6,7 +6,7 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-        
+
         [JsonProperty("drv_status")]
         public partial KlipperStatusDriver? DrvStatus { get; set; }
         #endregion

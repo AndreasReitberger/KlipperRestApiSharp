@@ -6,12 +6,12 @@ namespace AndreasReitberger.API.Moonraker.Models.WebSocket
     {
         #region Properties
         [ObservableProperty]
-        
+
         [JsonProperty("heater_bed")]
         public partial KlipperStatusHeaterBed? HeaterBed { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("toolhead")]
         public partial KlipperStatusToolhead? ToolHead { get; set; }
         #endregion

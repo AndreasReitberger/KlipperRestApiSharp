@@ -6,12 +6,12 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-        
+
         [JsonProperty("virt_type")]
         public partial string VirtType { get; set; } = string.Empty;
 
         [ObservableProperty]
-        
+
         [JsonProperty("virt_identifier")]
         public partial string VirtIdentifier { get; set; } = string.Empty;
         #endregion

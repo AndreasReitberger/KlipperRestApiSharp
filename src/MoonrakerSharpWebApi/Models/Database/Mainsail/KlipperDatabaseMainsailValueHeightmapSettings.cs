@@ -6,27 +6,27 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-        
+
         [JsonProperty("mesh")]
         public partial bool Mesh { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("scaleVisualMap")]
         public partial bool ScaleVisualMap { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("probed")]
         public partial bool Probed { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("flat")]
         public partial bool Flat { get; set; }
 
         [ObservableProperty]
-        
+
         [JsonProperty("wireframe")]
         public partial bool Wireframe { get; set; }
         #endregion
