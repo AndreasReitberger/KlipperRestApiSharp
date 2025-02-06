@@ -8,12 +8,16 @@ namespace AndreasReitberger.API.Moonraker.Enum
         Completed = 0,
         [EnumMember(Value = "klippy_shutdown")]
         KlippyShutdown = 1,
+        [EnumMember(Value = "klippy_disconnect")]
+        KlippyDisconnect = 2,
         [EnumMember(Value = "in_progress")]
-        InProgress = 2,
+        InProgress = 3,
         [EnumMember(Value = "cancelled")]
-        Cancelled = 3,
+        Cancelled = 4,
         [EnumMember(Value = "interrupted")]
-        Interrupted = 4,
+        Interrupted = 5,
+        [EnumMember(Value = "server_exit")]
+        ServerExit = 6,
         [EnumMember(Value = "error")]
         Error = 99,
     }
