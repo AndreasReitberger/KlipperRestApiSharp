@@ -19,7 +19,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         [ObservableProperty]
 
         [JsonProperty("cpu_temp")]
-        public partial double CpuTemp { get; set; }
+        public partial double? CpuTemp { get; set; }
 
         [ObservableProperty]
 
