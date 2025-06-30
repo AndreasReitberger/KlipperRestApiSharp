@@ -1,4 +1,5 @@
-﻿using AndreasReitberger.API.Moonraker.Enum;
+﻿using AndreasReitberger.API.Moonraker.Attributes;
+using AndreasReitberger.API.Moonraker.Enum;
 using AndreasReitberger.API.Moonraker.Extensions;
 using AndreasReitberger.API.Moonraker.Models;
 using AndreasReitberger.API.Moonraker.Structs;
@@ -24,6 +25,7 @@ namespace AndreasReitberger.API.Moonraker
 {
     // Needs: https://github.com/Arksine/moonraker/blob/master/docs/web_api.md
     // Docs: https://moonraker.readthedocs.io/en/latest/configuration/
+    [Preserve(AllMembers = true)]
     public partial class MoonrakerClient : Print3dServerClient, IPrint3dServerClient
     {
         #region Variables
