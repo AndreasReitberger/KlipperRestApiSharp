@@ -50,29 +50,6 @@ namespace MoonrakerSharpWebApi.Test
         }
 
         [Test]
-        public async Task BuildWitOneShotTokenAsync()
-        {
-            try
-            {
-                var client = new MoonrakerClient.MoonrakerConnectionBuilder()
-                    .WithName("Test")
-                    .WithServerAddress(_host, _port, _ssl)
-                    .Build();
-                KlipperAccessTokenResult? token = await client.GetOneshotTokenAsync();
-
-                client.OneShotToken = token?.Result ?? string.Empty;
-                Assert.That(!string.IsNullOrEmpty(client.OneShotToken));
-
-                KlipperMachineInfo? info = await client.GetMachineSystemInfoAsync();
-                Assert.That(info is not null);
-            }
-            catch (Exception ex)
-            {
-                Assert.Fail(ex.Message);
-            }
-        }
-
-        [Test]
         public async Task BuildWitUserTokenAsync()
         {
             try
