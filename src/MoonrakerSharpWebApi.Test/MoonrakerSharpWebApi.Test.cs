@@ -1033,10 +1033,10 @@ namespace MoonrakerSharpWebApi.Test
 
                     byte[]? file = await File.ReadAllBytesAsync(testFile);
 
-                    KlipperFileActionResult? msg = await client.UploadFileAsync(localFilePath: fullPath, timeout: 100000);
+                    KlipperFileActionResult? msg = await client.UploadFileAsync(localFilePath: fullPath, timeout: 100);
                     KlipperDirectoryActionResult? deleted = await client.DeleteFileAsync("gcodes", info.Name);
 
-                    msg = await client.UploadFileAsync(fileName: info.Name, file: file, timeout: 100000);
+                    msg = await client.UploadFileAsync(fileName: info.Name, file: file, timeout: 100);
                     Assert.That(msg is not null);
 
                     KlipperGcodeMetaResult? meta = await client.GetGcodeMetadataAsync(msg?.Item?.Path);
@@ -1585,7 +1585,7 @@ namespace MoonrakerSharpWebApi.Test
                 await client.CheckOnlineAsync(3500);
                 await client.CheckOnlineAsync(3500);
                 // Wait 10 minutes
-                CancellationTokenSource cts = new(new TimeSpan(0, 10, 0));
+                CancellationTokenSource cts = new(TimeSpan.FromMinutes(10));
                 do
                 {
                     await Task.Delay(10000);
@@ -1691,7 +1691,7 @@ namespace MoonrakerSharpWebApi.Test
                 };
 
                 // Wait a few minutes
-                CancellationTokenSource cts = new(new TimeSpan(0, 10, 0));
+                CancellationTokenSource cts = new(TimeSpan.FromMinutes(10));
                 client.WebSocketDisconnected += (o, args) =>
                 {
                     if (!cts.IsCancellationRequested)
@@ -1814,7 +1814,7 @@ namespace MoonrakerSharpWebApi.Test
                 };
 
                 // Wait a 90 minutes
-                CancellationTokenSource cts = new(new TimeSpan(1, 30, 0));
+                CancellationTokenSource cts = new(TimeSpan.FromMinutes(90));
                 client.WebSocketDisconnected += (o, args) =>
                 {
                     if (!cts.IsCancellationRequested)

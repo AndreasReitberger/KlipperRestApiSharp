@@ -669,7 +669,7 @@ namespace AndreasReitberger.API.Moonraker
         #endregion
 
         #region Download
-        public Task<byte[]?> DownloadFileFromUriAsync(string path, int timeout = 10000) => DownloadFileFromUriAsync(path, AuthHeaders, null, timeout);
+        public Task<byte[]?> DownloadFileFromUriAsync(string path, int timeout = 100) => DownloadFileFromUriAsync(path, AuthHeaders, null, timeout);
 
         #endregion
 
@@ -870,17 +870,17 @@ namespace AndreasReitberger.API.Moonraker
 
         #region CheckOnline
 
-        public override async Task CheckOnlineAsync(int timeout = 10000)
+        public override async Task CheckOnlineAsync(int timeout = 10)
         {
-            CancellationTokenSource cts = new(new TimeSpan(0, 0, 0, 0, timeout));
+            CancellationTokenSource cts = new(TimeSpan.FromSeconds(timeout));
             await CheckOnlineAsync(cts).ConfigureAwait(false);
             cts?.Dispose();
         }
         public Task CheckOnlineAsync(CancellationTokenSource cts) => CheckOnlineAsync($"{MoonrakerCommands.Base}", AuthHeaders, "version", cts);
 
-        public Task<bool> CheckIfApiIsValidAsync(int timeout = 10000) => CheckIfApiIsValidAsync($"{MoonrakerCommands.Base}", AuthHeaders, "version", timeout);
+        public Task<bool> CheckIfApiIsValidAsync(int timeout = 10) => CheckIfApiIsValidAsync($"{MoonrakerCommands.Base}", AuthHeaders, "version", timeout);
 
-        public Task CheckServerIfApiIsValidAsync(int timeout = 10000) => CheckIfApiIsValidAsync(timeout);
+        public Task CheckServerIfApiIsValidAsync(int timeout = 10) => CheckIfApiIsValidAsync(timeout);
         #endregion
 
         #region Updates
