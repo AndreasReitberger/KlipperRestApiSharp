@@ -7,7 +7,7 @@ namespace AndreasReitberger.API.Moonraker.Models
     public class KlipperGcodeCacheChangedEventArgs : Print3dBaseEventArgs
     {
         #region Properties
-        public List<KlipperGcode> CachedGcodes { get; set; } = new();
+        public List<KlipperGcode> CachedGcodes { get; set; } = [];
         #endregion
 
         #region Overrides

@@ -7,7 +7,7 @@ namespace AndreasReitberger.API.Moonraker.Models
     public class KlipperPresetsChangedEventArgs : Print3dBaseEventArgs
     {
         #region Properties
-        public List<KlipperDatabaseTemperaturePreset> NewPresets { get; set; } = new();
+        public List<KlipperDatabaseTemperaturePreset> NewPresets { get; set; } = [];
         #endregion
 
         #region Overrides

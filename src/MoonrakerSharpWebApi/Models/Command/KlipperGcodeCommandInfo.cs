@@ -1,4 +1,4 @@
-﻿using AndreasReitberger.Core.Utilities;
+﻿using AndreasReitberger.Shared.Core.Utilities;
 using Newtonsoft.Json;
 using System;
 

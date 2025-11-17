@@ -232,13 +232,13 @@ namespace AndreasReitberger.API.Moonraker
                         List<KlipperDatabaseMainsailValueRemotePrinter>? mainsailObject = GetObjectFromJson<List<KlipperDatabaseMainsailValueRemotePrinter>>(resultString);
                         if (mainsailObject is not null)
                         {
-                            resultObject = new(mainsailObject.Select(item => new KlipperDatabaseRemotePrinter()
+                            resultObject = [.. mainsailObject.Select(item => new KlipperDatabaseRemotePrinter()
                             {
                                 Hostname = item.Hostname,
                                 Port = item.Port,
                                 Settings = item.Settings,
                                 WebPort = item.WebPort,
-                            }));
+                            })];
                         }
                         break;
                     case MoonrakerOperatingSystems.FluiddPi:
@@ -321,7 +321,7 @@ namespace AndreasReitberger.API.Moonraker
                                         Value = valuePair.Value.Value,
                                     }))),
                             });
-                            resultObject = new(temp);
+                            resultObject = [.. temp];
                         }
                         break;
                     case MoonrakerOperatingSystems.FluiddPi:
@@ -343,7 +343,7 @@ namespace AndreasReitberger.API.Moonraker
                                         Value = valuePair.Value.Value,
                                     }))),
                             });
-                            resultObject = new(temp);
+                            resultObject = [.. temp];
                         }
                         break;
                     default:
@@ -408,8 +408,8 @@ namespace AndreasReitberger.API.Moonraker
                 object cmd = new
                 {
                     @namespace = namespaceName,
-                    key = key,
-                    value = value,
+                    key,
+                    value,
                 };
                 string targetUri = $"{MoonrakerCommands.Server}";
                 result = await SendRestApiRequestAsync(

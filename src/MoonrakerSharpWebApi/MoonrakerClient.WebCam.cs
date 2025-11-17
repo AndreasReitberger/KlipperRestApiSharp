@@ -92,7 +92,7 @@ namespace AndreasReitberger.API.Moonraker
                                 UrlSnapshot = item.Value.UrlSnapshot,
                                 Orientation = (item.Value.Rotation ?? 0),
                             });
-                            resultObject = new(temp);
+                            resultObject = [.. temp];
                         }
                         break;
                     default:
