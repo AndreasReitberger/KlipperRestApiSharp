@@ -187,7 +187,7 @@ namespace AndreasReitberger.API.Moonraker
             }
         }
 
-        public async Task<byte[]> GetGcodeThumbnailImageAsync(string relativePath, int timeout = 10000)
+        public async Task<byte[]> GetGcodeThumbnailImageAsync(string relativePath, int timeout = 10)
         {
             try
             {
@@ -202,7 +202,7 @@ namespace AndreasReitberger.API.Moonraker
                 return [];
             }
         }
-        public async Task<byte[]?> GetGcodeThumbnailImageAsync(IGcodeMeta? gcodeMeta, int index = 0, int timeout = 10000)
+        public async Task<byte[]?> GetGcodeThumbnailImageAsync(IGcodeMeta? gcodeMeta, int index = 0, int timeout = 10)
         {
             if (gcodeMeta is null || gcodeMeta?.GcodeImages is null) return [];
             string? path = gcodeMeta.GcodeImages.Count > index ?
@@ -217,7 +217,7 @@ namespace AndreasReitberger.API.Moonraker
             return string.IsNullOrEmpty(path) ? null : await GetGcodeThumbnailImageAsync(subfolder + path, timeout)
                 .ConfigureAwait(false);
         }
-        public async Task<byte[]?> GetGcodeLargestThumbnailImageAsync(KlipperGcodeMetaResult? gcodeMeta, int timeout = 10000)
+        public async Task<byte[]?> GetGcodeLargestThumbnailImageAsync(KlipperGcodeMetaResult? gcodeMeta, int timeout = 10)
         {
             if (gcodeMeta is null || gcodeMeta?.GcodeImages is null) return [];
             string? path = gcodeMeta.GcodeImages
@@ -236,7 +236,7 @@ namespace AndreasReitberger.API.Moonraker
                 .ConfigureAwait(false)
                 ;
         }
-        public async Task<byte[]?> GetGcodeSmallestThumbnailImageAsync(KlipperGcodeMetaResult? gcodeMeta, int timeout = 10000)
+        public async Task<byte[]?> GetGcodeSmallestThumbnailImageAsync(KlipperGcodeMetaResult? gcodeMeta, int timeout = 10)
         {
             if (gcodeMeta is null || gcodeMeta?.GcodeImages is null) return [];
             string? path = gcodeMeta.GcodeImages
@@ -256,7 +256,7 @@ namespace AndreasReitberger.API.Moonraker
                 .ConfigureAwait(false)
                 ;
         }
-        public async Task<byte[]?> GetGcodeSecondThumbnailImageAsync(IGcodeMeta? gcodeMeta, int timeout = 10000)
+        public async Task<byte[]?> GetGcodeSecondThumbnailImageAsync(IGcodeMeta? gcodeMeta, int timeout = 10)
         {
             if (gcodeMeta is null || gcodeMeta?.GcodeImages is null) return [];
             string? path = gcodeMeta.GcodeImages
@@ -596,7 +596,7 @@ namespace AndreasReitberger.API.Moonraker
             }
         }
 
-        public async Task<KlipperFileActionResult?> UploadFileAsync(string localFilePath, string root = "gcodes", string path = "", int timeout = 100000)
+        public async Task<KlipperFileActionResult?> UploadFileAsync(string localFilePath, string root = "gcodes", string path = "", int timeout = 100)
         {
             IRestApiRequestRespone? result = null;
             KlipperFileActionResult? resultObject = null;
@@ -638,7 +638,7 @@ namespace AndreasReitberger.API.Moonraker
             }
         }
 
-        public async Task<KlipperFileActionResult?> UploadFileAsync(string fileName, byte[] file, string root = "gcodes", string path = "", int timeout = 100000)
+        public async Task<KlipperFileActionResult?> UploadFileAsync(string fileName, byte[] file, string root = "gcodes", string path = "", int timeout = 100)
         {
             IRestApiRequestRespone? result = null;
             KlipperFileActionResult? resultObject = null;
