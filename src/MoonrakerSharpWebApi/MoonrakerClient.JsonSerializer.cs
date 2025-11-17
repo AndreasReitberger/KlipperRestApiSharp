@@ -16,7 +16,7 @@ namespace AndreasReitberger.API.Moonraker
 
         [ObservableProperty]
         [Newtonsoft.Json.JsonIgnore, JsonIgnore, XmlIgnore]
-        public partial JsonSerializerOptions JsonSerializerSettings { get; set; } = DefaultJsonSerializerSettings;
+        public new partial JsonSerializerOptions JsonSerializerSettings { get; set; } = DefaultJsonSerializerSettings;
 
         public new static JsonSerializerOptions DefaultJsonSerializerSettings = new()
         {

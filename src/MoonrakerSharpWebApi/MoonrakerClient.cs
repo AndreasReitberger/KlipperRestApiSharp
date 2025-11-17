@@ -8,16 +8,14 @@ using AndreasReitberger.API.Print3dServer.Core.Enums;
 using AndreasReitberger.API.Print3dServer.Core.Interfaces;
 using AndreasReitberger.API.REST.Events;
 using AndreasReitberger.API.REST.Interfaces;
-using AndreasReitberger.Core.Utilities;
+using AndreasReitberger.Shared.Core.Utilities;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Security;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -414,14 +412,14 @@ namespace AndreasReitberger.API.Moonraker
                     PrintDuration = value?.PrintDuration,
                     TotalPrintDuration = GcodeMeta?.EstimatedTime,
                     RemainingPrintTime = Convert.ToDouble(TotalPrintTime - value?.PrintDuration ?? 0),
-                    Done = Math.Round(MathHelper.Clamp((Convert.ToDouble(value?.PrintDuration ?? 0)) / (TotalPrintTime / 100), 0, 100), 2),
+                    Done = Math.Round(Math.Clamp((Convert.ToDouble(value?.PrintDuration ?? 0)) / (TotalPrintTime / 100), 0, 100), 2),
                 };
 
                 // Update progress
                 PrintTime = value?.PrintDuration ?? 0;
                 TotalPrintTime = GcodeMeta?.EstimatedTime ?? 0;
                 RemainingPrintTime = Convert.ToDouble(TotalPrintTime - value?.PrintDuration ?? 0);
-                Progress = Math.Round(MathHelper.Clamp((Convert.ToDouble(value?.PrintDuration ?? 0)) / (TotalPrintTime / 100), 0, 100), 2);
+                Progress = Math.Round(Math.Clamp((Convert.ToDouble(value?.PrintDuration ?? 0)) / (TotalPrintTime / 100), 0, 100), 2);
             }
         }
 
@@ -525,38 +523,13 @@ namespace AndreasReitberger.API.Moonraker
         }
         #endregion
 
-        #region ReadOnly
-
-        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        public new bool IsReady
-        {
-            get
-            {
-                return (
-                    !string.IsNullOrEmpty(ServerAddress)) && Port > 0 &&
-                    (
-                        // Address
-                        Regex.IsMatch(ServerAddress, RegexHelper.IPv4AddressRegex) || Regex.IsMatch(ServerAddress, RegexHelper.IPv6AddressRegex) || Regex.IsMatch(ServerAddress, RegexHelper.Fqdn)
-                        ||
-                        // Or validation rules are overriden
-                        OverrideValidationRules
-                    )
-                    ;
-            }
-        }
-        #endregion
-
         #endregion
 
         #region Constructor
         public MoonrakerClient()
         {
             Id = Guid.NewGuid();
-            Target = Print3dServerTarget.Moonraker;
-            ApiKeyRegexPattern = "";
-            WebSocketTarget = "websocket";
-            WebCamTarget = "/webcam/?action=stream";
-            WebSocketMessageReceived += Client_WebSocketMessageReceived;
+            LoadDefaults();
             UpdateRestClientInstance();
         }
 
@@ -568,15 +541,19 @@ namespace AndreasReitberger.API.Moonraker
         /// <param name="password">Password</param>
         /// <param name="port">Port</param>
         /// <param name="isSecure">True if https is used</param>
-        public MoonrakerClient(string serverAddress, string api, int port = 80, bool isSecure = false)
+        public MoonrakerClient(string serverAddress, string api) : base(serverAddress, api)
         {
             Id = Guid.NewGuid();
-            Target = Print3dServerTarget.Moonraker;
-            ApiKeyRegexPattern = "";
-            WebSocketTarget = "websocket";
-            WebCamTarget = "/webcam/?action=stream";
-            WebSocketMessageReceived += Client_WebSocketMessageReceived;
-            InitInstance(serverAddress, port, api, isSecure);
+            LoadDefaults();
+            InitInstance(serverAddress, api);
+            UpdateRestClientInstance();
+        }
+        
+        public MoonrakerClient(string serverAddress) : base(serverAddress)
+        {
+            Id = Guid.NewGuid();
+            LoadDefaults();
+            InitInstance(serverAddress, "");
             UpdateRestClientInstance();
         }
 
@@ -588,15 +565,11 @@ namespace AndreasReitberger.API.Moonraker
         /// <param name="password">Password</param>
         /// <param name="port">Port</param>
         /// <param name="isSecure">True if https is used</param>
-        public MoonrakerClient(string serverAddress, string username, SecureString password, int port = 80, bool isSecure = false)
+        public MoonrakerClient(string serverAddress, string username, string password) : base(serverAddress)
         {
             Id = Guid.NewGuid();
-            Target = Print3dServerTarget.Moonraker;
-            ApiKeyRegexPattern = "";
-            WebSocketTarget = "websocket";
-            WebCamTarget = "/webcam/?action=stream";
-            WebSocketMessageReceived += Client_WebSocketMessageReceived;
-            InitInstance(serverAddress, port, "", isSecure);
+            LoadDefaults();
+            InitInstance(serverAddress);
             LoginRequired = true;
             Username = username;
             Password = password;
@@ -651,17 +624,14 @@ namespace AndreasReitberger.API.Moonraker
                 //OnError(new UnhandledExceptionEventArgs(exc, false));
             }
         }
-        public new void InitInstance(string serverAddress, int port = 80, string api = "", bool isSecure = false)
+        public new void InitInstance(string serverAddress, string api = "")
         {
             try
             {
-                ServerAddress = serverAddress;
+                ApiTargetPath = serverAddress;
                 ApiKey = api;
-                Port = port;
-                IsSecure = isSecure;
 
                 Instance = this;
-
                 if (Instance is not null)
                 {
                     Instance.UpdateInstance = false;
@@ -682,6 +652,21 @@ namespace AndreasReitberger.API.Moonraker
         #region Methods
 
         #region Private
+
+        #region Misc
+        void LoadDefaults()
+        {
+            PingInterval = 5;
+            Target = Print3dServerTarget.Moonraker;
+#if NET6_0_OR_GREATER
+            ApiKeyRegex = RegexHelper.RepetierServerProApiKeyGeneratedRegex();
+#endif
+            //WebSocketTarget = "websocket";
+            WebCamTarget = "/webcam/?action=stream";
+            WebSocketMessageReceived -= Client_WebSocketMessageReceived;
+            WebSocketMessageReceived += Client_WebSocketMessageReceived;
+        }
+        #endregion
 
         #region Download
         public Task<byte[]?> DownloadFileFromUriAsync(string path, int timeout = 10000) => DownloadFileFromUriAsync(path, AuthHeaders, null, timeout);
@@ -781,7 +766,7 @@ namespace AndreasReitberger.API.Moonraker
                 }
                 if (GcodeMeta is not null)
                 {
-                    Layer = MathHelper.Clamp(Convert.ToInt64(Z / GcodeMeta.LayerHeight), 0, Layers);
+                    Layer = Math.Clamp(Convert.ToInt64(Z / GcodeMeta.LayerHeight), 0, Layers);
                 }
             }
             catch (Exception exc)
@@ -908,14 +893,14 @@ namespace AndreasReitberger.API.Moonraker
             try
             {
                 if (temp is not MoonrakerClient tempKlipper) return false;
-                else return
-                    !(ServerAddress == tempKlipper.ServerAddress &&
-                        Port == tempKlipper.Port &&
-                        ApiKey == tempKlipper.ApiKey &&
-                        IsSecure == tempKlipper.IsSecure &&
-                        LoginRequired == tempKlipper.LoginRequired
-                        )
-                    ;
+                else
+                {
+                    return
+                    !(ApiTargetPath == tempKlipper.ApiTargetPath &&
+                        ApiVersion == tempKlipper.ApiVersion &&
+                        ApiKey == tempKlipper.ApiKey
+                        );
+                }
             }
             catch (Exception exc)
             {
@@ -1275,7 +1260,7 @@ namespace AndreasReitberger.API.Moonraker
                     return false;
                 }
 
-                List<string> cmds = new();
+                List<string> cmds = [];
                 if (!string.IsNullOrEmpty(presetProfile?.Gcode))
                 {
                     cmds.Add(presetProfile.Gcode);
@@ -1294,7 +1279,7 @@ namespace AndreasReitberger.API.Moonraker
                 }
                 //bool result = await SendGcodeCommandAsync(cmds.ToArray()).ConfigureAwait(false);
                 //return result;
-                List<bool> results = new();
+                List<bool> results = [];
                 for (int i = 0; i < cmds.Count; i++)
                 {
                     string cmd = cmds[i];
@@ -1780,12 +1765,12 @@ namespace AndreasReitberger.API.Moonraker
             try
             {
                 Username = username;
-                Password = SecureStringHelper.ConvertToSecureString(password);
+                Password = password;
 
                 object cmd = new
                 {
-                    username = username,
-                    password = password,
+                    username,
+                    password,
                     source = "moonraker",
                 };
 
@@ -1920,7 +1905,7 @@ namespace AndreasReitberger.API.Moonraker
             {
                 object cmd = new
                 {
-                    password = password,
+                    password,
                     new_password = newPassword,
                 };
                 string targetUri = $"{MoonrakerCommands.Access}";
@@ -2062,8 +2047,8 @@ namespace AndreasReitberger.API.Moonraker
                 */
                 object cmd = new
                 {
-                    username = username,
-                    password = password
+                    username,
+                    password
                 };
 
                 // This operation needs a valid token / api key
@@ -2120,7 +2105,7 @@ namespace AndreasReitberger.API.Moonraker
                 */
                 object cmd = new
                 {
-                    username = username,
+                    username,
                 };
                 string targetUri = $"{MoonrakerCommands.Access}";
                 result = await SendRestApiRequestAsync(
@@ -2793,7 +2778,7 @@ namespace AndreasReitberger.API.Moonraker
         public async Task<Dictionary<string, string>> GetDeviceStatusAsync(string device)
         {
             IRestApiRequestRespone? result = null;
-            Dictionary<string, string> resultObject = new();
+            Dictionary<string, string> resultObject = [];
             try
             {
                 Dictionary<string, string> urlSegments = new()
@@ -2890,7 +2875,7 @@ namespace AndreasReitberger.API.Moonraker
         public async Task<Dictionary<string, string>> GetBatchDeviceStatusAsync(string[] devices)
         {
             IRestApiRequestRespone? result = null;
-            Dictionary<string, string> resultObject = new();
+            Dictionary<string, string> resultObject = [];
             try
             {
                 StringBuilder deviceList = new();
@@ -3308,7 +3293,7 @@ namespace AndreasReitberger.API.Moonraker
             {
                 object cmd = new
                 {
-                    commands = commands
+                    commands
                 };
                 string targetUri = $"{MoonrakerCommands.Api}";
                 IRestApiRequestRespone? result = await SendRestApiRequestAsync(

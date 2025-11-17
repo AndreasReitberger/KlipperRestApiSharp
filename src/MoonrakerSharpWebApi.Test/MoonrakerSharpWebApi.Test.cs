@@ -13,7 +13,7 @@ using System.Xml.Serialization;
 
 namespace MoonrakerSharpWebApi.Test
 {
-    public class Tests
+    public partial class Tests
     {
         private readonly string _host = SecretAppSettingReader.ReadSection<SecretAppSetting>("TestSetup").Ip ?? "";
         private readonly int _port = 80;
@@ -24,23 +24,47 @@ namespace MoonrakerSharpWebApi.Test
 
         private readonly bool _skipOnlineTests = true;
 
-        private string[] wsStartCommands = new string[]
-        { 
+        private string[] wsStartCommands =
+        [ 
             // Needed to get the ConnectionId
             $"{{\"jsonrpc\":\"2.0\",\"method\":\"server.info\",\"params\":{{}},\"id\":1}}",
             $"{{\"jsonrpc\":\"2.0\",\"method\":\"server.websocket.id\",\"params\":{{}},\"id\":2}}",
-        };
+        ];
 
         MoonrakerClient? client = null;
+
+        [GeneratedRegex(@"^[A-Z][A-Za-z0-9]*$")]
+        private static partial Regex MyRegex();
+
+        [GeneratedRegex(@"(?<=\"").+?(?=\"")")]
+        private static partial Regex MyRegex_Extract();
 
         [SetUp]
         public void Setup()
         {
+            string host = $"{(_ssl ? "https://" : "http://")}{_host}:{_port}";
+            string ws = $"{(_ssl ? "wss://" : "ws://")}{_host}:{_port}/websocket";
             client = new MoonrakerClient.MoonrakerConnectionBuilder()
-                .WithName("Test")
-                .WithServerAddress(_host, _port, _ssl)
+                .WithServerAddress(host)
                 .WithApiKey(_api)
-                .Build();
+                .WithWebSocket(ws)
+                .WithTimeout(100)
+                .Build(); 
+            client.Error += (sender, args) =>
+                {
+                    if (!client.ReThrowOnError)
+                    {
+                        Assert.Fail($"Error: {args?.ToString()}");
+                    }
+                };
+            client.RestApiError += (sender, args) =>
+            {
+                if (!client.ReThrowOnError)
+                {
+                    //Assert.Fail($"REST-Error: {args?.ToString()}");
+                    Debug.WriteLine($"REST-Error: {args?.ToString()}");
+                }
+            };
         }
 
         [TearDown]
@@ -55,9 +79,11 @@ namespace MoonrakerSharpWebApi.Test
             try
             {
                 Assert.That(!string.IsNullOrEmpty(_user) && !string.IsNullOrEmpty(_pwd), "Provide a user and password in your secrets.json file first!");
+                string host = $"{(_ssl ? "https://" : "http://")}{_host}:{_port}";
+
                 var client = new MoonrakerClient.MoonrakerConnectionBuilder()
                     .WithName("Test")
-                    .WithServerAddress(_host, _port, _ssl)
+                    .WithServerAddress(host)
                     .Build();
                 string? apiKey = await client.LoginUserForApiKeyAsync(_user, _pwd);
 
@@ -111,7 +137,8 @@ namespace MoonrakerSharpWebApi.Test
             if (File.Exists(serverConfig)) File.Delete(serverConfig);
             try
             {
-                MoonrakerClient.Instance = new MoonrakerClient(_host, _api, _port, _ssl)
+                string host = $"{(_ssl ? "https://" : "http://")}{_host}:{_port}";
+                MoonrakerClient.Instance = new MoonrakerClient(host)
                 {
                     FreeDiskSpace = 1523165212,
                     TotalDiskSpace = 65621361616161,
@@ -139,7 +166,8 @@ namespace MoonrakerSharpWebApi.Test
             if (File.Exists(serverConfig)) File.Delete(serverConfig);
             try
             {
-                MoonrakerClient.Instance = new MoonrakerClient(_host, _api, _port, _ssl)
+                string host = $"{(_ssl ? "https://" : "http://")}{_host}:{_port}";
+                MoonrakerClient.Instance = new MoonrakerClient(host)
                 {
                     FreeDiskSpace = 1523165212,
                     TotalDiskSpace = 65621361616161,
@@ -165,14 +193,12 @@ namespace MoonrakerSharpWebApi.Test
             if (File.Exists(serverConfig)) File.Delete(serverConfig);
             try
             {
-                List<Type> types = AppDomain.CurrentDomain.GetAssemblies()
+                List<Type> types = [.. AppDomain.CurrentDomain.GetAssemblies()
                        .SelectMany(t => t.GetTypes())
-                       .Where(t => t.IsClass && !t.Name.StartsWith("<") && t.Namespace?.StartsWith("AndreasReitberger.API.Moonraker") is true)
-                       .ToList()
+                       .Where(t => t.IsClass && !t.Name.StartsWith("<") && t.Namespace?.StartsWith("AndreasReitberger.API.Moonraker") is true)]
                        ;
-                //Regex r = new(@"(?<=\"")[A-Z]*[A-Z][a-zA-Z]*(?=\"")");
-                Regex r = new(@"^[A-Z][A-Za-z0-9]*$");
-                Regex extract = new(@"(?<=\"").+?(?=\"")");
+                Regex r = MyRegex();
+                Regex extract = MyRegex_Extract();
                 foreach (Type t in types)
                 {
                     if (t == typeof(KlipperWebSocketStateRespone))
@@ -195,10 +221,9 @@ namespace MoonrakerSharpWebApi.Test
                     if (serializedString == "{}") continue;
 
                     // Get all property infos
-                    List<PropertyInfo> p = t
+                    List<PropertyInfo> p = [.. t
                         .GetProperties()
-                        .Where(prop => prop.GetCustomAttribute<JsonPropertyAttribute>(true) is not null)
-                        .ToList()
+                        .Where(prop => prop.GetCustomAttribute<JsonPropertyAttribute>(true) is not null)]
                         ;
 
                     // Get the property names from the json text
@@ -223,9 +248,7 @@ namespace MoonrakerSharpWebApi.Test
                     // set to cleanuped string
                     serializedString = sb.ToString();
                     var splitted = serializedString.Split(",", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-                    List<string> properties = splitted
-                        .Select(row => extract.Match(row ?? "")?.Value ?? string.Empty)
-                        .ToList()
+                    List<string> properties = [.. splitted.Select(row => extract.Match(row ?? "")?.Value ?? string.Empty)]
                         ;
                     /*
                     serializedString = string.Join(Environment.NewLine, splitString);
@@ -287,7 +310,8 @@ namespace MoonrakerSharpWebApi.Test
                 XmlSerializer xmlSerializer = new(typeof(MoonrakerClient));
                 using (var fileStream = new FileStream(serverConfig, FileMode.Create))
                 {
-                    MoonrakerClient.Instance = new MoonrakerClient(_host, _api, _port, _ssl)
+                    string host = $"{(_ssl ? "https://" : "http://")}{_host}:{_port}";
+                    MoonrakerClient.Instance = new MoonrakerClient(host)
                     {
                         UsedDiskSpace = 1523152132,
                         FreeDiskSpace = 1523165212,
@@ -318,24 +342,24 @@ namespace MoonrakerSharpWebApi.Test
         {
             try
             {
-                MoonrakerClient _server = new(_host, _api, _port, _ssl);
-                await _server.CheckOnlineAsync();
-                if (_server.IsOnline)
+                if (client is null) throw new NullReferenceException($"The client was null!");
+                await client.CheckOnlineAsync();
+                if (client.IsOnline)
                 {
-                    await _server.RefreshAllAsync();
-                    Assert.That(_server.InitialDataFetched);
+                    await client.RefreshAllAsync();
+                    Assert.That(client.InitialDataFetched);
 
-                    KlipperAccessTokenResult? token2 = await _server.GetApiKeyAsync();
+                    KlipperAccessTokenResult? token2 = await client.GetApiKeyAsync();
                     Assert.That(!string.IsNullOrEmpty(token2?.Result));
 
-                    Dictionary<string, object> objectList = await _server.QueryPrinterObjectStatusAsync(new() { { "gcode_move", "" } });
+                    Dictionary<string, object> objectList = await client.QueryPrinterObjectStatusAsync(new() { { "gcode_move", "" } });
                     Assert.That(objectList?.Count > 0);
 
-                    objectList = await _server.QueryPrinterObjectStatusAsync(new() { { "toolhead", "position,status" } });
+                    objectList = await client.QueryPrinterObjectStatusAsync(new() { { "toolhead", "position,status" } });
                     Assert.That(objectList?.Count > 0);
                 }
                 else
-                    Assert.Fail($"Server {_server.FullWebAddress} is offline.");
+                    Assert.Fail($"Server {client.FullWebAddress} is offline.");
             }
             catch (Exception exc)
             {
@@ -348,49 +372,49 @@ namespace MoonrakerSharpWebApi.Test
         {
             try
             {
-                MoonrakerClient _server = new(_host, _api, _port, _ssl);
-                await _server.CheckOnlineAsync();
-                if (_server.IsOnline)
+                if (client is null) throw new NullReferenceException($"The client was null!");
+                await client.CheckOnlineAsync();
+                if (client.IsOnline)
                 {
-                    _server.RestJsonConvertError += (o, args) =>
+                    client.RestJsonConvertError += (o, args) =>
                     {
                         Assert.Fail(args?.Message);
                     };
 
-                    await _server.RefreshAllAsync();
+                    await client.RefreshAllAsync();
                     await Task.Delay(250);
 
-                    Assert.That(_server.InitialDataFetched);
+                    Assert.That(client.InitialDataFetched);
 
-                    Assert.That(_server.IdleState is not null);
-                    Assert.That(_server.DisplayStatus is not null);
-                    Assert.That(_server.GcodeMove is not null);
-                    Assert.That(_server.GcodeMeta is not null);
-                    Assert.That(_server.VirtualSdCard is not null);
+                    Assert.That(client.IdleState is not null);
+                    Assert.That(client.DisplayStatus is not null);
+                    Assert.That(client.GcodeMove is not null);
+                    Assert.That(client.GcodeMeta is not null);
+                    Assert.That(client.VirtualSdCard is not null);
 
-                    Assert.That(_server.HeatedBeds?.Count > 0);
-                    Assert.That(_server.HeatedBeds?.FirstOrDefault().Value?.TempRead > 0);
-                    Assert.That(_server.ActiveHeatedBed?.TempRead > 0);
+                    Assert.That(client.HeatedBeds?.Count > 0);
+                    Assert.That(client.HeatedBeds?.FirstOrDefault().Value?.TempRead > 0);
+                    Assert.That(client.ActiveHeatedBed?.TempRead > 0);
 
-                    Assert.That(_server.Toolheads?.Count > 0);
-                    Assert.That(_server.Toolheads?.FirstOrDefault().Value?.TempRead > 0);
-                    Assert.That(_server.ActiveToolhead?.TempRead > 0);
+                    Assert.That(client.Toolheads?.Count > 0);
+                    Assert.That(client.Toolheads?.FirstOrDefault().Value?.TempRead > 0);
+                    Assert.That(client.ActiveToolhead?.TempRead > 0);
 
-                    Assert.That(_server.PrintStats is not null);
+                    Assert.That(client.PrintStats is not null);
 
-                    Assert.That(_server.Files is not null);
-                    Assert.That(_server.Files?.Count > 0);
+                    Assert.That(client.Files is not null);
+                    Assert.That(client.Files?.Count > 0);
 
-                    Assert.That(_server.Fans is not null);
-                    Assert.That(_server.Fans?.Count > 0);
-                    Assert.That(_server.ActiveFan?.Speed > 0);
-                    if (_server.IsPrinting)
+                    Assert.That(client.Fans is not null);
+                    Assert.That(client.Fans?.Count > 0);
+                    Assert.That(client.ActiveFan?.Speed > 0);
+                    if (client.IsPrinting)
                     {
-                        //Assert.That(_server.ActiveJob is not null);
+                        //Assert.That(client.ActiveJob is not null);
                     }
                 }
                 else
-                    Assert.Fail($"Server {_server.FullWebAddress} is offline.");
+                    Assert.Fail($"Server {client.FullWebAddress} is offline.");
             }
             catch (Exception exc)
             {
@@ -404,31 +428,31 @@ namespace MoonrakerSharpWebApi.Test
         {
             try
             {
-                MoonrakerClient _server = new(_host, _api, _port, _ssl);
-                await _server.CheckOnlineAsync();
-                if (_server.IsOnline)
+                if (client is null) throw new NullReferenceException($"The client was null!");
+                await client.CheckOnlineAsync();
+                if (client.IsOnline)
                 {
-                    _server.RestJsonConvertError += (o, args) =>
+                    client.RestJsonConvertError += (o, args) =>
                     {
                         Assert.Fail(args.Message);
                     };
 
-                    await _server.RefreshAllAsync();
-                    Assert.That(_server.InitialDataFetched);
+                    await client.RefreshAllAsync();
+                    Assert.That(client.InitialDataFetched);
 
-                    List<IWebCamConfig>? webcamConfigs = await _server.GetWebCamSettingsFromDatabaseAsync();
+                    List<IWebCamConfig>? webcamConfigs = await client.GetWebCamSettingsFromDatabaseAsync();
                     Assert.That(webcamConfigs?.Count > 0);
 
-                    webcamConfigs = await _server.GetWebCamSettingsAsync();
+                    webcamConfigs = await client.GetWebCamSettingsAsync();
                     Assert.That(webcamConfigs?.Count > 0);
 
-                    string webcamUri = await _server.GetWebCamUriAsync(0, false);
-                    Assert.That(_server.WebCams?.Count > 0);
-                    Assert.That(_server.WebCams?.Count > 0);
+                    string webcamUri = await client.GetWebCamUriAsync(0, false);
+                    Assert.That(client.WebCams?.Count > 0);
+                    Assert.That(client.WebCams?.Count > 0);
                     Assert.That(!string.IsNullOrEmpty(webcamUri));
                 }
                 else
-                    Assert.Fail($"Server {_server.FullWebAddress} is offline.");
+                    Assert.Fail($"Server {client.FullWebAddress} is offline.");
             }
             catch (Exception exc)
             {
@@ -443,40 +467,40 @@ namespace MoonrakerSharpWebApi.Test
         {
             try
             {
-                MoonrakerClient _server = new(_host, _api, _port, _ssl);
-                await _server.CheckOnlineAsync();
-                if (_server.IsOnline)
+                if (client is null) throw new NullReferenceException($"The client was null!");
+                await client.CheckOnlineAsync();
+                if (client.IsOnline)
                 {
-                    await _server.RefreshAllAsync();
-                    Assert.That(_server.InitialDataFetched);
+                    await client.RefreshAllAsync();
+                    Assert.That(client.InitialDataFetched);
 
-                    _server.RestJsonConvertError += (o, args) =>
+                    client.RestJsonConvertError += (o, args) =>
                     {
                         Assert.Fail(args.Message);
                     };
-                    await _server.StartListeningAsync(commandsOnConnect: wsStartCommands);
+                    await client.StartListeningAsync(commandsOnConnect: wsStartCommands);
 
-                    Dictionary<string, KlipperStatusFilamentSensor> fSensors = await _server.GetFilamentSensorsAsync();
+                    Dictionary<string, KlipperStatusFilamentSensor> fSensors = await client.GetFilamentSensorsAsync();
                     Assert.That(fSensors?.Count > 0);
 
-                    Dictionary<string, string> macros = new();
-                    List<string> availableMacros = await _server.GetPrinterObjectListAsync("gcode_macro");
+                    Dictionary<string, string> macros = [];
+                    List<string> availableMacros = await client.GetPrinterObjectListAsync("gcode_macro");
                     for (int i = 0; i < availableMacros.Count; i++)
                     {
                         macros.Add(availableMacros[i], string.Empty);
                     }
 
-                    Dictionary<string, KlipperGcodeMacro> gcMacros = await _server.GetGcodeMacrosAsync();
+                    Dictionary<string, KlipperGcodeMacro> gcMacros = await client.GetGcodeMacrosAsync();
                     Assert.That(gcMacros?.Count > 0);
 
-                    List<string> objects = await _server.GetPrinterObjectListAsync();
+                    List<string> objects = await client.GetPrinterObjectListAsync();
                     Assert.That(objects?.Count > 0);
 
-                    KlipperEndstopQueryResult endstops = await _server.QueryEndstopsAsync();
+                    KlipperEndstopQueryResult endstops = await client.QueryEndstopsAsync();
                     Assert.That(endstops is not null);
 
                     macros.Clear();
-                    Dictionary<string, string> targets = new();
+                    Dictionary<string, string> targets = [];
                     for (int i = 0; i < objects.Count; i++)
                     {
                         targets.Add(objects[i], string.Empty);
@@ -487,17 +511,17 @@ namespace MoonrakerSharpWebApi.Test
                     //targets.Add("toolhead", "");
                     //targets.Add("extruder", "target,temperature");
 
-                    Dictionary<string, KlipperGcodeMacro> availableMarcros = await _server.GetGcodeMacrosAsync();
+                    Dictionary<string, KlipperGcodeMacro> availableMarcros = await client.GetGcodeMacrosAsync();
                     Assert.That(availableMarcros?.Count > 0);
 
-                    Dictionary<string, object> objectStates = await _server.QueryPrinterObjectStatusAsync(targets);
+                    Dictionary<string, object> objectStates = await client.QueryPrinterObjectStatusAsync(targets);
                     Assert.That(objectStates?.Count > 0);
 
-                    long? connectionId = _server.WebSocketConnectionId; // ""; // Get from WebSocket?
-                    string result = await _server.SubscribePrinterObjectStatusAsync(connectionId, objects);
+                    long? connectionId = client.WebSocketConnectionId; // ""; // Get from WebSocket?
+                    string result = await client.SubscribePrinterObjectStatusAsync(connectionId, objects);
                 }
                 else
-                    Assert.Fail($"Server {_server.FullWebAddress} is offline.");
+                    Assert.Fail($"Server {client.FullWebAddress} is offline.");
             }
             catch (Exception exc)
             {
@@ -510,37 +534,37 @@ namespace MoonrakerSharpWebApi.Test
         {
             try
             {
-                MoonrakerClient _server = new(_host, _api, _port, _ssl);
-                await _server.CheckOnlineAsync();
-                if (_server.IsOnline)
+                if (client is null) throw new NullReferenceException($"The client was null!");
+                await client.CheckOnlineAsync();
+                if (client.IsOnline)
                 {
-                    await _server.RefreshAllAsync();
-                    Assert.That(_server.InitialDataFetched);
+                    await client.RefreshAllAsync();
+                    Assert.That(client.InitialDataFetched);
 
-                    _server.RestJsonConvertError += (o, args) =>
+                    client.RestJsonConvertError += (o, args) =>
                     {
                         Assert.Fail(args.Message);
                     };
 
-                    Dictionary<string, string> macros = new();
-                    List<string> availableMacros = await _server.GetPrinterObjectListAsync("gcode_macro", true);
+                    Dictionary<string, string> macros = [];
+                    List<string> availableMacros = await client.GetPrinterObjectListAsync("gcode_macro", true);
                     for (int i = 0; i < availableMacros.Count; i++)
                     {
                         macros.Add(availableMacros[i], string.Empty);
                     }
 
                     macros.Clear();
-                    List<string> objects = await _server.GetPrinterObjectListAsync("gcode_macro");
+                    List<string> objects = await client.GetPrinterObjectListAsync("gcode_macro");
                     for (int i = 0; i < objects.Count; i++)
                     {
                         macros.Add(objects[i], string.Empty);
                     }
 
-                    Dictionary<string, KlipperGcodeMacro> gcMacros = await _server.GetGcodeMacrosAsync();
+                    Dictionary<string, KlipperGcodeMacro> gcMacros = await client.GetGcodeMacrosAsync();
                     Assert.That(gcMacros?.Count > 0);
                 }
                 else
-                    Assert.Fail($"Server {_server.FullWebAddress} is offline.");
+                    Assert.Fail($"Server {client.FullWebAddress} is offline.");
             }
             catch (Exception exc)
             {
@@ -553,33 +577,33 @@ namespace MoonrakerSharpWebApi.Test
         {
             try
             {
-                MoonrakerClient _server = new(_host, _api, _port, _ssl);
-                _server.Error += (sender, e) =>
+                if (client is null) throw new NullReferenceException($"The client was null!");
+                client.Error += (sender, e) =>
                 {
                     Assert.Fail(e.ToString());
                 };
-                await _server.CheckOnlineAsync();
-                if (_server.IsOnline)
+                await client.CheckOnlineAsync();
+                if (client.IsOnline)
                 {
-                    await _server.RefreshAllAsync();
-                    Assert.That(_server.InitialDataFetched);
+                    await client.RefreshAllAsync();
+                    Assert.That(client.InitialDataFetched);
 
-                    _server.RestJsonConvertError += (o, args) =>
+                    client.RestJsonConvertError += (o, args) =>
                     {
                         Assert.Fail(args.Message);
                     };
 
-                    List<IGcode> models = await _server.GetAvailableFilesAsync("gcodes", true);
+                    List<IGcode> models = await client.GetAvailableFilesAsync("gcodes", true);
                     //var childItems = models?.Where(model => model.Path.Contains("/")).ToList();
                     Assert.That(models?.Count > 0);
                     foreach (KlipperFile? gcodeFile in models?.Cast<KlipperFile>()?.Where(g => g?.Meta?.GcodeImages?.Count > 0))
                     {
-                        byte[] thumbnail = await _server.GetGcodeThumbnailImageAsync(gcodeFile?.Meta);
+                        byte[] thumbnail = await client.GetGcodeThumbnailImageAsync(gcodeFile?.Meta);
                         Assert.That(thumbnail is not null);
                     }
                 }
                 else
-                    Assert.Fail($"Server {_server.FullWebAddress} is offline.");
+                    Assert.Fail($"Server {client.FullWebAddress} is offline.");
             }
             catch (Exception exc)
             {
@@ -592,18 +616,18 @@ namespace MoonrakerSharpWebApi.Test
         {
             try
             {
-                MoonrakerClient _server = new(_host, _api, _port, _ssl);
-                await _server.CheckOnlineAsync();
-                if (_server.IsOnline)
+                if (client is null) throw new NullReferenceException($"The client was null!");
+                await client.CheckOnlineAsync();
+                if (client.IsOnline)
                 {
-                    await _server.RefreshAllAsync();
-                    Assert.That(_server.InitialDataFetched);
+                    await client.RefreshAllAsync();
+                    Assert.That(client.InitialDataFetched);
 
-                    KlipperPrinterStateMessageResult info = await _server.GetPrinterInfoAsync();
+                    KlipperPrinterStateMessageResult info = await client.GetPrinterInfoAsync();
                     Assert.That(info is not null);
                 }
                 else
-                    Assert.Fail($"Server {_server.FullWebAddress} is offline.");
+                    Assert.Fail($"Server {client.FullWebAddress} is offline.");
             }
             catch (Exception exc)
             {
@@ -618,25 +642,25 @@ namespace MoonrakerSharpWebApi.Test
             {
                 if (_skipOnlineTests) return;
 
-                MoonrakerClient _server = new(_host, _api, _port, _ssl);
-                await _server.CheckOnlineAsync();
-                if (_server.IsOnline)
+                if (client is null) throw new NullReferenceException($"The client was null!");
+                await client.CheckOnlineAsync();
+                if (client.IsOnline)
                 {
-                    await _server.RefreshAllAsync();
-                    Assert.That(_server.InitialDataFetched);
+                    await client.RefreshAllAsync();
+                    Assert.That(client.InitialDataFetched);
 
                     int fanSpeed = 128;
                     string gcode = $"M106 S{fanSpeed}";
-                    bool result = await _server.RunGcodeScriptAsync(gcode);
+                    bool result = await client.RunGcodeScriptAsync(gcode);
                     Assert.That(result);
 
                     fanSpeed = 0;
                     gcode = $"M106 S{fanSpeed}";
-                    result = await _server.RunGcodeScriptAsync(gcode);
+                    result = await client.RunGcodeScriptAsync(gcode);
                     Assert.That(result);
                 }
                 else
-                    Assert.Fail($"Server {_server.FullWebAddress} is offline.");
+                    Assert.Fail($"Server {client.FullWebAddress} is offline.");
             }
             catch (Exception exc)
             {
@@ -651,27 +675,27 @@ namespace MoonrakerSharpWebApi.Test
             {
                 if (_skipOnlineTests) return;
 
-                MoonrakerClient _server = new(_host, _api, _port, _ssl);
-                await _server.CheckOnlineAsync();
-                if (_server.IsOnline)
+                if (client is null) throw new NullReferenceException($"The client was null!");
+                await client.CheckOnlineAsync();
+                if (client.IsOnline)
                 {
-                    await _server.RefreshAllAsync();
-                    Assert.That(_server.InitialDataFetched);
+                    await client.RefreshAllAsync();
+                    Assert.That(client.InitialDataFetched);
 
-                    var homed = await _server.HomeAxesAsync(true, true, true);
+                    var homed = await client.HomeAxesAsync(true, true, true);
                     Assert.That(homed, "Not homed!");
 
                     // Move all 3 axes to ensure they all move correctly
                     var newX = 100;
                     var newY = 100;
                     var newZ = 100;
-                    var moved = await _server.MoveAxesAsync(
+                    var moved = await client.MoveAxesAsync(
                         speed: 6000,
                         x: newX,
                         y: newY,
                         z: newZ,
                         relative: false);
-                    var end = await _server.GetToolHeadStatusAsync();
+                    var end = await client.GetToolHeadStatusAsync();
                     Assert.That(moved, "Did not move");
                     Assert.That(newX == end.Position[0], message: "X didn't move as expected");
                     Assert.That(newY == end.Position[1], message: "Y didn't move as expected");
@@ -681,22 +705,22 @@ namespace MoonrakerSharpWebApi.Test
                     newX = 50;
                     newY = 50;
                     newZ = 50;
-                    await _server.MoveAxesAsync(
+                    await client.MoveAxesAsync(
                         speed: 6000,
                         x: newX);
-                    await _server.MoveAxesAsync(
+                    await client.MoveAxesAsync(
                         speed: 6000,
                         y: newY);
-                    await _server.MoveAxesAsync(
+                    await client.MoveAxesAsync(
                         speed: 6000,
                         z: newZ);
-                    end = await _server.GetToolHeadStatusAsync();
+                    end = await client.GetToolHeadStatusAsync();
                     Assert.That(newX == end.Position[0], message: "X didn't move as expected");
                     Assert.That(newY == end.Position[1], message: "Y didn't move as expected");
                     Assert.That(newZ == end.Position[2], message: "Z didn't move as expected");
                 }
                 else
-                    Assert.Fail($"Server {_server.FullWebAddress} is offline.");
+                    Assert.Fail($"Server {client.FullWebAddress} is offline.");
             }
             catch (Exception exc)
             {
@@ -712,49 +736,49 @@ namespace MoonrakerSharpWebApi.Test
             try
             {
                 if (_skipOnlineTests) return;
-                MoonrakerClient _server = new(_host, _api, _port, _ssl);
-                await _server.CheckOnlineAsync();
-                if (_server.IsOnline)
+                if (client is null) throw new NullReferenceException($"The client was null!");
+                await client.CheckOnlineAsync();
+                if (client.IsOnline)
                 {
-                    await _server.RefreshAllAsync();
-                    Assert.That(_server.InitialDataFetched);
+                    await client.RefreshAllAsync();
+                    Assert.That(client.InitialDataFetched);
 
-                    bool fan = await _server.SetFanSpeedTargetAsync(128, false);
-                    fan = await _server.SetFanSpeedTargetAsync(0, false);
-                    fan = await _server.SetFanSpeedTargetAsync(100, true);
-                    fan = await _server.SetFanSpeedTargetAsync(0, false);
+                    bool fan = await client.SetFanSpeedTargetAsync(128, false);
+                    fan = await client.SetFanSpeedTargetAsync(0, false);
+                    fan = await client.SetFanSpeedTargetAsync(100, true);
+                    fan = await client.SetFanSpeedTargetAsync(0, false);
 
-                    bool extruder = await _server.SetExtruderTargetAsync(50);
-                    extruder = await _server.SetExtruderTargetAsync(50, 1);
+                    bool extruder = await client.SetExtruderTargetAsync(50);
+                    extruder = await client.SetExtruderTargetAsync(50, 1);
                     await Task.Delay(5000);
-                    extruder = await _server.SetExtruderTargetAsync(0);
-                    extruder = await _server.SetExtruderTargetAsync(0, 1);
+                    extruder = await client.SetExtruderTargetAsync(0);
+                    extruder = await client.SetExtruderTargetAsync(0, 1);
 
-                    bool heaterBed = await _server.SetHeaterBedTargetAsync(50);
+                    bool heaterBed = await client.SetHeaterBedTargetAsync(50);
                     await Task.Delay(5000);
-                    heaterBed = await _server.SetHeaterBedTargetAsync(0);
+                    heaterBed = await client.SetHeaterBedTargetAsync(0);
 
                     string fileName = "test.gcode";
-                    bool printStarted = await _server.PrintFileAsync(fileName);
+                    bool printStarted = await client.PrintFileAsync(fileName);
                     Assert.That(printStarted);
 
                     if (printStarted)
                     {
                         // Wait a minute
                         await Task.Delay(60 * 1000);
-                        bool paused = await _server.PausePrintAsync();
+                        bool paused = await client.PausePrintAsync();
                         await Task.Delay(5000);
                         Assert.That(paused);
 
                         if (paused)
                         {
-                            bool resumed = await _server.ResumePrintAsync();
+                            bool resumed = await client.ResumePrintAsync();
                             await Task.Delay(5000);
                             Assert.That(resumed);
 
                             if (resumed)
                             {
-                                bool cancelled = await _server.CancelPrintAsync();
+                                bool cancelled = await client.CancelPrintAsync();
                                 await Task.Delay(5000);
                                 Assert.That(cancelled);
                             }
@@ -763,7 +787,7 @@ namespace MoonrakerSharpWebApi.Test
                 }
                 else
                 {
-                    Assert.Fail($"Server {_server.FullWebAddress} is offline.");
+                    Assert.Fail($"Server {client.FullWebAddress} is offline.");
                 }
             }
             catch (Exception exc)
@@ -779,19 +803,19 @@ namespace MoonrakerSharpWebApi.Test
         {
             try
             {
-                MoonrakerClient _server = new(_host, _api, _port, _ssl);
-                await _server.CheckOnlineAsync();
-                if (_server.IsOnline)
+                if (client is null) throw new NullReferenceException($"The client was null!");
+                await client.CheckOnlineAsync();
+                if (client.IsOnline)
                 {
-                    await _server.RefreshAllAsync();
-                    Assert.That(_server.InitialDataFetched);
+                    await client.RefreshAllAsync();
+                    Assert.That(client.InitialDataFetched);
 
-                    //var token = await _server.GetOneshotTokenAsync();
-                    KlipperAccessTokenResult token2 = await _server.GetApiKeyAsync();
+                    //var token = await client.GetOneshotTokenAsync();
+                    KlipperAccessTokenResult token2 = await client.GetApiKeyAsync();
                     Assert.That(!string.IsNullOrEmpty(token2.Result));
                 }
                 else
-                    Assert.Fail($"Server {_server.FullWebAddress} is offline.");
+                    Assert.Fail($"Server {client.FullWebAddress} is offline.");
             }
             catch (Exception exc)
             {
@@ -804,30 +828,30 @@ namespace MoonrakerSharpWebApi.Test
         {
             try
             {
-                MoonrakerClient _server = new(_host, _api, _port, _ssl);
-                await _server.CheckOnlineAsync();
-                if (_server.IsOnline)
+                if (client is null) throw new NullReferenceException($"The client was null!");
+                await client.CheckOnlineAsync();
+                if (client.IsOnline)
                 {
-                    await _server.RefreshAllAsync();
-                    Assert.That(_server.InitialDataFetched);
+                    await client.RefreshAllAsync();
+                    Assert.That(client.InitialDataFetched);
 
-                    KlipperServerConfig config = await _server.GetServerConfigAsync();
+                    KlipperServerConfig config = await client.GetServerConfigAsync();
                     Assert.That(config is not null);
 
-                    Dictionary<string, KlipperTemperatureSensorHistory> tempData = await _server.GetServerCachedTemperatureDataAsync();
+                    Dictionary<string, KlipperTemperatureSensorHistory> tempData = await client.GetServerCachedTemperatureDataAsync();
                     Assert.That(tempData?.Count > 0);
 
-                    List<KlipperGcode> cachedGcodes = await _server.GetServerCachedGcodesAsync();
+                    List<KlipperGcode> cachedGcodes = await client.GetServerCachedGcodesAsync();
                     Assert.That(cachedGcodes?.Count > 0);
 
                     if (!_skipOnlineTests)
                     {
-                        bool restart = await _server.RestartServerAsync();
+                        bool restart = await client.RestartServerAsync();
                         Assert.That(restart);
                     }
                 }
                 else
-                    Assert.Fail($"Server {_server.FullWebAddress} is offline.");
+                    Assert.Fail($"Server {client.FullWebAddress} is offline.");
             }
             catch (Exception exc)
             {
@@ -840,23 +864,23 @@ namespace MoonrakerSharpWebApi.Test
         {
             try
             {
-                MoonrakerClient _server = new(_host, _api, _port, _ssl);
-                await _server.CheckOnlineAsync();
-                if (_server.IsOnline)
+                if (client is null) throw new NullReferenceException($"The client was null!");
+                await client.CheckOnlineAsync();
+                if (client.IsOnline)
                 {
-                    await _server.RefreshAllAsync();
-                    Assert.That(_server.InitialDataFetched);
+                    await client.RefreshAllAsync();
+                    Assert.That(client.InitialDataFetched);
 
-                    Dictionary<string, string> help = await _server.GetGcodeHelpAsync();
+                    Dictionary<string, string> help = await client.GetGcodeHelpAsync();
                     Assert.That(help?.Count > 0);
                     if (!_skipOnlineTests)
                     {
-                        bool succeed = await _server.RunGcodeScriptAsync("G28");
+                        bool succeed = await client.RunGcodeScriptAsync("G28");
                         Assert.That(succeed);
                     }
                 }
                 else
-                    Assert.Fail($"Server {_server.FullWebAddress} is offline.");
+                    Assert.Fail($"Server {client.FullWebAddress} is offline.");
             }
             catch (Exception exc)
             {
@@ -870,37 +894,37 @@ namespace MoonrakerSharpWebApi.Test
             try
             {
                 if (_skipOnlineTests) return;
-                MoonrakerClient _server = new(_host, _api, _port, _ssl);
-                await _server.CheckOnlineAsync();
-                if (_server.IsOnline)
+                if (client is null) throw new NullReferenceException($"The client was null!");
+                await client.CheckOnlineAsync();
+                if (client.IsOnline)
                 {
-                    await _server.RefreshAllAsync();
-                    Assert.That(_server.InitialDataFetched);
+                    await client.RefreshAllAsync();
+                    Assert.That(client.InitialDataFetched);
 
-                    KlipperMachineInfo info = await _server.GetMachineSystemInfoAsync();
+                    KlipperMachineInfo info = await client.GetMachineSystemInfoAsync();
                     Assert.That(info is not null);
 
-                    bool restarted = await _server.RestartSystemServiceAsync(KlipperServices.webcamd);
+                    bool restarted = await client.RestartSystemServiceAsync(KlipperServices.webcamd);
                     Assert.That(restarted);
                     await Task.Delay(10 * 1000);
 
-                    bool stopped = await _server.StopSystemServiceAsync(KlipperServices.webcamd);
+                    bool stopped = await client.StopSystemServiceAsync(KlipperServices.webcamd);
                     Assert.That(stopped);
                     await Task.Delay(10 * 1000);
 
-                    bool started = await _server.StartSystemServiceAsync(KlipperServices.webcamd);
+                    bool started = await client.StartSystemServiceAsync(KlipperServices.webcamd);
                     Assert.That(started);
                     await Task.Delay(10 * 1000);
 
-                    bool rebooted = await _server.MachineRebootAsync();
+                    bool rebooted = await client.MachineRebootAsync();
                     Assert.That(rebooted);
                     await Task.Delay(10 * 1000);
 
-                    bool shutdown = await _server.MachineShutdownAsync();
+                    bool shutdown = await client.MachineShutdownAsync();
                     Assert.That(shutdown);
                 }
                 else
-                    Assert.Fail($"Server {_server.FullWebAddress} is offline.");
+                    Assert.Fail($"Server {client.FullWebAddress} is offline.");
             }
             catch (Exception exc)
             {
@@ -913,18 +937,18 @@ namespace MoonrakerSharpWebApi.Test
         {
             try
             {
-                MoonrakerClient _server = new(_host, _api, _port, _ssl);
-                await _server.CheckOnlineAsync();
-                if (_server.IsOnline)
+                if (client is null) throw new NullReferenceException($"The client was null!");
+                await client.CheckOnlineAsync();
+                if (client.IsOnline)
                 {
-                    await _server.RefreshAllAsync();
-                    Assert.That(_server.InitialDataFetched);
+                    await client.RefreshAllAsync();
+                    Assert.That(client.InitialDataFetched);
 
-                    KlipperMoonrakerProcessStatsResult info = await _server.GetMoonrakerProcessStatsAsync();
+                    KlipperMoonrakerProcessStatsResult info = await client.GetMoonrakerProcessStatsAsync();
                     Assert.That(info is not null);
                 }
                 else
-                    Assert.Fail($"Server {_server.FullWebAddress} is offline.");
+                    Assert.Fail($"Server {client.FullWebAddress} is offline.");
             }
             catch (Exception exc)
             {
@@ -937,48 +961,48 @@ namespace MoonrakerSharpWebApi.Test
         {
             try
             {
-                MoonrakerClient _server = new(_host, _api, _port, _ssl);
-                await _server.CheckOnlineAsync();
-                if (_server.IsOnline)
+                if (client is null) throw new NullReferenceException($"The client was null!");
+                await client.CheckOnlineAsync();
+                if (client.IsOnline)
                 {
-                    await _server.RefreshAllAsync();
-                    Assert.That(_server.InitialDataFetched);
+                    await client.RefreshAllAsync();
+                    Assert.That(client.InitialDataFetched);
 
-                    List<IGcode> files = await _server.GetAvailableFilesAsync();
+                    List<IGcode> files = await client.GetAvailableFilesAsync();
                     Assert.That(files?.Count > 0);
 
                     string? fileName = files[0]?.FilePath;
-                    KlipperGcodeMetaResult meta = await _server.GetGcodeMetadataAsync(fileName);
+                    KlipperGcodeMetaResult? meta = await client.GetGcodeMetadataAsync(fileName);
                     Assert.That(meta is not null);
 
 
-                    files = await _server.GetAvailableFilesAsync("config");
+                    files = await client.GetAvailableFilesAsync("config");
                     Assert.That(files?.Count > 0);
 
-                    files = await _server.GetAvailableFilesAsync("config_examples");
+                    files = await client.GetAvailableFilesAsync("config_examples");
                     Assert.That(files?.Count > 0);
 
-                    files = await _server.GetAvailableFilesAsync("docs ");
+                    files = await client.GetAvailableFilesAsync("docs ");
                     Assert.That(files?.Count > 0);
 
                     string dirName = "gcodes/Kundenaufträge";
-                    KlipperDirectoryActionResult created = await _server.CreateDirectoryAsync(dirName);
+                    KlipperDirectoryActionResult? created = await client.CreateDirectoryAsync(dirName);
                     Assert.That(created is not null);
 
-                    KlipperDirectoryActionResult copyFile = await _server.CopyDirectoryOrFileAsync($"gcodes/{fileName}", $"{dirName}/{fileName}");
+                    KlipperDirectoryActionResult? copyFile = await client.CopyDirectoryOrFileAsync($"gcodes/{fileName}", $"{dirName}/{fileName}");
                     Assert.That(copyFile is not null);
 
-                    KlipperDirectoryInfoResult dirs = await _server.GetDirectoryInformationAsync(dirName);
+                    KlipperDirectoryInfoResult? dirs = await client.GetDirectoryInformationAsync(dirName);
                     Assert.That(dirs is not null);
 
-                    KlipperDirectoryActionResult deleteFile = await _server.DeleteFileAsync($"{dirName}/{fileName}");
+                    KlipperDirectoryActionResult? deleteFile = await client.DeleteFileAsync($"{dirName}/{fileName}");
                     Assert.That(deleteFile is not null);
 
-                    KlipperDirectoryActionResult deleted = await _server.DeleteDirectoryAsync(dirName);
+                    KlipperDirectoryActionResult? deleted = await client.DeleteDirectoryAsync(dirName);
                     Assert.That(deleted is not null);
                 }
                 else
-                    Assert.Fail($"Server {_server.FullWebAddress} is offline.");
+                    Assert.Fail($"Server {client.FullWebAddress} is offline.");
             }
             catch (Exception exc)
             {
@@ -994,12 +1018,12 @@ namespace MoonrakerSharpWebApi.Test
         {
             try
             {
-                MoonrakerClient _server = new(_host, _api, _port, _ssl);
-                await _server.CheckOnlineAsync();
-                if (_server.IsOnline)
+                if (client is null) throw new NullReferenceException($"The client was null!");
+                await client.CheckOnlineAsync();
+                if (client.IsOnline)
                 {
-                    await _server.RefreshAllAsync();
-                    Assert.That(_server.InitialDataFetched);
+                    await client.RefreshAllAsync();
+                    Assert.That(client.InitialDataFetched);
 
                     string testFile = @"Files/Groot_0.2mm_PETG_MK3S_11h28m.gcode";
 
@@ -1009,26 +1033,26 @@ namespace MoonrakerSharpWebApi.Test
 
                     byte[]? file = await File.ReadAllBytesAsync(testFile);
 
-                    KlipperFileActionResult? msg = await _server.UploadFileAsync(localFilePath: fullPath, timeout: 100000);
-                    KlipperDirectoryActionResult? deleted = await _server.DeleteFileAsync("gcodes", info.Name);
+                    KlipperFileActionResult? msg = await client.UploadFileAsync(localFilePath: fullPath, timeout: 100000);
+                    KlipperDirectoryActionResult? deleted = await client.DeleteFileAsync("gcodes", info.Name);
 
-                    msg = await _server.UploadFileAsync(fileName: info.Name, file: file, timeout: 100000);
+                    msg = await client.UploadFileAsync(fileName: info.Name, file: file, timeout: 100000);
                     Assert.That(msg is not null);
 
-                    KlipperGcodeMetaResult? meta = await _server.GetGcodeMetadataAsync(msg?.Item?.Path);
+                    KlipperGcodeMetaResult? meta = await client.GetGcodeMetadataAsync(msg?.Item?.Path);
                     Assert.That(meta is not null);
 
                     string? thumbnail = meta?.GcodeImages.FirstOrDefault()?.Path;
                     // Get small image (30x30)
-                    byte[] image = await _server.GetGcodeThumbnailImageAsync(thumbnail);
+                    byte[]? image = await client.GetGcodeThumbnailImageAsync(thumbnail);
                     // Get big image (400x300)
-                    byte[] image2 = await _server.GetGcodeThumbnailImageAsync(meta, 1);
+                    byte[]? image2 = await client.GetGcodeThumbnailImageAsync(meta, 1);
 
-                    deleted = await _server.DeleteFileAsync("gcodes", info.Name);
+                    deleted = await client.DeleteFileAsync("gcodes", info.Name);
                     Assert.That(deleted is not null);
                 }
                 else
-                    Assert.Fail($"Server {_server.FullWebAddress} is offline.");
+                    Assert.Fail($"Server {client.FullWebAddress} is offline.");
             }
             catch (Exception exc)
             {
@@ -1041,18 +1065,18 @@ namespace MoonrakerSharpWebApi.Test
         {
             try
             {
-                MoonrakerClient _server = new(_host, _api, _port, _ssl);
-                await _server.CheckOnlineAsync();
-                if (_server.IsOnline)
+                if (client is null) throw new NullReferenceException($"The client was null!");
+                await client.CheckOnlineAsync();
+                if (client.IsOnline)
                 {
-                    await _server.RefreshAllAsync();
-                    Assert.That(_server.InitialDataFetched);
+                    await client.RefreshAllAsync();
+                    Assert.That(client.InitialDataFetched);
 
-                    byte[] logFile = await _server.DownloadLogFileAsync(KlipperLogFileTypes.Klippy);
+                    byte[]? logFile = await client.DownloadLogFileAsync(KlipperLogFileTypes.Klippy);
                     await File.WriteAllBytesAsync("klippy.log", logFile);
                     Assert.That(logFile?.Length > 0);
 
-                    logFile = await _server.DownloadLogFileAsync(KlipperLogFileTypes.Moonraker);
+                    logFile = await client.DownloadLogFileAsync(KlipperLogFileTypes.Moonraker);
                     await File.WriteAllBytesAsync("moonraker.log", logFile);
                     Assert.That(logFile?.Length > 0);
 
@@ -1060,7 +1084,7 @@ namespace MoonrakerSharpWebApi.Test
                     File.Delete("moonraker.log");
                 }
                 else
-                    Assert.Fail($"Server {_server.FullWebAddress} is offline.");
+                    Assert.Fail($"Server {client.FullWebAddress} is offline.");
             }
             catch (Exception exc)
             {
@@ -1076,60 +1100,60 @@ namespace MoonrakerSharpWebApi.Test
             try
             {
                 if (_skipOnlineTests) return;
-                MoonrakerClient _server = new(_host, _api, _port, _ssl);
-                await _server.CheckOnlineAsync();
-                if (_server.IsOnline)
+                if (client is null) throw new NullReferenceException($"The client was null!");
+                await client.CheckOnlineAsync();
+                if (client.IsOnline)
                 {
                     string username = "TestUser";
                     string password = "TestPassword";
 
-                    KlipperUserActionResult login2 = await _server.LoginUserAsync(username, password);
+                    KlipperUserActionResult login2 = await client.LoginUserAsync(username, password);
 
-                    await _server.RefreshAllAsync();
-                    Assert.That(_server.InitialDataFetched);
+                    await client.RefreshAllAsync();
+                    Assert.That(client.InitialDataFetched);
 
-                    KlipperUserActionResult userCreated = await _server.CreateUserAsync(username, password);
+                    KlipperUserActionResult userCreated = await client.CreateUserAsync(username, password);
                     Assert.That(userCreated is not null);
 
-                    List<KlipperUser> users = await _server.ListAvailableUsersAsync();
+                    List<KlipperUser> users = await client.ListAvailableUsersAsync();
                     Assert.That(users?.Count > 0);
 
-                    KlipperUser currentUser = await _server.GetCurrentUserAsync();
+                    KlipperUser currentUser = await client.GetCurrentUserAsync();
                     if (currentUser != null)
                     {
-                        //Assert.IsNotNull(await _server.LogoutCurrentUserAsync());
+                        //Assert.IsNotNull(await client.LogoutCurrentUserAsync());
                     }
 
-                    KlipperUserActionResult login = await _server.LoginUserAsync(username, password);
+                    KlipperUserActionResult login = await client.LoginUserAsync(username, password);
                     Assert.That(login is not null);
                     Assert.That(login.Username == username);
 
-                    currentUser = await _server.GetCurrentUserAsync();
+                    currentUser = await client.GetCurrentUserAsync();
                     Assert.That(currentUser is not null);
 
-                    KlipperUserActionResult newTokenResult = await _server.RefreshJSONWebTokenAsync();
+                    KlipperUserActionResult newTokenResult = await client.RefreshJSONWebTokenAsync();
                     Assert.That(newTokenResult is not null);
-                    Assert.That(_server.UserToken == newTokenResult.Token);
+                    Assert.That(client.UserToken == newTokenResult.Token);
 
                     string newPassword = "TestPasswordChanged";
-                    KlipperUserActionResult refreshPassword = await _server.ResetUserPasswordAsync(password, newPassword);
+                    KlipperUserActionResult refreshPassword = await client.ResetUserPasswordAsync(password, newPassword);
                     Assert.That(refreshPassword is not null);
 
-                    KlipperUserActionResult logout = await _server.LogoutCurrentUserAsync();
+                    KlipperUserActionResult logout = await client.LogoutCurrentUserAsync();
                     Assert.That(logout is not null);
 
-                    login = await _server.LoginUserAsync(username, newPassword);
+                    login = await client.LoginUserAsync(username, newPassword);
                     Assert.That(login is not null);
                     Assert.That(login?.Username == username);
 
-                    logout = await _server.LogoutCurrentUserAsync();
+                    logout = await client.LogoutCurrentUserAsync();
                     Assert.That(logout is not null);
 
-                    KlipperUserActionResult userDeleted = await _server.DeleteUserAsync(username);
+                    KlipperUserActionResult userDeleted = await client.DeleteUserAsync(username);
                     Assert.That(userDeleted is not null);
                 }
                 else
-                    Assert.Fail($"Server {_server.FullWebAddress} is offline.");
+                    Assert.Fail($"Server {client.FullWebAddress} is offline.");
             }
             catch (Exception exc)
             {
@@ -1148,28 +1172,28 @@ namespace MoonrakerSharpWebApi.Test
         {
             try
             {
-                MoonrakerClient _server = new(_host, _api, _port, _ssl);
-                _server.Error += (sender, e) =>
+                if (client is null) throw new NullReferenceException($"The client was null!");
+                client.Error += (sender, e) =>
                 {
                     if (e is UnhandledExceptionEventArgs args)
                         Console.WriteLine(args.ExceptionObject?.ToString());
                     //Assert.Fail(e.ToString());
                 };
-                await _server.CheckOnlineAsync();
-                if (_server.IsOnline)
+                await client.CheckOnlineAsync();
+                if (client.IsOnline)
                 {
-                    await _server.RefreshAllAsync();
-                    Assert.That(_server.InitialDataFetched);
+                    await client.RefreshAllAsync();
+                    Assert.That(client.InitialDataFetched);
 
-                    //List<string> namespaces = await _server.ListDatabaseNamespacesAsync();
-                    Assert.That(_server.AvailableNamespaces?.Count > 0);
-                    if (_server.OperatingSystem == MoonrakerOperatingSystems.FluiddPi)
+                    //List<string> namespaces = await client.ListDatabaseNamespacesAsync();
+                    Assert.That(client.AvailableNamespaces?.Count > 0);
+                    if (client.OperatingSystem == MoonrakerOperatingSystems.FluiddPi)
                     {
-                        _server.ApiKey = _api;
+                        client.ApiKey = _api;
                     }
 
-                    string currentNamespace = _server.OperatingSystem == MoonrakerOperatingSystems.MainsailOS ? "mainsail" : "fluidd";
-                    Dictionary<string, object> items = await _server.GetDatabaseItemAsync(currentNamespace);
+                    string currentNamespace = client.OperatingSystem == MoonrakerOperatingSystems.MainsailOS ? "mainsail" : "fluidd";
+                    Dictionary<string, object> items = await client.GetDatabaseItemAsync(currentNamespace);
                     Assert.That(items?.Count > 0);
 
                     foreach (KeyValuePair<string, object> pair in items)
@@ -1179,40 +1203,40 @@ namespace MoonrakerSharpWebApi.Test
                         {
                             foreach (var property in jObject.Properties())
                             {
-                                Dictionary<string, object> childItems = await _server.GetDatabaseItemAsync(currentNamespace, property.Name);
+                                Dictionary<string, object> childItems = await client.GetDatabaseItemAsync(currentNamespace, property.Name);
                             }
                         }
                     }
 
-                    Dictionary<string, object> moonrakerItems = await _server.GetDatabaseItemAsync("moonraker");
+                    Dictionary<string, object> moonrakerItems = await client.GetDatabaseItemAsync("moonraker");
 
-                    Dictionary<string, object> webcams = await _server.GetDatabaseItemAsync(currentNamespace,
-                        _server.OperatingSystem == MoonrakerOperatingSystems.MainsailOS ? "webcam" : "cameras");
+                    Dictionary<string, object> webcams = await client.GetDatabaseItemAsync(currentNamespace,
+                        client.OperatingSystem == MoonrakerOperatingSystems.MainsailOS ? "webcam" : "cameras");
                     Assert.That(webcams?.Count > 0);
 
-                    List<IWebCamConfig>? webcamConfig = await _server.GetWebCamSettingsAsync();
+                    List<IWebCamConfig>? webcamConfig = await client.GetWebCamSettingsAsync();
                     Assert.That(webcamConfig?.Count > 0);
                     if (webcamConfig.Count > 0)
                         Assert.That(!string.IsNullOrEmpty(webcamConfig.FirstOrDefault()?.WebCamUrlDynamic?.ToString()));
 
-                    List<KlipperDatabaseTemperaturePreset> presets = await _server.GetDashboardPresetsAsync();
+                    List<KlipperDatabaseTemperaturePreset> presets = await client.GetDashboardPresetsAsync();
                     Assert.That(presets?.Count > 0);
 
-                    if (_server.OperatingSystem == MoonrakerOperatingSystems.MainsailOS)
+                    if (client.OperatingSystem == MoonrakerOperatingSystems.MainsailOS)
                     {
-                        KlipperDatabaseMainsailValueHeightmapSettings? heightmap = await _server.GetMeshHeightMapSettingsAsync();
+                        KlipperDatabaseMainsailValueHeightmapSettings? heightmap = await client.GetMeshHeightMapSettingsAsync();
                         Assert.That(heightmap is not null);
                     }
 
-                    Dictionary<string, object> add = await _server.AddDatabaseItemAsync(currentNamespace, "testkey", 56);
+                    Dictionary<string, object> add = await client.AddDatabaseItemAsync(currentNamespace, "testkey", 56);
                     Assert.That(add?.Count > 0);
 
-                    Dictionary<string, object> delete = await _server.DeleteDatabaseItemAsync(currentNamespace, "testkey");
+                    Dictionary<string, object> delete = await client.DeleteDatabaseItemAsync(currentNamespace, "testkey");
                     Assert.That(delete?.Count > 0);
 
                 }
                 else
-                    Assert.Fail($"Server {_server.FullWebAddress} is offline.");
+                    Assert.Fail($"Server {client.FullWebAddress} is offline.");
             }
             catch (Exception exc)
             {
@@ -1229,28 +1253,28 @@ namespace MoonrakerSharpWebApi.Test
         {
             try
             {
-                MoonrakerClient _server = new(_host, _api, _port, _ssl);
-                _server.Error += (sender, e) =>
+                if (client is null) throw new NullReferenceException($"The client was null!");
+                client.Error += (sender, e) =>
                 {
                     if (e is UnhandledExceptionEventArgs args)
                         Console.WriteLine(args.ExceptionObject?.ToString());
                     Assert.Fail(e.ToString());
                 };
-                await _server.CheckOnlineAsync();
-                if (_server.IsOnline)
+                await client.CheckOnlineAsync();
+                if (client.IsOnline)
                 {
-                    await _server.RefreshAllAsync();
-                    Assert.That(_server.InitialDataFetched);
+                    await client.RefreshAllAsync();
+                    Assert.That(client.InitialDataFetched);
 
-                    //List<string> namespaces = await _server.ListDatabaseNamespacesAsync();
-                    Assert.That(_server.AvailableNamespaces?.Count > 0);
+                    //List<string> namespaces = await client.ListDatabaseNamespacesAsync();
+                    Assert.That(client.AvailableNamespaces?.Count > 0);
 
-                    string currentNamespace = _server.OperatingSystem == MoonrakerOperatingSystems.MainsailOS ? "mainsail" : "fluidd";
-                    List<KlipperDatabaseRemotePrinter> printers = await _server.GetRemotePrintersAsync();
+                    string currentNamespace = client.OperatingSystem == MoonrakerOperatingSystems.MainsailOS ? "mainsail" : "fluidd";
+                    List<KlipperDatabaseRemotePrinter> printers = await client.GetRemotePrintersAsync();
                     Assert.That(printers?.Count > 0);
                 }
                 else
-                    Assert.Fail($"Server {_server.FullWebAddress} is offline.");
+                    Assert.Fail($"Server {client.FullWebAddress} is offline.");
             }
             catch (Exception exc)
             {
@@ -1269,18 +1293,18 @@ namespace MoonrakerSharpWebApi.Test
         {
             try
             {
-                MoonrakerClient _server = new(_host, _api, _port, _ssl);
-                await _server.CheckOnlineAsync();
-                if (_server.IsOnline)
+                if (client is null) throw new NullReferenceException($"The client was null!");
+                await client.CheckOnlineAsync();
+                if (client.IsOnline)
                 {
-                    await _server.RefreshAllAsync();
-                    Assert.That(_server.InitialDataFetched);
+                    await client.RefreshAllAsync();
+                    Assert.That(client.InitialDataFetched);
 
-                    KlipperJobQueueResult jobstatus = await _server.GetJobQueueStatusAsync();
+                    KlipperJobQueueResult jobstatus = await client.GetJobQueueStatusAsync();
                     Assert.That(jobstatus is not null);
                 }
                 else
-                    Assert.Fail($"Server {_server.FullWebAddress} is offline.");
+                    Assert.Fail($"Server {client.FullWebAddress} is offline.");
             }
             catch (Exception exc)
             {
@@ -1298,36 +1322,36 @@ namespace MoonrakerSharpWebApi.Test
             {
                 if (_skipOnlineTests) return;
 
-                MoonrakerClient _server = new(_host, _api, _port, _ssl);
-                await _server.CheckOnlineAsync();
-                if (_server.IsOnline)
+                if (client is null) throw new NullReferenceException($"The client was null!");
+                await client.CheckOnlineAsync();
+                if (client.IsOnline)
                 {
-                    await _server.RefreshAllAsync();
-                    Assert.That(_server.InitialDataFetched);
+                    await client.RefreshAllAsync();
+                    Assert.That(client.InitialDataFetched);
 
-                    KlipperJobQueueResult? jobstatus = await _server.GetJobQueueStatusAsync();
+                    KlipperJobQueueResult? jobstatus = await client.GetJobQueueStatusAsync();
                     Assert.That(jobstatus is not null);
 
-                    List<IGcode> files = await _server.GetAvailableFilesAsync();
+                    List<IGcode> files = await client.GetAvailableFilesAsync();
                     Assert.That(files?.Count > 0);
 
                     string? fileName = files[0]?.FilePath;
-                    KlipperJobQueueResult? queued = await _server.EnqueueJobsAsync(new string[] { fileName });
+                    KlipperJobQueueResult? queued = await client.EnqueueJobsAsync(new string[] { fileName });
 
-                    jobstatus = await _server.GetJobQueueStatusAsync();
+                    jobstatus = await client.GetJobQueueStatusAsync();
                     Assert.That(jobstatus is not null);
 
-                    KlipperJobQueueResult? start = await _server.StartJobQueueAsync();
+                    KlipperJobQueueResult? start = await client.StartJobQueueAsync();
                     Assert.That(start is not null);
 
-                    KlipperJobQueueResult? pause = await _server.PauseJobQueueAsync();
+                    KlipperJobQueueResult? pause = await client.PauseJobQueueAsync();
                     Assert.That(pause is not null);
 
-                    KlipperJobQueueResult? removedAll = await _server.RemoveAllJobAsync();
+                    KlipperJobQueueResult? removedAll = await client.RemoveAllJobAsync();
                     Assert.That(removedAll is not null);
                 }
                 else
-                    Assert.Fail($"Server {_server.FullWebAddress} is offline.");
+                    Assert.Fail($"Server {client.FullWebAddress} is offline.");
             }
             catch (Exception exc)
             {
@@ -1346,31 +1370,31 @@ namespace MoonrakerSharpWebApi.Test
         {
             try
             {
-                MoonrakerClient _server = new(_host, _api, _port, _ssl);
-                await _server.CheckOnlineAsync();
-                if (_server.IsOnline)
+                if (client is null) throw new NullReferenceException($"The client was null!");
+                await client.CheckOnlineAsync();
+                if (client.IsOnline)
                 {
-                    await _server.RefreshAllAsync();
-                    Assert.That(_server.InitialDataFetched);
+                    await client.RefreshAllAsync();
+                    Assert.That(client.InitialDataFetched);
 
-                    List<KlipperDevice> devices = await _server.GetDeviceListAsync();
+                    List<KlipperDevice> devices = await client.GetDeviceListAsync();
                     Assert.That(devices?.Count > 0);
 
                     string device = devices[0].Device;
-                    Dictionary<string, string> status = await _server.GetDeviceStatusAsync(device);
+                    Dictionary<string, string> status = await client.GetDeviceStatusAsync(device);
                     Assert.That(status?.Count > 0);
                     Assert.That(status["printer"] == "off");
 
-                    Dictionary<string, string> stateChanged = await _server.SetDeviceStateAsync(device, KlipperDeviceActions.On);
+                    Dictionary<string, string> stateChanged = await client.SetDeviceStateAsync(device, KlipperDeviceActions.On);
                     Assert.That(stateChanged?.Count > 0);
                     Assert.That(stateChanged["printer"] == "on");
 
-                    stateChanged = await _server.SetDeviceStateAsync(device, KlipperDeviceActions.Off);
+                    stateChanged = await client.SetDeviceStateAsync(device, KlipperDeviceActions.Off);
                     Assert.That(stateChanged?.Count > 0);
                     Assert.That(stateChanged["printer"] == "off");
                 }
                 else
-                    Assert.Fail($"Server {_server.FullWebAddress} is offline.");
+                    Assert.Fail($"Server {client.FullWebAddress} is offline.");
             }
             catch (Exception exc)
             {
@@ -1389,18 +1413,18 @@ namespace MoonrakerSharpWebApi.Test
         {
             try
             {
-                MoonrakerClient _server = new(_host, _api, _port, _ssl);
-                await _server.CheckOnlineAsync();
-                if (_server.IsOnline)
+                if (client is null) throw new NullReferenceException($"The client was null!");
+                await client.CheckOnlineAsync();
+                if (client.IsOnline)
                 {
-                    await _server.RefreshAllAsync();
-                    Assert.That(_server.InitialDataFetched);
+                    await client.RefreshAllAsync();
+                    Assert.That(client.InitialDataFetched);
 
-                    KlipperUpdateStatusResult status = await _server.GetUpdateStatusAsync();
+                    KlipperUpdateStatusResult status = await client.GetUpdateStatusAsync();
                     Assert.That(status is not null);
                 }
                 else
-                    Assert.Fail($"Server {_server.FullWebAddress} is offline.");
+                    Assert.Fail($"Server {client.FullWebAddress} is offline.");
             }
             catch (Exception exc)
             {
@@ -1419,36 +1443,36 @@ namespace MoonrakerSharpWebApi.Test
         {
             try
             {
-                MoonrakerClient _server = new(_host, _api, _port, _ssl);
-                await _server.CheckOnlineAsync();
-                if (_server.IsOnline)
+                if (client is null) throw new NullReferenceException($"The client was null!");
+                await client.CheckOnlineAsync();
+                if (client.IsOnline)
                 {
-                    await _server.RefreshAllAsync();
-                    Assert.That(_server.InitialDataFetched);
+                    await client.RefreshAllAsync();
+                    Assert.That(client.InitialDataFetched);
 
-                    OctoprintApiVersionResult version = await _server.GetOctoPrintApiVersionInfoAsync();
+                    OctoprintApiVersionResult version = await client.GetOctoPrintApiVersionInfoAsync();
                     Assert.That(version is not null);
 
-                    OctoprintApiServerStatusResult server = await _server.GetOctoPrintApiServerStatusAsync();
+                    OctoprintApiServerStatusResult server = await client.GetOctoPrintApiServerStatusAsync();
                     Assert.That(server is not null);
 
-                    OctoprintApiSettingsResult settings = await _server.GetOctoPrintApiSettingsAsync();
+                    OctoprintApiSettingsResult settings = await client.GetOctoPrintApiSettingsAsync();
                     Assert.That(settings is not null);
 
-                    OctoprintApiJobResult jobStatus = await _server.GetOctoPrintApiJobStatusAsync();
+                    OctoprintApiJobResult jobStatus = await client.GetOctoPrintApiJobStatusAsync();
                     Assert.That(jobStatus is not null);
 
-                    OctoprintApiPrinterStatusResult printerStatus = await _server.GetOctoPrintApiPrinterStatusAsync();
+                    OctoprintApiPrinterStatusResult printerStatus = await client.GetOctoPrintApiPrinterStatusAsync();
                     Assert.That(printerStatus is not null);
 
-                    Dictionary<string, OctoprintApiPrinter> printerProfiles = await _server.GetOctoPrintApiPrinterProfilesAsync();
+                    Dictionary<string, OctoprintApiPrinter> printerProfiles = await client.GetOctoPrintApiPrinterProfilesAsync();
                     Assert.That(printerProfiles?.Count > 0);
 
-                    bool gcodeCommand = await _server.SendOctoPrintApiGcodeCommandAsync("G28");
+                    bool gcodeCommand = await client.SendOctoPrintApiGcodeCommandAsync("G28");
                     Assert.That(gcodeCommand);
                 }
                 else
-                    Assert.Fail($"Server {_server.FullWebAddress} is offline.");
+                    Assert.Fail($"Server {client.FullWebAddress} is offline.");
             }
             catch (Exception exc)
             {
@@ -1467,28 +1491,28 @@ namespace MoonrakerSharpWebApi.Test
         {
             try
             {
-                MoonrakerClient _server = new(_host, _api, _port, _ssl);
-                await _server.CheckOnlineAsync();
-                if (_server.IsOnline)
+                if (client is null) throw new NullReferenceException($"The client was null!");
+                await client.CheckOnlineAsync();
+                if (client.IsOnline)
                 {
-                    await _server.RefreshAllAsync();
-                    Assert.That(_server.InitialDataFetched);
+                    await client.RefreshAllAsync();
+                    Assert.That(client.InitialDataFetched);
 
-                    List<KlipperJobItem> history = await _server.GetHistoryJobListAsync();
+                    List<KlipperJobItem> history = await client.GetHistoryJobListAsync();
                     Assert.That(history?.Count > 0);
 
-                    KlipperHistoryJobTotalsResult total = await _server.GetHistoryTotalJobsAsync();
+                    KlipperHistoryJobTotalsResult total = await client.GetHistoryTotalJobsAsync();
                     Assert.That(total is not null);
 
                     string uid = history[0].JobId;
-                    KlipperJobItem job = await _server.GetHistoryJobAsync(uid);
+                    KlipperJobItem job = await client.GetHistoryJobAsync(uid);
                     Assert.That(job is not null);
 
-                    List<string> deletedIds = await _server.DeleteHistoryJobAsync(uid);
+                    List<string> deletedIds = await client.DeleteHistoryJobAsync(uid);
                     Assert.That(deletedIds?.Count > 0);
                 }
                 else
-                    Assert.Fail($"Server {_server.FullWebAddress} is offline.");
+                    Assert.Fail($"Server {client.FullWebAddress} is offline.");
             }
             catch (Exception exc)
             {
@@ -1507,30 +1531,30 @@ namespace MoonrakerSharpWebApi.Test
         {
             try
             {
-                MoonrakerClient _server = new(_host, _api, _port, _ssl);
-                await _server.CheckOnlineAsync();
-                if (_server.IsOnline)
+                if (client is null) throw new NullReferenceException($"The client was null!");
+                await client.CheckOnlineAsync();
+                if (client.IsOnline)
                 {
-                    await _server.RefreshAllAsync();
-                    Assert.That(_server.InitialDataFetched);
+                    await client.RefreshAllAsync();
+                    Assert.That(client.InitialDataFetched);
 
-                    List<IPrinter3d> printers = await _server.GetPrintersAsync();
+                    List<IPrinter3d> printers = await client.GetPrintersAsync();
                     Assert.That(printers?.Count > 0);
 
-                    List<IGcode> gcodes = await _server.GetFilesAsync();
+                    List<IGcode> gcodes = await client.GetFilesAsync();
                     Assert.That(gcodes?.Count > 0);
 
-                    IToolhead? toolheads = await _server.GetExtruderStatusAsync();
+                    IToolhead? toolheads = await client.GetExtruderStatusAsync();
                     Assert.That(toolheads is not null);
 
-                    IPrint3dFan? fan = await _server.GetFanStatusAsync();
+                    IPrint3dFan? fan = await client.GetFanStatusAsync();
                     Assert.That(fan is not null);
 
-                    IHeaterComponent? heaterBed = await _server.GetHeaterBedStatusAsync();
+                    IHeaterComponent? heaterBed = await client.GetHeaterBedStatusAsync();
                     Assert.That(heaterBed is not null);
                 }
                 else
-                    Assert.Fail($"Server {_server.FullWebAddress} is offline.");
+                    Assert.Fail($"Server {client.FullWebAddress} is offline.");
             }
             catch (Exception exc)
             {
@@ -1548,27 +1572,27 @@ namespace MoonrakerSharpWebApi.Test
         {
             try
             {
-                MoonrakerClient _server = new(_host, _api, _port, _ssl);
-                _server.Error += (o, args) =>
+                if (client is null) throw new NullReferenceException($"The client was null!");
+                client.Error += (o, args) =>
                 {
                     Assert.Fail(args.ToString());
                 };
-                _server.ServerWentOffline += (o, args) =>
+                client.ServerWentOffline += (o, args) =>
                 {
                     Assert.Fail(args.ToString());
                 };
-                await _server.CheckOnlineAsync(3500);
-                await _server.CheckOnlineAsync(3500);
-                await _server.CheckOnlineAsync(3500);
+                await client.CheckOnlineAsync(3500);
+                await client.CheckOnlineAsync(3500);
+                await client.CheckOnlineAsync(3500);
                 // Wait 10 minutes
                 CancellationTokenSource cts = new(new TimeSpan(0, 10, 0));
                 do
                 {
                     await Task.Delay(10000);
-                    await _server.CheckOnlineAsync();
-                    Debug.WriteLine($"Online: {_server.IsOnline}");
-                    //await _server.RefreshAllAsync();
-                } while (_server.IsOnline && !cts.IsCancellationRequested);
+                    await client.CheckOnlineAsync();
+                    Debug.WriteLine($"Online: {client.IsOnline}");
+                    //await client.RefreshAllAsync();
+                } while (client.IsOnline && !cts.IsCancellationRequested);
                 Assert.That(cts.IsCancellationRequested);
             }
             catch (Exception exc)
@@ -1582,73 +1606,77 @@ namespace MoonrakerSharpWebApi.Test
         {
             try
             {
-                Dictionary<DateTime, string> websocketMessages = new();
-                MoonrakerClient _server = new(_host, _api, _port, _ssl)
+                Dictionary<DateTime, string> websocketMessages = [];
+                string host = $"{(_ssl ? "https://" : "http://")}{_host}:{_port}";
+                string ws = $"{(_ssl ? "wss://" : "ws://")}{_host}:{_port}/socket";
+
+                MoonrakerClient client = new(host)
                 {
                     LoginRequired = false,
+                    WebSocketTargetUri = ws,
                 };
 
-                await _server.CheckOnlineAsync();
-                Assert.That(_server.IsOnline);
+                await client.CheckOnlineAsync();
+                Assert.That(client.IsOnline);
 
-                await _server.RefreshAllAsync();
+                await client.RefreshAllAsync();
 
-                if (_server.LoginRequired)
+                if (client.LoginRequired)
                 {
-                    await _server.LoginUserAsync("TestUser", "TestPassword");
+                    await client.LoginUserAsync("TestUser", "TestPassword");
                 }
-                await _server.StartListeningAsync(commandsOnConnect: wsStartCommands);
+                await client.StartListeningAsync(commandsOnConnect: wsStartCommands);
 
-                _server.WebSocketConnectionIdChanged += (o, args) =>
+                client.WebSocketConnectionIdChanged += (o, args) =>
                 {
                     Assert.That(args?.ConnectionId is not null);
                     Assert.That(args?.ConnectionId > 0);
                     Task.Run(async () =>
                     {
-                        string subResult = await _server.SubscribeAllPrinterObjectStatusAsync(args.ConnectionId);
+                        string subResult = await client.SubscribeAllPrinterObjectStatusAsync(args.ConnectionId);
                     });
                 };
 
-                _server.Error += (o, args) =>
+                client.Error += (o, args) =>
                 {
                     Assert.Fail(args.ToString());
                 };
-                _server.ServerWentOffline += (o, args) =>
+                client.ServerWentOffline += (o, args) =>
                 {
                     Assert.Fail(args.ToString());
                 };
 
                 // Subscirbe to state changes
-                _server.ToolheadsChanged += (o, args) =>
+                client.ToolheadsChanged += (o, args) =>
                 {
                     foreach (var pair in args.Toolheads)
                     {
                         Debug.WriteLine($"Extruder{pair.Key}: {pair.Value?.TempRead} �C (Target: {pair.Value?.TempSet} �C)");
                     }
                 };
-                _server.HeatersChanged += (o, args) =>
+                client.HeatersChanged += (o, args) =>
                 {
                     foreach (var pair in args.Heaters)
                     {
                         Debug.WriteLine($"HeatedBed{pair.Key}: {pair.Value?.TempRead} �C (Target: {pair.Value?.TempSet} �C)");
                     }
                 };
-                _server.KlipperDisplayStatusChanged += (o, args) =>
+                client.KlipperDisplayStatusChanged += (o, args) =>
                 {
                     if (args.NewDisplayStatus != null)
                         Debug.WriteLine($"Progress: {args.NewDisplayStatus.Progress * 100} % (Msg: {args.NewDisplayStatus.Message})");
                 };
 
-                _server.KlipperToolHeadStateChanged += (o, args) =>
+                client.KlipperToolHeadStateChanged += (o, args) =>
                 {
                     //Debug.WriteLine($"Toolhead: {args.ToolheadStates.EstimatedPrintTime}");
                 };
-                _server.KlipperPrintStateChanged += (o, args) =>
+                client.KlipperPrintStateChanged += (o, args) =>
                 {
                     //Debug.WriteLine($"PrintState: New => {args.NewPrintState.State}; Previous => {args.PreviousPrintState?.State}");
                 };
 
-                _server.WebSocketMessageReceived += (o, args) =>
+                client.WebSocketMessageReceived += (o, args) =>
                 {
                     if (!string.IsNullOrEmpty(args.Message))
                     {
@@ -1657,14 +1685,14 @@ namespace MoonrakerSharpWebApi.Test
                     }
                 };
 
-                _server.WebSocketError += (o, args) =>
+                client.WebSocketError += (o, args) =>
                 {
                     Assert.Fail($"Websocket closed due to an error: {args}");
                 };
 
                 // Wait a few minutes
                 CancellationTokenSource cts = new(new TimeSpan(0, 10, 0));
-                _server.WebSocketDisconnected += (o, args) =>
+                client.WebSocketDisconnected += (o, args) =>
                 {
                     if (!cts.IsCancellationRequested)
                         Assert.Fail($"Websocket unexpectly closed: {args}");
@@ -1673,10 +1701,10 @@ namespace MoonrakerSharpWebApi.Test
                 do
                 {
                     await Task.Delay(10000);
-                    await _server.CheckOnlineAsync();
-                    Debug.WriteLine($"Online: {_server.IsOnline}");
-                } while (_server.IsOnline && !cts.IsCancellationRequested);
-                await _server.StopListeningAsync();
+                    await client.CheckOnlineAsync();
+                    Debug.WriteLine($"Online: {client.IsOnline}");
+                } while (client.IsOnline && !cts.IsCancellationRequested);
+                await client.StopListeningAsync();
 
                 StringBuilder sb = new();
                 foreach (var pair in websocketMessages)
@@ -1697,77 +1725,81 @@ namespace MoonrakerSharpWebApi.Test
         {
             try
             {
-                Dictionary<DateTime, string> websocketMessages = new();
-                MoonrakerClient _server = new(_host, _api, _port, _ssl)
+                Dictionary<DateTime, string> websocketMessages = [];
+                string host = $"{(_ssl ? "https://" : "http://")}{_host}:{_port}";
+                string ws = $"{(_ssl ? "wss://" : "ws://")}{_host}:{_port}/socket";
+
+                MoonrakerClient client = new(host)
                 {
                     LoginRequired = false,
+                    WebSocketTargetUri = ws,
                 };
 
-                await _server.CheckOnlineAsync();
-                Assert.That(_server.IsOnline);
+                await client.CheckOnlineAsync();
+                Assert.That(client.IsOnline);
 
-                await _server.RefreshAllAsync();
+                await client.RefreshAllAsync();
 
-                //var test = await _server.GetActiveJobStatusAsync();
+                //var test = await client.GetActiveJobStatusAsync();
 
-                if (_server.LoginRequired)
+                if (client.LoginRequired)
                 {
-                    await _server.LoginUserAsync("TestUser", "TestPassword");
+                    await client.LoginUserAsync("TestUser", "TestPassword");
                 }
-                //KlipperAccessTokenResult oneshot = await _server.GetOneshotTokenAsync();
-                //_server.OneShotToken = oneshot.Result;
-                await _server.StartListeningAsync(commandsOnConnect: wsStartCommands);
+                //KlipperAccessTokenResult oneshot = await client.GetOneshotTokenAsync();
+                //client.OneShotToken = oneshot.Result;
+                await client.StartListeningAsync(commandsOnConnect: wsStartCommands);
 
-                _server.WebSocketConnectionIdChanged += (o, args) =>
+                client.WebSocketConnectionIdChanged += (o, args) =>
                 {
                     Assert.That(args?.ConnectionId is not null);
                     Assert.That(args?.ConnectionId > 0);
                     Task.Run(async () =>
                     {
-                        string subResult = await _server.SubscribeAllPrinterObjectStatusAsync(args.ConnectionId);
+                        string subResult = await client.SubscribeAllPrinterObjectStatusAsync(args.ConnectionId);
                     });
                 };
 
-                _server.Error += (o, args) =>
+                client.Error += (o, args) =>
                 {
                     Assert.Fail(args.ToString());
                 };
-                _server.ServerWentOffline += (o, args) =>
+                client.ServerWentOffline += (o, args) =>
                 {
                     Assert.Fail(args.ToString());
                 };
 
                 // Subscirbe to state changes
-                _server.ToolheadsChanged += (o, args) =>
+                client.ToolheadsChanged += (o, args) =>
                 {
                     foreach (var pair in args.Toolheads)
                     {
                         Debug.WriteLine($"Extruder{pair.Key}: {pair.Value?.TempRead} �C (Target: {pair.Value?.TempSet} �C)");
                     }
                 };
-                _server.HeatersChanged += (o, args) =>
+                client.HeatersChanged += (o, args) =>
                 {
                     foreach (var pair in args.Heaters)
                     {
                         Debug.WriteLine($"HeatedBed{pair.Key}: {pair.Value?.TempRead} �C (Target: {pair.Value?.TempSet} �C)");
                     }
                 };
-                _server.KlipperDisplayStatusChanged += (o, args) =>
+                client.KlipperDisplayStatusChanged += (o, args) =>
                 {
                     if (args.NewDisplayStatus != null)
                         Debug.WriteLine($"Progress: {args.NewDisplayStatus?.Progress * 100} % (Msg: {args.NewDisplayStatus?.Message})");
                 };
 
-                _server.KlipperToolHeadStateChanged += (o, args) =>
+                client.KlipperToolHeadStateChanged += (o, args) =>
                 {
                     //Debug.WriteLine($"Toolhead: {args.ToolheadStates.EstimatedPrintTime}");
                 };
-                _server.KlipperPrintStateChanged += (o, args) =>
+                client.KlipperPrintStateChanged += (o, args) =>
                 {
                     //Debug.WriteLine($"PrintState: New => {args.NewPrintState.State}; Previous => {args.PreviousPrintState?.State}");
                 };
 
-                _server.WebSocketMessageReceived += (o, args) =>
+                client.WebSocketMessageReceived += (o, args) =>
                 {
                     if (!string.IsNullOrEmpty(args.Message))
                     {
@@ -1776,14 +1808,14 @@ namespace MoonrakerSharpWebApi.Test
                     }
                 };
 
-                _server.WebSocketError += (o, args) =>
+                client.WebSocketError += (o, args) =>
                 {
                     Assert.Fail($"Websocket closed due to an error: {args}");
                 };
 
                 // Wait a 90 minutes
                 CancellationTokenSource cts = new(new TimeSpan(1, 30, 0));
-                _server.WebSocketDisconnected += (o, args) =>
+                client.WebSocketDisconnected += (o, args) =>
                 {
                     if (!cts.IsCancellationRequested)
                         Assert.Fail($"Websocket unexpectly closed: {args}");
@@ -1792,17 +1824,17 @@ namespace MoonrakerSharpWebApi.Test
                 do
                 {
                     await Task.Delay(10000);
-                    await _server.CheckOnlineAsync();
-                    Debug.WriteLine($"Online: {_server.IsOnline}");
-                    if (_server.IsPrinting)
+                    await client.CheckOnlineAsync();
+                    Debug.WriteLine($"Online: {client.IsOnline}");
+                    if (client.IsPrinting)
                     {
-                        if (_server.ActiveJob is not null)
+                        if (client.ActiveJob is not null)
                         {
 
                         }
                     }
-                } while (_server.IsOnline && !cts.IsCancellationRequested);
-                await _server.StopListeningAsync();
+                } while (client.IsOnline && !cts.IsCancellationRequested);
+                await client.StopListeningAsync();
 
                 StringBuilder sb = new();
                 foreach (var pair in websocketMessages)

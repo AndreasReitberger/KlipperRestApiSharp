@@ -23,11 +23,10 @@ namespace AndreasReitberger.API.Moonraker
                 return _client;
             }
 
-            public MoonrakerConnectionBuilder WithServerAddress(string serverAddress, int port = 80, bool https = false)
+            public MoonrakerConnectionBuilder WithServerAddress(string serverAddress, string version = "")
             {
-                _client.IsSecure = https;
-                _client.ServerAddress = serverAddress;
-                _client.Port = port;
+                _client.ApiTargetPath = serverAddress;
+                _client.ApiVersion = version;
                 return this;
             }
 
@@ -61,6 +60,27 @@ namespace AndreasReitberger.API.Moonraker
             public MoonrakerConnectionBuilder WithName(string name)
             {
                 _client.ServerName = name;
+                return this;
+            }
+
+            public MoonrakerConnectionBuilder WithPingInterval(bool enablePing, int interval = 5)
+            {
+                _client.EnablePing = enablePing;
+                _client.PingInterval = interval;
+                return this;
+            }
+
+            public MoonrakerConnectionBuilder WithTimeout(int timeout = 100)
+            {
+                _client.DefaultTimeout = timeout;
+                return this;
+            }
+            public MoonrakerConnectionBuilder WithWebSocket(string websocketTarget, string pingCommand = "", int pingInterval = 5, bool enablePing = true)
+            {
+                _client.WebSocketTargetUri = websocketTarget;
+                _client.PingCommand = pingCommand;
+                _client.PingInterval = pingInterval;
+                _client.EnablePing = enablePing;
                 return this;
             }
 
