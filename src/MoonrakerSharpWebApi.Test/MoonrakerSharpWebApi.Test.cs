@@ -138,15 +138,15 @@ namespace MoonrakerSharpWebApi.Test
             try
             {
                 string host = $"{(_ssl ? "https://" : "http://")}{_host}:{_port}";
-                MoonrakerClient.Instance = new MoonrakerClient(host)
+                var sClient = new MoonrakerClient(host)
                 {
                     FreeDiskSpace = 1523165212,
                     TotalDiskSpace = 65621361616161,
                     ServerName = "My moonraker server",
                 };
-                MoonrakerClient.Instance.SetProxy(true, "https://testproxy.de", 447, "User", "my_awesome_pwd", true);
+                sClient.SetProxy(true, "https://testproxy.de", 447, "User", "my_awesome_pwd", true);
 
-                string serializedString = System.Text.Json.JsonSerializer.Serialize(MoonrakerClient.Instance, options: MoonrakerClient.DefaultJsonSerializerSettings);
+                string serializedString = System.Text.Json.JsonSerializer.Serialize(sClient, options: MoonrakerClient.DefaultJsonSerializerSettings);
                 MoonrakerClient? serializedObject = System.Text.Json.JsonSerializer.Deserialize<MoonrakerClient>(serializedString, options: MoonrakerClient.DefaultJsonSerializerSettings);
                 Assert.That(serializedObject is MoonrakerClient server && server != null);
             }
@@ -167,14 +167,14 @@ namespace MoonrakerSharpWebApi.Test
             try
             {
                 string host = $"{(_ssl ? "https://" : "http://")}{_host}:{_port}";
-                MoonrakerClient.Instance = new MoonrakerClient(host)
+                var sClient = new MoonrakerClient(host)
                 {
                     FreeDiskSpace = 1523165212,
                     TotalDiskSpace = 65621361616161,
                     ServerName = "My moonraker server",
                 };
-                MoonrakerClient.Instance.SetProxy(true, "https://testproxy.de", 447, "User", "my_awesome_pwd", true);
-                string serializedString = JsonConvert.SerializeObject(MoonrakerClient.Instance, Formatting.Indented, settings: MoonrakerClient.DefaultNewtonsoftJsonSerializerSettings);
+                sClient.SetProxy(true, "https://testproxy.de", 447, "User", "my_awesome_pwd", true);
+                string serializedString = JsonConvert.SerializeObject(sClient, Formatting.Indented, settings: MoonrakerClient.DefaultNewtonsoftJsonSerializerSettings);
                 MoonrakerClient? serializedObject = JsonConvert.DeserializeObject<MoonrakerClient>(serializedString, settings: MoonrakerClient.DefaultNewtonsoftJsonSerializerSettings);
                 Assert.That(serializedObject is MoonrakerClient server && server != null);
             }
@@ -311,16 +311,16 @@ namespace MoonrakerSharpWebApi.Test
                 using (var fileStream = new FileStream(serverConfig, FileMode.Create))
                 {
                     string host = $"{(_ssl ? "https://" : "http://")}{_host}:{_port}";
-                    MoonrakerClient.Instance = new MoonrakerClient(host)
+                    var sClient = new MoonrakerClient(host)
                     {
                         UsedDiskSpace = 1523152132,
                         FreeDiskSpace = 1523165212,
                         TotalDiskSpace = 65621361616161,
                         ServerName = "My moonraker server",
                     };
-                    MoonrakerClient.Instance.SetProxy(true, "https://testproxy.de", 447, "User", "my_awesome_pwd", true);
+                    sClient.SetProxy(true, "https://testproxy.de", 447, "User", "my_awesome_pwd", true);
 
-                    xmlSerializer.Serialize(fileStream, MoonrakerClient.Instance);
+                    xmlSerializer.Serialize(fileStream, sClient);
                     Assert.That(File.Exists(Path.Combine(dir, "server.xml")));
                 }
 
@@ -1107,39 +1107,39 @@ namespace MoonrakerSharpWebApi.Test
                     string username = "TestUser";
                     string password = "TestPassword";
 
-                    KlipperUserActionResult login2 = await client.LoginUserAsync(username, password);
+                    KlipperUserActionResult? login2 = await client.LoginUserAsync(username, password);
 
                     await client.RefreshAllAsync();
                     Assert.That(client.InitialDataFetched);
 
-                    KlipperUserActionResult userCreated = await client.CreateUserAsync(username, password);
+                    KlipperUserActionResult? userCreated = await client.CreateUserAsync(username, password);
                     Assert.That(userCreated is not null);
 
                     List<KlipperUser> users = await client.ListAvailableUsersAsync();
                     Assert.That(users?.Count > 0);
 
-                    KlipperUser currentUser = await client.GetCurrentUserAsync();
+                    KlipperUser? currentUser = await client.GetCurrentUserAsync();
                     if (currentUser != null)
                     {
                         //Assert.IsNotNull(await client.LogoutCurrentUserAsync());
                     }
 
-                    KlipperUserActionResult login = await client.LoginUserAsync(username, password);
+                    KlipperUserActionResult? login = await client.LoginUserAsync(username, password);
                     Assert.That(login is not null);
-                    Assert.That(login.Username == username);
+                    Assert.That(login?.Username == username);
 
                     currentUser = await client.GetCurrentUserAsync();
                     Assert.That(currentUser is not null);
 
-                    KlipperUserActionResult newTokenResult = await client.RefreshJSONWebTokenAsync();
+                    KlipperUserActionResult? newTokenResult = await client.RefreshJSONWebTokenAsync();
                     Assert.That(newTokenResult is not null);
-                    Assert.That(client.UserToken == newTokenResult.Token);
+                    Assert.That(client.UserToken == newTokenResult?.Token);
 
                     string newPassword = "TestPasswordChanged";
-                    KlipperUserActionResult refreshPassword = await client.ResetUserPasswordAsync(password, newPassword);
+                    KlipperUserActionResult? refreshPassword = await client.ResetUserPasswordAsync(password, newPassword);
                     Assert.That(refreshPassword is not null);
 
-                    KlipperUserActionResult logout = await client.LogoutCurrentUserAsync();
+                    KlipperUserActionResult? logout = await client.LogoutCurrentUserAsync();
                     Assert.That(logout is not null);
 
                     login = await client.LoginUserAsync(username, newPassword);
@@ -1149,7 +1149,7 @@ namespace MoonrakerSharpWebApi.Test
                     logout = await client.LogoutCurrentUserAsync();
                     Assert.That(logout is not null);
 
-                    KlipperUserActionResult userDeleted = await client.DeleteUserAsync(username);
+                    KlipperUserActionResult? userDeleted = await client.DeleteUserAsync(username);
                     Assert.That(userDeleted is not null);
                 }
                 else

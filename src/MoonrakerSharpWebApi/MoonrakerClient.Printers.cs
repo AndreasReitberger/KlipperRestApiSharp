@@ -300,7 +300,7 @@ namespace AndreasReitberger.API.Moonraker
                 KlipperActionListRespone? state = GetObjectFromJson<KlipperActionListRespone>(result?.Result, NewtonsoftJsonSerializerSettings);
                 if (!string.IsNullOrEmpty(startsWith))
                 {
-                    resultObject = [.. state?.Result?.Objects.Where(obj => obj.StartsWith(startsWith))];
+                    resultObject = [.. state?.Result?.Objects.Where(obj => obj.StartsWith(startsWith)) ?? []];
                     if (resultObject is not null && removeStartTag)
                     {
                         resultObject = resultObject.Select(item => item.Replace(startsWith, string.Empty).Trim()).ToList();
