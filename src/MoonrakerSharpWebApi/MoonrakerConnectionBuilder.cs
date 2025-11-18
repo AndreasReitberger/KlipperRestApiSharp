@@ -83,6 +83,12 @@ namespace AndreasReitberger.API.Moonraker
                 _client.EnablePing = enablePing;
                 return this;
             }
+            public MoonrakerConnectionBuilder WithRefreshInterval(int refreshInterval = 1, int onRefreshInterval = 1)
+            {
+                _client.RefreshInterval = refreshInterval;
+                _client.OnRefreshInterval = onRefreshInterval;
+                return this;
+            }
 
             #endregion
         }
