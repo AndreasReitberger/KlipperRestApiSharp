@@ -95,7 +95,7 @@ namespace AndreasReitberger.API.Moonraker
                         }
                     }
                 }
-                return [.. files?.Result];
+                return [.. files?.Result ?? []];
             }
             catch (JsonException jecx)
             {
@@ -357,7 +357,7 @@ namespace AndreasReitberger.API.Moonraker
                     path = "gcodes";
                 }
                 KlipperDirectoryInfoResult? result = await GetDirectoryInformationAsync(path, false).ConfigureAwait(false);
-                return [.. result?.Dirs];
+                return [.. result?.Dirs ?? []];
             }
             catch (Exception exc)
             {

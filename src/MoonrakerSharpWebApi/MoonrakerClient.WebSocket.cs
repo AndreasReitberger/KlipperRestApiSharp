@@ -128,7 +128,7 @@ namespace AndreasReitberger.API.Moonraker
                                         break;
                                     case "registered_directories":
                                         RegisteredDirectories =
-                                            [.. JsonConvert.DeserializeObject<List<string>>(jsonBody)];
+                                            [.. JsonConvert.DeserializeObject<List<string>>(jsonBody) ?? []];
                                         break;
                                     case "cpu_temp":
                                         CpuTemp =
@@ -317,7 +317,7 @@ namespace AndreasReitberger.API.Moonraker
                                         }
                                         List<KlipperJobQueueItem>? queueUpdate =
                                             JsonConvert.DeserializeObject<List<KlipperJobQueueItem>>(jsonBody);
-                                        Jobs = [.. queueUpdate];
+                                        Jobs = [.. queueUpdate ?? []];
                                         break;
                                     case "queue_state":
                                         string state = jsonBody;
@@ -501,7 +501,7 @@ namespace AndreasReitberger.API.Moonraker
                                         break;
                                     case "registered_directories":
                                         RegisteredDirectories =
-                                            [.. JsonConvert.DeserializeObject<List<string>>(jsonBody)];
+                                            [.. JsonConvert.DeserializeObject<List<string>>(jsonBody) ?? []];
                                         break;
                                     case "cpu_temp":
                                         CpuTemp =
@@ -651,7 +651,7 @@ namespace AndreasReitberger.API.Moonraker
                                         break;
                                     case "registered_directories":
                                         RegisteredDirectories =
-                                            [.. JsonConvert.DeserializeObject<List<string>>(jsonBody)];
+                                            [.. JsonConvert.DeserializeObject<List<string>>(jsonBody) ?? []];
                                         break;
                                     case "cpu_temp":
                                         CpuTemp =
@@ -838,7 +838,7 @@ namespace AndreasReitberger.API.Moonraker
                                         }
                                         List<KlipperJobQueueItem>? queueUpdate =
                                             JsonConvert.DeserializeObject<List<KlipperJobQueueItem>>(jsonBody);
-                                        Jobs = [.. queueUpdate];
+                                        Jobs = [.. queueUpdate ?? []];
                                         break;
                                     case "queue_state":
                                         string state = jsonBody;
@@ -1021,7 +1021,7 @@ namespace AndreasReitberger.API.Moonraker
                                         break;
                                     case "registered_directories":
                                         RegisteredDirectories =
-                                            [.. JsonConvert.DeserializeObject<List<string>>(jsonBody)];
+                                            [.. JsonConvert.DeserializeObject<List<string>>(jsonBody) ?? []];
                                         break;
                                     case "cpu_temp":
                                         CpuTemp =

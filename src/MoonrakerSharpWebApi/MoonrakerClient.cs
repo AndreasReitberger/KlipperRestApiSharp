@@ -38,31 +38,6 @@ namespace AndreasReitberger.API.Moonraker
 
         #endregion
 
-        #region Instance
-        static MoonrakerClient? _instance = null;
-        static readonly object Lock = new();
-        public new static MoonrakerClient Instance
-        {
-            get
-            {
-                lock (Lock)
-                {
-                    _instance ??= new MoonrakerClient();
-                }
-                return _instance;
-            }
-            set
-            {
-                if (_instance == value) return;
-                lock (Lock)
-                {
-                    _instance = value;
-                }
-            }
-        }
-
-        #endregion
-
         #region Properties
 
         #region Connection
@@ -526,7 +501,7 @@ namespace AndreasReitberger.API.Moonraker
         #endregion
 
         #region Constructor
-        public MoonrakerClient()
+        public MoonrakerClient() : base()
         {
             Id = Guid.NewGuid();
             LoadDefaults();
@@ -545,7 +520,6 @@ namespace AndreasReitberger.API.Moonraker
         {
             Id = Guid.NewGuid();
             LoadDefaults();
-            InitInstance(serverAddress, api);
             UpdateRestClientInstance();
         }
         
@@ -553,7 +527,6 @@ namespace AndreasReitberger.API.Moonraker
         {
             Id = Guid.NewGuid();
             LoadDefaults();
-            InitInstance(serverAddress, "");
             UpdateRestClientInstance();
         }
 
@@ -569,7 +542,6 @@ namespace AndreasReitberger.API.Moonraker
         {
             Id = Guid.NewGuid();
             LoadDefaults();
-            InitInstance(serverAddress);
             LoginRequired = true;
             Username = username;
             Password = password;
@@ -589,63 +561,6 @@ namespace AndreasReitberger.API.Moonraker
                 */
             }
             WebSocketMessageReceived -= Client_WebSocketMessageReceived;
-        }
-        #endregion
-
-        #region Init
-        public new void InitInstance()
-        {
-            try
-            {
-                Instance = this;
-                if (Instance is not null)
-                {
-                    Instance.UpdateInstance = false;
-                    Instance.IsInitialized = true;
-                }
-                UpdateInstance = false;
-                IsInitialized = true;
-            }
-            catch (Exception exc)
-            {
-                //UpdateInstance = true;
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-                IsInitialized = false;
-            }
-        }
-        public static void UpdateSingleInstance(MoonrakerClient Inst)
-        {
-            try
-            {
-                Instance = Inst;
-            }
-            catch (Exception)
-            {
-                //OnError(new UnhandledExceptionEventArgs(exc, false));
-            }
-        }
-        public new void InitInstance(string serverAddress, string api = "")
-        {
-            try
-            {
-                ApiTargetPath = serverAddress;
-                ApiKey = api;
-
-                Instance = this;
-                if (Instance is not null)
-                {
-                    Instance.UpdateInstance = false;
-                    Instance.IsInitialized = true;
-                }
-                UpdateInstance = false;
-                IsInitialized = true;
-            }
-            catch (Exception exc)
-            {
-                //UpdateInstance = true;
-                OnError(new UnhandledExceptionEventArgs(exc, false));
-                IsInitialized = false;
-            }
         }
         #endregion
 

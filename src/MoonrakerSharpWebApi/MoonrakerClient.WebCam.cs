@@ -38,7 +38,7 @@ namespace AndreasReitberger.API.Moonraker
                     .ConfigureAwait(false);
                 KlipperWebcamConfigRespone? configs = GetObjectFromJson<KlipperWebcamConfigRespone>(result?.Result, NewtonsoftJsonSerializerSettings);
                 if (configs?.Result?.Webcams?.Count > 0)
-                    return [.. configs?.Result?.Webcams];
+                    return [.. configs?.Result?.Webcams ?? []];
                 else
                     // If nothing is returned, try to get it from the database directly.
                     return await GetWebCamSettingsFromDatabaseAsync().ConfigureAwait(false);
@@ -124,7 +124,7 @@ namespace AndreasReitberger.API.Moonraker
             try
             {
                 List<IWebCamConfig>? result = await GetWebCamSettingsAsync().ConfigureAwait(false);
-                WebCams = [.. result];
+                WebCams = [.. result ?? []];
             }
             catch (Exception exc)
             {
