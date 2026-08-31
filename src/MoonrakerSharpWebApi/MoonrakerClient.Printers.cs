@@ -3,12 +3,11 @@ using AndreasReitberger.API.Moonraker.Structs;
 using AndreasReitberger.API.Print3dServer.Core.Interfaces;
 using AndreasReitberger.API.REST.Events;
 using AndreasReitberger.API.REST.Interfaces;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace AndreasReitberger.API.Moonraker
@@ -18,15 +17,15 @@ namespace AndreasReitberger.API.Moonraker
         #region Properties
 
         [ObservableProperty]
-        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public partial double LiveVelocity { get; set; } = 0;
 
         [ObservableProperty]
-        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public partial double LiveExtruderVelocity { get; set; } = 0;
 
         [ObservableProperty]
-        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public partial KlipperPrinterStateMessageResult? PrinterInfo { get; set; }
         partial void OnPrinterInfoChanged(KlipperPrinterStateMessageResult? value)
         {
@@ -75,7 +74,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Get,
                        command: "info",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        cts: default
                        )
@@ -103,7 +102,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "emergency_stop",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        cts: default
                        )
@@ -131,7 +130,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "restart",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        cts: default
                        )
@@ -159,7 +158,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "firmware_restart",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        cts: default
                        )
@@ -287,7 +286,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Get,
                        command: "objects/list",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        cts: default
                        )
@@ -334,14 +333,14 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Get,
                        command: "objects/query",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        urlSegments: urlSegments,
                        cts: default
                        )
                     .ConfigureAwait(false);
                 /*
-                result = await SendRestApiRequestAsync(MoonrakerCommandBase.printer, Method.Get, "objects/query", jsonObject: null, cts: default, urlSegments: urlSegments)
+                result = await SendRestApiRequestAsync(MoonrakerCommandBase.printer, Method.Get, "objects/query", body: null, cts: default, urlSegments: urlSegments)
                     .ConfigureAwait(false);
                 */
                 KlipperPrinterStatusRespone? queryResult = GetObjectFromJson<KlipperPrinterStatusRespone>(result?.Result, NewtonsoftJsonSerializerSettings);
@@ -699,14 +698,14 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Get,
                        command: "objects/query",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        urlSegments: urlSegments,
                        cts: default
                        )
                     .ConfigureAwait(false);
                 /*
-                result = await SendRestApiRequestAsync(MoonrakerCommandBase.printer, Method.Get, "objects/query", jsonObject: null, cts: default, urlSegments: urlSegments)
+                result = await SendRestApiRequestAsync(MoonrakerCommandBase.printer, Method.Get, "objects/query", body: null, cts: default, urlSegments: urlSegments)
                     .ConfigureAwait(false);
                 */
                 KlipperFilamentSensorsRespone? queryResult = GetObjectFromJson<KlipperFilamentSensorsRespone>(result?.Result, NewtonsoftJsonSerializerSettings);
@@ -1160,14 +1159,14 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "objects/subscribe",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        urlSegments: urlSegments,
                        cts: default
                        )
                     .ConfigureAwait(false);
                 /*
-                result = await SendRestApiRequestAsync(MoonrakerCommandBase.printer, Method.Post, "objects/subscribe", jsonObject: null, cts: default, urlSegments: urlSegments)
+                result = await SendRestApiRequestAsync(MoonrakerCommandBase.printer, Method.Post, "objects/subscribe", body: null, cts: default, urlSegments: urlSegments)
                     .ConfigureAwait(false);
                 */
                 return result?.Result ?? resultObject;
@@ -1195,7 +1194,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Get,
                        command: "query_endstops/status",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        cts: default
                        )

@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
@@ -8,7 +7,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         #region Properties
         [ObservableProperty]
 
-        [JsonProperty("deleted_jobs")]
+        [JsonPropertyName("deleted_jobs")]
         public partial List<string> DeletedJobs { get; set; } = [];
         #endregion
 

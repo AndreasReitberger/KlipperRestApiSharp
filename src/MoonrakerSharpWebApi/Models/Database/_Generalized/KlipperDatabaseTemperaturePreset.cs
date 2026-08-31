@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Moonraker.Models
@@ -19,7 +18,6 @@ namespace AndreasReitberger.API.Moonraker.Models
         [ObservableProperty]
         public partial Dictionary<string, KlipperDatabaseTemperaturePresetHeater> Values { get; set; } = [];
 
-        //public List<KlipperDatabaseTemperaturePresetHeater> Values  = new();
         #endregion
 
         #region Overrides

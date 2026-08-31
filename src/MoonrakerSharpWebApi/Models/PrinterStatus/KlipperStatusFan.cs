@@ -1,5 +1,4 @@
 ﻿using AndreasReitberger.API.Print3dServer.Core.Interfaces;
-using Newtonsoft.Json;
 using System;
 using System.Threading.Tasks;
 
@@ -19,7 +18,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         [ObservableProperty]
 
         [NotifyPropertyChangedFor(nameof(Speed))]
-        [JsonProperty("speed")]
+        [JsonPropertyName("speed")]
         public partial double? FanSpeed { get; set; } = 0;
 
         partial void OnFanSpeedChanged(double? value)
@@ -33,8 +32,8 @@ namespace AndreasReitberger.API.Moonraker.Models
         public int? Speed => Convert.ToInt32(Percent * 2.55f);
         /*
         [ObservableProperty, JsonIgnore]
-        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        [property: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        [JsonIgnore, XmlIgnore]
+        [property: JsonIgnore, JsonIgnore, XmlIgnore]
         public int? speed = 0;
         partial void OnSpeedChanged(int? value)
         {
@@ -46,13 +45,13 @@ namespace AndreasReitberger.API.Moonraker.Models
         */
 
         [ObservableProperty]
-        [field: JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
-        [JsonProperty("rpm")]
+        [field: JsonIgnore, JsonIgnore, XmlIgnore]
+        [JsonPropertyName("rpm")]
         public partial long? Rpm { get; set; } = 0;
 
         [ObservableProperty]
 
-        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public partial int? Percent { get; set; } = 0;
 
         partial void OnPercentChanged(int? value)

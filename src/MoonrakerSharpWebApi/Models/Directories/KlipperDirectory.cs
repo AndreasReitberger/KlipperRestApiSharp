@@ -1,6 +1,5 @@
 ﻿using AndreasReitberger.API.Print3dServer.Core.Interfaces;
 using AndreasReitberger.API.Print3dServer.Core.Utilities;
-using Newtonsoft.Json;
 using System;
 
 namespace AndreasReitberger.API.Moonraker.Models
@@ -10,7 +9,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         #region Properties
         [ObservableProperty]
 
-        [JsonProperty("dirname")]
+        [JsonPropertyName("dirname")]
         public partial string DirectoryName { get; set; } = string.Empty;
 
         partial void OnDirectoryNameChanged(string value)
@@ -21,18 +20,18 @@ namespace AndreasReitberger.API.Moonraker.Models
 
         [ObservableProperty]
 
-        [JsonProperty("path")]
+        [JsonPropertyName("path")]
         public partial string Path { get; set; } = string.Empty;
 
         [ObservableProperty]
 
-        [JsonProperty("root")]
+        [JsonPropertyName("root")]
         public partial string Root { get; set; } = string.Empty;
 
         [ObservableProperty]
 
         [NotifyPropertyChangedFor(nameof(ModifiedGeneralized))]
-        [JsonProperty("modified")]
+        [JsonPropertyName("modified")]
         public partial double? Modified { get; set; }
 
         partial void OnModifiedChanged(double? value)
@@ -46,12 +45,12 @@ namespace AndreasReitberger.API.Moonraker.Models
 
         [ObservableProperty]
 
-        [JsonProperty("size")]
+        [JsonPropertyName("size")]
         public partial long Size { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("permissions")]
+        [JsonPropertyName("permissions")]
         public partial string Permissions { get; set; } = string.Empty;
 
         #region JsonIgnore

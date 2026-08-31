@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
@@ -52,62 +51,62 @@ namespace AndreasReitberger.API.Moonraker.Models
 
         [ObservableProperty]
 
-        [JsonProperty("axes")]
+        [JsonPropertyName("axes")]
         public partial OctoprintApiPrinterAxes? Axes { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("color")]
+        [JsonPropertyName("color")]
         public partial string Color { get; set; } = string.Empty;
 
         [ObservableProperty]
 
-        [JsonProperty("current")]
+        [JsonPropertyName("current")]
         public partial bool Current { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("default")]
+        [JsonPropertyName("default")]
         public partial bool DefaultDefault { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("extruder")]
+        [JsonPropertyName("extruder")]
         public partial OctoprintApiPrinterExtruder? Extruder { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("heatedBed")]
+        [JsonPropertyName("heatedBed")]
         public partial bool HasHeatedBed { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("heatedChamber")]
+        [JsonPropertyName("heatedChamber")]
         public partial bool HasHeatedChamber { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("id")]
+        [JsonPropertyName("id")]
         public partial string Id { get; set; } = string.Empty;
 
         [ObservableProperty]
 
-        [JsonProperty("model")]
+        [JsonPropertyName("model")]
         public partial string Model { get; set; } = string.Empty;
 
         [ObservableProperty]
 
-        [JsonProperty("name")]
+        [JsonPropertyName("name")]
         public partial string Name { get; set; } = string.Empty;
 
         [ObservableProperty]
 
-        [JsonProperty("resource")]
+        [JsonPropertyName("resource")]
         public partial Uri? Resource { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("volume")]
+        [JsonPropertyName("volume")]
         public partial OctoprintApiPrinterVolume? VVolume { get; set; }
         #endregion
 

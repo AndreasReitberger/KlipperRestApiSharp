@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
@@ -6,23 +6,19 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-
-        [JsonProperty("hostname")]
+        [JsonPropertyName("hostname")]
         public partial string Hostname { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("port")]
+        [JsonPropertyName("port")]
         public partial long Port { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("webPort")]
+        [JsonPropertyName("webPort")]
         public partial long WebPort { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("settings")]
+        [JsonPropertyName("settings")]
         public partial object? Settings { get; set; }
         #endregion
 

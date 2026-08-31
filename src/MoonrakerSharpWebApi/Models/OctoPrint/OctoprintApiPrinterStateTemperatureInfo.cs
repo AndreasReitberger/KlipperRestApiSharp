@@ -1,5 +1,4 @@
 ﻿using AndreasReitberger.API.Moonraker.Enum;
-using Newtonsoft.Json;
 using System;
 
 namespace AndreasReitberger.API.Moonraker.Models
@@ -10,17 +9,17 @@ namespace AndreasReitberger.API.Moonraker.Models
 
         [ObservableProperty]
 
-        [JsonProperty("actual", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("actual")]
         public partial double Actual { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("target")]
+        [JsonPropertyName("target")]
         public partial long Target { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("offset", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("offset")]
         public partial long Offset { get; set; }
         [JsonIgnore]
         public OctoprintApiCurrentToolState State { get => GetCurrentState(); }

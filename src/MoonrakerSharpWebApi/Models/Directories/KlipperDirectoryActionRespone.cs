@@ -1,13 +1,11 @@
-﻿using Newtonsoft.Json;
-
-namespace AndreasReitberger.API.Moonraker.Models
+﻿namespace AndreasReitberger.API.Moonraker.Models
 {
     public partial class KlipperDirectoryActionRespone : ObservableObject
     {
         #region Properties
         [ObservableProperty]
 
-        [JsonProperty("result")]
+        [JsonPropertyName("result")]
         public partial KlipperDirectoryActionResult? Result { get; set; }
         #endregion
 

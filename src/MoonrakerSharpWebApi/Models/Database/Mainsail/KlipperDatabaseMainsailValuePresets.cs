@@ -1,6 +1,6 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
@@ -8,8 +8,7 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-
-        [JsonProperty("presets")]
+        [JsonPropertyName("presets")]
         public partial Dictionary<Guid, KlipperDatabaseMainsailValuePreset> Presets { get; set; } = [];
         #endregion
 

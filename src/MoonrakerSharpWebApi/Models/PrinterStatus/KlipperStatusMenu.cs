@@ -1,28 +1,26 @@
-﻿using Newtonsoft.Json;
-
-namespace AndreasReitberger.API.Moonraker.Models
+﻿namespace AndreasReitberger.API.Moonraker.Models
 {
     public partial class KlipperStatusMenu : ObservableObject
     {
         #region Properties
         [ObservableProperty]
 
-        [JsonProperty("running")]
+        [JsonPropertyName("running")]
         public partial bool Running { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("rows")]
+        [JsonPropertyName("rows")]
         public partial long? Rows { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("cols")]
+        [JsonPropertyName("cols")]
         public partial long? Cols { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("timeout")]
+        [JsonPropertyName("timeout")]
         public partial long? Timeout { get; set; }
         #endregion
 

@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
@@ -8,22 +7,22 @@ namespace AndreasReitberger.API.Moonraker.Models
         #region Properties
         [ObservableProperty]
 
-        [JsonProperty("dirs")]
+        [JsonPropertyName("dirs")]
         public partial List<KlipperDirectory> Dirs { get; set; } = [];
 
         [ObservableProperty]
 
-        [JsonProperty("files")]
+        [JsonPropertyName("files")]
         public partial List<KlipperFile> Files { get; set; } = [];
 
         [ObservableProperty]
 
-        [JsonProperty("disk_usage")]
+        [JsonPropertyName("disk_usage")]
         public partial KlipperDiskUsage? DiskUsage { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("root_info")]
+        [JsonPropertyName("root_info")]
         public partial KlipperRootInfo? RootInfo { get; set; }
         #endregion
 

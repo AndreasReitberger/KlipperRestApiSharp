@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
@@ -8,12 +7,12 @@ namespace AndreasReitberger.API.Moonraker.Models
         #region Properties
         [ObservableProperty]
 
-        [JsonProperty("text", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("text")]
         public partial string Text { get; set; } = string.Empty;
 
         [ObservableProperty]
 
-        [JsonProperty("flags", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("flags")]
         public partial Dictionary<string, bool> Flags { get; set; } = [];
         #endregion
 

@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
@@ -6,23 +6,19 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-
-        [JsonProperty("type")]
+        [JsonPropertyName("type")]
         public partial string Type { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("repo")]
+        [JsonPropertyName("repo")]
         public partial string Repo { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("path")]
+        [JsonPropertyName("path")]
         public partial string Path { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("persistent_files")]
+        [JsonPropertyName("persistent_files")]
         public partial object? PersistentFiles { get; set; }
         #endregion
 

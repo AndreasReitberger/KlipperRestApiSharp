@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
@@ -6,18 +6,15 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-
-        [JsonProperty("extruder")]
+        [JsonPropertyName("extruder")]
         public partial KlipperDatabaseMainsailHeaterElement? Extruder { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("extruder1")]
+        [JsonPropertyName("extruder1")]
         public partial KlipperDatabaseMainsailHeaterElement? Extruder1 { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("heater_bed")]
+        [JsonPropertyName("heater_bed")]
         public partial KlipperDatabaseMainsailHeaterElement? HeaterBed { get; set; }
         #endregion
 

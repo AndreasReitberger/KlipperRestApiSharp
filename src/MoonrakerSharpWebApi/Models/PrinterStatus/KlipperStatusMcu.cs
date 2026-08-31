@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
@@ -8,22 +7,22 @@ namespace AndreasReitberger.API.Moonraker.Models
         #region Properties
         [ObservableProperty]
 
-        [JsonProperty("mcu_build_versions")]
+        [JsonPropertyName("mcu_build_versions")]
         public partial string McuBuildVersions { get; set; } = string.Empty;
 
         [ObservableProperty]
 
-        [JsonProperty("mcu_version")]
+        [JsonPropertyName("mcu_version")]
         public partial string McuVersion { get; set; } = string.Empty;
 
         [ObservableProperty]
 
-        [JsonProperty("last_stats")]
+        [JsonPropertyName("last_stats")]
         public partial Dictionary<string, double> LastStats { get; set; } = [];
 
         [ObservableProperty]
 
-        [JsonProperty("mcu_constants")]
+        [JsonPropertyName("mcu_constants")]
         public partial Dictionary<string, object> McuConstants { get; set; } = [];
         #endregion
 

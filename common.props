@@ -9,9 +9,9 @@
         <PackageReleaseNotes>Check GitHub releases for changelog.</PackageReleaseNotes>
         <Authors>Andreas Reitberger</Authors>
         <Copyright>Andreas Reitberger</Copyright>
-		<LangVersion>preview</LangVersion>
+		    <LangVersion>preview</LangVersion>
         <PublishReadyToRun>false</PublishReadyToRun>
-		<Nullable>enable</Nullable>
+		    <Nullable>enable</Nullable>
 
         <!--Source-Linking-->
         <PublishRepositoryUrl>true</PublishRepositoryUrl>

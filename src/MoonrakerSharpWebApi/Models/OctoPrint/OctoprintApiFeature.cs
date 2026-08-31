@@ -1,18 +1,16 @@
-﻿using Newtonsoft.Json;
-
-namespace AndreasReitberger.API.Moonraker.Models
+﻿namespace AndreasReitberger.API.Moonraker.Models
 {
     public partial class OctoprintApiFeature : ObservableObject
     {
         #region Properties
         [ObservableProperty]
 
-        [JsonProperty("sdSupport")]
+        [JsonPropertyName("sdSupport")]
         public partial bool SdSupport { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("temperatureGraph")]
+        [JsonPropertyName("temperatureGraph")]
         public partial bool TemperatureGraph { get; set; }
         #endregion
 

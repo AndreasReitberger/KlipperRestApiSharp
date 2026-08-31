@@ -1,18 +1,16 @@
-﻿using Newtonsoft.Json;
-
-namespace AndreasReitberger.API.Moonraker.Models
+﻿namespace AndreasReitberger.API.Moonraker.Models
 {
     public partial class KlipperStatusProbe : ObservableObject
     {
         #region Properties
         [ObservableProperty]
 
-        [JsonProperty("last_z_result")]
+        [JsonPropertyName("last_z_result")]
         public partial double? LastZResult { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("last_query")]
+        [JsonPropertyName("last_query")]
         public partial bool LastQuery { get; set; }
         #endregion
 

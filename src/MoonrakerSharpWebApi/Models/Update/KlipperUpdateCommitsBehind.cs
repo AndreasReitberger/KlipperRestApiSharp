@@ -1,38 +1,36 @@
-﻿using Newtonsoft.Json;
-
-namespace AndreasReitberger.API.Moonraker.Models
+﻿namespace AndreasReitberger.API.Moonraker.Models
 {
     public partial class KlipperUpdateCommitsBehind : ObservableObject
     {
         #region Properties
         [ObservableProperty]
 
-        [JsonProperty("sha")]
+        [JsonPropertyName("sha")]
         public partial string Sha { get; set; } = string.Empty;
 
         [ObservableProperty]
 
-        [JsonProperty("author")]
+        [JsonPropertyName("author")]
         public partial string Author { get; set; } = string.Empty;
 
         [ObservableProperty]
 
-        [JsonProperty("date")]
+        [JsonPropertyName("date")]
         public partial long Date { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("subject")]
+        [JsonPropertyName("subject")]
         public partial string Subject { get; set; } = string.Empty;
 
         [ObservableProperty]
 
-        [JsonProperty("message")]
+        [JsonPropertyName("message")]
         public partial string Message { get; set; } = string.Empty;
 
         [ObservableProperty]
 
-        [JsonProperty("tag")]
+        [JsonPropertyName("tag")]
         public partial object? Tag { get; set; }
         #endregion
 

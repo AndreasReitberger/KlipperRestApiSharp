@@ -1,5 +1,5 @@
-﻿using Newtonsoft.Json;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
@@ -7,8 +7,7 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-
-        [JsonProperty("cameras")]
+        [JsonPropertyName("cameras")]
         public partial List<KlipperDatabaseFluiddValueWebcamConfig> Cameras { get; set; } = [];
 
         #endregion

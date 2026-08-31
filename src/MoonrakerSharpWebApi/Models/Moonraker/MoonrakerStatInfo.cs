@@ -1,5 +1,4 @@
 ﻿using AndreasReitberger.API.Moonraker.Enum;
-using Newtonsoft.Json;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
@@ -8,22 +7,22 @@ namespace AndreasReitberger.API.Moonraker.Models
         #region Properties
         [ObservableProperty]
 
-        [JsonProperty("time")]
+        [JsonPropertyName("time")]
         public partial double? Time { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("cpu_usage")]
+        [JsonPropertyName("cpu_usage")]
         public partial double? CpuUsage { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("memory")]
+        [JsonPropertyName("memory")]
         public partial long? Memory { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("mem_units", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("mem_units")]
         public partial MoonrakerMemUnits? MemUnits { get; set; }
         #endregion
 

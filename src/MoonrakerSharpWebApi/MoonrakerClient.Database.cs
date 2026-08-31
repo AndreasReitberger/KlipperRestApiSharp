@@ -3,10 +3,10 @@ using AndreasReitberger.API.Moonraker.Models;
 using AndreasReitberger.API.Moonraker.Structs;
 using AndreasReitberger.API.REST.Events;
 using AndreasReitberger.API.REST.Interfaces;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace AndreasReitberger.API.Moonraker
@@ -16,7 +16,7 @@ namespace AndreasReitberger.API.Moonraker
         #region Properties
 
         [ObservableProperty]
-        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public partial List<string> AvailableNamespaces { get; set; } = [];
 
         #endregion
@@ -33,7 +33,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Get,
                        command: "database/list",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        cts: default
                        )
@@ -104,7 +104,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Get,
                        command: "database/item",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        urlSegments: urlSegments,
                        cts: default
@@ -416,7 +416,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "database/item",
-                       jsonObject: cmd,
+                       body: cmd,
                        authHeaders: AuthHeaders,
                        //urlSegments: urlSegments,
                        cts: default
@@ -457,7 +457,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Delete,
                        command: "database/item",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        urlSegments: urlSegments,
                        cts: default

@@ -8,8 +8,9 @@ using AndreasReitberger.API.Print3dServer.Core.Enums;
 using AndreasReitberger.API.Print3dServer.Core.Interfaces;
 using AndreasReitberger.API.REST.Events;
 using AndreasReitberger.API.REST.Interfaces;
+#if NET6_0_OR_GREATER
 using AndreasReitberger.Shared.Core.Utilities;
-using Newtonsoft.Json;
+#endif
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -60,11 +61,11 @@ namespace AndreasReitberger.API.Moonraker
         #region Api & Version
 
         [ObservableProperty]
-        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public partial string MoonrakerVersion { get; set; } = string.Empty;
 
         [ObservableProperty]
-        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public partial List<string> RegisteredDirectories { get; set; } = [];
 
         #endregion
@@ -72,7 +73,7 @@ namespace AndreasReitberger.API.Moonraker
         #region Jobs
 
         [ObservableProperty]
-        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public partial string JobListState { get; set; } = string.Empty;
         partial void OnJobListStateChanging(string value)
         {
@@ -90,7 +91,7 @@ namespace AndreasReitberger.API.Moonraker
 
         #region State & Config
         [ObservableProperty]
-        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public partial string KlipperState { get; set; } = string.Empty;
         partial void OnKlipperStateChanging(string value)
         {
@@ -102,7 +103,7 @@ namespace AndreasReitberger.API.Moonraker
         }
 
         [ObservableProperty]
-        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public partial double CpuTemp { get; set; } = 0;
         partial void OnCpuTempChanged(double value)
         {
@@ -113,7 +114,7 @@ namespace AndreasReitberger.API.Moonraker
         }
 
         [ObservableProperty]
-        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public partial KlipperServerConfig? Config { get; set; }
         partial void OnConfigChanged(KlipperServerConfig? value)
         {
@@ -127,7 +128,7 @@ namespace AndreasReitberger.API.Moonraker
         }
 
         [ObservableProperty]
-        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public partial
 #if ConcurrentDictionary
         ConcurrentDictionary<string, KlipperTemperatureSensorHistory> TemperatureCache { get; set; } = new();
@@ -155,7 +156,7 @@ namespace AndreasReitberger.API.Moonraker
 #endif
 
         [ObservableProperty]
-        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public partial List<KlipperGcode> GcodeCache { get; set; } = [];
         partial void OnGcodeCacheChanged(List<KlipperGcode> value)
         {
@@ -168,7 +169,7 @@ namespace AndreasReitberger.API.Moonraker
         }
 
         [ObservableProperty]
-        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public partial KlipperGcodeMetaResult? GcodeMeta { get; set; }
         partial void OnGcodeMetaChanged(KlipperGcodeMetaResult? value)
         {
@@ -182,7 +183,7 @@ namespace AndreasReitberger.API.Moonraker
         }
 
         [ObservableProperty]
-        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public partial KlipperStatusGcodeMove? GcodeMove { get; set; }
         partial void OnGcodeMoveChanged(KlipperStatusGcodeMove? value)
         {
@@ -197,7 +198,7 @@ namespace AndreasReitberger.API.Moonraker
         }
 
         [ObservableProperty]
-        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public partial KlipperStatusVirtualSdcard? VirtualSdCard { get; set; }
         partial void OnVirtualSdCardChanged(KlipperStatusVirtualSdcard? value)
         {
@@ -210,7 +211,7 @@ namespace AndreasReitberger.API.Moonraker
         }
 
         [ObservableProperty]
-        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public partial ConcurrentDictionary<string, KlipperStatusTemperatureSensor> TemperatureSensors { get; set; } = new();
         partial void OnTemperatureSensorsChanged(ConcurrentDictionary<string, KlipperStatusTemperatureSensor> value)
         {
@@ -241,7 +242,7 @@ namespace AndreasReitberger.API.Moonraker
         }
 
         [ObservableProperty]
-        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public partial ConcurrentDictionary<string, double?> CpuUsage { get; set; } = new();
         partial void OnCpuUsageChanged(ConcurrentDictionary<string, double?> value)
         {
@@ -273,7 +274,7 @@ namespace AndreasReitberger.API.Moonraker
         }
 
         [ObservableProperty]
-        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public partial ConcurrentDictionary<string, long?> SystemMemory { get; set; } = new();
         partial void OnSystemMemoryChanged(ConcurrentDictionary<string, long?> value)
         {
@@ -305,7 +306,7 @@ namespace AndreasReitberger.API.Moonraker
         }
 
         [ObservableProperty]
-        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public partial ConcurrentDictionary<string, KlipperStatusDriver> Drivers { get; set; } = new();
         partial void OnDriversChanged(ConcurrentDictionary<string, KlipperStatusDriver> value)
         {
@@ -340,7 +341,7 @@ namespace AndreasReitberger.API.Moonraker
         }
 
         [ObservableProperty]
-        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public partial double Progress { get; set; } = 0;
         partial void OnProgressChanging(double value)
         {
@@ -354,19 +355,19 @@ namespace AndreasReitberger.API.Moonraker
         }
 
         [ObservableProperty]
-        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public partial double PrintTime { get; set; } = 0;
 
         [ObservableProperty]
-        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public partial double TotalPrintTime { get; set; } = 0;
 
         [ObservableProperty]
-        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public partial double RemainingPrintTime { get; set; } = 0;
 
         [ObservableProperty]
-        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public partial KlipperStatusPrintStats? PrintStats { get; set; }
         partial void OnPrintStatsChanging(KlipperStatusPrintStats? value)
         {
@@ -399,7 +400,7 @@ namespace AndreasReitberger.API.Moonraker
         }
 
         [ObservableProperty]
-        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public partial KlipperStatusMotionReport? MotionReport { get; set; }
         partial void OnMotionReportChanging(KlipperStatusMotionReport? value)
         {
@@ -417,7 +418,7 @@ namespace AndreasReitberger.API.Moonraker
         }
 
         [ObservableProperty]
-        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public partial KlipperStatusIdleTimeout? IdleState { get; set; }
         partial void OnIdleStateChanging(KlipperStatusIdleTimeout? value)
         {
@@ -431,7 +432,7 @@ namespace AndreasReitberger.API.Moonraker
         }
 
         [ObservableProperty]
-        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public partial KlipperStatusToolhead? ToolHeadStatus { get; set; }
         partial void OnToolHeadStatusChanged(KlipperStatusToolhead? value)
         {
@@ -444,7 +445,7 @@ namespace AndreasReitberger.API.Moonraker
         }
 
         [ObservableProperty]
-        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public partial string ActiveJobName { get; set; } = string.Empty;
         partial void OnActiveJobNameChanging(string value)
         {
@@ -458,7 +459,7 @@ namespace AndreasReitberger.API.Moonraker
         }
 
         [ObservableProperty]
-        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public partial KlipperStatusDisplay? DisplayStatus { get; set; }
         partial void OnDisplayStatusChanging(KlipperStatusDisplay? value)
         {
@@ -472,7 +473,7 @@ namespace AndreasReitberger.API.Moonraker
         }
 
         [ObservableProperty]
-        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public partial KlipperStatusFilamentSensor? FilamentSensor { get; set; } = new() { FilamentDetected = false };
         partial void OnFilamentSensorChanging(KlipperStatusFilamentSensor? value)
         {
@@ -487,7 +488,7 @@ namespace AndreasReitberger.API.Moonraker
 
 
         [ObservableProperty]
-        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public partial List<KlipperDatabaseTemperaturePreset> Presets { get; set; } = [];
         partial void OnPresetsChanged(List<KlipperDatabaseTemperaturePreset> value)
         {
@@ -837,7 +838,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Get,
                        command: "oneshot_token",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        cts: default
                        )
@@ -877,7 +878,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Get,
                        command: "api_key",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        //urlSegments: urlSegements,
                        cts: default
@@ -947,7 +948,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Get,
                        command: "config",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        //urlSegments: urlSegements,
                        cts: default
@@ -1004,7 +1005,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Get,
                        command: "temperature_store",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        //urlSegments: urlSegements,
                        cts: default
@@ -1056,7 +1057,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Get,
                        command: $"gcode_store?count={count}",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        //urlSegments: urlSegments,
                        cts: default
@@ -1094,7 +1095,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                         method: Method.Post,
                        command: $"restart",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        //urlSegments: urlSegments,
                        cts: default
@@ -1129,7 +1130,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "gcode/script",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        urlSegments: urlSegements,
                        cts: default
@@ -1221,7 +1222,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Get,
                        command: "gcode/help",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        cts: default
                        )
@@ -1263,7 +1264,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "print/start",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        urlSegments: urlSegments,
                        cts: default
@@ -1291,7 +1292,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "print/pause",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        //urlSegements: urlSegements,
                        cts: default
@@ -1319,7 +1320,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "print/resume",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        //urlSegements: urlSegements,
                        cts: default
@@ -1347,7 +1348,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "print/cancel",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        //urlSegements: urlSegements,
                        cts: default
@@ -1439,7 +1440,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Get,
                        command: "system_info",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        //urlSegements: urlSegements,
                        cts: default
@@ -1476,7 +1477,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "shutdown",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        //urlSegements: urlSegements,
                        cts: default
@@ -1505,7 +1506,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "reboot",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        //urlSegements: urlSegements,
                        cts: default
@@ -1539,7 +1540,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "services/restart",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        urlSegments: urlSegments,
                        cts: default
@@ -1574,7 +1575,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "services/stop",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        urlSegments: urlSegments,
                        cts: default
@@ -1609,7 +1610,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "services/start",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        urlSegments: urlSegments,
                        cts: default
@@ -1641,7 +1642,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Get,
                        command: "proc_stats",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        //urlSegments: urlSegments,
                        cts: default
@@ -1694,7 +1695,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "login",
-                       jsonObject: cmd,
+                       body: cmd,
                        authHeaders: AuthHeaders,
                        cts: default
                        )
@@ -1779,7 +1780,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "refresh_jwt",
-                       jsonObject: cmd,
+                       body: cmd,
                        authHeaders: AuthHeaders,
                        //urlSegments: urlSegments,
                        cts: default
@@ -1828,7 +1829,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "user/password",
-                       jsonObject: cmd,
+                       body: cmd,
                        authHeaders: AuthHeaders,
                        //urlSegments: urlSegments,
                        cts: default
@@ -1868,7 +1869,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "logout",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        //urlSegments: urlSegments,
                        cts: default
@@ -1919,7 +1920,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Get,
                        command: "user",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        //urlSegments: urlSegments,
                        cts: default
@@ -1977,7 +1978,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "user",
-                       jsonObject: cmd,
+                       body: cmd,
                        authHeaders: AuthHeaders,
                        //urlSegments: urlSegments,
                        cts: default
@@ -2027,7 +2028,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Delete,
                        command: "user",
-                       jsonObject: cmd,
+                       body: cmd,
                        authHeaders: AuthHeaders,
                        //urlSegments: urlSegments,
                        cts: default
@@ -2066,7 +2067,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Get,
                        command: "users/list",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        //urlSegments: urlSegments,
                        cts: default
@@ -2108,7 +2109,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Get,
                        command: "job_queue/status",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        //urlSegments: urlSegments,
                        cts: default
@@ -2184,7 +2185,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "job_queue/job",
-                       jsonObject: cmd,
+                       body: cmd,
                        authHeaders: AuthHeaders,
                        //urlSegments: urlSegments,
                        cts: default
@@ -2229,7 +2230,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Delete,
                        command: "job_queue/job",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        urlSegments: urlSegments,
                        cts: default
@@ -2237,7 +2238,7 @@ namespace AndreasReitberger.API.Moonraker
                     .ConfigureAwait(false);
                 /*
                 result =
-                    await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Delete, $"job_queue/job", jsonObject: null, cts: default, urlSegments: urlSegments)
+                    await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Delete, $"job_queue/job", body: null, cts: default, urlSegments: urlSegments)
                     .ConfigureAwait(false);
                 */
                 KlipperJobQueueRespone? queryResult = GetObjectFromJson<KlipperJobQueueRespone>(result?.Result, NewtonsoftJsonSerializerSettings);
@@ -2277,7 +2278,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Delete,
                        command: "job_queue/job",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        urlSegments: urlSegments,
                        cts: default
@@ -2285,7 +2286,7 @@ namespace AndreasReitberger.API.Moonraker
                     .ConfigureAwait(false);
                 /*
                 result =
-                    await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Delete, $"job_queue/job", jsonObject: null, cts: default, urlSegments: urlSegments)
+                    await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Delete, $"job_queue/job", body: null, cts: default, urlSegments: urlSegments)
                     .ConfigureAwait(false);
                 */
                 KlipperJobQueueRespone? queryResult = GetObjectFromJson<KlipperJobQueueRespone>(result?.Result, NewtonsoftJsonSerializerSettings);
@@ -2321,7 +2322,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "job_queue/pause",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        //urlSegments: urlSegments,
                        cts: default
@@ -2364,7 +2365,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "job_queue/start",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        //urlSegments: urlSegments,
                        cts: default
@@ -2414,7 +2415,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Get,
                        command: "update/status",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        urlSegments: urlSegments,
                        cts: default
@@ -2422,7 +2423,7 @@ namespace AndreasReitberger.API.Moonraker
                     .ConfigureAwait(false);
                 /*
                 result =
-                    await SendRestApiRequestAsync(MoonrakerCommandBase.machine, Method.Get, $"update/status", jsonObject: null, cts: default, urlSegments: urlSegments)
+                    await SendRestApiRequestAsync(MoonrakerCommandBase.machine, Method.Get, $"update/status", body: null, cts: default, urlSegments: urlSegments)
                     .ConfigureAwait(false);
                 */
                 KlipperUpdateStatusRespone? queryResult = GetObjectFromJson<KlipperUpdateStatusRespone>(result?.Result, NewtonsoftJsonSerializerSettings);
@@ -2469,7 +2470,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "update/full",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        //urlSegments: urlSegments,
                        cts: default
@@ -2498,7 +2499,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "update/moonraker",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        //urlSegments: urlSegments,
                        cts: default
@@ -2527,7 +2528,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "update/klipper",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        //urlSegments: urlSegments,
                        cts: default
@@ -2561,7 +2562,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "update/client",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        urlSegments: urlSegments,
                        cts: default
@@ -2569,7 +2570,7 @@ namespace AndreasReitberger.API.Moonraker
                     .ConfigureAwait(false);
                 /*
                 KlipperApiRequestRespone result =
-                    await SendRestApiRequestAsync(MoonrakerCommandBase.machine, Method.Post, $"update/client", jsonObject: null, cts: default, urlSegments: urlSegments)
+                    await SendRestApiRequestAsync(MoonrakerCommandBase.machine, Method.Post, $"update/client", body: null, cts: default, urlSegments: urlSegments)
                     .ConfigureAwait(false);
                 */
                 return GetQueryResult(result?.Result);
@@ -2590,7 +2591,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "update/system",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        //urlSegments: urlSegments,
                        cts: default
@@ -2625,7 +2626,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "update/recover",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        urlSegments: urlSegments,
                        cts: default
@@ -2633,7 +2634,7 @@ namespace AndreasReitberger.API.Moonraker
                     .ConfigureAwait(false);
                 /*
                 KlipperApiRequestRespone result =
-                    await SendRestApiRequestAsync(MoonrakerCommandBase.machine, Method.Post, $"update/recover", jsonObject: null, cts: default, urlSegments: urlSegments)
+                    await SendRestApiRequestAsync(MoonrakerCommandBase.machine, Method.Post, $"update/recover", body: null, cts: default, urlSegments: urlSegments)
                     .ConfigureAwait(false);
                 */
                 return GetQueryResult(result?.Result);
@@ -2658,7 +2659,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Get,
                        command: "device_power/devices",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        //urlSegments: urlSegments,
                        cts: default
@@ -2706,7 +2707,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Get,
                        command: "device_power/device",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        urlSegments: urlSegments,
                        cts: default
@@ -2714,7 +2715,7 @@ namespace AndreasReitberger.API.Moonraker
                     .ConfigureAwait(false);
                 /*
                 result =
-                    await SendRestApiRequestAsync(MoonrakerCommandBase.machine, Method.Get, $"device_power/device", jsonObject: null, cts: default, urlSegments: urlSegments)
+                    await SendRestApiRequestAsync(MoonrakerCommandBase.machine, Method.Get, $"device_power/device", body: null, cts: default, urlSegments: urlSegments)
                     .ConfigureAwait(false);
                 */
                 KlipperDeviceStatusRespone? queryResult = GetObjectFromJson<KlipperDeviceStatusRespone>(result?.Result, NewtonsoftJsonSerializerSettings);
@@ -2755,7 +2756,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "device_power/device",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        urlSegments: urlSegments,
                        cts: default
@@ -2763,7 +2764,7 @@ namespace AndreasReitberger.API.Moonraker
                     .ConfigureAwait(false);
                 /*
                 result =
-                    await SendRestApiRequestAsync(MoonrakerCommandBase.machine, Method.Post, $"device_power/device", jsonObject: null, cts: default, urlSegments: urlSegments)
+                    await SendRestApiRequestAsync(MoonrakerCommandBase.machine, Method.Post, $"device_power/device", body: null, cts: default, urlSegments: urlSegments)
                     .ConfigureAwait(false);
                 */
                 KlipperDeviceStatusRespone? queryResult = GetObjectFromJson<KlipperDeviceStatusRespone>(result?.Result, NewtonsoftJsonSerializerSettings);
@@ -2808,7 +2809,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Get,
                        command: $"device_power/status?{deviceList}",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        //urlSegments: urlSegments,
                        cts: default
@@ -2859,7 +2860,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: $"device_power/on?{deviceList}",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        //urlSegments: urlSegments,
                        cts: default
@@ -2910,7 +2911,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: $"device_power/off?{deviceList}",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        //urlSegments: urlSegments,
                        cts: default
@@ -2955,7 +2956,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Get,
                        command: $"version",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        //urlSegments: urlSegments,
                        cts: default
@@ -2998,7 +2999,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Get,
                        command: $"server",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        //urlSegments: urlSegments,
                        cts: default
@@ -3041,7 +3042,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Get,
                        command: $"login",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        //urlSegments: urlSegments,
                        cts: default
@@ -3084,7 +3085,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Get,
                        command: $"settings",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        //urlSegments: urlSegments,
                        cts: default
@@ -3127,7 +3128,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Get,
                        command: $"job",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        //urlSegments: urlSegments,
                        cts: default
@@ -3170,7 +3171,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Get,
                        command: $"printer",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        //urlSegments: urlSegments,
                        cts: default
@@ -3215,7 +3216,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Get,
                        command: $"printer/command",
-                       jsonObject: cmd,
+                       body: cmd,
                        authHeaders: AuthHeaders,
                        //urlSegments: urlSegments,
                        cts: default
@@ -3248,7 +3249,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Get,
                        command: $"printerprofiles",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        //urlSegments: urlSegments,
                        cts: default
@@ -3316,7 +3317,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Get,
                        command: $"history/list",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        urlSegments: urlSegments,
                        cts: default
@@ -3324,7 +3325,7 @@ namespace AndreasReitberger.API.Moonraker
                     .ConfigureAwait(false);
                 /*
                 result =
-                    await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Get, $"history/list", jsonObject: null, cts: default, urlSegments: urlSegments)
+                    await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Get, $"history/list", body: null, cts: default, urlSegments: urlSegments)
                     .ConfigureAwait(false);
                 */
                 KlipperHistoryRespone? queryResult = GetObjectFromJson<KlipperHistoryRespone>(result?.Result, NewtonsoftJsonSerializerSettings);
@@ -3358,7 +3359,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Get,
                        command: $"history/totals",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        cts: default
                        )
@@ -3399,7 +3400,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: $"history/reset_totals",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        //urlSegments: urlSegments,
                        cts: default
@@ -3446,7 +3447,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Get,
                        command: $"history/job",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        urlSegments: urlSegments,
                        cts: default
@@ -3454,7 +3455,7 @@ namespace AndreasReitberger.API.Moonraker
                     .ConfigureAwait(false);
                 /*
                 result =
-                    await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Get, $"history/job", jsonObject: null, cts: default, urlSegments: urlSegments)
+                    await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Get, $"history/job", body: null, cts: default, urlSegments: urlSegments)
                     .ConfigureAwait(false);
                 */
                 KlipperHistorySingleJobRespone? queryResult = GetObjectFromJson<KlipperHistorySingleJobRespone>(result?.Result, NewtonsoftJsonSerializerSettings);
@@ -3498,7 +3499,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Delete,
                        command: $"history/job",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        urlSegments: urlSegments,
                        cts: default
@@ -3506,7 +3507,7 @@ namespace AndreasReitberger.API.Moonraker
                     .ConfigureAwait(false);
                 /*
                 result =
-                    await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Delete, $"history/job", jsonObject: null, cts: default, urlSegments: urlSegments)
+                    await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Delete, $"history/job", body: null, cts: default, urlSegments: urlSegments)
                     .ConfigureAwait(false);
                 */
                 KlipperHistoryJobDeletedRespone? queryResult = GetObjectFromJson<KlipperHistoryJobDeletedRespone>(result?.Result, NewtonsoftJsonSerializerSettings);

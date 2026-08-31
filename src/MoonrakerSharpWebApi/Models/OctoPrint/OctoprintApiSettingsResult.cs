@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
@@ -8,17 +7,17 @@ namespace AndreasReitberger.API.Moonraker.Models
         #region Properties
         [ObservableProperty]
 
-        [JsonProperty("plugins")]
+        [JsonPropertyName("plugins")]
         public partial Dictionary<string, OctoprintApiPlugin> Plugins { get; set; } = [];
 
         [ObservableProperty]
 
-        [JsonProperty("feature")]
+        [JsonPropertyName("feature")]
         public partial OctoprintApiFeature? Feature { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("webcam")]
+        [JsonPropertyName("webcam")]
         public partial OctoprintApiWebcam? Webcam { get; set; }
         #endregion
 

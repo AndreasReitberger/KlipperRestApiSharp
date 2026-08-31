@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
@@ -6,78 +6,63 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-
-        [JsonProperty("down_pin")]
+        [JsonPropertyName("down_pin")]
         public partial string DownPin { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("analog_range_back_pin")]
+        [JsonPropertyName("analog_range_back_pin")]
         public partial string AnalogRangeBackPin { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("click_pin")]
+        [JsonPropertyName("click_pin")]
         public partial string ClickPin { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("d6_pin")]
+        [JsonPropertyName("d6_pin")]
         public partial string D6Pin { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("d4_pin")]
+        [JsonPropertyName("d4_pin")]
         public partial string D4Pin { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("lcd_type")]
+        [JsonPropertyName("lcd_type")]
         public partial string LcdType { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("d5_pin")]
+        [JsonPropertyName("d5_pin")]
         public partial string D5Pin { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("e_pin")]
+        [JsonPropertyName("e_pin")]
         public partial string EPin { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("back_pin")]
+        [JsonPropertyName("back_pin")]
         public partial string BackPin { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("rs_pin")]
+        [JsonPropertyName("rs_pin")]
         public partial string RsPin { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("analog_range_down_pin")]
+        [JsonPropertyName("analog_range_down_pin")]
         public partial string AnalogRangeDownPin { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("analog_range_up_pin")]
+        [JsonPropertyName("analog_range_up_pin")]
         public partial string AnalogRangeUpPin { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("up_pin")]
+        [JsonPropertyName("up_pin")]
         public partial string UpPin { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("d7_pin")]
+        [JsonPropertyName("d7_pin")]
         public partial string D7Pin { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("analog_range_click_pin")]
+        [JsonPropertyName("analog_range_click_pin")]
         public partial string AnalogRangeClickPin { get; set; } = string.Empty;
         #endregion
 

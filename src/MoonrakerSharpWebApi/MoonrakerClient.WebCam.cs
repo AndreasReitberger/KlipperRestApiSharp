@@ -4,7 +4,6 @@ using AndreasReitberger.API.Moonraker.Structs;
 using AndreasReitberger.API.Print3dServer.Core.Interfaces;
 using AndreasReitberger.API.REST.Events;
 using AndreasReitberger.API.REST.Interfaces;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +13,6 @@ namespace AndreasReitberger.API.Moonraker
 {
     public partial class MoonrakerClient
     {
-
         #region Methods
 
         public override Task<List<IWebCamConfig>?> GetWebCamConfigsAsync() => GetWebCamSettingsAsync();
@@ -31,7 +29,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Get,
                        command: "webcams/list",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        cts: default
                        )

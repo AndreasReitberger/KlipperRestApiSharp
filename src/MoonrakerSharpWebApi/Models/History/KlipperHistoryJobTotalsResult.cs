@@ -1,38 +1,36 @@
-﻿using Newtonsoft.Json;
-
-namespace AndreasReitberger.API.Moonraker.Models
+﻿namespace AndreasReitberger.API.Moonraker.Models
 {
     public partial class KlipperHistoryJobTotalsResult : ObservableObject
     {
         #region Properties
         [ObservableProperty]
 
-        [JsonProperty("total_jobs")]
+        [JsonPropertyName("total_jobs")]
         public partial long TotalJobs { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("total_time")]
+        [JsonPropertyName("total_time")]
         public partial double TotalTime { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("total_print_time")]
+        [JsonPropertyName("total_print_time")]
         public partial double TotalPrintTime { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("total_filament_used")]
+        [JsonPropertyName("total_filament_used")]
         public partial double TotalFilamentUsed { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("longest_job")]
+        [JsonPropertyName("longest_job")]
         public partial double LongestJob { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("longest_print")]
+        [JsonPropertyName("longest_print")]
         public partial double LongestPrint { get; set; }
         #endregion
 

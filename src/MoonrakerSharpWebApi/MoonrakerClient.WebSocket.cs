@@ -1,10 +1,7 @@
 ﻿using AndreasReitberger.API.Moonraker.Models;
 using AndreasReitberger.API.Print3dServer.Core.Enums;
-using AndreasReitberger.API.Print3dServer.Core.Events;
 using AndreasReitberger.API.Print3dServer.Core.Interfaces;
 using AndreasReitberger.API.REST.Events;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -16,7 +13,7 @@ namespace AndreasReitberger.API.Moonraker
     {
         #region Properties
         [ObservableProperty]
-        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public partial long? WebSocketConnectionId { get; set; }
         partial void OnWebSocketConnectionIdChanged(long? value)
         {

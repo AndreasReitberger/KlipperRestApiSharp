@@ -1,18 +1,16 @@
-﻿using Newtonsoft.Json;
-
-namespace AndreasReitberger.API.Moonraker.Models
+﻿namespace AndreasReitberger.API.Moonraker.Models
 {
     public partial class KlipperPrinterStatusResult : ObservableObject
     {
         #region Properties
         [ObservableProperty]
 
-        [JsonProperty("status")]
+        [JsonPropertyName("status")]
         public partial object? Status { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("eventtime")]
+        [JsonPropertyName("eventtime")]
         public partial double? Eventtime { get; set; }
         #endregion
 

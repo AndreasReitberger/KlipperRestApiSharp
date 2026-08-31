@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
@@ -6,18 +6,15 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-
-        [JsonProperty("baud")]
+        [JsonPropertyName("baud")]
         public partial long Baud { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("serial")]
+        [JsonPropertyName("serial")]
         public partial string Serial { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("max_stepper_error")]
+        [JsonPropertyName("max_stepper_error")]
         public partial double MaxStepperError { get; set; }
         #endregion
 

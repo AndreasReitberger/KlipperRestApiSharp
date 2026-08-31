@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
@@ -8,12 +7,12 @@ namespace AndreasReitberger.API.Moonraker.Models
         #region Properties
         [ObservableProperty]
 
-        [JsonProperty("status")]
+        [JsonPropertyName("status")]
         public partial Dictionary<string, KlipperGcodeMacro> Status { get; set; } = [];
 
         [ObservableProperty]
 
-        [JsonProperty("eventtime")]
+        [JsonPropertyName("eventtime")]
         public partial double Eventtime { get; set; }
         #endregion
 

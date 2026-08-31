@@ -1,5 +1,5 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
+using System.Text.Json.Serialization;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
@@ -7,53 +7,43 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-
-        [JsonProperty("id")]
+        [JsonPropertyName("id")]
         public partial Guid Id { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("enabled")]
+        [JsonPropertyName("enabled")]
         public partial bool Enabled { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("name")]
+        [JsonPropertyName("name")]
         public partial string Name { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("service")]
+        [JsonPropertyName("service")]
         public partial string Service { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("targetFps")]
+        [JsonPropertyName("targetFps")]
         public partial long Fpstarget { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("urlStream")]
+        [JsonPropertyName("urlStream")]
         public partial string UrlStream { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("urlSnapshot")]
+        [JsonPropertyName("urlSnapshot")]
         public partial string UrlSnapshot { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("flipX")]
+        [JsonPropertyName("flipX")]
         public partial bool FlipX { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("flipY")]
+        [JsonPropertyName("flipY")]
         public partial bool FlipY { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("rotation")]
+        [JsonPropertyName("rotation")]
         public partial int? Rotation { get; set; } = 0;
         #endregion
 

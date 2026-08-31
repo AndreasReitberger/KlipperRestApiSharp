@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
@@ -6,13 +6,11 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-
-        [JsonProperty("printername")]
+        [JsonPropertyName("printername")]
         public partial string Printername { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("displayCancelPrint")]
+        [JsonPropertyName("displayCancelPrint")]
         public partial bool DisplayCancelPrint { get; set; }
         #endregion
 

@@ -1,9 +1,8 @@
 ﻿using AndreasReitberger.API.Print3dServer.Core.Enums;
 using AndreasReitberger.API.Print3dServer.Core.Interfaces;
 using AndreasReitberger.API.Print3dServer.Core.Utilities;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using System;
+using System.Text.Json.Serialization;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
@@ -11,7 +10,6 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-
         [JsonIgnore]
         public partial Guid Id { get; set; }
 
@@ -19,7 +17,7 @@ namespace AndreasReitberger.API.Moonraker.Models
 
         [NotifyPropertyChangedFor(nameof(Done))]
         [NotifyPropertyChangedFor(nameof(EndTimeGeneralized))]
-        [JsonProperty("end_time")]
+        [JsonPropertyName("end_time")]
         public partial double? EndTime { get; set; }
 
         partial void OnEndTimeChanged(double? value)
@@ -35,25 +33,24 @@ namespace AndreasReitberger.API.Moonraker.Models
 
         [ObservableProperty]
 
-        [JsonProperty("filament_used")]
+        [JsonPropertyName("filament_used")]
         public partial double? FilamentUsed { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("filename")]
+        [JsonPropertyName("filename")]
         public partial string FileName { get; set; } = string.Empty;
 
         [ObservableProperty]
 
-        [JsonProperty("metadata")]
+        [JsonPropertyName("metadata")]
         public partial IGcodeMeta? Meta { get; set; }
 
         [ObservableProperty]
 
         [NotifyPropertyChangedFor(nameof(PrintDurationGeneralized))]
-        [JsonProperty("print_duration")]
+        [JsonPropertyName("print_duration")]
         public partial double? PrintDuration { get; set; }
-
         partial void OnPrintDurationChanged(double? value)
         {
             if (value is not null)
@@ -64,7 +61,6 @@ namespace AndreasReitberger.API.Moonraker.Models
 
         [JsonIgnore]
         public partial TimeSpan? PrintDurationGeneralized { get; set; }
-
         partial void OnPrintDurationGeneralizedChanged(TimeSpan? value)
         {
             Done = CalculateProgress(totalPrintDuration: TotalPrintDurationGeneralized, currentPrintDuration: value);
@@ -72,7 +68,7 @@ namespace AndreasReitberger.API.Moonraker.Models
 
         [ObservableProperty]
 
-        [JsonProperty("status")]
+        [JsonPropertyName("status")]
         [field: JsonConverter(typeof(StringEnumConverter), true)]
         public partial Print3dJobState? State { get; set; }
 
@@ -80,9 +76,8 @@ namespace AndreasReitberger.API.Moonraker.Models
 
         [NotifyPropertyChangedFor(nameof(Done))]
         [NotifyPropertyChangedFor(nameof(StartTimeGeneralized))]
-        [JsonProperty("start_time")]
+        [JsonPropertyName("start_time")]
         public partial double? StartTime { get; set; }
-
         partial void OnStartTimeChanged(double? value)
         {
             if (value is not null)
@@ -98,7 +93,6 @@ namespace AndreasReitberger.API.Moonraker.Models
 
         [JsonIgnore]
         public partial double? Done { get; set; }
-
         partial void OnDoneChanged(double? value)
         {
             if (value is not null)
@@ -108,7 +102,6 @@ namespace AndreasReitberger.API.Moonraker.Models
         }
 
         [ObservableProperty]
-
         [JsonIgnore]
         public partial double? DonePercentage { get; set; }
 
@@ -116,9 +109,8 @@ namespace AndreasReitberger.API.Moonraker.Models
 
         [NotifyPropertyChangedFor(nameof(Done))]
         [NotifyPropertyChangedFor(nameof(TotalPrintDurationGeneralized))]
-        [JsonProperty("total_duration")]
+        [JsonPropertyName("total_duration")]
         public partial double? TotalPrintDuration { get; set; }
-
         partial void OnTotalPrintDurationChanged(double? value)
         {
             if (value is not null)
@@ -126,30 +118,24 @@ namespace AndreasReitberger.API.Moonraker.Models
         }
 
         [ObservableProperty]
-
         [JsonIgnore]
         public partial TimeSpan? TotalPrintDurationGeneralized { get; set; }
-
         partial void OnTotalPrintDurationGeneralizedChanged(TimeSpan? value)
         {
             Done = CalculateProgress(totalPrintDuration: value, currentPrintDuration: PrintDurationGeneralized);
         }
 
         [ObservableProperty]
-
-        [JsonProperty("job_id")]
+        [JsonPropertyName("job_id")]
         public partial string JobId { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("exists")]
+        [JsonPropertyName("exists")]
         public partial bool FileExists { get; set; }
 
         [ObservableProperty]
-
         [NotifyPropertyChangedFor(nameof(RemainingPrintTimeGeneralized))]
         public partial double? RemainingPrintTime { get; set; }
-
         partial void OnRemainingPrintTimeChanged(double? value)
         {
             if (value is not null)
@@ -157,11 +143,9 @@ namespace AndreasReitberger.API.Moonraker.Models
         }
 
         [ObservableProperty]
-
         public partial TimeSpan? RemainingPrintTimeGeneralized { get; set; }
 
         [ObservableProperty]
-
         public partial long? Repeat { get; set; }
         #endregion
 

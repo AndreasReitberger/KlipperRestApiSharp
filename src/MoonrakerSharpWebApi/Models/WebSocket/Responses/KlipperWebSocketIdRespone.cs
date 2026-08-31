@@ -1,13 +1,11 @@
-﻿using Newtonsoft.Json;
-
-namespace AndreasReitberger.API.Moonraker.Models.WebSocket
+﻿namespace AndreasReitberger.API.Moonraker.Models.WebSocket
 {
     public partial class KlipperWebSocketIdRespone : ObservableObject
     {
         #region Properties
         [ObservableProperty]
 
-        [JsonProperty("websocket_id")]
+        [JsonPropertyName("websocket_id")]
         public partial long WebsocketId { get; set; }
         #endregion
 

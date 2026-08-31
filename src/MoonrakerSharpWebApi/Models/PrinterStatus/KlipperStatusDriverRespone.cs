@@ -1,13 +1,11 @@
-﻿using Newtonsoft.Json;
-
-namespace AndreasReitberger.API.Moonraker.Models
+﻿namespace AndreasReitberger.API.Moonraker.Models
 {
     public partial class KlipperStatusDriverRespone : ObservableObject
     {
         #region Properties
         [ObservableProperty]
 
-        [JsonProperty("drv_status")]
+        [JsonPropertyName("drv_status")]
         public partial KlipperStatusDriver? DrvStatus { get; set; }
         #endregion
 

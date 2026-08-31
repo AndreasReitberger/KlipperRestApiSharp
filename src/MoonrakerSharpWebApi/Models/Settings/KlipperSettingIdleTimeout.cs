@@ -1,18 +1,16 @@
-﻿using Newtonsoft.Json;
-
-namespace AndreasReitberger.API.Moonraker.Models
+﻿namespace AndreasReitberger.API.Moonraker.Models
 {
     public partial class KlipperSettingIdleTimeout : ObservableObject
     {
         #region Properties
         [ObservableProperty]
 
-        [JsonProperty("gcode")]
+        [JsonPropertyName("gcode")]
         public partial string Gcode { get; set; } = string.Empty;
 
         [ObservableProperty]
 
-        [JsonProperty("timeout")]
+        [JsonPropertyName("timeout")]
         public partial long Timeout { get; set; }
         #endregion
 

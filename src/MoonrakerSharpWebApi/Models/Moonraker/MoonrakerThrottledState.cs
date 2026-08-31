@@ -1,23 +1,21 @@
-﻿using Newtonsoft.Json;
-
-namespace AndreasReitberger.API.Moonraker.Models
+﻿namespace AndreasReitberger.API.Moonraker.Models
 {
     public partial class MoonrakerThrottledState : ObservableObject
     {
         #region Properties
         [ObservableProperty]
 
-        [JsonProperty("rx_bytes")]
+        [JsonPropertyName("rx_bytes")]
         public partial long RxBytes { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("tx_bytes")]
+        [JsonPropertyName("tx_bytes")]
         public partial long TxBytes { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("bandwidth")]
+        [JsonPropertyName("bandwidth")]
         public partial double Bandwidth { get; set; }
         #endregion
 

@@ -1,6 +1,4 @@
 ﻿using AndreasReitberger.API.Moonraker.Enum;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
@@ -9,13 +7,13 @@ namespace AndreasReitberger.API.Moonraker.Models
         #region Properties
         [ObservableProperty]
 
-        [JsonProperty("state")]
+        [JsonPropertyName("state")]
         [field: JsonConverter(typeof(StringEnumConverter), true)]
         public partial KlipperIdleStates State { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("printing_time")]
+        [JsonPropertyName("printing_time")]
         public partial double? PrintingTime { get; set; }
 
         [ObservableProperty]

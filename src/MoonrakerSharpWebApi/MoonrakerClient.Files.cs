@@ -4,7 +4,6 @@ using AndreasReitberger.API.Moonraker.Structs;
 using AndreasReitberger.API.Print3dServer.Core.Interfaces;
 using AndreasReitberger.API.REST.Events;
 using AndreasReitberger.API.REST.Interfaces;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -19,7 +18,7 @@ namespace AndreasReitberger.API.Moonraker
         #region Properties
 
         [ObservableProperty]
-        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public partial ObservableCollection<KlipperDirectory> AvailableDirectories { get; set; } = [];
         partial void OnAvailableDirectoriesChanged(ObservableCollection<KlipperDirectory> value)
         {
@@ -70,7 +69,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Get,
                        command: "files/list",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        urlSegments: urlSegments,
                        cts: default
@@ -137,7 +136,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Get,
                        command: "files/metadata",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        urlSegments: urlSegments,
                        cts: default
@@ -307,7 +306,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Get,
                        command: "files/directory",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        urlSegments: urlSegments,
                        cts: default
@@ -399,7 +398,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "files/directory",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        urlSegments: urlSegments,
                        cts: default
@@ -407,7 +406,7 @@ namespace AndreasReitberger.API.Moonraker
                     .ConfigureAwait(false);
                 /*
                 result =
-                    await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Post, $"files/directory", jsonObject: null, cts: default, urlSegments: urlSegments)
+                    await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Post, $"files/directory", body: null, cts: default, urlSegments: urlSegments)
                     .ConfigureAwait(false);
                 */
                 KlipperDirectoryActionRespone? queryResult = GetObjectFromJson<KlipperDirectoryActionRespone>(result?.Result, NewtonsoftJsonSerializerSettings);
@@ -448,7 +447,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Delete,
                        command: "files/directory",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        urlSegments: urlSegments,
                        cts: default
@@ -456,7 +455,7 @@ namespace AndreasReitberger.API.Moonraker
                     .ConfigureAwait(false);
                 /*
                 result =
-                    await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Delete, $"files/directory", jsonObject: null, cts: default, urlSegments: urlSegments)
+                    await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Delete, $"files/directory", body: null, cts: default, urlSegments: urlSegments)
                     .ConfigureAwait(false);
                 */
                 KlipperDirectoryActionRespone? queryResult = GetObjectFromJson<KlipperDirectoryActionRespone>(result?.Result, NewtonsoftJsonSerializerSettings);
@@ -497,7 +496,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "files/move",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        urlSegments: urlSegments,
                        cts: default
@@ -505,7 +504,7 @@ namespace AndreasReitberger.API.Moonraker
                     .ConfigureAwait(false);
                 /*
                 result =
-                    await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Post, $"files/move", jsonObject: null, cts: default, urlSegments: urlSegments)
+                    await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Post, $"files/move", body: null, cts: default, urlSegments: urlSegments)
                     .ConfigureAwait(false);
                 */
                 KlipperDirectoryActionRespone? queryResult = GetObjectFromJson<KlipperDirectoryActionRespone>(result?.Result, NewtonsoftJsonSerializerSettings);
@@ -546,7 +545,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "files/copy",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        urlSegments: urlSegments,
                        cts: default
@@ -554,7 +553,7 @@ namespace AndreasReitberger.API.Moonraker
                     .ConfigureAwait(false);
                 /*
                 result =
-                    await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Post, $"files/copy", jsonObject: null, cts: default, urlSegments: urlSegments)
+                    await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Post, $"files/copy", body: null, cts: default, urlSegments: urlSegments)
                     .ConfigureAwait(false);
                 */
                 KlipperDirectoryActionRespone? queryResult = GetObjectFromJson<KlipperDirectoryActionRespone>(result?.Result, NewtonsoftJsonSerializerSettings);
@@ -685,7 +684,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Delete,
                        command: $"files/{root}/{filePath}",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        //urlSegments: urlSegments,
                        cts: default
@@ -731,7 +730,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Delete,
                        command: $"files/{filePath}",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        //urlSegments: urlSegments,
                        cts: default

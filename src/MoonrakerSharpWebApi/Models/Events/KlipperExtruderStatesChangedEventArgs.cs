@@ -1,5 +1,4 @@
 ﻿using AndreasReitberger.API.Print3dServer.Core.Events;
-using Newtonsoft.Json;
 using System.Collections.Concurrent;
 
 namespace AndreasReitberger.API.Moonraker.Models

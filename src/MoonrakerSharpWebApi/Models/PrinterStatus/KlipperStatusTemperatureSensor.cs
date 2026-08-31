@@ -1,23 +1,21 @@
-﻿using Newtonsoft.Json;
-
-namespace AndreasReitberger.API.Moonraker.Models
+﻿namespace AndreasReitberger.API.Moonraker.Models
 {
     public partial class KlipperStatusTemperatureSensor : ObservableObject
     {
         #region Properties
         [ObservableProperty]
 
-        [JsonProperty("temperature")]
+        [JsonPropertyName("temperature")]
         public partial double? Temperature { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("measured_max_temp")]
+        [JsonPropertyName("measured_max_temp")]
         public partial double? MeasuredMaxTemperature { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("measured_min_temp")]
+        [JsonPropertyName("measured_min_temp")]
         public partial double? MeasuredMinTemperature { get; set; }
         #endregion
 

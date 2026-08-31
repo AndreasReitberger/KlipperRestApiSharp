@@ -1,18 +1,16 @@
-﻿using Newtonsoft.Json;
-
-namespace AndreasReitberger.API.Moonraker.Models
+﻿namespace AndreasReitberger.API.Moonraker.Models
 {
     public partial class KlipperRootInfo : ObservableObject
     {
         #region Properties
         [ObservableProperty]
 
-        [JsonProperty("name")]
+        [JsonPropertyName("name")]
         public partial string Name { get; set; } = string.Empty;
 
         [ObservableProperty]
 
-        [JsonProperty("permissions")]
+        [JsonPropertyName("permissions")]
         public partial string Permissions { get; set; } = string.Empty;
         #endregion
 

@@ -1,5 +1,5 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
+using System.Text.Json.Serialization;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
@@ -7,48 +7,39 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-
-        [JsonProperty("type")]
+        [JsonPropertyName("type")]
         public partial string Type { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("venv_args")]
+        [JsonPropertyName("venv_args")]
         public partial string VenvArgs { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("is_system_service")]
+        [JsonPropertyName("is_system_service")]
         public partial bool IsSystemService { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("moved_origin")]
+        [JsonPropertyName("moved_origin")]
         public partial Uri? MovedOrigin { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("origin")]
+        [JsonPropertyName("origin")]
         public partial Uri? Origin { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("primary_branch")]
+        [JsonPropertyName("primary_branch")]
         public partial string PrimaryBranch { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("enable_node_updates")]
+        [JsonPropertyName("enable_node_updates")]
         public partial bool EnableNodeUpdates { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("requirements")]
+        [JsonPropertyName("requirements")]
         public partial string Requirements { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("install_script")]
+        [JsonPropertyName("install_script")]
         public partial string InstallScript { get; set; } = string.Empty;
         #endregion
 

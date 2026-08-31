@@ -1,13 +1,11 @@
-﻿using Newtonsoft.Json;
-
-namespace AndreasReitberger.API.Moonraker.Models
+﻿namespace AndreasReitberger.API.Moonraker.Models
 {
     public partial class KlipperSettingForceMove : ObservableObject
     {
         #region Properties
         [ObservableProperty]
 
-        [JsonProperty("enable_force_move")]
+        [JsonPropertyName("enable_force_move")]
         public partial bool EnableForceMove { get; set; }
 
         #endregion

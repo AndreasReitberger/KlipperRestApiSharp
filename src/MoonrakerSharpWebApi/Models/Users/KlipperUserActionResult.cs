@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-
-namespace AndreasReitberger.API.Moonraker.Models
+﻿namespace AndreasReitberger.API.Moonraker.Models
 {
     public partial class KlipperUserActionResult : ObservableObject
 
@@ -8,22 +6,22 @@ namespace AndreasReitberger.API.Moonraker.Models
         #region Properties
         [ObservableProperty]
 
-        [JsonProperty("username")]
+        [JsonPropertyName("username")]
         public partial string Username { get; set; } = string.Empty;
 
         [ObservableProperty]
 
-        [JsonProperty("token")]
+        [JsonPropertyName("token")]
         public partial string Token { get; set; } = string.Empty;
 
         [ObservableProperty]
 
-        [JsonProperty("refresh_token")]
+        [JsonPropertyName("refresh_token")]
         public partial string RefreshToken { get; set; } = string.Empty;
 
         [ObservableProperty]
 
-        [JsonProperty("action")]
+        [JsonPropertyName("action")]
         public partial string Action { get; set; } = string.Empty;
         #endregion
 

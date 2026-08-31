@@ -1,5 +1,4 @@
 ﻿using AndreasReitberger.API.Print3dServer.Core.Interfaces;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 
@@ -15,7 +14,7 @@ namespace AndreasReitberger.API.Moonraker.Models
 
         [ObservableProperty]
 
-        [JsonProperty("print_start_time")]
+        [JsonPropertyName("print_start_time")]
         public partial double? PrintStartTime { get; set; }
 
         [ObservableProperty]
@@ -25,53 +24,53 @@ namespace AndreasReitberger.API.Moonraker.Models
 
         [ObservableProperty]
 
-        [JsonProperty("size")]
+        [JsonPropertyName("size")]
         public partial long FileSize { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("modified")]
+        [JsonPropertyName("modified")]
         public partial double Modified { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("slicer")]
+        [JsonPropertyName("slicer")]
         public partial string Slicer { get; set; } = string.Empty;
 
         [ObservableProperty]
 
-        [JsonProperty("slicer_version")]
+        [JsonPropertyName("slicer_version")]
         public partial string SlicerVersion { get; set; } = string.Empty;
 
         [ObservableProperty]
 
-        [JsonProperty("layer_height")]
+        [JsonPropertyName("layer_height")]
         public partial double LayerHeight { get; set; } = 0;
 
         [ObservableProperty]
 
-        [JsonProperty("first_layer_height")]
+        [JsonPropertyName("first_layer_height")]
         public partial double FirstLayerHeight { get; set; } = 0;
 
         [ObservableProperty]
 
-        [JsonProperty("object_height")]
+        [JsonPropertyName("object_height")]
         public partial double ObjectHeight { get; set; } = 0;
 
         [ObservableProperty]
 
-        [JsonProperty("filament_total")]
+        [JsonPropertyName("filament_total")]
         public partial double FilamentTotal { get; set; } = 0;
 
         [ObservableProperty]
 
-        [JsonProperty("filament_weight_total")]
+        [JsonPropertyName("filament_weight_total")]
         public partial double FilamentWeightTotal { get; set; } = 0;
 
         [ObservableProperty]
 
         [NotifyPropertyChangedFor(nameof(EstimatedPrintTime))]
-        [JsonProperty("estimated_time")]
+        [JsonPropertyName("estimated_time")]
         public partial double EstimatedTime { get; set; } = 0;
 
         partial void OnEstimatedTimeChanged(double value)
@@ -81,37 +80,37 @@ namespace AndreasReitberger.API.Moonraker.Models
 
         [ObservableProperty]
 
-        [JsonProperty("first_layer_extr_temp")]
+        [JsonPropertyName("first_layer_extr_temp")]
         public partial double FirstLayerExtrTemp { get; set; } = 0;
 
         [ObservableProperty]
 
-        [JsonProperty("first_layer_bed_temp")]
+        [JsonPropertyName("first_layer_bed_temp")]
         public partial double FirstLayerBedTemp { get; set; } = 0;
 
         [ObservableProperty]
 
-        [JsonProperty("gcode_start_byte")]
+        [JsonPropertyName("gcode_start_byte")]
         public partial long GcodeStartByte { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("gcode_end_byte")]
+        [JsonPropertyName("gcode_end_byte")]
         public partial long GcodeEndByte { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("job_id")]
+        [JsonPropertyName("job_id")]
         public partial string JobId { get; set; } = string.Empty;
 
         [ObservableProperty]
 
-        [JsonProperty("filename")]
+        [JsonPropertyName("filename")]
         public partial string FileName { get; set; } = string.Empty;
 
         [ObservableProperty]
 
-        [JsonProperty("thumbnails")]
+        [JsonPropertyName("thumbnails")]
         public partial List<IGcodeImage> GcodeImages { get; set; } = [];
 
         [JsonIgnore]

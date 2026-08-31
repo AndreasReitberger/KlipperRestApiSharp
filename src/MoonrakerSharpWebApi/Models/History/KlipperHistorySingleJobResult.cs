@@ -1,13 +1,11 @@
-﻿using Newtonsoft.Json;
-
-namespace AndreasReitberger.API.Moonraker.Models
+﻿namespace AndreasReitberger.API.Moonraker.Models
 {
     public partial class KlipperHistorySingleJobResult : ObservableObject
     {
         #region Properties
         [ObservableProperty]
 
-        [JsonProperty("job")]
+        [JsonPropertyName("job")]
         public partial KlipperJobItem? Job { get; set; }
         #endregion
 

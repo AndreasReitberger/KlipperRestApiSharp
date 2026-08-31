@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
@@ -6,13 +6,11 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-
-        [JsonProperty("locale")]
+        [JsonPropertyName("locale")]
         public partial string Locale { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("instanceName")]
+        [JsonPropertyName("instanceName")]
         public partial string InstanceName { get; set; } = string.Empty;
 
         #endregion

@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
@@ -8,42 +7,42 @@ namespace AndreasReitberger.API.Moonraker.Models
         #region Properties
         [ObservableProperty]
 
-        [JsonProperty("homing_origin")]
+        [JsonPropertyName("homing_origin")]
         public partial List<double> HomingOrigin { get; set; } = [];
 
         [ObservableProperty]
 
-        [JsonProperty("speed_factor")]
+        [JsonPropertyName("speed_factor")]
         public partial double? SpeedFactor { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("gcode_position")]
+        [JsonPropertyName("gcode_position")]
         public partial List<double> GcodePosition { get; set; } = [];
 
         [ObservableProperty]
 
-        [JsonProperty("absolute_extrude")]
+        [JsonPropertyName("absolute_extrude")]
         public partial bool AbsoluteExtrude { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("absolute_coordinates")]
+        [JsonPropertyName("absolute_coordinates")]
         public partial bool AbsoluteCoordinates { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("position")]
+        [JsonPropertyName("position")]
         public partial List<double> Position { get; set; } = [];
 
         [ObservableProperty]
 
-        [JsonProperty("speed")]
+        [JsonPropertyName("speed")]
         public partial double? Speed { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("extrude_factor")]
+        [JsonPropertyName("extrude_factor")]
         public partial double? ExtrudeFactor { get; set; }
         #endregion
 

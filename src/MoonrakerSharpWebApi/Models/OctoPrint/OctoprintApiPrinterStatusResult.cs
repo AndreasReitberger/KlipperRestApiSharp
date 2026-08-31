@@ -1,23 +1,21 @@
-﻿using Newtonsoft.Json;
-
-namespace AndreasReitberger.API.Moonraker.Models
+﻿namespace AndreasReitberger.API.Moonraker.Models
 {
     public partial class OctoprintApiPrinterStatusResult : ObservableObject
     {
         #region Properties
         [ObservableProperty]
 
-        [JsonProperty("temperature", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("temperature")]
         public partial OctoprintApiPrinterStateTemperature? Temperature { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("sd", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("sd")]
         public partial OctoprintApiPrinterStateSd? Sd { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("state", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("state")]
         public partial OctoprintApiPrinterState? State { get; set; }
         #endregion
 

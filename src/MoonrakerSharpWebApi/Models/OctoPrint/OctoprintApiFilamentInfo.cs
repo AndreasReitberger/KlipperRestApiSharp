@@ -1,18 +1,16 @@
-﻿using Newtonsoft.Json;
-
-namespace AndreasReitberger.API.Moonraker.Models
+﻿namespace AndreasReitberger.API.Moonraker.Models
 {
     public partial class OctoprintApiFilamentInfo : ObservableObject
     {
         #region Properties
         [ObservableProperty]
 
-        [JsonProperty("length", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("length")]
         public partial double Length { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("volume", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("volume")]
         public partial double Volume { get; set; }
         #endregion
 

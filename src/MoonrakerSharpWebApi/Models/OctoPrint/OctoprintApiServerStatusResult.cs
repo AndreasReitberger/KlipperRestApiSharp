@@ -1,18 +1,16 @@
-﻿using Newtonsoft.Json;
-
-namespace AndreasReitberger.API.Moonraker.Models
+﻿namespace AndreasReitberger.API.Moonraker.Models
 {
     public partial class OctoprintApiServerStatusResult : ObservableObject
     {
         #region Properties
         [ObservableProperty]
 
-        [JsonProperty("server")]
+        [JsonPropertyName("server")]
         public partial string Server { get; set; } = string.Empty;
 
         [ObservableProperty]
 
-        [JsonProperty("safemode")]
+        [JsonPropertyName("safemode")]
         public partial object? Safemode { get; set; }
         #endregion
 

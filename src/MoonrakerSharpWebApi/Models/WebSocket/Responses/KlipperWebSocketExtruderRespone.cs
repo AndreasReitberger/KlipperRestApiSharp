@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace AndreasReitberger.API.Moonraker.Models.WebSocket
 {
@@ -6,23 +6,23 @@ namespace AndreasReitberger.API.Moonraker.Models.WebSocket
     {
         #region Properties
         [ObservableProperty]
-        [JsonProperty("extruder")]
+        [JsonPropertyName("extruder")]
         public partial KlipperStatusExtruder? Extruder { get; set; }
 
         [ObservableProperty]
-        [JsonProperty("toolhead")]
+        [JsonPropertyName("toolhead")]
         public partial KlipperStatusToolhead? ToolHead { get; set; }
 
         [ObservableProperty]
-        [JsonProperty("extruder1")]
+        [JsonPropertyName("extruder1")]
         public partial KlipperStatusExtruder? Extruder1 { get; set; }
 
         [ObservableProperty]
-        [JsonProperty("extruder2")]
+        [JsonPropertyName("extruder2")]
         public partial KlipperStatusExtruder? Extruder2 { get; set; }
 
         [ObservableProperty]
-        [JsonProperty("extruder3")]
+        [JsonPropertyName("extruder3")]
         public partial KlipperStatusExtruder? Extruder3 { get; set; }
         #endregion
 

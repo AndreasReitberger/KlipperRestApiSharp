@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Moonraker.Models.WebSocket
 {
@@ -9,27 +8,27 @@ namespace AndreasReitberger.API.Moonraker.Models.WebSocket
 
         [ObservableProperty]
 
-        [JsonProperty("moonraker_stats")]
+        [JsonPropertyName("moonraker_stats")]
         public partial MoonrakerStatInfo? MoonrakerStats { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("throttled_state")]
+        [JsonPropertyName("throttled_state")]
         public partial MoonrakerThrottledState? ThrottledState { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("cpu_temp")]
+        [JsonPropertyName("cpu_temp")]
         public partial double CpuTemp { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("network")]
+        [JsonPropertyName("network")]
         public partial Dictionary<string, KlipperNetworkInterface> Network { get; set; } = [];
 
         [ObservableProperty]
 
-        [JsonProperty("websocket_connections")]
+        [JsonPropertyName("websocket_connections")]
         public partial long WebsocketConnections { get; set; }
         #endregion
 

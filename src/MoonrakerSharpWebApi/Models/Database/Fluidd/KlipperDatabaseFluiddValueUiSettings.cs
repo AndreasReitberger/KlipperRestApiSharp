@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
@@ -6,13 +6,11 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-
-        [JsonProperty("general")]
+        [JsonPropertyName("general")]
         public partial KlipperDatabaseFluiddValueUiSettingsGeneral? General { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("dashboard")]
+        [JsonPropertyName("dashboard")]
         public partial KlipperDatabaseFluiddValueUiSettingsDashboard? Dashboard { get; set; }
 
         #endregion

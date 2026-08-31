@@ -1,28 +1,26 @@
-﻿using Newtonsoft.Json;
-
-namespace AndreasReitberger.API.Moonraker.Models
+﻿namespace AndreasReitberger.API.Moonraker.Models
 {
     public partial class OctoprintApiJobResult : ObservableObject
     {
         #region Properties
         [ObservableProperty]
 
-        [JsonProperty("file", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("file")]
         public partial OctoprintAbiJobInfoFile? File { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("estimatedPrintTime", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("estimatedPrintTime")]
         public partial long EstimatedPrintTime { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("filament", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("filament")]
         public partial OctoprintApiFilamentInfo? Filament { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("user", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("user")]
         public partial object? User { get; set; }
         #endregion
 

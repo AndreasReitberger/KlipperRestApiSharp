@@ -1,17 +1,15 @@
-﻿using Newtonsoft.Json;
-
-namespace AndreasReitberger.API.Moonraker.Models
+﻿namespace AndreasReitberger.API.Moonraker.Models
 {
     public partial class KlipperEventData
     {
         #region Properties
-        [JsonProperty("data", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("data")]
         public object? Data { get; set; }
 
-        [JsonProperty("event", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("event")]
         public string Event { get; set; } = string.Empty;
 
-        [JsonProperty("printer", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("printer")]
         public string Printer { get; set; } = string.Empty;
         #endregion
 

@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
@@ -6,43 +6,35 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-
-        [JsonProperty("server")]
+        [JsonPropertyName("server")]
         public partial KlipperServer? Server { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("authorization")]
+        [JsonPropertyName("authorization")]
         public partial KlipperAuthorization? Authorization { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("octoprint_compat")]
+        [JsonPropertyName("octoprint_compat")]
         public partial object? OctoprintCompat { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("history")]
+        [JsonPropertyName("history")]
         public partial object? History { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("update_manager")]
+        [JsonPropertyName("update_manager")]
         public partial KlipperUpdateManager? UpdateManager { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("update_manager moonraker")]
+        [JsonPropertyName("update_manager moonraker")]
         public partial KlipperUpdateManagerKlipperClass? UpdateManagerMoonraker { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("update_manager klipper")]
+        [JsonPropertyName("update_manager klipper")]
         public partial KlipperUpdateManagerKlipperClass? UpdateManagerKlipper { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("update_manager mainsail")]
+        [JsonPropertyName("update_manager mainsail")]
         public partial KlipperUpdateManagerMainsail? UpdateManagerMainsail { get; set; }
         #endregion
 

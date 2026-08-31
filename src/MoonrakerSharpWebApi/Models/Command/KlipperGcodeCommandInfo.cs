@@ -1,6 +1,4 @@
-﻿using AndreasReitberger.Shared.Core.Utilities;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
@@ -16,7 +14,6 @@ namespace AndreasReitberger.API.Moonraker.Models
 
         [ObservableProperty]
         public partial bool Sent { get; set; } = false;
-
 
 
         [ObservableProperty]

@@ -1,13 +1,11 @@
-﻿using Newtonsoft.Json;
-
-namespace AndreasReitberger.API.Moonraker.Models
+﻿namespace AndreasReitberger.API.Moonraker.Models
 {
     public partial class KlipperStatusPauseResume : ObservableObject
     {
         #region Properties
         [ObservableProperty]
 
-        [JsonProperty("is_paused")]
+        [JsonPropertyName("is_paused")]
         public partial bool IsPaused { get; set; }
         #endregion
 

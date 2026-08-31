@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
@@ -6,38 +6,31 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-
-        [JsonProperty("enable_auto_refresh")]
+        [JsonPropertyName("enable_auto_refresh")]
         public partial bool EnableAutoRefresh { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("channel")]
+        [JsonPropertyName("channel")]
         public partial string Channel { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("enable_repo_debug")]
+        [JsonPropertyName("enable_repo_debug")]
         public partial bool EnableRepoDebug { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("enable_system_updates")]
+        [JsonPropertyName("enable_system_updates")]
         public partial bool EnableSystemUpdates { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("type")]
+        [JsonPropertyName("type")]
         public partial string Type { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("client_repo")]
+        [JsonPropertyName("client_repo")]
         public partial object? ClientRepo { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("client_path")]
+        [JsonPropertyName("client_path")]
         public partial object? ClientPath { get; set; }
         #endregion
 
