@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text.Json.Serialization;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
@@ -13,7 +12,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         #endregion
 
         #region Overrides
-        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
+        public override string ToString() => JsonSerializer.Serialize(this!, MoonrakerClientSourceGenerationContext.Default.KlipperDatabaseMainsailValuePresets);
         #endregion
     }
 }

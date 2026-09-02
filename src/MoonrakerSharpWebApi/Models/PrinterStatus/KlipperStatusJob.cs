@@ -1,8 +1,8 @@
-﻿using AndreasReitberger.API.Print3dServer.Core.Enums;
+﻿using AndreasReitberger.API.Moonraker.SourceGeneration;
+using AndreasReitberger.API.Print3dServer.Core.Enums;
 using AndreasReitberger.API.Print3dServer.Core.Interfaces;
 using AndreasReitberger.API.Print3dServer.Core.Utilities;
 using System;
-using System.Text.Json.Serialization;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
@@ -14,12 +14,10 @@ namespace AndreasReitberger.API.Moonraker.Models
         public partial Guid Id { get; set; }
 
         [ObservableProperty]
-
         [NotifyPropertyChangedFor(nameof(Done))]
         [NotifyPropertyChangedFor(nameof(EndTimeGeneralized))]
         [JsonPropertyName("end_time")]
         public partial double? EndTime { get; set; }
-
         partial void OnEndTimeChanged(double? value)
         {
             if (value is not null)
@@ -27,27 +25,22 @@ namespace AndreasReitberger.API.Moonraker.Models
         }
 
         [ObservableProperty]
-
         [JsonIgnore]
         public partial DateTime? EndTimeGeneralized { get; set; }
 
         [ObservableProperty]
-
         [JsonPropertyName("filament_used")]
         public partial double? FilamentUsed { get; set; }
 
         [ObservableProperty]
-
         [JsonPropertyName("filename")]
         public partial string FileName { get; set; } = string.Empty;
 
         [ObservableProperty]
-
         [JsonPropertyName("metadata")]
         public partial IGcodeMeta? Meta { get; set; }
 
         [ObservableProperty]
-
         [NotifyPropertyChangedFor(nameof(PrintDurationGeneralized))]
         [JsonPropertyName("print_duration")]
         public partial double? PrintDuration { get; set; }
@@ -58,7 +51,6 @@ namespace AndreasReitberger.API.Moonraker.Models
         }
 
         [ObservableProperty]
-
         [JsonIgnore]
         public partial TimeSpan? PrintDurationGeneralized { get; set; }
         partial void OnPrintDurationGeneralizedChanged(TimeSpan? value)
@@ -67,9 +59,8 @@ namespace AndreasReitberger.API.Moonraker.Models
         }
 
         [ObservableProperty]
-
         [JsonPropertyName("status")]
-        [field: JsonConverter(typeof(StringEnumConverter), true)]
+        //[field: JsonConverter(typeof(StringEnumConverter), true)]
         public partial Print3dJobState? State { get; set; }
 
         [ObservableProperty]
@@ -85,12 +76,10 @@ namespace AndreasReitberger.API.Moonraker.Models
         }
 
         [ObservableProperty]
-
         [JsonIgnore]
         public partial DateTime? StartTimeGeneralized { get; set; }
 
         [ObservableProperty]
-
         [JsonIgnore]
         public partial double? Done { get; set; }
         partial void OnDoneChanged(double? value)
@@ -106,7 +95,6 @@ namespace AndreasReitberger.API.Moonraker.Models
         public partial double? DonePercentage { get; set; }
 
         [ObservableProperty]
-
         [NotifyPropertyChangedFor(nameof(Done))]
         [NotifyPropertyChangedFor(nameof(TotalPrintDurationGeneralized))]
         [JsonPropertyName("total_duration")]
@@ -150,7 +138,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         #endregion
 
         #region Overrides
-        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
+        public override string ToString() => JsonSerializer.Serialize(this!, MoonrakerClientSourceGenerationContext.Default.);
 
         #endregion
 

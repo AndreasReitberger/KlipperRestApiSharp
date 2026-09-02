@@ -1,4 +1,6 @@
-﻿global using CommunityToolkit.Mvvm.ComponentModel;
+﻿global using AndreasReitberger.API.Moonraker.SourceGeneration;
+global using CommunityToolkit.Mvvm.ComponentModel;
 global using RestSharp;
-global using System.Xml.Serialization;
+global using System.Text.Json;
 global using System.Text.Json.Serialization;
+global using System.Xml.Serialization;

@@ -1,6 +1,4 @@
-﻿
-
-namespace AndreasReitberger.API.Moonraker.Models
+﻿namespace AndreasReitberger.API.Moonraker.Models
 {
     public partial class KlipperDevice : ObservableObject
     {
@@ -23,7 +21,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         #endregion
 
         #region Overrides
-        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
+        public override string ToString() => JsonSerializer.Serialize(this!, MoonrakerClientSourceGenerationContext.Default.KlipperDevice);
         #endregion
     }
 }
