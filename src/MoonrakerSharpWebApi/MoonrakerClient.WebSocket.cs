@@ -5,6 +5,7 @@ using AndreasReitberger.API.REST.Events;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Text.Json.Nodes;
 using Websocket.Client;
 
 namespace AndreasReitberger.API.Moonraker
@@ -36,7 +37,7 @@ namespace AndreasReitberger.API.Moonraker
             {
                 //object cmd = new { name = ScriptName };
                 result = await SendRestApiRequestAsync(MoonRakerCommandBase.server, Method.Get, "websocket_id").ConfigureAwait(false);
-                KlipperAccessTokenResult accessToken = GetObjectFromJson<KlipperAccessTokenResult>(result?.Result, NewtonsoftJsonSerializerSettings);
+                KlipperAccessTokenResult accessToken = JsonConvertHelper.ToObject<KlipperAccessTokenResult>(result?.Result, context: MoonrakerClientSourceGenerationContext.Default);
                 SessionId = accessToken?.Result;
                 return accessToken;
             }
@@ -70,20 +71,19 @@ namespace AndreasReitberger.API.Moonraker
                     string jsonBody = string.Empty;
                     try
                     {
-                        //ConcurrentDictionary<int, KlipperStatusExtruder> extruderStats = new();
                         ConcurrentDictionary<int, IToolhead> extruderStats = new();
-                        KlipperWebSocketMessage? method = JsonConvert.DeserializeObject<KlipperWebSocketMessage>(text);
+                        KlipperWebSocketMessage? method = JsonConvertHelper.ToObject<KlipperWebSocketMessage>(text, context: MoonrakerClientSourceGenerationContext.Default);
                         for (int i = 0; i < method?.Parameters?.Count; i++)
                         {
-                            if (method.Parameters[i] is not JObject jsonObject)
+                            if (method.Parameters[i] is not JsonObject jsonObject)
                             {
                                 continue;
                             }
                             // Parse each property individually
-                            foreach (JProperty property in jsonObject.Children<JProperty>())
+                            foreach (KeyValuePair<string, JsonNode?> property in jsonObject)
                             {
-                                name = property.Name;
-                                jsonBody = property.Value.ToString();
+                                name = property.Key;
+                                jsonBody = property.Value?.ToString() ?? string.Empty;
                                 switch (name)
                                 {
                                     case "klippy_state":
@@ -91,7 +91,7 @@ namespace AndreasReitberger.API.Moonraker
                                         break;
                                     case "probe":
                                         KlipperStatusProbe? probe =
-                                            JsonConvert.DeserializeObject<KlipperStatusProbe>(jsonBody);
+                                            JsonConvertHelper.ToObject<KlipperStatusProbe>(jsonBody);
                                         break;
                                     case "virtual_sdcard":
                                         if (!jsonBody.Contains("progress"))
@@ -99,7 +99,7 @@ namespace AndreasReitberger.API.Moonraker
                                             //break;
                                         }
                                         KlipperStatusVirtualSdcard? virtualSdcardState =
-                                            JsonConvert.DeserializeObject<KlipperStatusVirtualSdcard>(jsonBody);
+                                            JsonConvertHelper.ToObject<KlipperStatusVirtualSdcard>(jsonBody);
                                         VirtualSdCard = virtualSdcardState;
                                         break;
                                     case "display_status":
@@ -108,31 +108,31 @@ namespace AndreasReitberger.API.Moonraker
                                             break;
                                         }
                                         KlipperStatusDisplay? displayState =
-                                            JsonConvert.DeserializeObject<KlipperStatusDisplay>(jsonBody);
+                                            JsonConvertHelper.ToObject<KlipperStatusDisplay>(jsonBody);
                                         DisplayStatus = displayState;
                                         break;
                                     case "moonraker_stats":
                                         MoonrakerStatInfo? notifyProcState =
-                                            JsonConvert.DeserializeObject<MoonrakerStatInfo>(jsonBody);
+                                            JsonConvertHelper.ToObject<MoonrakerStatInfo>(jsonBody);
                                         break;
                                     case "mcu":
                                         KlipperStatusMcu? mcuState =
-                                            JsonConvert.DeserializeObject<KlipperStatusMcu>(jsonBody);
+                                            JsonConvertHelper.ToObject<KlipperStatusMcu>(jsonBody);
                                         break;
                                     case "system_stats":
                                         KlipperStatusSystemStats? systemState =
-                                            JsonConvert.DeserializeObject<KlipperStatusSystemStats>(jsonBody);
+                                            JsonConvertHelper.ToObject<KlipperStatusSystemStats>(jsonBody);
                                         break;
                                     case "registered_directories":
                                         RegisteredDirectories =
-                                            [.. JsonConvert.DeserializeObject<List<string>>(jsonBody) ?? []];
+                                            [.. JsonConvertHelper.ToObject<List<string>>(jsonBody) ?? []];
                                         break;
                                     case "cpu_temp":
                                         CpuTemp =
-                                            JsonConvert.DeserializeObject<double>(jsonBody.Replace(",", "."));
+                                            JsonConvertHelper.ToObject<double>(jsonBody.Replace(",", "."));
                                         break;
                                     case "system_cpu_usage":
-                                        Dictionary<string, double?>? tempUsageObject = JsonConvert.DeserializeObject<Dictionary<string, double?>>(jsonBody);
+                                        Dictionary<string, double?>? tempUsageObject = JsonConvertHelper.ToObject<Dictionary<string, double?>>(jsonBody);
                                         if (tempUsageObject is not null)
                                         {
                                             foreach (KeyValuePair<string, double?> cpuUsageItem in tempUsageObject)
@@ -150,7 +150,7 @@ namespace AndreasReitberger.API.Moonraker
                                         }
                                         break;
                                     case "system_memory":
-                                        Dictionary<string, long?>? tempMemoryObject = JsonConvert.DeserializeObject<Dictionary<string, long?>>(jsonBody);
+                                        Dictionary<string, long?>? tempMemoryObject = JsonConvertHelper.ToObject<Dictionary<string, long?>>(jsonBody);
                                         if (tempMemoryObject is not null)
                                         {
                                             foreach (KeyValuePair<string, long?> memoryUsage in tempMemoryObject)
@@ -171,19 +171,19 @@ namespace AndreasReitberger.API.Moonraker
                                         MoonrakerVersion = jsonBody;
                                         break;
                                     case "websocket_connections":
-                                        int wsConnections = JsonConvert.DeserializeObject<int>(jsonBody);
+                                        int wsConnections = JsonConvertHelper.ToObject<int>(jsonBody);
                                         break;
                                     case "network":
                                         Dictionary<string, KlipperNetworkInterface>? network =
-                                            JsonConvert.DeserializeObject<Dictionary<string, KlipperNetworkInterface>>(jsonBody);
+                                            JsonConvertHelper.ToObject<Dictionary<string, KlipperNetworkInterface>>(jsonBody);
                                         break;
                                     case "gcode_move":
-                                        KlipperStatusGcodeMove? gcodeMoveState = JsonConvert.DeserializeObject<KlipperStatusGcodeMove>(jsonBody);
+                                        KlipperStatusGcodeMove? gcodeMoveState = JsonConvertHelper.ToObject<KlipperStatusGcodeMove>(jsonBody);
                                         GcodeMove = gcodeMoveState;
                                         break;
                                     case "print_stats":
                                         KlipperStatusPrintStats? printStats =
-                                            JsonConvert.DeserializeObject<KlipperStatusPrintStats>(jsonBody);
+                                            JsonConvertHelper.ToObject<KlipperStatusPrintStats>(jsonBody);
                                         if (printStats is not null)
                                         {
                                             printStats.ValidPrintState = jsonBody.Contains("state");
@@ -200,20 +200,20 @@ namespace AndreasReitberger.API.Moonraker
                                         break;
                                     case "fan":
                                         KlipperStatusFan? fanState =
-                                            JsonConvert.DeserializeObject<KlipperStatusFan>(jsonBody);
+                                            JsonConvertHelper.ToObject<KlipperStatusFan>(jsonBody);
                                         ActiveFan = fanState;
                                         //Fan = fanState;
                                         break;
                                     case "toolhead":
                                         KlipperStatusToolhead? toolhead =
-                                            JsonConvert.DeserializeObject<KlipperStatusToolhead>(jsonBody);
+                                            JsonConvertHelper.ToObject<KlipperStatusToolhead>(jsonBody);
                                         ToolHeadStatus = toolhead;
                                         break;
                                     case "heater_bed":
                                         // In the status report the temp is missing, so do not parse the heater then.
                                         if (!jsonBody.Contains("temperature") || RefreshHeatersDirectly) break;
                                         KlipperStatusHeaterBed? heaterBed =
-                                            JsonConvert.DeserializeObject<KlipperStatusHeaterBed>(jsonBody);
+                                            JsonConvertHelper.ToObject<KlipperStatusHeaterBed>(jsonBody);
                                         HeatedBeds ??= new();
                                         if (heaterBed is not null)
                                         {
@@ -241,7 +241,7 @@ namespace AndreasReitberger.API.Moonraker
                                             _ = int.TryParse(extruderIndex, out index);
                                         }
                                         KlipperStatusExtruder? extruder =
-                                            JsonConvert.DeserializeObject<KlipperStatusExtruder>(jsonBody);
+                                            JsonConvertHelper.ToObject<KlipperStatusExtruder>(jsonBody);
                                         if (extruder is not null)
                                         {
                                             if (Toolheads.ContainsKey(index))
@@ -259,12 +259,12 @@ namespace AndreasReitberger.API.Moonraker
                                         break;
                                     case "motion_report":
                                         KlipperStatusMotionReport? motionReport =
-                                            JsonConvert.DeserializeObject<KlipperStatusMotionReport>(jsonBody);
+                                            JsonConvertHelper.ToObject<KlipperStatusMotionReport>(jsonBody);
                                         MotionReport = motionReport;
                                         break;
                                     case "idle_timeout":
                                         KlipperStatusIdleTimeout? idleTimeout =
-                                            JsonConvert.DeserializeObject<KlipperStatusIdleTimeout>(jsonBody);
+                                            JsonConvertHelper.ToObject<KlipperStatusIdleTimeout>(jsonBody);
 
                                         if (idleTimeout is not null)
                                             idleTimeout.ValidState = jsonBody.Contains("state");
@@ -272,12 +272,12 @@ namespace AndreasReitberger.API.Moonraker
                                         break;
                                     case "filament_switch_sensor fsensor":
                                         KlipperStatusFilamentSensor? fSensor =
-                                            JsonConvert.DeserializeObject<KlipperStatusFilamentSensor>(jsonBody);
+                                            JsonConvertHelper.ToObject<KlipperStatusFilamentSensor>(jsonBody);
                                         FilamentSensor = fSensor;
                                         break;
                                     case "pause_resume":
                                         KlipperStatusPauseResume? pauseResume =
-                                            JsonConvert.DeserializeObject<KlipperStatusPauseResume>(jsonBody);
+                                            JsonConvertHelper.ToObject<KlipperStatusPauseResume>(jsonBody);
                                         IsPaused = pauseResume?.IsPaused ?? false;
                                         break;
                                     case "action":
@@ -285,12 +285,12 @@ namespace AndreasReitberger.API.Moonraker
                                         break;
                                     case "bed_mesh":
                                         KlipperStatusMesh? mesh =
-                                            JsonConvert.DeserializeObject<KlipperStatusMesh>(jsonBody);
+                                            JsonConvertHelper.ToObject<KlipperStatusMesh>(jsonBody);
                                         break;
                                     case "job":
                                         if (!jsonBody.Contains("filename")) break;
                                         KlipperStatusJob? job =
-                                            JsonConvert.DeserializeObject<KlipperStatusJob>(jsonBody);
+                                            JsonConvertHelper.ToObject<KlipperStatusJob>(jsonBody);
                                         //ActiveJobName = job?.Filename;
                                         ActiveJob = job;
                                         //if (JobStatus?.Status == KlipperJobStates.Completed)
@@ -313,7 +313,7 @@ namespace AndreasReitberger.API.Moonraker
                                             break;
                                         }
                                         List<KlipperJobQueueItem>? queueUpdate =
-                                            JsonConvert.DeserializeObject<List<KlipperJobQueueItem>>(jsonBody);
+                                            JsonConvertHelper.ToObject<List<KlipperJobQueueItem>>(jsonBody);
                                         Jobs = [.. queueUpdate ?? []];
                                         break;
                                     case "queue_state":
@@ -346,7 +346,7 @@ namespace AndreasReitberger.API.Moonraker
 #else
                                                     string fanName = fan[fan.Length - 1];
 #endif
-                                                    KlipperStatusFan? fanObject = JsonConvert.DeserializeObject<KlipperStatusFan>(jsonBody);
+                                                    KlipperStatusFan? fanObject = JsonConvertHelper.ToObject<KlipperStatusFan>(jsonBody);
                                                     if (fanObject is not null)
                                                     {
                                                         if (Fans.ContainsKey(fanName))
@@ -371,7 +371,7 @@ namespace AndreasReitberger.API.Moonraker
 #else
                                                     string sensorName = sensor[sensor.Length - 1];
 #endif
-                                                    KlipperStatusTemperatureSensor? tempObject = JsonConvert.DeserializeObject<KlipperStatusTemperatureSensor>(jsonBody);
+                                                    KlipperStatusTemperatureSensor? tempObject = JsonConvertHelper.ToObject<KlipperStatusTemperatureSensor>(jsonBody);
                                                     if (tempObject is not null)
                                                     {
                                                         if (TemperatureSensors.ContainsKey(sensorName))
@@ -396,7 +396,7 @@ namespace AndreasReitberger.API.Moonraker
 #else
                                                     string driverName = driver[driver.Length - 1];
 #endif
-                                                    KlipperStatusDriverRespone? drvObject = JsonConvert.DeserializeObject<KlipperStatusDriverRespone>(jsonBody);
+                                                    KlipperStatusDriverRespone? drvObject = JsonConvertHelper.ToObject<KlipperStatusDriverRespone>(jsonBody);
                                                     if (drvObject?.DrvStatus is not null)
                                                     {
                                                         if (Drivers.ContainsKey(driverName))
@@ -471,38 +471,38 @@ namespace AndreasReitberger.API.Moonraker
                 }
                 else if (text.ToLower().Contains("error"))
                 {
-                    //Session = JsonConvert.DeserializeObject<EventSession>(text);
+                    //Session = JsonConvertHelper.ToObject<EventSession>(text);
                 }
                 else if (text.ToLower().Contains("result"))
                 {
                     try
                     {
-                        KlipperWebSocketResult? result = JsonConvert.DeserializeObject<KlipperWebSocketResult>(text);
+                        KlipperWebSocketResult? result = JsonConvertHelper.ToObject<KlipperWebSocketResult>(text);
                         //var type = result?.Result?.GetType();
-                        if (result?.Result is JObject jsonObject)
+                        if (result?.Result is JsonObject jsonObject)
                         {
-                            foreach (JProperty property in jsonObject.Children<JProperty>())
+                            foreach (KeyValuePair<string, JsonNode?> property in jsonObject)
                             {
-                                string name = property.Name;
-                                string jsonBody = property.Value.ToString();
+                                string name = property.Key;
+                                string jsonBody = property.Value?.ToString() ?? string.Empty;
                                 switch (name)
                                 {
                                     case "websocket_id":
                                         long wsId =
-                                            JsonConvert.DeserializeObject<long>(jsonBody);
+                                            JsonConvertHelper.ToObject<long>(jsonBody);
                                         WebSocketConnectionId = wsId;
                                         break;
                                     case "klippy_connected":
                                         bool klippyConnected =
-                                            JsonConvert.DeserializeObject<bool>(jsonBody.ToLower());
+                                            JsonConvertHelper.ToObject<bool>(jsonBody.ToLower());
                                         break;
                                     case "registered_directories":
                                         RegisteredDirectories =
-                                            [.. JsonConvert.DeserializeObject<List<string>>(jsonBody) ?? []];
+                                            [.. JsonConvertHelper.ToObject<List<string>>(jsonBody) ?? []];
                                         break;
                                     case "cpu_temp":
                                         CpuTemp =
-                                            JsonConvert.DeserializeObject<double>(jsonBody.Replace(",", "."));
+                                            JsonConvertHelper.ToObject<double>(jsonBody.Replace(",", "."));
                                         break;
                                     case "moonraker_version":
                                         MoonrakerVersion = jsonBody;
@@ -595,18 +595,18 @@ namespace AndreasReitberger.API.Moonraker
                     {
                         //ConcurrentDictionary<int, KlipperStatusExtruder> extruderStats = new();
                         ConcurrentDictionary<int, IToolhead> extruderStats = new();
-                        KlipperWebSocketMessage? method = JsonConvert.DeserializeObject<KlipperWebSocketMessage>(text);
+                        KlipperWebSocketMessage? method = JsonConvertHelper.ToObject<KlipperWebSocketMessage>(text);
                         for (int i = 0; i < method?.Parameters?.Count; i++)
                         {
-                            if (method.Parameters[i] is not JObject jsonObject)
+                            if (method.Parameters[i] is not JsonObject jsonObject)
                             {
                                 continue;
                             }
                             // Parse each property individually
-                            foreach (JProperty property in jsonObject.Children<JProperty>())
+                            foreach (KeyValuePair<string, JsonNode?> property in jsonObject)
                             {
-                                name = property.Name;
-                                jsonBody = property.Value.ToString();
+                                name = property.Key;
+                                jsonBody = property.Value?.ToString() ?? string.Empty;
                                 switch (name)
                                 {
                                     case "klippy_state":
@@ -614,7 +614,7 @@ namespace AndreasReitberger.API.Moonraker
                                         break;
                                     case "probe":
                                         KlipperStatusProbe? probe =
-                                            JsonConvert.DeserializeObject<KlipperStatusProbe>(jsonBody);
+                                            JsonConvertHelper.ToObject<KlipperStatusProbe>(jsonBody);
                                         break;
                                     case "virtual_sdcard":
                                         if (!jsonBody.Contains("progress"))
@@ -622,7 +622,7 @@ namespace AndreasReitberger.API.Moonraker
                                             //break;
                                         }
                                         KlipperStatusVirtualSdcard? virtualSdcardState =
-                                            JsonConvert.DeserializeObject<KlipperStatusVirtualSdcard>(jsonBody);
+                                            JsonConvertHelper.ToObject<KlipperStatusVirtualSdcard>(jsonBody);
                                         VirtualSdCard = virtualSdcardState;
                                         break;
                                     case "display_status":
@@ -631,31 +631,31 @@ namespace AndreasReitberger.API.Moonraker
                                             break;
                                         }
                                         KlipperStatusDisplay? displayState =
-                                            JsonConvert.DeserializeObject<KlipperStatusDisplay>(jsonBody);
+                                            JsonConvertHelper.ToObject<KlipperStatusDisplay>(jsonBody);
                                         DisplayStatus = displayState;
                                         break;
                                     case "moonraker_stats":
                                         MoonrakerStatInfo? notifyProcState =
-                                            JsonConvert.DeserializeObject<MoonrakerStatInfo>(jsonBody);
+                                            JsonConvertHelper.ToObject<MoonrakerStatInfo>(jsonBody);
                                         break;
                                     case "mcu":
                                         KlipperStatusMcu? mcuState =
-                                            JsonConvert.DeserializeObject<KlipperStatusMcu>(jsonBody);
+                                            JsonConvertHelper.ToObject<KlipperStatusMcu>(jsonBody);
                                         break;
                                     case "system_stats":
                                         KlipperStatusSystemStats? systemState =
-                                            JsonConvert.DeserializeObject<KlipperStatusSystemStats>(jsonBody);
+                                            JsonConvertHelper.ToObject<KlipperStatusSystemStats>(jsonBody);
                                         break;
                                     case "registered_directories":
                                         RegisteredDirectories =
-                                            [.. JsonConvert.DeserializeObject<List<string>>(jsonBody) ?? []];
+                                            [.. JsonConvertHelper.ToObject<List<string>>(jsonBody) ?? []];
                                         break;
                                     case "cpu_temp":
                                         CpuTemp =
-                                            JsonConvert.DeserializeObject<double>(jsonBody.Replace(",", "."));
+                                            JsonConvertHelper.ToObject<double>(jsonBody.Replace(",", "."));
                                         break;
                                     case "system_cpu_usage":
-                                        Dictionary<string, double?>? tempUsageObject = JsonConvert.DeserializeObject<Dictionary<string, double?>>(jsonBody);
+                                        Dictionary<string, double?>? tempUsageObject = JsonConvertHelper.ToObject<Dictionary<string, double?>>(jsonBody);
                                         if (tempUsageObject is not null)
                                         {
                                             foreach (KeyValuePair<string, double?> cpuUsageItem in tempUsageObject)
@@ -673,7 +673,7 @@ namespace AndreasReitberger.API.Moonraker
                                         }
                                         break;
                                     case "system_memory":
-                                        Dictionary<string, long?>? tempMemoryObject = JsonConvert.DeserializeObject<Dictionary<string, long?>>(jsonBody);
+                                        Dictionary<string, long?>? tempMemoryObject = JsonConvertHelper.ToObject<Dictionary<string, long?>>(jsonBody);
                                         if (tempMemoryObject is not null)
                                         {
                                             foreach (KeyValuePair<string, long?> memoryUsage in tempMemoryObject)
@@ -694,19 +694,19 @@ namespace AndreasReitberger.API.Moonraker
                                         MoonrakerVersion = jsonBody;
                                         break;
                                     case "websocket_connections":
-                                        int wsConnections = JsonConvert.DeserializeObject<int>(jsonBody);
+                                        int wsConnections = JsonConvertHelper.ToObject<int>(jsonBody);
                                         break;
                                     case "network":
                                         Dictionary<string, KlipperNetworkInterface>? network =
-                                            JsonConvert.DeserializeObject<Dictionary<string, KlipperNetworkInterface>>(jsonBody);
+                                            JsonConvertHelper.ToObject<Dictionary<string, KlipperNetworkInterface>>(jsonBody);
                                         break;
                                     case "gcode_move":
-                                        KlipperStatusGcodeMove? gcodeMoveState = JsonConvert.DeserializeObject<KlipperStatusGcodeMove>(jsonBody);
+                                        KlipperStatusGcodeMove? gcodeMoveState = JsonConvertHelper.ToObject<KlipperStatusGcodeMove>(jsonBody);
                                         GcodeMove = gcodeMoveState;
                                         break;
                                     case "print_stats":
                                         KlipperStatusPrintStats? printStats =
-                                            JsonConvert.DeserializeObject<KlipperStatusPrintStats>(jsonBody);
+                                            JsonConvertHelper.ToObject<KlipperStatusPrintStats>(jsonBody);
                                         if (printStats is not null)
                                         {
                                             printStats.ValidPrintState = jsonBody.Contains("state");
@@ -723,19 +723,19 @@ namespace AndreasReitberger.API.Moonraker
                                         break;
                                     case "fan":
                                         KlipperStatusFan? fanState =
-                                            JsonConvert.DeserializeObject<KlipperStatusFan>(jsonBody);
+                                            JsonConvertHelper.ToObject<KlipperStatusFan>(jsonBody);
                                         ActiveFan = fanState;
                                         break;
                                     case "toolhead":
                                         KlipperStatusToolhead? toolhead =
-                                            JsonConvert.DeserializeObject<KlipperStatusToolhead>(jsonBody);
+                                            JsonConvertHelper.ToObject<KlipperStatusToolhead>(jsonBody);
                                         ToolHeadStatus = toolhead;
                                         break;
                                     case "heater_bed":
                                         // In the status report the temp is missing, so do not parse the heater then.
                                         if (!jsonBody.Contains("temperature") || RefreshHeatersDirectly) break;
                                         KlipperStatusHeaterBed? heaterBed =
-                                            JsonConvert.DeserializeObject<KlipperStatusHeaterBed>(jsonBody);
+                                            JsonConvertHelper.ToObject<KlipperStatusHeaterBed>(jsonBody);
                                         HeatedBeds ??= new();
                                         if (heaterBed is not null)
                                         {
@@ -763,7 +763,7 @@ namespace AndreasReitberger.API.Moonraker
                                             _ = int.TryParse(extruderIndex, out index);
                                         }
                                         KlipperStatusExtruder? extruder =
-                                            JsonConvert.DeserializeObject<KlipperStatusExtruder>(jsonBody);
+                                            JsonConvertHelper.ToObject<KlipperStatusExtruder>(jsonBody);
                                         if (extruder is not null)
                                         {
                                             if (Toolheads.ContainsKey(index))
@@ -781,24 +781,24 @@ namespace AndreasReitberger.API.Moonraker
                                         break;
                                     case "motion_report":
                                         KlipperStatusMotionReport? motionReport =
-                                            JsonConvert.DeserializeObject<KlipperStatusMotionReport>(jsonBody);
+                                            JsonConvertHelper.ToObject<KlipperStatusMotionReport>(jsonBody);
                                         MotionReport = motionReport;
                                         break;
                                     case "idle_timeout":
                                         KlipperStatusIdleTimeout? idleTimeout =
-                                            JsonConvert.DeserializeObject<KlipperStatusIdleTimeout>(jsonBody);
+                                            JsonConvertHelper.ToObject<KlipperStatusIdleTimeout>(jsonBody);
                                         if (idleTimeout is not null)
                                             idleTimeout.ValidState = jsonBody.Contains("state");
                                         IdleState = idleTimeout;
                                         break;
                                     case "filament_switch_sensor fsensor":
                                         KlipperStatusFilamentSensor? fSensor =
-                                            JsonConvert.DeserializeObject<KlipperStatusFilamentSensor>(jsonBody);
+                                            JsonConvertHelper.ToObject<KlipperStatusFilamentSensor>(jsonBody);
                                         FilamentSensor = fSensor;
                                         break;
                                     case "pause_resume":
                                         KlipperStatusPauseResume? pauseResume =
-                                            JsonConvert.DeserializeObject<KlipperStatusPauseResume>(jsonBody);
+                                            JsonConvertHelper.ToObject<KlipperStatusPauseResume>(jsonBody);
                                         IsPaused = pauseResume?.IsPaused ?? false;
                                         break;
                                     case "action":
@@ -806,12 +806,12 @@ namespace AndreasReitberger.API.Moonraker
                                         break;
                                     case "bed_mesh":
                                         KlipperStatusMesh? mesh =
-                                            JsonConvert.DeserializeObject<KlipperStatusMesh>(jsonBody);
+                                            JsonConvertHelper.ToObject<KlipperStatusMesh>(jsonBody);
                                         break;
                                     case "job":
                                         if (!jsonBody.Contains("filename")) break;
                                         KlipperStatusJob? job =
-                                            JsonConvert.DeserializeObject<KlipperStatusJob>(jsonBody);
+                                            JsonConvertHelper.ToObject<KlipperStatusJob>(jsonBody);
                                         //ActiveJobName = job?.Filename;
                                         ActiveJob = job;
                                         //if (JobStatus?.Status == KlipperJobStates.Completed)
@@ -834,7 +834,7 @@ namespace AndreasReitberger.API.Moonraker
                                             break;
                                         }
                                         List<KlipperJobQueueItem>? queueUpdate =
-                                            JsonConvert.DeserializeObject<List<KlipperJobQueueItem>>(jsonBody);
+                                            JsonConvertHelper.ToObject<List<KlipperJobQueueItem>>(jsonBody);
                                         Jobs = [.. queueUpdate ?? []];
                                         break;
                                     case "queue_state":
@@ -867,7 +867,7 @@ namespace AndreasReitberger.API.Moonraker
 #else
                                                     string fanName = fan[fan.Length - 1];
 #endif
-                                                    KlipperStatusFan? fanObject = JsonConvert.DeserializeObject<KlipperStatusFan>(jsonBody);
+                                                    KlipperStatusFan? fanObject = JsonConvertHelper.ToObject<KlipperStatusFan>(jsonBody);
                                                     if (fanObject is not null)
                                                     {
                                                         if (Fans.ContainsKey(fanName))
@@ -892,7 +892,7 @@ namespace AndreasReitberger.API.Moonraker
 #else
                                                     string sensorName = sensor[sensor.Length - 1];
 #endif
-                                                    KlipperStatusTemperatureSensor? tempObject = JsonConvert.DeserializeObject<KlipperStatusTemperatureSensor>(jsonBody);
+                                                    KlipperStatusTemperatureSensor? tempObject = JsonConvertHelper.ToObject<KlipperStatusTemperatureSensor>(jsonBody);
                                                     if (tempObject is not null)
                                                     {
                                                         if (TemperatureSensors.ContainsKey(sensorName))
@@ -917,7 +917,7 @@ namespace AndreasReitberger.API.Moonraker
 #else
                                                     string driverName = driver[driver.Length - 1];
 #endif
-                                                    KlipperStatusDriverRespone? drvObject = JsonConvert.DeserializeObject<KlipperStatusDriverRespone>(jsonBody);
+                                                    KlipperStatusDriverRespone? drvObject = JsonConvertHelper.ToObject<KlipperStatusDriverRespone>(jsonBody);
                                                     if (drvObject?.DrvStatus is not null)
                                                     {
                                                         if (Drivers.ContainsKey(driverName))
@@ -991,38 +991,38 @@ namespace AndreasReitberger.API.Moonraker
                 }
                 else if (text.ToLower().Contains("error"))
                 {
-                    //Session = JsonConvert.DeserializeObject<EventSession>(text);
+                    //Session = JsonConvertHelper.ToObject<EventSession>(text);
                 }
                 else if (text.ToLower().Contains("result"))
                 {
                     try
                     {
-                        KlipperWebSocketResult? result = JsonConvert.DeserializeObject<KlipperWebSocketResult>(text);
+                        KlipperWebSocketResult? result = JsonConvertHelper.ToObject<KlipperWebSocketResult>(text);
                         //var type = result?.Result?.GetType();
-                        if (result?.Result is JObject jsonObject)
+                        if (result?.Result is JsonObject jsonObject)
                         {
-                            foreach (JProperty property in jsonObject.Children<JProperty>())
+                            foreach (KeyValuePair<string, JsonNode?> property in jsonObject)
                             {
-                                string name = property.Name;
-                                string jsonBody = property.Value.ToString();
+                                string name = property.Key;
+                                string jsonBody = property.Value?.ToString() ?? string.Empty;
                                 switch (name)
                                 {
                                     case "websocket_id":
                                         long wsId =
-                                            JsonConvert.DeserializeObject<long>(jsonBody);
+                                            JsonConvertHelper.ToObject<long>(jsonBody);
                                         WebSocketConnectionId = wsId;
                                         break;
                                     case "klippy_connected":
                                         bool klippyConnected =
-                                            JsonConvert.DeserializeObject<bool>(jsonBody.ToLower());
+                                            JsonConvertHelper.ToObject<bool>(jsonBody.ToLower());
                                         break;
                                     case "registered_directories":
                                         RegisteredDirectories =
-                                            [.. JsonConvert.DeserializeObject<List<string>>(jsonBody) ?? []];
+                                            [.. JsonConvertHelper.ToObject<List<string>>(jsonBody) ?? []];
                                         break;
                                     case "cpu_temp":
                                         CpuTemp =
-                                            JsonConvert.DeserializeObject<double>(jsonBody.Replace(",", "."));
+                                            JsonConvertHelper.ToObject<double>(jsonBody.Replace(",", "."));
                                         break;
                                     case "moonraker_version":
                                         MoonrakerVersion = jsonBody;

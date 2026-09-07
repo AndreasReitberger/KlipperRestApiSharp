@@ -34,7 +34,7 @@ namespace AndreasReitberger.API.Moonraker
                        cts: default
                        )
                     .ConfigureAwait(false);
-                KlipperWebcamConfigRespone? configs = GetObjectFromJson<KlipperWebcamConfigRespone>(result?.Result, NewtonsoftJsonSerializerSettings);
+                KlipperWebcamConfigRespone? configs = JsonConvertHelper.ToObject<KlipperWebcamConfigRespone>(result?.Result, context: MoonrakerClientSourceGenerationContext.Default);
                 if (configs?.Result?.Webcams?.Count > 0)
                     return [.. configs?.Result?.Webcams ?? []];
                 else
@@ -74,7 +74,7 @@ namespace AndreasReitberger.API.Moonraker
                 {
                     case MoonrakerOperatingSystems.MainsailOS:
                     case MoonrakerOperatingSystems.FluiddPi:
-                        Dictionary<Guid, KlipperDatabaseFluiddValueWebcamConfig>? fluiddObject = GetObjectFromJson<Dictionary<Guid, KlipperDatabaseFluiddValueWebcamConfig>>(resultString, NewtonsoftJsonSerializerSettings);
+                        Dictionary<Guid, KlipperDatabaseFluiddValueWebcamConfig>? fluiddObject = JsonConvertHelper.ToObject<Dictionary<Guid, KlipperDatabaseFluiddValueWebcamConfig>>(resultString, context: MoonrakerClientSourceGenerationContext.Default);
                         if (fluiddObject?.Count > 0)
                         {
                             IEnumerable<KlipperDatabaseWebcamConfig> temp = fluiddObject.Select(item => new KlipperDatabaseWebcamConfig()

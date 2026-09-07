@@ -8,19 +8,15 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-
         public partial bool On { get; set; }
 
         [ObservableProperty]
-
-        public partial long? Voltage { get; set; }
+        public partial double? Voltage { get; set; }
 
         [ObservableProperty]
-
         [NotifyPropertyChangedFor(nameof(Speed))]
         [JsonPropertyName("speed")]
         public partial double? FanSpeed { get; set; } = 0;
-
         partial void OnFanSpeedChanged(double? value)
         {
             if (value is not null)
@@ -45,15 +41,13 @@ namespace AndreasReitberger.API.Moonraker.Models
         */
 
         [ObservableProperty]
-        [field: JsonIgnore, JsonIgnore, XmlIgnore]
+        [field: JsonIgnore, XmlIgnore]
         [JsonPropertyName("rpm")]
         public partial long? Rpm { get; set; } = 0;
 
         [ObservableProperty]
-
         [JsonIgnore, XmlIgnore]
         public partial int? Percent { get; set; } = 0;
-
         partial void OnPercentChanged(int? value)
         {
             On = value > 0;
@@ -65,7 +59,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         #endregion
 
         #region Overrides
-        public override string ToString() => JsonSerializer.Serialize(this!, MoonrakerClientSourceGenerationContext.Default.);
+        public override string ToString() => JsonSerializer.Serialize(this!, MoonrakerClientSourceGenerationContext.Default.KlipperStatusFan);
 
         #endregion
     }

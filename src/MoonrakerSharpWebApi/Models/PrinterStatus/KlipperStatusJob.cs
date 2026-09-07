@@ -1,5 +1,4 @@
-﻿using AndreasReitberger.API.Moonraker.SourceGeneration;
-using AndreasReitberger.API.Print3dServer.Core.Enums;
+﻿using AndreasReitberger.API.Print3dServer.Core.Enums;
 using AndreasReitberger.API.Print3dServer.Core.Interfaces;
 using AndreasReitberger.API.Print3dServer.Core.Utilities;
 using System;
@@ -138,7 +137,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         #endregion
 
         #region Overrides
-        public override string ToString() => JsonSerializer.Serialize(this!, MoonrakerClientSourceGenerationContext.Default.);
+        public override string ToString() => JsonSerializer.Serialize(this!, MoonrakerClientSourceGenerationContext.Default.KlipperStatusJob);
 
         #endregion
 
