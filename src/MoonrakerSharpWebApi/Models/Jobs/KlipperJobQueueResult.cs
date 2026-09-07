@@ -1,5 +1,4 @@
 ﻿using AndreasReitberger.API.Print3dServer.Core.Interfaces;
-using Newtonsoft.Json;
 using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Moonraker.Models
@@ -9,17 +8,17 @@ namespace AndreasReitberger.API.Moonraker.Models
         #region Properties
         [ObservableProperty]
 
-        [JsonProperty("queued_jobs")]
+        [JsonPropertyName("queued_jobs")]
         public partial List<IPrint3dJob> QueuedJobs { get; set; } = [];
 
         [ObservableProperty]
 
-        [JsonProperty("queue_state")]
+        [JsonPropertyName("queue_state")]
         public partial string QueueState { get; set; } = string.Empty;
         #endregion
 
         #region Overrides
-        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
+        public override string ToString() => JsonSerializer.Serialize(this!, MoonrakerClientSourceGenerationContext.Default.KlipperJobQueueResult);
 
         #endregion
     }

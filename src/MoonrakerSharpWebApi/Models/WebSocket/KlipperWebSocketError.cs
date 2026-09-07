@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
@@ -6,16 +6,16 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-        [JsonProperty("code")]
+        [JsonPropertyName("code")]
         public partial long Code { get; set; }
 
         [ObservableProperty]
-        [JsonProperty("message")]
+        [JsonPropertyName("message")]
         public partial string Message { get; set; } = string.Empty;
         #endregion
 
         #region Overrides
-        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
+        public override string ToString() => JsonSerializer.Serialize(this!, MoonrakerClientSourceGenerationContext.Default.KlipperWebSocketError);
         #endregion
     }
 }

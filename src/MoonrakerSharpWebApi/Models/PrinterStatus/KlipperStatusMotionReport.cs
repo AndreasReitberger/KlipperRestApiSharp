@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
@@ -8,32 +7,32 @@ namespace AndreasReitberger.API.Moonraker.Models
         #region Properties
         [ObservableProperty]
 
-        [JsonProperty("live_position")]
+        [JsonPropertyName("live_position")]
         public partial List<double> LivePosition { get; set; } = [];
 
         [ObservableProperty]
 
-        [JsonProperty("steppers")]
+        [JsonPropertyName("steppers")]
         public partial List<string> Steppers { get; set; } = [];
 
         [ObservableProperty]
 
-        [JsonProperty("live_velocity")]
+        [JsonPropertyName("live_velocity")]
         public partial double? LiveVelocity { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("live_extruder_velocity")]
+        [JsonPropertyName("live_extruder_velocity")]
         public partial double? LiveExtruderVelocity { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("trapq")]
+        [JsonPropertyName("trapq")]
         public partial List<string> Trapq { get; set; } = [];
         #endregion
 
         #region Overrides
-        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
+        public override string ToString() => JsonSerializer.Serialize(this!, MoonrakerClientSourceGenerationContext.Default.KlipperStatusMotionReport);
         #endregion
     }
 }

@@ -1,6 +1,5 @@
 ﻿using AndreasReitberger.API.Print3dServer.Core.Events;
 using AndreasReitberger.API.Print3dServer.Core.Interfaces;
-using Newtonsoft.Json;
 using System.Collections.ObjectModel;
 
 namespace AndreasReitberger.API.Moonraker.Models
@@ -12,7 +11,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         #endregion
 
         #region Overrides
-        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
+        public override string ToString() => JsonSerializer.Serialize(this!, MoonrakerClientSourceGenerationContext.Default.KlipperRemotePrintersChangedEventArgs);
 
         #endregion
     }

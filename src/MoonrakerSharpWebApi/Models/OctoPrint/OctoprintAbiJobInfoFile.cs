@@ -1,38 +1,36 @@
-﻿using Newtonsoft.Json;
-
-namespace AndreasReitberger.API.Moonraker.Models
+﻿namespace AndreasReitberger.API.Moonraker.Models
 {
     public partial class OctoprintAbiJobInfoFile : ObservableObject
     {
         #region Properties
         [ObservableProperty]
 
-        [JsonProperty("name")]
+        [JsonPropertyName("name")]
         public partial string Name { get; set; } = string.Empty;
 
         [ObservableProperty]
 
-        [JsonProperty("origin")]
+        [JsonPropertyName("origin")]
         public partial string Origin { get; set; } = string.Empty;
 
         [ObservableProperty]
 
-        [JsonProperty("size", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("size")]
         public partial long Size { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("date", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("date")]
         public partial long Date { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("path", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("path")]
         public partial string Path { get; set; } = string.Empty;
         #endregion
 
         #region Overrides
-        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
+        public override string ToString() => JsonSerializer.Serialize(this!, MoonrakerClientSourceGenerationContext.Default.OctoprintAbiJobInfoFile);
         #endregion
     }
 }

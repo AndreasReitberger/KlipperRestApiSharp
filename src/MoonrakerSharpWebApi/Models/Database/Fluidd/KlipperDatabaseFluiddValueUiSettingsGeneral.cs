@@ -1,24 +1,20 @@
-﻿using Newtonsoft.Json;
-
-namespace AndreasReitberger.API.Moonraker.Models
+﻿namespace AndreasReitberger.API.Moonraker.Models
 {
     public partial class KlipperDatabaseFluiddValueUiSettingsGeneral : ObservableObject
     {
         #region Properties
         [ObservableProperty]
-
-        [JsonProperty("locale")]
+        [JsonPropertyName("locale")]
         public partial string Locale { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("instanceName")]
+        [JsonPropertyName("instanceName")]
         public partial string InstanceName { get; set; } = string.Empty;
 
         #endregion
 
         #region Overrides
-        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
+        public override string ToString() => JsonSerializer.Serialize(this!, MoonrakerClientSourceGenerationContext.Default.KlipperDatabaseFluiddValueUiSettingsGeneral);
         #endregion
     }
 }

@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
@@ -8,62 +7,62 @@ namespace AndreasReitberger.API.Moonraker.Models
         #region Properties
         [ObservableProperty]
 
-        [JsonProperty("square_corner_velocity")]
+        [JsonPropertyName("square_corner_velocity")]
         public partial double? SquareCornerVelocity { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("max_accel")]
+        [JsonPropertyName("max_accel")]
         public partial double? MaxAccel { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("homed_axes")]
+        [JsonPropertyName("homed_axes")]
         public partial string HomedAxes { get; set; } = string.Empty;
 
         [ObservableProperty]
 
-        [JsonProperty("estimated_print_time")]
+        [JsonPropertyName("estimated_print_time")]
         public partial double? EstimatedPrintTime { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("max_velocity")]
+        [JsonPropertyName("max_velocity")]
         public partial double? MaxVelocity { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("print_time")]
+        [JsonPropertyName("print_time")]
         public partial double? PrintTime { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("max_accel_to_decel")]
+        [JsonPropertyName("max_accel_to_decel")]
         public partial double? MaxAccelToDecel { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("axis_minimum")]
+        [JsonPropertyName("axis_minimum")]
         public partial List<double> AxisMinimum { get; set; } = [];
 
         [ObservableProperty]
 
-        [JsonProperty("stalls")]
+        [JsonPropertyName("stalls")]
         public partial double? Stalls { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("axis_maximum")]
+        [JsonPropertyName("axis_maximum")]
         public partial List<double> AxisMaximum { get; set; } = [];
 
         [ObservableProperty]
 
-        [JsonProperty("position")]
+        [JsonPropertyName("position")]
         public partial List<double> Position { get; set; } = [];
 
         [ObservableProperty]
 
-        [JsonProperty("extruder")]
+        [JsonPropertyName("extruder")]
         public partial string Extruder { get; set; } = string.Empty;
         #endregion
 
@@ -96,7 +95,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         #endregion
 
         #region Overrides
-        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
+        public override string ToString() => JsonSerializer.Serialize(this!, MoonrakerClientSourceGenerationContext.Default.KlipperStatusToolhead);
         #endregion
     }
 }

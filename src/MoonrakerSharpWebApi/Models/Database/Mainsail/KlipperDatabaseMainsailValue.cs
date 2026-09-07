@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
@@ -7,48 +6,40 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-
-        [JsonProperty("dashboard")]
+        [JsonPropertyName("dashboard")]
         public partial KlipperDatabaseMainsailValueDashboard? Dashboard { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("general")]
+        [JsonPropertyName("general")]
         public partial KlipperDatabaseMainsailValueGeneral? General { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("heightmap")]
+        [JsonPropertyName("heightmap")]
         public partial KlipperDatabaseMainsailValueHeightmapSettings? Heightmap { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("init")]
+        [JsonPropertyName("init")]
         public partial bool Init { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("presets")]
+        [JsonPropertyName("presets")]
         public partial List<KlipperDatabaseMainsailValuePreset> Presets { get; set; } = [];
 
         [ObservableProperty]
-
-        [JsonProperty("remote_printers")]
+        [JsonPropertyName("remote_printers")]
         public partial List<object> PemotePrinters { get; set; } = [];
 
         [ObservableProperty]
-
-        [JsonProperty("settings")]
+        [JsonPropertyName("settings")]
         public partial KlipperDatabaseMainsailValueSettings? Settings { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("webcam")]
+        [JsonPropertyName("webcam")]
         public partial KlipperDatabaseMainsailValueWebcam? Webcam { get; set; }
         #endregion
 
         #region Overrides
-        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
+        public override string ToString() => JsonSerializer.Serialize(this!, MoonrakerClientSourceGenerationContext.Default.KlipperDatabaseMainsailValue);
         #endregion
     }
 }

@@ -9,11 +9,11 @@ namespace AndreasReitberger.API.Moonraker
     public partial class MoonrakerClient
     {
         #region Static
-        public static ObservableCollection<MoonrakerOperatingSystems> SupportedOperatingSystems = new(
-            System.Enum.GetValues(typeof(MoonrakerOperatingSystems)).Cast<MoonrakerOperatingSystems>());
+        public static ObservableCollection<MoonrakerOperatingSystems> SupportedOperatingSystems = [with(
+            System.Enum.GetValues(typeof(MoonrakerOperatingSystems)).Cast<MoonrakerOperatingSystems>())];
 
-        public static ObservableCollection<string> SupportedOperatingSystemNames = new(
-            SupportedOperatingSystems.Select(item => item.ToString()));
+        public static ObservableCollection<string> SupportedOperatingSystemNames = [with(
+            SupportedOperatingSystems.Select(item => item.ToString()))];
 
         public static void AddToConcurrentDictionary<T1, T2>(Dictionary<T1, T2> source, ConcurrentDictionary<T1, T2> target) where T1 : notnull
         {

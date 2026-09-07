@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
@@ -7,18 +6,16 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-
-        [JsonProperty("configs")]
+        [JsonPropertyName("configs")]
         public partial List<KlipperDatabaseMainsailValueWebcamConfig> Configs { get; set; } = [];
 
         [ObservableProperty]
-
-        [JsonProperty("boolNavi")]
+        [JsonPropertyName("boolNavi")]
         public partial bool BoolNavi { get; set; }
         #endregion
 
         #region Overrides
-        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
+        public override string ToString() => JsonSerializer.Serialize(this!, MoonrakerClientSourceGenerationContext.Default.KlipperDatabaseMainsailValueWebcam);
         #endregion
     }
 }

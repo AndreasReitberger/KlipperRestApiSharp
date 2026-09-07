@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace AndreasReitberger.API.Moonraker.Models.WebSocket
 {
@@ -7,17 +7,17 @@ namespace AndreasReitberger.API.Moonraker.Models.WebSocket
         #region Properties
         [ObservableProperty]
 
-        [JsonProperty("heater_bed")]
+        [JsonPropertyName("heater_bed")]
         public partial KlipperStatusHeaterBed? HeaterBed { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("toolhead")]
+        [JsonPropertyName("toolhead")]
         public partial KlipperStatusToolhead? ToolHead { get; set; }
         #endregion
 
         #region Overrides
-        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
+        public override string ToString() => JsonSerializer.Serialize(this!, MoonrakerClientSourceGenerationContext.Default.KlipperWebSocketHeaterBedRespone);
         #endregion
     }
 }

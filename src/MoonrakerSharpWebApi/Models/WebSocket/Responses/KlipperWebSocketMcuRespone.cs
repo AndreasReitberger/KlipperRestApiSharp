@@ -1,28 +1,26 @@
-﻿using Newtonsoft.Json;
-
-namespace AndreasReitberger.API.Moonraker.Models.WebSocket
+﻿namespace AndreasReitberger.API.Moonraker.Models.WebSocket
 {
     public partial class KlipperWebSocketMcuRespone : ObservableObject
     {
         #region Properties
         [ObservableProperty]
 
-        [JsonProperty("mcu")]
+        [JsonPropertyName("mcu")]
         public partial KlipperStatusMcu? Mcu { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("system_stats")]
+        [JsonPropertyName("system_stats")]
         public partial KlipperStatusSystemStats? SystemStats { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("toolhead")]
+        [JsonPropertyName("toolhead")]
         public partial KlipperStatusToolhead? Toolhead { get; set; }
         #endregion
 
         #region Overrides
-        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
+        public override string ToString() => JsonSerializer.Serialize(this!, MoonrakerClientSourceGenerationContext.Default.KlipperWebSocketMcuRespone);
         #endregion
     }
 }

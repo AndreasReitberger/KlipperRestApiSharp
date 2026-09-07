@@ -1,22 +1,20 @@
-﻿using Newtonsoft.Json;
-
-namespace AndreasReitberger.API.Moonraker.Models
+﻿namespace AndreasReitberger.API.Moonraker.Models
 {
     public partial class KlipperEventSession
     {
         #region Properties
-        [JsonProperty("callback_id")]
+        [JsonPropertyName("callback_id")]
         public long CallbackId { get; set; }
 
-        [JsonProperty("data")]
+        [JsonPropertyName("data")]
         public object? Data { get; set; }
 
-        [JsonProperty("session")]
+        [JsonPropertyName("session")]
         public string Session { get; set; } = string.Empty;
         #endregion
 
         #region Overrides
-        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
+        public override string ToString() => JsonSerializer.Serialize(this!, MoonrakerClientSourceGenerationContext.Default.KlipperEventSession);
         #endregion
     }
 }

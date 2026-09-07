@@ -1,6 +1,5 @@
 ﻿using AndreasReitberger.API.Print3dServer.Core.Interfaces;
 using AndreasReitberger.API.Print3dServer.Core.Utilities;
-using Newtonsoft.Json;
 using System;
 using System.Threading.Tasks;
 
@@ -16,18 +15,18 @@ namespace AndreasReitberger.API.Moonraker.Models
 
         [ObservableProperty]
 
-        [JsonProperty("filename")]
+        [JsonPropertyName("filename")]
         public partial string FileName { get; set; } = string.Empty;
 
         [ObservableProperty]
 
-        [JsonProperty("job_id")]
+        [JsonPropertyName("job_id")]
         public partial string JobId { get; set; } = string.Empty;
 
         [ObservableProperty]
 
         [NotifyPropertyChangedFor(nameof(TimeAddedGeneralized))]
-        [JsonProperty("time_added")]
+        [JsonPropertyName("time_added")]
         public partial double? TimeAdded { get; set; }
 
         partial void OnTimeAddedChanged(double? value)
@@ -44,7 +43,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         [ObservableProperty]
 
         [NotifyPropertyChangedFor(nameof(TimeInQueueGeneralized))]
-        [JsonProperty("time_in_queue")]
+        [JsonPropertyName("time_in_queue")]
         public partial double? TimeInQueue { get; set; }
 
         partial void OnTimeInQueueChanged(double? value)
@@ -86,7 +85,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         #endregion
 
         #region Overrides
-        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
+        public override string ToString() => JsonSerializer.Serialize(this!, MoonrakerClientSourceGenerationContext.Default.KlipperJobQueueItem);
 
         #endregion
 

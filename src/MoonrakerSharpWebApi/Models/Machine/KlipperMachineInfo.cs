@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
@@ -8,42 +7,42 @@ namespace AndreasReitberger.API.Moonraker.Models
         #region Properties
         [ObservableProperty]
 
-        [JsonProperty("cpu_info")]
+        [JsonPropertyName("cpu_info")]
         public partial KlipperCpuInfo? CpuInfo { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("sd_info")]
+        [JsonPropertyName("sd_info")]
         public partial KlipperSdInfo? SdInfo { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("distribution")]
+        [JsonPropertyName("distribution")]
         public partial KlipperDistribution? Distribution { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("virtualization")]
+        [JsonPropertyName("virtualization")]
         public partial KlipperVirtualization? Virtualization { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("available_services")]
+        [JsonPropertyName("available_services")]
         public partial List<string> AvailableServices { get; set; } = [];
 
         [ObservableProperty]
 
-        [JsonProperty("service_state")]
+        [JsonPropertyName("service_state")]
         public partial Dictionary<string, KlipperState> ServiceState { get; set; } = [];
 
         [ObservableProperty]
 
-        [JsonProperty("network")]
+        [JsonPropertyName("network")]
         public partial Dictionary<string, KlipperNetworkInterface> Network { get; set; } = [];
         #endregion
 
         #region Overrides
-        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
+        public override string ToString() => JsonSerializer.Serialize(this!, MoonrakerClientSourceGenerationContext.Default.KlipperMachineInfo);
         #endregion
     }
 }

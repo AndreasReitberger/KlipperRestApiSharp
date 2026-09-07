@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
@@ -8,17 +7,17 @@ namespace AndreasReitberger.API.Moonraker.Models
         #region Properties
         [ObservableProperty]
 
-        [JsonProperty("available_sensors")]
+        [JsonPropertyName("available_sensors")]
         public partial List<string> AvailableSensors { get; set; } = [];
 
         [ObservableProperty]
 
-        [JsonProperty("available_heaters")]
+        [JsonPropertyName("available_heaters")]
         public partial List<string> AvailableHeaters { get; set; } = [];
         #endregion
 
         #region Overrides
-        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
+        public override string ToString() => JsonSerializer.Serialize(this!, MoonrakerClientSourceGenerationContext.Default.KlipperStatusHeaters);
         #endregion
     }
 }

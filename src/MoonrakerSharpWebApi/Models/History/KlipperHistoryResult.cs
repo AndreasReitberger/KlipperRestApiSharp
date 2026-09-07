@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
@@ -8,17 +7,17 @@ namespace AndreasReitberger.API.Moonraker.Models
         #region Properties
         [ObservableProperty]
 
-        [JsonProperty("count")]
+        [JsonPropertyName("count")]
         public partial long Count { get; set; } = 0;
 
         [ObservableProperty]
 
-        [JsonProperty("jobs")]
+        [JsonPropertyName("jobs")]
         public partial List<KlipperJobItem> Jobs { get; set; } = [];
         #endregion
 
         #region Overrides
-        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
+        public override string ToString() => JsonSerializer.Serialize(this!, MoonrakerClientSourceGenerationContext.Default.KlipperHistoryResult);
         #endregion
     }
 }

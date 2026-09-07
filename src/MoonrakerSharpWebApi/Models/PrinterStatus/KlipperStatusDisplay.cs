@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
@@ -12,12 +11,12 @@ namespace AndreasReitberger.API.Moonraker.Models
         [ObservableProperty]
 
         [NotifyPropertyChangedFor(nameof(PercentageProgress))]
-        [JsonProperty("progress")]
+        [JsonPropertyName("progress")]
         public partial double? Progress { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("message")]
+        [JsonPropertyName("message")]
         public partial string Message { get; set; } = string.Empty;
         #endregion
 
@@ -38,7 +37,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         #endregion
 
         #region Overrides
-        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
+        public override string ToString() => JsonSerializer.Serialize(this!, MoonrakerClientSourceGenerationContext.Default.KlipperStatusDisplay);
         #endregion
     }
 }

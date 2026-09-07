@@ -1,10 +1,8 @@
-﻿using AndreasReitberger.API.Moonraker.Models;
-using AndreasReitberger.API.Print3dServer.Core;
+﻿#if false
+using AndreasReitberger.API.Moonraker.Models;
 using AndreasReitberger.API.Print3dServer.Core.Interfaces;
-using AndreasReitberger.API.Print3dServer.Core.JSON.Newtonsoft;
 using AndreasReitberger.API.REST;
 using AndreasReitberger.API.REST.Interfaces;
-using Newtonsoft.Json;
 
 namespace AndreasReitberger.API.Moonraker
 {
@@ -15,7 +13,7 @@ namespace AndreasReitberger.API.Moonraker
         #region Debug
 
         [ObservableProperty]
-        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public new partial JsonSerializerSettings NewtonsoftJsonSerializerSettings { get; set; } = DefaultNewtonsoftJsonSerializerSettings;
 
         public new static JsonSerializerSettings DefaultNewtonsoftJsonSerializerSettings = new()
@@ -66,3 +64,4 @@ namespace AndreasReitberger.API.Moonraker
 #endif
     }
 }
+#endif

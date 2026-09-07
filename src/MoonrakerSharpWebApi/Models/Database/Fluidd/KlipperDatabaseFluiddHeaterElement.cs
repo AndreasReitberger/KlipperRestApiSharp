@@ -1,28 +1,23 @@
-﻿using Newtonsoft.Json;
-
-namespace AndreasReitberger.API.Moonraker.Models
+﻿namespace AndreasReitberger.API.Moonraker.Models
 {
     public partial class KlipperDatabaseFluiddHeaterElement : ObservableObject
     {
         #region Properties
         [ObservableProperty]
-
-        [JsonProperty("active")]
+        [JsonPropertyName("active")]
         public partial bool Active { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("value")]
+        [JsonPropertyName("value")]
         public partial long? Value { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("type")]
+        [JsonPropertyName("type")]
         public partial string Type { get; set; } = string.Empty;
         #endregion
 
         #region Overrides
-        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
+        public override string ToString() => JsonSerializer.Serialize(this!, MoonrakerClientSourceGenerationContext.Default.KlipperDatabaseFluiddHeaterElement);
         #endregion
     }
 }

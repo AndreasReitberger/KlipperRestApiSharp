@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
@@ -12,27 +11,27 @@ namespace AndreasReitberger.API.Moonraker.Models
         [ObservableProperty]
 
         [NotifyPropertyChangedFor(nameof(PercentageProgress))]
-        [JsonProperty("progress")]
+        [JsonPropertyName("progress")]
         public partial double? Progress { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("file_position")]
+        [JsonPropertyName("file_position")]
         public partial long? FilePosition { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("is_active")]
+        [JsonPropertyName("is_active")]
         public partial bool IsActive { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("file_path")]
+        [JsonPropertyName("file_path")]
         public partial string FilePath { get; set; } = string.Empty;
 
         [ObservableProperty]
 
-        [JsonProperty("file_size")]
+        [JsonPropertyName("file_size")]
         public partial long? FileSize { get; set; }
         #endregion
 
@@ -53,7 +52,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         #endregion
 
         #region Overrides
-        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
+        public override string ToString() => JsonSerializer.Serialize(this!, MoonrakerClientSourceGenerationContext.Default.KlipperStatusVirtualSdcard);
         #endregion
     }
 }

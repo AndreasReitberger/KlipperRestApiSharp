@@ -3,7 +3,6 @@ using AndreasReitberger.API.Moonraker.Models;
 using AndreasReitberger.API.Moonraker.Structs;
 using AndreasReitberger.API.REST.Events;
 using AndreasReitberger.API.REST.Interfaces;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +15,7 @@ namespace AndreasReitberger.API.Moonraker
         #region Properties
 
         [ObservableProperty]
-        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public partial List<string> AvailableNamespaces { get; set; } = [];
 
         #endregion
@@ -33,17 +32,12 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Get,
                        command: "database/list",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        cts: default
                        )
                     .ConfigureAwait(false);
-                /*
-                result =
-                    await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Get, $"database/list")
-                    .ConfigureAwait(false);
-                */
-                KlipperDatabaseNamespaceListRespone? queryResult = GetObjectFromJson<KlipperDatabaseNamespaceListRespone>(result?.Result, NewtonsoftJsonSerializerSettings);
+                KlipperDatabaseNamespaceListRespone? queryResult = JsonConvertHelper.ToObject<KlipperDatabaseNamespaceListRespone>(result?.Result, context: MoonrakerClientSourceGenerationContext.Default);
                 return queryResult?.Result?.Namespaces ?? [];
             }
             catch (Exception exc)
@@ -93,28 +87,24 @@ namespace AndreasReitberger.API.Moonraker
                     // If namespace is missing, just return an empty resultObject now
                     else return resultObject;
                 }
-                Dictionary<string, string> urlSegments = new()
-                {
-                    { "namespace", namespaceName }
-                };
-                if (!string.IsNullOrEmpty(key)) urlSegments.Add("key", key);
+                List<Tuple<string, string>> urlSegments = 
+                [
+                    new("namespace", namespaceName)
+                ];
+                if (!string.IsNullOrEmpty(key)) urlSegments.Add(new("key", key));
 
                 string targetUri = $"{MoonrakerCommands.Server}";
                 result = await SendRestApiRequestAsync(
                        requestTargetUri: targetUri,
                        method: Method.Get,
                        command: "database/item",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        urlSegments: urlSegments,
                        cts: default
                        )
                     .ConfigureAwait(false);
-                /*
-                result = await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Get, $"database/item", default, null, urlSegments)
-                            .ConfigureAwait(false);
-                */
-                KlipperDatabaseItemRespone? queryResult = GetObjectFromJson<KlipperDatabaseItemRespone>(result?.Result);
+                KlipperDatabaseItemRespone? queryResult = JsonConvertHelper.ToObject<KlipperDatabaseItemRespone>(result?.Result);
                 if (queryResult?.Result?.Value is not null)
                 {
                     resultObject = new()
@@ -145,13 +135,11 @@ namespace AndreasReitberger.API.Moonraker
                 KeyValuePair<string, object>? pair = result?.FirstOrDefault();
                 if (string.IsNullOrEmpty(pair?.Key)) return resultObject;
 
-                //resultString = pair.Value.ToString();
                 resultString = pair.Value.Value.ToString();
-
                 switch (OperatingSystem)
                 {
                     case MoonrakerOperatingSystems.MainsailOS:
-                        KlipperDatabaseMainsailValueGeneral? mainsailObject = GetObjectFromJson<KlipperDatabaseMainsailValueGeneral>(resultString);
+                        KlipperDatabaseMainsailValueGeneral? mainsailObject = JsonConvertHelper.ToObject<KlipperDatabaseMainsailValueGeneral>(resultString);
                         if (mainsailObject is not null)
                         {
                             resultObject = new()
@@ -162,7 +150,7 @@ namespace AndreasReitberger.API.Moonraker
                         }
                         break;
                     case MoonrakerOperatingSystems.FluiddPi:
-                        KlipperDatabaseFluiddValueUiSettings? fluiddObject = GetObjectFromJson<KlipperDatabaseFluiddValueUiSettings>(resultString);
+                        KlipperDatabaseFluiddValueUiSettings? fluiddObject = JsonConvertHelper.ToObject<KlipperDatabaseFluiddValueUiSettings>(resultString);
                         if (fluiddObject?.General is not null)
                         {
                             resultObject = new()
@@ -223,13 +211,11 @@ namespace AndreasReitberger.API.Moonraker
                 KeyValuePair<string, object>? pair = result?.FirstOrDefault();
                 if (string.IsNullOrEmpty(pair?.Key)) return resultObject;
 
-                //resultString = pair.Value.ToString();
                 resultString = pair.Value.Value.ToString();
-
                 switch (OperatingSystem)
                 {
                     case MoonrakerOperatingSystems.MainsailOS:
-                        List<KlipperDatabaseMainsailValueRemotePrinter>? mainsailObject = GetObjectFromJson<List<KlipperDatabaseMainsailValueRemotePrinter>>(resultString);
+                        List<KlipperDatabaseMainsailValueRemotePrinter>? mainsailObject = JsonConvertHelper.ToObject<List<KlipperDatabaseMainsailValueRemotePrinter>>(resultString);
                         if (mainsailObject is not null)
                         {
                             resultObject = [.. mainsailObject.Select(item => new KlipperDatabaseRemotePrinter()
@@ -245,18 +231,6 @@ namespace AndreasReitberger.API.Moonraker
 #if DEBUG
                     //throw new NotSupportedException($"The method '{nameof(GetRemotePrintersAsync)}() is only support on '{MoonrakerOperatingSystems.MainsailOS}!");
 #endif
-                    /*
-                    KlipperDatabaseFluiddValueUiSettings fluiddObject = GetObjectFromJson<KlipperDatabaseFluiddValueUiSettings>(resultString);
-                    if (fluiddObject?.General is not null)
-                    {
-                        resultObject = new()
-                        {
-                            Locale = fluiddObject.General.Locale,
-                            Printername = fluiddObject.General.InstanceName,
-                        };
-                    }
-                    break;
-                    */
                     default:
                         break;
                 }
@@ -303,7 +277,7 @@ namespace AndreasReitberger.API.Moonraker
                 {
                     case MoonrakerOperatingSystems.MainsailOS:
                         // New since latest update
-                        KlipperDatabaseMainsailValuePresets? mainsailObject = GetObjectFromJson<KlipperDatabaseMainsailValuePresets>(resultString, NewtonsoftJsonSerializerSettings);
+                        KlipperDatabaseMainsailValuePresets? mainsailObject = JsonConvertHelper.ToObject<KlipperDatabaseMainsailValuePresets>(resultString, context: MoonrakerClientSourceGenerationContext.Default);
                         if (mainsailObject is not null)
                         {
                             IEnumerable<KlipperDatabaseTemperaturePreset> temp = mainsailObject.Presets.Select((item, index) => new KlipperDatabaseTemperaturePreset()
@@ -312,21 +286,20 @@ namespace AndreasReitberger.API.Moonraker
                                 Id = item.Key,
                                 Name = item.Value.Name,
                                 Gcode = item.Value.Gcode,
-                                Values = new(item.Value.Values.Select(valuePair => new KeyValuePair<string, KlipperDatabaseTemperaturePresetHeater>(
+                                Values = [with(item.Value.Values.Select(valuePair => new KeyValuePair<string, KlipperDatabaseTemperaturePresetHeater>(
                                     valuePair.Key, new KlipperDatabaseTemperaturePresetHeater()
                                     {
                                         Name = valuePair.Key,
                                         Active = valuePair.Value.BoolValue,
                                         Type = valuePair.Value.Type,
                                         Value = valuePair.Value.Value,
-                                    }))),
+                                    })))],
                             });
                             resultObject = [.. temp];
                         }
                         break;
                     case MoonrakerOperatingSystems.FluiddPi:
-                        //resultString = pair.Value.ToString();
-                        KlipperDatabaseFluiddValueUiSettings? fluiddObject = GetObjectFromJson<KlipperDatabaseFluiddValueUiSettings>(resultString);
+                        KlipperDatabaseFluiddValueUiSettings? fluiddObject = JsonConvertHelper.ToObject<KlipperDatabaseFluiddValueUiSettings>(resultString);
                         if (fluiddObject?.Dashboard?.TempPresets is not null)
                         {
                             IEnumerable<KlipperDatabaseTemperaturePreset> temp = fluiddObject.Dashboard.TempPresets.Select(item => new KlipperDatabaseTemperaturePreset()
@@ -334,14 +307,14 @@ namespace AndreasReitberger.API.Moonraker
                                 Id = item.Id,
                                 Name = item.Name,
                                 Gcode = item.Gcode,
-                                Values = new(item.Values.Select(valuePair => new KeyValuePair<string, KlipperDatabaseTemperaturePresetHeater>(
+                                Values = [with(item.Values.Select(valuePair => new KeyValuePair<string, KlipperDatabaseTemperaturePresetHeater>(
                                     valuePair.Key, new KlipperDatabaseTemperaturePresetHeater()
                                     {
                                         Name = valuePair.Key,
                                         Active = valuePair.Value.Active,
                                         Type = valuePair.Value.Type,
                                         Value = valuePair.Value.Value,
-                                    }))),
+                                    })))],
                             });
                             resultObject = [.. temp];
                         }
@@ -387,9 +360,8 @@ namespace AndreasReitberger.API.Moonraker
                 KeyValuePair<string, object>? pair = result?.FirstOrDefault();
                 if (string.IsNullOrEmpty(pair?.Key)) return resultObject;
 
-                //resultString = pair.Value.ToString();
                 resultString = pair.Value.Value.ToString();
-                resultObject = GetObjectFromJson<KlipperDatabaseMainsailValueHeightmapSettings>(resultString);
+                resultObject = JsonConvertHelper.ToObject<KlipperDatabaseMainsailValueHeightmapSettings>(resultString);
                 return resultObject;
             }
             catch (Exception exc)
@@ -416,14 +388,12 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "database/item",
-                       jsonObject: cmd,
+                       body: cmd,
                        authHeaders: AuthHeaders,
-                       //urlSegments: urlSegments,
                        cts: default
                        )
                     .ConfigureAwait(false);
-                //result = await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Post, "database/item", cmd).ConfigureAwait(false);
-                KlipperDatabaseItemRespone? queryResult = GetObjectFromJson<KlipperDatabaseItemRespone>(result?.Result, NewtonsoftJsonSerializerSettings);
+                KlipperDatabaseItemRespone? queryResult = JsonConvertHelper.ToObject<KlipperDatabaseItemRespone>(result?.Result, context: MoonrakerClientSourceGenerationContext.Default);
                 if (queryResult is not null && queryResult.Result?.Value is not null)
                 {
                     resultObject = new()
@@ -446,29 +416,24 @@ namespace AndreasReitberger.API.Moonraker
             Dictionary<string, object> resultObject = [];
             try
             {
-                Dictionary<string, string> urlSegments = new()
-                {
-                    { "namespace", namespaceName }
-                };
-                if (!string.IsNullOrEmpty(key)) urlSegments.Add("key", key);
+                List<Tuple<string, string>> urlSegments =
+                [
+                    new("namespace", namespaceName)
+                ];
+                if (!string.IsNullOrEmpty(key)) urlSegments.Add(new("key", key));
 
                 string targetUri = $"{MoonrakerCommands.Server}";
                 result = await SendRestApiRequestAsync(
                        requestTargetUri: targetUri,
                        method: Method.Delete,
                        command: "database/item",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        urlSegments: urlSegments,
                        cts: default
                        )
                     .ConfigureAwait(false);
-                /*
-                result =
-                    await SendRestApiRequestAsync(MoonrakerCommandBase.server, Method.Delete, $"database/item", default, null, urlSegments)
-                    .ConfigureAwait(false);
-                */
-                KlipperDatabaseItemRespone? queryResult = GetObjectFromJson<KlipperDatabaseItemRespone>(result?.Result, NewtonsoftJsonSerializerSettings);
+                KlipperDatabaseItemRespone? queryResult = JsonConvertHelper.ToObject<KlipperDatabaseItemRespone>(result?.Result, context: MoonrakerClientSourceGenerationContext.Default);
                 if (queryResult?.Result?.Value is not null)
                 {
                     resultObject = new()

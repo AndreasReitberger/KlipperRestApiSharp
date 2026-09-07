@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Moonraker.Models
@@ -7,24 +7,24 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-        [JsonProperty("jsonrpc")]
+        [JsonPropertyName("jsonrpc")]
         public partial string Jsonrpc { get; set; } = string.Empty;
 
         [ObservableProperty]
-        [JsonProperty("method")]
+        [JsonPropertyName("method")]
         public partial string Method { get; set; } = string.Empty;
 
         [ObservableProperty]
-        [JsonProperty("params")]
+        [JsonPropertyName("params")]
         public partial List<object> Parameters { get; set; } = [];
 
         [ObservableProperty]
-        [JsonProperty("id")]
+        [JsonPropertyName("id")]
         public partial long? Id { get; set; }
         #endregion
 
         #region Overrides
-        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
+        public override string ToString() => JsonSerializer.Serialize(this!, MoonrakerClientSourceGenerationContext.Default.KlipperWebSocketMessage);
         #endregion
     }
 }

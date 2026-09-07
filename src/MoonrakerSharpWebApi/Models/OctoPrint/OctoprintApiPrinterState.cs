@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
@@ -8,17 +7,17 @@ namespace AndreasReitberger.API.Moonraker.Models
         #region Properties
         [ObservableProperty]
 
-        [JsonProperty("text", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("text")]
         public partial string Text { get; set; } = string.Empty;
 
         [ObservableProperty]
 
-        [JsonProperty("flags", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("flags")]
         public partial Dictionary<string, bool> Flags { get; set; } = [];
         #endregion
 
         #region Overrides
-        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
+        public override string ToString() => JsonSerializer.Serialize(this!, MoonrakerClientSourceGenerationContext.Default.OctoprintApiPrinterState);
         #endregion
     }
 }

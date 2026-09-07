@@ -1,7 +1,6 @@
 ﻿using AndreasReitberger.API.Print3dServer.Core.Enums;
 using AndreasReitberger.API.Print3dServer.Core.Interfaces;
 using AndreasReitberger.API.Print3dServer.Core.Utilities;
-using Newtonsoft.Json;
 using System;
 using System.Threading.Tasks;
 
@@ -23,17 +22,17 @@ namespace AndreasReitberger.API.Moonraker.Models
 
         [ObservableProperty]
 
-        [JsonProperty("filename")]
+        [JsonPropertyName("filename")]
         public partial string FileName { get; set; } = string.Empty;
 
         [ObservableProperty]
 
-        [JsonProperty("path")]
+        [JsonPropertyName("path")]
         public partial string FilePath { get; set; } = string.Empty;
 
         [ObservableProperty]
 
-        [JsonProperty("modified")]
+        [JsonPropertyName("modified")]
         public partial double? Modified { get; set; }
 
         partial void OnModifiedChanged(double? value)
@@ -43,19 +42,19 @@ namespace AndreasReitberger.API.Moonraker.Models
 
         [ObservableProperty]
 
-        [JsonProperty("size")]
+        [JsonPropertyName("size")]
         public partial long Size { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("permissions")]
+        [JsonPropertyName("permissions")]
         public partial string Permissions { get; set; } = string.Empty;
 
         #region JsonIgnore
 
         [ObservableProperty]
 
-        [JsonProperty("created")]
+        [JsonPropertyName("created")]
         [NotifyPropertyChangedFor(nameof(CreatedGeneralized))]
         public partial double? Created { get; set; } = 0;
 
@@ -147,7 +146,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         #endregion
 
         #region Overrides
-        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
+        public override string ToString() => JsonSerializer.Serialize(this!, MoonrakerClientSourceGenerationContext.Default.KlipperFile);
 
         #endregion
 

@@ -1,18 +1,15 @@
-﻿using Newtonsoft.Json;
-
-namespace AndreasReitberger.API.Moonraker.Models
+﻿namespace AndreasReitberger.API.Moonraker.Models
 {
     public partial class KlipperConfigVirtualSdcard : ObservableObject
     {
         #region Properties
         [ObservableProperty]
-
-        [JsonProperty("path")]
+        [JsonPropertyName("path")]
         public partial string Path { get; set; } = string.Empty;
         #endregion
 
         #region Overrides
-        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
+        public override string ToString() => JsonSerializer.Serialize(this!, MoonrakerClientSourceGenerationContext.Default.KlipperConfigVirtualSdcard);
         #endregion
     }
 }

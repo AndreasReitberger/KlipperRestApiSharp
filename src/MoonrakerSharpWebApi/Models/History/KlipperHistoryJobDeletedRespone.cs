@@ -1,19 +1,17 @@
-﻿using Newtonsoft.Json;
-
-namespace AndreasReitberger.API.Moonraker.Models
+﻿namespace AndreasReitberger.API.Moonraker.Models
 {
     public partial class KlipperHistoryJobDeletedRespone : ObservableObject
     {
         #region Properties
         [ObservableProperty]
 
-        [JsonProperty("result")]
+        [JsonPropertyName("result")]
         public partial KlipperHistoryJobDeletedResult? Result { get; set; }
 
         #endregion
 
         #region Overrides
-        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
+        public override string ToString() => JsonSerializer.Serialize(this!, MoonrakerClientSourceGenerationContext.Default.KlipperHistoryJobDeletedRespone);
         #endregion
     }
 }

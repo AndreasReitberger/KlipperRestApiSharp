@@ -1,7 +1,5 @@
-﻿using AndreasReitberger.API.Moonraker.Enum;
-using AndreasReitberger.API.Print3dServer.Core.Enums;
+﻿using AndreasReitberger.API.Print3dServer.Core.Enums;
 using AndreasReitberger.API.Print3dServer.Core.Interfaces;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -18,87 +16,87 @@ namespace AndreasReitberger.API.Moonraker.Models
 
         [ObservableProperty]
 
-        [JsonProperty("temperature")]
+        [JsonPropertyName("temperature")]
         public partial double? TempRead { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("target")]
+        [JsonPropertyName("target")]
         public partial double? TempSet { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("power")]
+        [JsonPropertyName("power")]
         public partial double? Power { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("pressure_advance")]
+        [JsonPropertyName("pressure_advance")]
         public partial double? PressureAdvance { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("smooth_time")]
+        [JsonPropertyName("smooth_time")]
         public partial double? SmoothTime { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("square_corner_velocity")]
+        [JsonPropertyName("square_corner_velocity")]
         public partial double? SquareCornerVelocity { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("max_accel")]
+        [JsonPropertyName("max_accel")]
         public partial double? MaxAccel { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("homed_axes")]
+        [JsonPropertyName("homed_axes")]
         public partial string HomedAxes { get; set; } = string.Empty;
 
         [ObservableProperty]
 
-        [JsonProperty("estimated_print_time")]
+        [JsonPropertyName("estimated_print_time")]
         public partial double? EstimatedPrintTime { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("max_velocity")]
+        [JsonPropertyName("max_velocity")]
         public partial double? MaxVelocity { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("print_time")]
+        [JsonPropertyName("print_time")]
         public partial double? PrintTime { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("max_accel_to_decel")]
+        [JsonPropertyName("max_accel_to_decel")]
         public partial double? MaxAccelToDecel { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("axis_minimum")]
+        [JsonPropertyName("axis_minimum")]
         public partial List<double> AxisMinimum { get; set; } = [];
 
         [ObservableProperty]
 
-        [JsonProperty("stalls")]
+        [JsonPropertyName("stalls")]
         public partial double? Stalls { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("axis_maximum")]
+        [JsonPropertyName("axis_maximum")]
         public partial List<double> AxisMaximum { get; set; } = [];
 
         [ObservableProperty]
 
-        [JsonProperty("position")]
+        [JsonPropertyName("position")]
         public partial List<double> Position { get; set; } = [];
 
         [ObservableProperty]
 
-        [JsonProperty("extruder")]
+        [JsonPropertyName("extruder")]
         public partial string Name { get; set; } = string.Empty;
 
         [JsonIgnore]
@@ -157,7 +155,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         #endregion
 
         #region Overrides
-        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
+        public override string ToString() => JsonSerializer.Serialize(this!, MoonrakerClientSourceGenerationContext.Default.KlipperStatusExtruder);
 
         #endregion
     }

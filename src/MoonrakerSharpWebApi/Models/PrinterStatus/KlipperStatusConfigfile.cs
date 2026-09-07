@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
@@ -8,27 +7,27 @@ namespace AndreasReitberger.API.Moonraker.Models
         #region Properties
         [ObservableProperty]
 
-        [JsonProperty("warnings")]
+        [JsonPropertyName("warnings")]
         public partial List<object> Warnings { get; set; } = [];
 
         [ObservableProperty]
 
-        [JsonProperty("config")]
+        [JsonPropertyName("config")]
         public partial KlipperConfig? Config { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("settings")]
+        [JsonPropertyName("settings")]
         public partial KlipperSettings? Settings { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("save_config_pending")]
+        [JsonPropertyName("save_config_pending")]
         public partial bool SaveConfigPending { get; set; }
         #endregion
 
         #region Overrides
-        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
+        public override string ToString() => JsonSerializer.Serialize(this!, MoonrakerClientSourceGenerationContext.Default.KlipperStatusConfigfile);
         #endregion
     }
 }

@@ -1,23 +1,21 @@
-﻿using Newtonsoft.Json;
-
-namespace AndreasReitberger.API.Moonraker.Models
+﻿namespace AndreasReitberger.API.Moonraker.Models
 {
     public partial class KlipperUser : ObservableObject
     {
         #region Properties
         [ObservableProperty]
 
-        [JsonProperty("username")]
+        [JsonPropertyName("username")]
         public partial string Username { get; set; } = string.Empty;
 
         [ObservableProperty]
 
-        [JsonProperty("created_on")]
+        [JsonPropertyName("created_on")]
         public partial double CreatedOn { get; set; }
         #endregion
 
         #region Overrides
-        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
+        public override string ToString() => JsonSerializer.Serialize(this!, MoonrakerClientSourceGenerationContext.Default.KlipperUser);
         #endregion
     }
 }

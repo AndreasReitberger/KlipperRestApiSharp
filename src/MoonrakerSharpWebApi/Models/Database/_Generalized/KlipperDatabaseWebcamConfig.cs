@@ -1,5 +1,4 @@
 ﻿using AndreasReitberger.API.Print3dServer.Core.Interfaces;
-using Newtonsoft.Json;
 using System;
 
 namespace AndreasReitberger.API.Moonraker.Models
@@ -17,7 +16,7 @@ namespace AndreasReitberger.API.Moonraker.Models
 
         [ObservableProperty]
 
-        [JsonProperty("name")]
+        [JsonPropertyName("name")]
         public partial string Alias { get; set; } = string.Empty;
 
         [ObservableProperty]
@@ -70,7 +69,7 @@ namespace AndreasReitberger.API.Moonraker.Models
 
         [ObservableProperty]
 
-        [JsonProperty("rotation")]
+        [JsonPropertyName("rotation")]
         public partial long Orientation { get; set; }
 
         [ObservableProperty]
@@ -80,7 +79,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         #endregion
 
         #region Overrides
-        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
+        public override string ToString() => JsonSerializer.Serialize(this!, MoonrakerClientSourceGenerationContext.Default.KlipperDatabaseWebcamConfig);
         #endregion
     }
 }

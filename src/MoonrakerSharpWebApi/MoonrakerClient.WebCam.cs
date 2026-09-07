@@ -4,7 +4,6 @@ using AndreasReitberger.API.Moonraker.Structs;
 using AndreasReitberger.API.Print3dServer.Core.Interfaces;
 using AndreasReitberger.API.REST.Events;
 using AndreasReitberger.API.REST.Interfaces;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +13,6 @@ namespace AndreasReitberger.API.Moonraker
 {
     public partial class MoonrakerClient
     {
-
         #region Methods
 
         public override Task<List<IWebCamConfig>?> GetWebCamConfigsAsync() => GetWebCamSettingsAsync();
@@ -31,12 +29,12 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Get,
                        command: "webcams/list",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        cts: default
                        )
                     .ConfigureAwait(false);
-                KlipperWebcamConfigRespone? configs = GetObjectFromJson<KlipperWebcamConfigRespone>(result?.Result, NewtonsoftJsonSerializerSettings);
+                KlipperWebcamConfigRespone? configs = JsonConvertHelper.ToObject<KlipperWebcamConfigRespone>(result?.Result, context: MoonrakerClientSourceGenerationContext.Default);
                 if (configs?.Result?.Webcams?.Count > 0)
                     return [.. configs?.Result?.Webcams ?? []];
                 else
@@ -76,7 +74,7 @@ namespace AndreasReitberger.API.Moonraker
                 {
                     case MoonrakerOperatingSystems.MainsailOS:
                     case MoonrakerOperatingSystems.FluiddPi:
-                        Dictionary<Guid, KlipperDatabaseFluiddValueWebcamConfig>? fluiddObject = GetObjectFromJson<Dictionary<Guid, KlipperDatabaseFluiddValueWebcamConfig>>(resultString, NewtonsoftJsonSerializerSettings);
+                        Dictionary<Guid, KlipperDatabaseFluiddValueWebcamConfig>? fluiddObject = JsonConvertHelper.ToObject<Dictionary<Guid, KlipperDatabaseFluiddValueWebcamConfig>>(resultString, context: MoonrakerClientSourceGenerationContext.Default);
                         if (fluiddObject?.Count > 0)
                         {
                             IEnumerable<KlipperDatabaseWebcamConfig> temp = fluiddObject.Select(item => new KlipperDatabaseWebcamConfig()

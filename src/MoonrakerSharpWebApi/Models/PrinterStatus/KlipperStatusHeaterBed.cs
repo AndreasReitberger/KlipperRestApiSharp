@@ -1,7 +1,5 @@
-﻿using AndreasReitberger.API.Moonraker.Enum;
-using AndreasReitberger.API.Print3dServer.Core.Enums;
+﻿using AndreasReitberger.API.Print3dServer.Core.Enums;
 using AndreasReitberger.API.Print3dServer.Core.Interfaces;
-using Newtonsoft.Json;
 using System;
 using System.Threading.Tasks;
 
@@ -16,17 +14,17 @@ namespace AndreasReitberger.API.Moonraker.Models
 
         [ObservableProperty]
 
-        [JsonProperty("temperature")]
+        [JsonPropertyName("temperature")]
         public partial double? TempRead { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("target")]
+        [JsonPropertyName("target")]
         public partial double? TempSet { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("power")]
+        [JsonPropertyName("power")]
         public partial double? Power { get; set; }
 
         [JsonIgnore]
@@ -75,7 +73,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         #endregion
 
         #region Overrides
-        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
+        public override string ToString() => JsonSerializer.Serialize(this!, MoonrakerClientSourceGenerationContext.Default.KlipperStatusHeaterBed);
         #endregion
     }
 }

@@ -1,33 +1,27 @@
-﻿using Newtonsoft.Json;
-
-namespace AndreasReitberger.API.Moonraker.Models
+﻿namespace AndreasReitberger.API.Moonraker.Models
 {
     public partial class KlipperDevice : ObservableObject
     {
         #region Properties
         [ObservableProperty]
-
-        [JsonProperty("device")]
+        [JsonPropertyName("device")]
         public partial string Device { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("status")]
+        [JsonPropertyName("status")]
         public partial string Status { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("locked_while_printing")]
+        [JsonPropertyName("locked_while_printing")]
         public partial bool LockedWhilePrinting { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("type")]
+        [JsonPropertyName("type")]
         public partial string Type { get; set; } = string.Empty;
         #endregion
 
         #region Overrides
-        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
+        public override string ToString() => JsonSerializer.Serialize(this!, MoonrakerClientSourceGenerationContext.Default.KlipperDevice);
         #endregion
     }
 }

@@ -3,12 +3,13 @@ using AndreasReitberger.API.Moonraker.Structs;
 using AndreasReitberger.API.Print3dServer.Core.Interfaces;
 using AndreasReitberger.API.REST.Events;
 using AndreasReitberger.API.REST.Interfaces;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using AndreasReitberger.Shared.Core.Utilities;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Nodes;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace AndreasReitberger.API.Moonraker
@@ -18,15 +19,15 @@ namespace AndreasReitberger.API.Moonraker
         #region Properties
 
         [ObservableProperty]
-        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public partial double LiveVelocity { get; set; } = 0;
 
         [ObservableProperty]
-        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public partial double LiveExtruderVelocity { get; set; } = 0;
 
         [ObservableProperty]
-        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore, XmlIgnore]
+        [JsonIgnore, XmlIgnore]
         public partial KlipperPrinterStateMessageResult? PrinterInfo { get; set; }
         partial void OnPrinterInfoChanged(KlipperPrinterStateMessageResult? value)
         {
@@ -75,7 +76,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Get,
                        command: "info",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        cts: default
                        )
@@ -84,7 +85,7 @@ namespace AndreasReitberger.API.Moonraker
                 result = await SendRestApiRequestAsync(MoonrakerCommandBase.printer, Method.Get, "info")
                     .ConfigureAwait(false);
                 */
-                KlipperPrinterStateMessageRespone? state = GetObjectFromJson<KlipperPrinterStateMessageRespone>(result?.Result, NewtonsoftJsonSerializerSettings);
+                KlipperPrinterStateMessageRespone? state = JsonConvertHelper.ToObject<KlipperPrinterStateMessageRespone>(result?.Result, context: MoonrakerClientSourceGenerationContext.Default);
                 return state?.Result;
             }
             catch (Exception exc)
@@ -103,7 +104,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "emergency_stop",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        cts: default
                        )
@@ -131,7 +132,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "restart",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        cts: default
                        )
@@ -159,7 +160,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "firmware_restart",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        cts: default
                        )
@@ -287,7 +288,7 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Get,
                        command: "objects/list",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        cts: default
                        )
@@ -297,7 +298,7 @@ namespace AndreasReitberger.API.Moonraker
                     await SendRestApiRequestAsync(MoonrakerCommandBase.printer, Method.Get, "objects/list")
                     .ConfigureAwait(false);
                 */
-                KlipperActionListRespone? state = GetObjectFromJson<KlipperActionListRespone>(result?.Result, NewtonsoftJsonSerializerSettings);
+                KlipperActionListRespone? state = JsonConvertHelper.ToObject<KlipperActionListRespone>(result?.Result, context: MoonrakerClientSourceGenerationContext.Default);
                 if (!string.IsNullOrEmpty(startsWith))
                 {
                     resultObject = [.. state?.Result?.Objects.Where(obj => obj.StartsWith(startsWith)) ?? []];
@@ -322,40 +323,55 @@ namespace AndreasReitberger.API.Moonraker
             Dictionary<string, object> resultObject = [];
             try
             {
-                Dictionary<string, string> urlSegments = [];
+                List<Tuple<string, string>> urlSegments = [];
                 foreach (KeyValuePair<string, string> obj in objects)
                 {
                     // Do not query macros here, there is an extra method for this.
                     if (obj.Key.StartsWith("gcode_macro")) continue;
-                    urlSegments.Add(obj.Key, obj.Value);
+                    urlSegments.Add(new(obj.Key, obj.Value));
                 }
                 string targetUri = $"{MoonrakerCommands.Printer}";
                 result = await SendRestApiRequestAsync(
                        requestTargetUri: targetUri,
                        method: Method.Get,
                        command: "objects/query",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        urlSegments: urlSegments,
                        cts: default
                        )
                     .ConfigureAwait(false);
-                /*
-                result = await SendRestApiRequestAsync(MoonrakerCommandBase.printer, Method.Get, "objects/query", jsonObject: null, cts: default, urlSegments: urlSegments)
-                    .ConfigureAwait(false);
-                */
-                KlipperPrinterStatusRespone? queryResult = GetObjectFromJson<KlipperPrinterStatusRespone>(result?.Result, NewtonsoftJsonSerializerSettings);
-                if (queryResult?.Result?.Status is JObject jsonObject)
+
+                KlipperPrinterStatusRespone? queryResult = JsonConvertHelper.ToObject<KlipperPrinterStatusRespone>(result?.Result, context: MoonrakerClientSourceGenerationContext.Default);
+                if (queryResult?.Result?.Status is JsonObject jsonObject)
                 {
-                    foreach (JProperty property in jsonObject.Children<JProperty>())
+                    foreach (KeyValuePair<string, JsonNode?> property in jsonObject)
                     {
-                        Stack<JToken> avilableProperties = new(jsonObject.Children<JToken>());
+                        Stack<JsonNode> availableProperties = new(jsonObject.Select(kvp => kvp.Value).Where(v => v != null)!);
                         do
                         {
-                            JToken token = avilableProperties.Pop();
-                            if (token is JProperty propTest)
+                            JsonNode token = availableProperties.Pop();
+                            if (token is JsonObject propTest)
                             {
                                 // Get the childs for this tags
+                                foreach (KeyValuePair<string, JsonNode?> prop in propTest)
+                                {
+                                    if (prop.Key.StartsWith("configfile") ||
+                                        prop.Key.StartsWith("settings"))
+                                    {
+                                        // Kinder auf den Stack legen
+                                        if (prop.Value is JsonObject childObj)
+                                        {
+                                            foreach (var child in childObj)
+                                            {
+                                                if (child.Value != null)
+                                                    availableProperties.Push(child.Value);
+                                            }
+                                        }
+                                        continue;
+                                    }
+                                }
+                                /*
                                 if (propTest.Name.StartsWith("configfile") || propTest.Name.StartsWith("settings"))
                                 {
                                     // Add all child properties back to the stack
@@ -366,12 +382,13 @@ namespace AndreasReitberger.API.Moonraker
                                     }
                                     continue;
                                 }
+                                */
                             }
+                            /*
                             else if (token is JToken childToken)
                             {
                                 if (childToken?.First is not JProperty jp)
                                     continue;
-                                /**/
                                 // Get the childs for this tags
                                 if (jp.Name.StartsWith("configfile") || jp.Name.StartsWith("settings"))
                                 {
@@ -385,7 +402,6 @@ namespace AndreasReitberger.API.Moonraker
                                 }
 
                             }
-
                             if (token is not JProperty parent)
                             {
                                 // Add all child properties back to the stack
@@ -396,7 +412,11 @@ namespace AndreasReitberger.API.Moonraker
                                 }
                                 continue;
                             }
+                            */
 
+                            // DEBUG THIS FIRST WITH A LIVE SESSION!!!!
+                            throw new NotImplementedException("This part of the code needs to be debugged and implemented properly. The current implementation is incomplete and may not handle all cases correctly.");
+                            /*
                             string name = parent.Name;
                             string path = parent.Path;
                             string jsonBody = parent.Value.ToString();
@@ -404,77 +424,77 @@ namespace AndreasReitberger.API.Moonraker
                             {
                                 case "probe":
                                     KlipperStatusProbe? probe =
-                                        GetObjectFromJson<KlipperStatusProbe>(jsonBody, NewtonsoftJsonSerializerSettings);
+                                        JsonConvertHelper.ToObject<KlipperStatusProbe>(jsonBody, context: MoonrakerClientSourceGenerationContext.Default);
                                     if (probe is not null)
                                         resultObject.Add(name, probe);
                                     break;
                                 case "configfile":
                                     KlipperStatusConfigfile? configFile =
-                                        GetObjectFromJson<KlipperStatusConfigfile>(jsonBody, NewtonsoftJsonSerializerSettings);
+                                        JsonConvertHelper.ToObject<KlipperStatusConfigfile>(jsonBody, context: MoonrakerClientSourceGenerationContext.Default);
                                     if (configFile is not null)
                                         resultObject.Add(name, configFile);
                                     break;
                                 case "query_endstops":
                                     KlipperStatusQueryEndstops? endstops =
-                                        GetObjectFromJson<KlipperStatusQueryEndstops>(jsonBody, NewtonsoftJsonSerializerSettings);
+                                        JsonConvertHelper.ToObject<KlipperStatusQueryEndstops>(jsonBody, context: MoonrakerClientSourceGenerationContext.Default);
                                     if (endstops is not null)
                                         resultObject.Add(name, endstops);
                                     break;
                                 case "virtual_sdcard":
                                     KlipperStatusVirtualSdcard? virtualSdcardState =
-                                        GetObjectFromJson<KlipperStatusVirtualSdcard>(jsonBody, NewtonsoftJsonSerializerSettings);
+                                        JsonConvertHelper.ToObject<KlipperStatusVirtualSdcard>(jsonBody, context: MoonrakerClientSourceGenerationContext.Default);
                                     if (virtualSdcardState is not null)
                                         resultObject.Add(name, virtualSdcardState);
                                     break;
                                 case "display_status":
                                     KlipperStatusDisplay? displayState =
-                                        GetObjectFromJson<KlipperStatusDisplay>(jsonBody, NewtonsoftJsonSerializerSettings);
+                                        JsonConvertHelper.ToObject<KlipperStatusDisplay>(jsonBody, context: MoonrakerClientSourceGenerationContext.Default);
                                     if (displayState is not null)
                                         resultObject.Add(name, displayState);
                                     break;
                                 case "moonraker_stats":
                                     MoonrakerStatInfo? notifyProcState =
-                                        GetObjectFromJson<MoonrakerStatInfo>(jsonBody, NewtonsoftJsonSerializerSettings);
+                                        JsonConvertHelper.ToObject<MoonrakerStatInfo>(jsonBody, context: MoonrakerClientSourceGenerationContext.Default);
                                     if (notifyProcState is not null)
                                         resultObject.Add(name, notifyProcState);
                                     break;
                                 case "mcu":
                                     KlipperStatusMcu? mcuState =
-                                        GetObjectFromJson<KlipperStatusMcu>(jsonBody, NewtonsoftJsonSerializerSettings);
+                                        JsonConvertHelper.ToObject<KlipperStatusMcu>(jsonBody, context: MoonrakerClientSourceGenerationContext.Default);
                                     if (mcuState is not null)
                                         resultObject.Add(name, mcuState);
                                     break;
                                 case "system_stats":
                                     KlipperStatusSystemStats? systemState =
-                                        GetObjectFromJson<KlipperStatusSystemStats>(jsonBody, NewtonsoftJsonSerializerSettings);
+                                        JsonConvertHelper.ToObject<KlipperStatusSystemStats>(jsonBody, context: MoonrakerClientSourceGenerationContext.Default);
                                     if (systemState is not null)
                                         resultObject.Add(name, systemState);
                                     break;
                                 case "cpu_temp":
                                     double cpuTemp =
-                                        GetObjectFromJson<double>(jsonBody.Replace(",", "."));
+                                        JsonConvertHelper.ToObject<double>(jsonBody.Replace(",", "."));
                                     resultObject.Add(name, cpuTemp);
                                     break;
                                 case "websocket_connections":
                                     int wsConnections =
-                                        GetObjectFromJson<int>(jsonBody, NewtonsoftJsonSerializerSettings);
+                                        JsonConvertHelper.ToObject<int>(jsonBody, context: MoonrakerClientSourceGenerationContext.Default);
                                     resultObject.Add(name, wsConnections);
                                     break;
                                 case "network":
                                     Dictionary<string, KlipperNetworkInterface>? network =
-                                        GetObjectFromJson<Dictionary<string, KlipperNetworkInterface>>(jsonBody, NewtonsoftJsonSerializerSettings);
+                                        JsonConvertHelper.ToObject<Dictionary<string, KlipperNetworkInterface>>(jsonBody, context: MoonrakerClientSourceGenerationContext.Default);
                                     if (network is not null)
                                         resultObject.Add(name, network);
                                     break;
                                 case "gcode_move":
                                     KlipperStatusGcodeMove? gcodeMoveState =
-                                        GetObjectFromJson<KlipperStatusGcodeMove>(jsonBody, NewtonsoftJsonSerializerSettings);
+                                        JsonConvertHelper.ToObject<KlipperStatusGcodeMove>(jsonBody, context: MoonrakerClientSourceGenerationContext.Default);
                                     if (gcodeMoveState is not null)
                                         resultObject.Add(name, gcodeMoveState);
                                     break;
                                 case "print_stats":
                                     KlipperStatusPrintStats? printStats =
-                                        GetObjectFromJson<KlipperStatusPrintStats>(jsonBody, NewtonsoftJsonSerializerSettings);
+                                        JsonConvertHelper.ToObject<KlipperStatusPrintStats>(jsonBody, context: MoonrakerClientSourceGenerationContext.Default);
                                     if (printStats is not null)
                                     {
                                         printStats.ValidPrintState = jsonBody.Contains("state");
@@ -483,13 +503,13 @@ namespace AndreasReitberger.API.Moonraker
                                     break;
                                 case "fan":
                                     KlipperStatusFan? fanState =
-                                        GetObjectFromJson<KlipperStatusFan>(jsonBody, NewtonsoftJsonSerializerSettings);
+                                        JsonConvertHelper.ToObject<KlipperStatusFan>(jsonBody, context: MoonrakerClientSourceGenerationContext.Default);
                                     if (fanState is not null)
                                         resultObject.Add(name, fanState);
                                     break;
                                 case "toolhead":
                                     KlipperStatusToolhead? toolhead =
-                                        GetObjectFromJson<KlipperStatusToolhead>(jsonBody, NewtonsoftJsonSerializerSettings);
+                                        JsonConvertHelper.ToObject<KlipperStatusToolhead>(jsonBody, context: MoonrakerClientSourceGenerationContext.Default);
                                     if (toolhead is not null)
                                         resultObject.Add(name, toolhead);
                                     break;
@@ -499,14 +519,14 @@ namespace AndreasReitberger.API.Moonraker
                                     if (path.EndsWith("settings.heater_bed"))
                                     {
                                         KlipperConfigHeaterBed? settingsHeaterBed =
-                                            GetObjectFromJson<KlipperConfigHeaterBed>(jsonBody, NewtonsoftJsonSerializerSettings);
+                                            JsonConvertHelper.ToObject<KlipperConfigHeaterBed>(jsonBody, context: MoonrakerClientSourceGenerationContext.Default);
                                         if (settingsHeaterBed is not null)
                                             resultObject.Add(name, settingsHeaterBed);
                                     }
                                     else
                                     {
                                         KlipperStatusHeaterBed? heaterBed =
-                                            GetObjectFromJson<KlipperStatusHeaterBed>(jsonBody, NewtonsoftJsonSerializerSettings);
+                                            JsonConvertHelper.ToObject<KlipperStatusHeaterBed>(jsonBody, context: MoonrakerClientSourceGenerationContext.Default);
                                         if (heaterBed is not null)
                                             resultObject.Add(name, heaterBed);
                                     }
@@ -520,27 +540,27 @@ namespace AndreasReitberger.API.Moonraker
                                     if (path.EndsWith("settings.extruder"))
                                     {
                                         KlipperConfigExtruder? settingsExtruder =
-                                            GetObjectFromJson<KlipperConfigExtruder>(jsonBody, NewtonsoftJsonSerializerSettings);
+                                            JsonConvertHelper.ToObject<KlipperConfigExtruder>(jsonBody, context: MoonrakerClientSourceGenerationContext.Default);
                                         if (settingsExtruder is not null)
                                             resultObject.Add(name, settingsExtruder);
                                     }
                                     else
                                     {
                                         KlipperStatusExtruder? extruder =
-                                            GetObjectFromJson<KlipperStatusExtruder>(jsonBody, NewtonsoftJsonSerializerSettings);
+                                            JsonConvertHelper.ToObject<KlipperStatusExtruder>(jsonBody, context: MoonrakerClientSourceGenerationContext.Default);
                                         if (extruder is not null)
                                             resultObject.Add(name, extruder);
                                     }
                                     break;
                                 case "motion_report":
                                     KlipperStatusMotionReport? motionReport =
-                                        GetObjectFromJson<KlipperStatusMotionReport>(jsonBody, NewtonsoftJsonSerializerSettings);
+                                        JsonConvertHelper.ToObject<KlipperStatusMotionReport>(jsonBody, context: MoonrakerClientSourceGenerationContext.Default);
                                     if (motionReport is not null)
                                         resultObject.Add(name, motionReport);
                                     break;
                                 case "idle_timeout":
                                     KlipperStatusIdleTimeout? idleTimeout =
-                                        GetObjectFromJson<KlipperStatusIdleTimeout>(jsonBody, NewtonsoftJsonSerializerSettings);
+                                        JsonConvertHelper.ToObject<KlipperStatusIdleTimeout>(jsonBody, context: MoonrakerClientSourceGenerationContext.Default);
                                     if (idleTimeout is not null)
                                     {
                                         idleTimeout.ValidState = jsonBody.Contains("state");
@@ -549,13 +569,13 @@ namespace AndreasReitberger.API.Moonraker
                                     break;
                                 case "filament_switch_sensor fsensor":
                                     KlipperStatusFilamentSensor? fSensor =
-                                        GetObjectFromJson<KlipperStatusFilamentSensor>(jsonBody, NewtonsoftJsonSerializerSettings);
+                                        JsonConvertHelper.ToObject<KlipperStatusFilamentSensor>(jsonBody, context: MoonrakerClientSourceGenerationContext.Default);
                                     if (fSensor is not null)
                                         resultObject.Add(name, fSensor);
                                     break;
                                 case "pause_resume":
                                     KlipperStatusPauseResume? pauseResume =
-                                        GetObjectFromJson<KlipperStatusPauseResume>(jsonBody, NewtonsoftJsonSerializerSettings);
+                                        JsonConvertHelper.ToObject<KlipperStatusPauseResume>(jsonBody, context: MoonrakerClientSourceGenerationContext.Default);
                                     if (pauseResume is not null)
                                         resultObject.Add(name, pauseResume);
                                     break;
@@ -565,13 +585,13 @@ namespace AndreasReitberger.API.Moonraker
                                     break;
                                 case "bed_mesh":
                                     KlipperStatusMesh? mesh =
-                                        GetObjectFromJson<KlipperStatusMesh>(jsonBody, NewtonsoftJsonSerializerSettings);
+                                        JsonConvertHelper.ToObject<KlipperStatusMesh>(jsonBody, context: MoonrakerClientSourceGenerationContext.Default);
                                     if (mesh is not null)
                                         resultObject.Add(name, mesh);
                                     break;
                                 case "job":
                                     KlipperStatusJob? job =
-                                        GetObjectFromJson<KlipperStatusJob>(jsonBody, NewtonsoftJsonSerializerSettings);
+                                        JsonConvertHelper.ToObject<KlipperStatusJob>(jsonBody, context: MoonrakerClientSourceGenerationContext.Default);
                                     if (job is not null)
                                         resultObject.Add(name, job);
                                     break;
@@ -582,7 +602,7 @@ namespace AndreasReitberger.API.Moonraker
                                     if (name.StartsWith("gcode_macro"))
                                     {
                                         KlipperGcodeMacro? gcMacro =
-                                            GetObjectFromJson<KlipperGcodeMacro>(jsonBody, NewtonsoftJsonSerializerSettings);
+                                            JsonConvertHelper.ToObject<KlipperGcodeMacro>(jsonBody, context: MoonrakerClientSourceGenerationContext.Default);
                                         if (gcMacro is not null)
                                         {
                                             if (string.IsNullOrEmpty(gcMacro.Name))
@@ -614,9 +634,9 @@ namespace AndreasReitberger.API.Moonraker
                                     }
                                     break;
                             }
-
+                            */
                         }
-                        while (avilableProperties.Count > 0);
+                        while (availableProperties.Count > 0);
                     }
                 }
                 return resultObject;
@@ -644,7 +664,7 @@ namespace AndreasReitberger.API.Moonraker
                 IEnumerable<KeyValuePair<string, KlipperGcodeMacro>> macros =
                     settings.Where(keypair => keypair.Key.StartsWith("gcode_macro"))
                     .Select(pair => new KeyValuePair<string, KlipperGcodeMacro>(pair.Key, pair.Value as KlipperGcodeMacro));
-                return new(macros);
+                return [with(macros)];
 #else
                 List<KeyValuePair<string, KlipperGcodeMacro>> macros =
                     settings.Where(keypair => keypair.Key.StartsWith("gcode_macro"))
@@ -682,34 +702,30 @@ namespace AndreasReitberger.API.Moonraker
             Dictionary<string, KlipperStatusFilamentSensor> resultObject = [];
             try
             {
-                Dictionary<string, string> urlSegments = [];
+                List<Tuple<string, string>> urlSegments = [];
                 if (macros is not null)
                 {
                     foreach (KeyValuePair<string, string> obj in macros)
                     {
-                        urlSegments.Add(obj.Key, obj.Value);
+                        urlSegments.Add(new(obj.Key, obj.Value));
                     }
                 }
                 else
                 {
-                    urlSegments.Add("filament_switch_sensor", string.Empty);
+                    urlSegments.Add(new("filament_switch_sensor", string.Empty));
                 }
                 string targetUri = $"{MoonrakerCommands.Printer}";
                 result = await SendRestApiRequestAsync(
                        requestTargetUri: targetUri,
                        method: Method.Get,
                        command: "objects/query",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        urlSegments: urlSegments,
                        cts: default
                        )
                     .ConfigureAwait(false);
-                /*
-                result = await SendRestApiRequestAsync(MoonrakerCommandBase.printer, Method.Get, "objects/query", jsonObject: null, cts: default, urlSegments: urlSegments)
-                    .ConfigureAwait(false);
-                */
-                KlipperFilamentSensorsRespone? queryResult = GetObjectFromJson<KlipperFilamentSensorsRespone>(result?.Result, NewtonsoftJsonSerializerSettings);
+                KlipperFilamentSensorsRespone? queryResult = JsonConvertHelper.ToObject<KlipperFilamentSensorsRespone>(result?.Result, context: MoonrakerClientSourceGenerationContext.Default);
                 return queryResult?.Result?.Status ?? resultObject;
             }
             catch (Exception exc)
@@ -1143,16 +1159,16 @@ namespace AndreasReitberger.API.Moonraker
             string? resultObject = "";
             try
             {
-                Dictionary<string, string> urlSegments = new()
-                {
-                    { "connection_id", $"{connectionId}" }
-                };
+                List<Tuple<string, string>> urlSegments = 
+                [
+                    new("connection_id", $"{connectionId}")
+                ];
 
                 for (int i = 0; i < objects.Count; i++)
                 {
                     string key = objects[i];
                     string value = string.Empty;
-                    urlSegments.Add(key, value);
+                    urlSegments.Add(new(key, value));
                 }
 
                 string targetUri = $"{MoonrakerCommands.Printer}";
@@ -1160,16 +1176,12 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Post,
                        command: "objects/subscribe",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        urlSegments: urlSegments,
                        cts: default
                        )
                     .ConfigureAwait(false);
-                /*
-                result = await SendRestApiRequestAsync(MoonrakerCommandBase.printer, Method.Post, "objects/subscribe", jsonObject: null, cts: default, urlSegments: urlSegments)
-                    .ConfigureAwait(false);
-                */
                 return result?.Result ?? resultObject;
             }
             catch (Exception exc)
@@ -1195,13 +1207,13 @@ namespace AndreasReitberger.API.Moonraker
                        requestTargetUri: targetUri,
                        method: Method.Get,
                        command: "query_endstops/status",
-                       jsonObject: null,
+                       body: null,
                        authHeaders: AuthHeaders,
                        cts: default
                        )
                     .ConfigureAwait(false);
                 //result = await SendRestApiRequestAsync(MoonrakerCommandBase.printer, Method.Get, "query_endstops/status").ConfigureAwait(false);
-                KlipperEndstopQueryRespone? queryResult = GetObjectFromJson<KlipperEndstopQueryRespone>(result?.Result, NewtonsoftJsonSerializerSettings);
+                KlipperEndstopQueryRespone? queryResult = JsonConvertHelper.ToObject<KlipperEndstopQueryRespone>(result?.Result, context: MoonrakerClientSourceGenerationContext.Default);
                 return queryResult?.Result;
             }
             catch (Exception exc)

@@ -19,7 +19,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Print3dServer.Core" Version="1.0.4-preview4" />
+    <PackageReference Include="Print3dServer.Core" Version="1.0.6" />
     <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="Microsoft.SourceLink.GitHub" Version="10.0.400" />
   </ItemGroup>
 </Project>

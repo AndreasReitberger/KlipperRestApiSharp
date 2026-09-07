@@ -1,33 +1,31 @@
-﻿using Newtonsoft.Json;
-
-namespace AndreasReitberger.API.Moonraker.Models
+﻿namespace AndreasReitberger.API.Moonraker.Models
 {
     public partial class KlipperFileActionResult : ObservableObject
     {
         #region Properties
         [ObservableProperty]
 
-        [JsonProperty("item")]
+        [JsonPropertyName("item")]
         public partial KlipperFileItem? Item { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("print_started")]
+        [JsonPropertyName("print_started")]
         public partial bool PrintStarted { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("print_queued")]
+        [JsonPropertyName("print_queued")]
         public partial bool PrintQueued { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("action")]
+        [JsonPropertyName("action")]
         public partial string Action { get; set; } = string.Empty;
         #endregion
 
         #region Overrides
-        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
+        public override string ToString() => JsonSerializer.Serialize(this!, MoonrakerClientSourceGenerationContext.Default.KlipperFileActionResult);
         #endregion
     }
 }

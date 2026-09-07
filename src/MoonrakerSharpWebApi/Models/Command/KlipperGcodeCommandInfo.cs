@@ -1,6 +1,4 @@
-﻿using AndreasReitberger.Shared.Core.Utilities;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
@@ -18,7 +16,6 @@ namespace AndreasReitberger.API.Moonraker.Models
         public partial bool Sent { get; set; } = false;
 
 
-
         [ObservableProperty]
         public partial bool Succeeded { get; set; } = false;
 
@@ -29,7 +26,7 @@ namespace AndreasReitberger.API.Moonraker.Models
 
         #region Overrides
 
-        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
+        public override string ToString() => JsonSerializer.Serialize(this!, MoonrakerClientSourceGenerationContext.Default.KlipperGcodeCommandInfo);
         #endregion
     }
 }

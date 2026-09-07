@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
@@ -7,28 +6,24 @@ namespace AndreasReitberger.API.Moonraker.Models
     {
         #region Properties
         [ObservableProperty]
-
-        [JsonProperty("login_timeout")]
+        [JsonPropertyName("login_timeout")]
         public partial long LoginTimeout { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("force_logins")]
+        [JsonPropertyName("force_logins")]
         public partial bool ForceLogins { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("cors_domains")]
+        [JsonPropertyName("cors_domains")]
         public partial List<string> CorsDomains { get; set; } = [];
 
         [ObservableProperty]
-
-        [JsonProperty("trusted_clients")]
+        [JsonPropertyName("trusted_clients")]
         public partial List<string> TrustedClients { get; set; } = [];
         #endregion
 
         #region Overrides
-        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
+        public override string ToString() => JsonSerializer.Serialize(this!, MoonrakerClientSourceGenerationContext.Default.KlipperAuthorization);
         #endregion
     }
 }

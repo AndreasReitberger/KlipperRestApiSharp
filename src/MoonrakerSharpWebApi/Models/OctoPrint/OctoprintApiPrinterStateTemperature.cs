@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace AndreasReitberger.API.Moonraker.Models
 {
@@ -8,32 +7,32 @@ namespace AndreasReitberger.API.Moonraker.Models
         #region Properties
         [ObservableProperty]
 
-        [JsonProperty("bed", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("bed")]
         public partial OctoprintApiPrinterStateTemperatureInfo? BBed { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("chamber", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("chamber")]
         public partial OctoprintApiPrinterStateTemperatureInfo? Chamber { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("history", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("history")]
         public partial List<OctoprintApiPrinterStateHistory> History { get; set; } = [];
 
         [ObservableProperty]
 
-        [JsonProperty("tool0", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("tool0")]
         public partial OctoprintApiPrinterStateTemperatureInfo? Tool0 { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("tool1", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("tool1")]
         public partial OctoprintApiPrinterStateTemperatureInfo? Tool1 { get; set; }
         #endregion
 
         #region Overrides
-        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
+        public override string ToString() => JsonSerializer.Serialize(this!, MoonrakerClientSourceGenerationContext.Default.OctoprintApiPrinterStateTemperature);
         #endregion
     }
 }

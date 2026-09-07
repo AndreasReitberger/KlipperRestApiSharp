@@ -1,68 +1,55 @@
-﻿using Newtonsoft.Json;
-
-namespace AndreasReitberger.API.Moonraker.Models
+﻿namespace AndreasReitberger.API.Moonraker.Models
 {
     public partial class KlipperConfigPrinter : ObservableObject
     {
         #region Properties
         [ObservableProperty]
-
-        [JsonProperty("max_velocity")]
+        [JsonPropertyName("max_velocity")]
         public partial long MaxVelocity { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("max_z_velocity")]
+        [JsonPropertyName("max_z_velocity")]
         public partial long MaxZVelocity { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("kinematics")]
+        [JsonPropertyName("kinematics")]
         public partial string Kinematics { get; set; } = string.Empty;
 
         [ObservableProperty]
-
-        [JsonProperty("max_accel")]
+        [JsonPropertyName("max_accel")]
         public partial long MaxAccel { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("max_z_accel")]
+        [JsonPropertyName("max_z_accel")]
         public partial long MaxZAccel { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("square_corner_velocity")]
+        [JsonPropertyName("square_corner_velocity")]
         public partial long SquareCornerVelocity { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("move_flush_time")]
+        [JsonPropertyName("move_flush_time")]
         public partial double MoveFlushTime { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("buffer_time_start")]
+        [JsonPropertyName("buffer_time_start")]
         public partial double BufferTimeStart { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("buffer_time_low")]
+        [JsonPropertyName("buffer_time_low")]
         public partial long BufferTimeLow { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("buffer_time_high")]
+        [JsonPropertyName("buffer_time_high")]
         public partial long BufferTimeHigh { get; set; }
 
         [ObservableProperty]
-
-        [JsonProperty("max_accel_to_decel")]
+        [JsonPropertyName("max_accel_to_decel")]
         public partial long MaxAccelToDecel { get; set; }
         #endregion
 
         #region Overrides
-        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
+        public override string ToString() => JsonSerializer.Serialize(this!, MoonrakerClientSourceGenerationContext.Default.KlipperConfigPrinter);
         #endregion
     }
 }

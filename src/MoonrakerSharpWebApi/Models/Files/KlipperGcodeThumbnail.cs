@@ -1,5 +1,4 @@
 ﻿using AndreasReitberger.API.Print3dServer.Core.Interfaces;
-using Newtonsoft.Json;
 using System;
 
 namespace AndreasReitberger.API.Moonraker.Models
@@ -14,22 +13,22 @@ namespace AndreasReitberger.API.Moonraker.Models
 
         [ObservableProperty]
 
-        [JsonProperty("width")]
+        [JsonPropertyName("width")]
         public partial long Width { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("height")]
+        [JsonPropertyName("height")]
         public partial long Height { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("size")]
+        [JsonPropertyName("size")]
         public partial long Size { get; set; }
 
         [ObservableProperty]
 
-        [JsonProperty("relative_path")]
+        [JsonPropertyName("relative_path")]
         public partial string Path { get; set; } = string.Empty;
 
         partial void OnPathChanged(string value)
@@ -44,7 +43,7 @@ namespace AndreasReitberger.API.Moonraker.Models
         #endregion
 
         #region Overrides
-        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
+        public override string ToString() => JsonSerializer.Serialize(this!, MoonrakerClientSourceGenerationContext.Default.KlipperGcodeThumbnail);
 
         #endregion
 
