@@ -664,7 +664,7 @@ namespace AndreasReitberger.API.Moonraker
                 IEnumerable<KeyValuePair<string, KlipperGcodeMacro>> macros =
                     settings.Where(keypair => keypair.Key.StartsWith("gcode_macro"))
                     .Select(pair => new KeyValuePair<string, KlipperGcodeMacro>(pair.Key, pair.Value as KlipperGcodeMacro));
-                return new(macros);
+                return [with(macros)];
 #else
                 List<KeyValuePair<string, KlipperGcodeMacro>> macros =
                     settings.Where(keypair => keypair.Key.StartsWith("gcode_macro"))

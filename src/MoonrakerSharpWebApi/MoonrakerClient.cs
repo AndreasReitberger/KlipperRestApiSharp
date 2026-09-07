@@ -1,5 +1,4 @@
-﻿using AndreasReitberger.API.Moonraker.Attributes;
-using AndreasReitberger.API.Moonraker.Enum;
+﻿using AndreasReitberger.API.Moonraker.Enum;
 using AndreasReitberger.API.Moonraker.Extensions;
 using AndreasReitberger.API.Moonraker.Models;
 using AndreasReitberger.API.Moonraker.Structs;
@@ -24,7 +23,6 @@ namespace AndreasReitberger.API.Moonraker
 {
     // Needs: https://github.com/Arksine/moonraker/blob/master/docs/web_api.md
     // Docs: https://moonraker.readthedocs.io/en/latest/configuration/
-    [Preserve(AllMembers = true)]
     public partial class MoonrakerClient : Print3dServerClient, IPrint3dServerClient
     {
         #region Variables
@@ -2099,7 +2097,7 @@ namespace AndreasReitberger.API.Moonraker
             {
                 ObservableCollection<IPrint3dJob> jobList = [];
                 List<IPrint3dJob> result = await GetJobQueueListAsync().ConfigureAwait(false);
-                Jobs = result is not null ? new(result) : jobList;
+                Jobs = result is not null ? [with(result)] : jobList;
             }
             catch (Exception exc)
             {
@@ -2160,10 +2158,10 @@ namespace AndreasReitberger.API.Moonraker
             KlipperJobQueueResult? resultObject = null;
             try
             {
-                List<Tuple<string, string>> urlSegments = new()
-                {
+                List<Tuple<string, string>> urlSegments =
+                [
                     new("all", "true")
-                };
+                ];
 
                 string targetUri = $"{MoonrakerCommands.Server}";
                 result = await SendRestApiRequestAsync(
@@ -2536,11 +2534,11 @@ namespace AndreasReitberger.API.Moonraker
         {
             try
             {
-                List<Tuple<string, string>> urlSegments = new()
-                {
+                List<Tuple<string, string>> urlSegments =
+                [
                     new("name", repoName),
                     new("hard", hard ? "true" : "false")
-                };
+                ];
 
                 string targetUri = $"{MoonrakerCommands.Machine}";
                 IRestApiRequestRespone? result = await SendRestApiRequestAsync(
@@ -2613,10 +2611,10 @@ namespace AndreasReitberger.API.Moonraker
             Dictionary<string, string> resultObject = [];
             try
             {
-                List<Tuple<string, string>> urlSegments = new()
-                {
+                List<Tuple<string, string>> urlSegments =
+                [
                     new("device", device)
-                };
+                ];
 
                 string targetUri = $"{MoonrakerCommands.Machine}";
                 result = await SendRestApiRequestAsync(
@@ -3209,11 +3207,11 @@ namespace AndreasReitberger.API.Moonraker
             KlipperHistoryResult? resultObject = null;
             try
             {
-                List<Tuple<string, string>> urlSegments = new()
-                {
+                List<Tuple<string, string>> urlSegments =
+                [
                     new("limit", $"{limit}"),
                     new("start", $"{start}")
-                };
+                ];
                 if (since >= 0) urlSegments.Add(new("since", $"{since}"));
                 if (before >= 0) urlSegments.Add(new("before", $"{before}"));
                 urlSegments.Add(new("order", order));
@@ -3338,10 +3336,10 @@ namespace AndreasReitberger.API.Moonraker
             KlipperJobItem? resultObject = null;
             try
             {
-                List<Tuple<string, string>> urlSegments = new()
-                {
+                List<Tuple<string, string>> urlSegments =
+                [
                     new("uid", uid)
-                };
+                ];
 
                 string targetUri = $"{MoonrakerCommands.Server}";
                 result = await SendRestApiRequestAsync(
@@ -3385,10 +3383,10 @@ namespace AndreasReitberger.API.Moonraker
             {
                 if (string.IsNullOrEmpty(uid)) return resultObject;
 
-                List<Tuple<string, string>> urlSegments = new()
-                {
+                List<Tuple<string, string>> urlSegments =
+                [
                     new("uid", uid)
-                };
+                ];
 
                 string targetUri = $"{MoonrakerCommands.Server}";
                 result = await SendRestApiRequestAsync(

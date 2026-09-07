@@ -371,7 +371,7 @@ namespace AndreasReitberger.API.Moonraker
                     path = "gcodes";
                 }
                 List<KlipperDirectory> result = await GetAvailableDirectoriesAsync(path).ConfigureAwait(false);
-                AvailableDirectories = new(result);
+                AvailableDirectories = [with(result)];
             }
             catch (Exception exc)
             {

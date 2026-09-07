@@ -2,12 +2,14 @@
 using AndreasReitberger.API.Moonraker.Enum;
 using AndreasReitberger.API.Moonraker.Models;
 using AndreasReitberger.API.Moonraker.Models.WebSocket;
+using AndreasReitberger.API.Moonraker.SourceGeneration;
 using AndreasReitberger.API.Print3dServer.Core.Interfaces;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using AndreasReitberger.Shared.Core.Utilities;
 using System.Diagnostics;
 using System.Reflection;
 using System.Text;
+using System.Text.Json.Nodes;
+using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using System.Xml.Serialization;
 
@@ -157,34 +159,6 @@ namespace MoonrakerSharpWebApi.Test
         }
 
         [Test]
-        public void SerializeJsonNewtonsoftTest()
-        {
-
-            var dir = @"TestResults\Serialization\";
-            Directory.CreateDirectory(dir);
-            string serverConfig = Path.Combine(dir, "server.xml");
-            if (File.Exists(serverConfig)) File.Delete(serverConfig);
-            try
-            {
-                string host = $"{(_ssl ? "https://" : "http://")}{_host}:{_port}";
-                var sClient = new MoonrakerClient(host)
-                {
-                    FreeDiskSpace = 1523165212,
-                    TotalDiskSpace = 65621361616161,
-                    ServerName = "My moonraker server",
-                };
-                sClient.SetProxy(true, "https://testproxy.de", 447, "User", "my_awesome_pwd", true);
-                string serializedString = JsonConvert.SerializeObject(sClient, Formatting.Indented, settings: MoonrakerClient.DefaultNewtonsoftJsonSerializerSettings);
-                MoonrakerClient? serializedObject = JsonConvert.DeserializeObject<MoonrakerClient>(serializedString, settings: MoonrakerClient.DefaultNewtonsoftJsonSerializerSettings);
-                Assert.That(serializedObject is MoonrakerClient server && server != null);
-            }
-            catch (Exception exc)
-            {
-                Assert.Fail(exc.Message);
-            }
-        }
-
-        [Test]
         public void SerializeAllTypesWithJsonNewtonsoftTest()
         {
             var dir = @"TestResults\Serialization\";
@@ -216,14 +190,14 @@ namespace MoonrakerSharpWebApi.Test
                         Debug.WriteLine($"Exception while creating object from type `{t}`: {exc.Message}");
                     }
                     if (obj is null) continue;
-                    string serializedString =
-                        JsonConvert.SerializeObject(obj, Formatting.Indented, settings: MoonrakerClient.DefaultNewtonsoftJsonSerializerSettings);
-                    if (serializedString == "{}") continue;
+                    string? serializedString =
+                        JsonConvertHelper.ToSettingsString(obj, context: MoonrakerClientSourceGenerationContext.Default);
+                    if (string.IsNullOrEmpty(serializedString) || serializedString == "{}") continue;
 
                     // Get all property infos
                     List<PropertyInfo> p = [.. t
                         .GetProperties()
-                        .Where(prop => prop.GetCustomAttribute<JsonPropertyAttribute>(true) is not null)]
+                        .Where(prop => prop.GetCustomAttribute<JsonPropertyNameAttribute>(true) is not null)]
                         ;
 
                     // Get the property names from the json text
@@ -248,15 +222,7 @@ namespace MoonrakerSharpWebApi.Test
                     // set to cleanuped string
                     serializedString = sb.ToString();
                     var splitted = serializedString.Split(",", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-                    List<string> properties = [.. splitted.Select(row => extract.Match(row ?? "")?.Value ?? string.Empty)]
-                        ;
-                    /*
-                    serializedString = string.Join(Environment.NewLine, splitString);
-                    List<string> properties = serializedString.Split(",", StringSplitOptions.RemoveEmptyEntries)
-                        .Select(p => p.Trim())
-                        .ToList()
-                        ;
-                    */
+                    List<string> properties = [.. splitted.Select(row => extract.Match(row ?? "")?.Value ?? string.Empty)];
                     foreach (string property in properties)
                     {
                         bool valid = r.IsMatch(property);
@@ -271,7 +237,7 @@ namespace MoonrakerSharpWebApi.Test
 
                             if (jsonAttribute is not null)
                             {
-                                CustomAttributeData? ca = jsonAttribute.CustomAttributes.FirstOrDefault(a => a.AttributeType == typeof(JsonPropertyAttribute));
+                                CustomAttributeData? ca = jsonAttribute.CustomAttributes.FirstOrDefault(a => a.AttributeType == typeof(JsonPropertyNameAttribute));
                                 if (ca is not null)
                                 {
                                     CustomAttributeTypedArgument cap = ca.ConstructorArguments.FirstOrDefault();
@@ -1199,11 +1165,11 @@ namespace MoonrakerSharpWebApi.Test
                     foreach (KeyValuePair<string, object> pair in items)
                     {
                         Type type = pair.Value.GetType();
-                        if (pair.Value is JObject jObject)
+                        if (pair.Value is JsonObject jObject)
                         {
-                            foreach (var property in jObject.Properties())
+                            foreach (KeyValuePair<string, JsonNode?> property in jObject)
                             {
-                                Dictionary<string, object> childItems = await client.GetDatabaseItemAsync(currentNamespace, property.Name);
+                                Dictionary<string, object> childItems = await client.GetDatabaseItemAsync(currentNamespace, property.Key);
                             }
                         }
                     }

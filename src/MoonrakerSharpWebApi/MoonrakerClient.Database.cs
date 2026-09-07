@@ -286,14 +286,14 @@ namespace AndreasReitberger.API.Moonraker
                                 Id = item.Key,
                                 Name = item.Value.Name,
                                 Gcode = item.Value.Gcode,
-                                Values = new(item.Value.Values.Select(valuePair => new KeyValuePair<string, KlipperDatabaseTemperaturePresetHeater>(
+                                Values = [with(item.Value.Values.Select(valuePair => new KeyValuePair<string, KlipperDatabaseTemperaturePresetHeater>(
                                     valuePair.Key, new KlipperDatabaseTemperaturePresetHeater()
                                     {
                                         Name = valuePair.Key,
                                         Active = valuePair.Value.BoolValue,
                                         Type = valuePair.Value.Type,
                                         Value = valuePair.Value.Value,
-                                    }))),
+                                    })))],
                             });
                             resultObject = [.. temp];
                         }
@@ -307,14 +307,14 @@ namespace AndreasReitberger.API.Moonraker
                                 Id = item.Id,
                                 Name = item.Name,
                                 Gcode = item.Gcode,
-                                Values = new(item.Values.Select(valuePair => new KeyValuePair<string, KlipperDatabaseTemperaturePresetHeater>(
+                                Values = [with(item.Values.Select(valuePair => new KeyValuePair<string, KlipperDatabaseTemperaturePresetHeater>(
                                     valuePair.Key, new KlipperDatabaseTemperaturePresetHeater()
                                     {
                                         Name = valuePair.Key,
                                         Active = valuePair.Value.Active,
                                         Type = valuePair.Value.Type,
                                         Value = valuePair.Value.Value,
-                                    }))),
+                                    })))],
                             });
                             resultObject = [.. temp];
                         }
